@@ -200,6 +200,7 @@ Ext.define('portal.widgets.panel.RecordPanel', {
      */
     onStoreFilterChange: function(store, filters) {
         this.getLayout().suspendAnimations();
+        Ext.suspendLayouts();
         
         this._eachRow(function(recordRowPanel) {
             var filtered = store.find('id', recordRowPanel.recordId) < 0; //we cant use store.getById as that bypasses any filters
@@ -215,6 +216,7 @@ Ext.define('portal.widgets.panel.RecordPanel', {
             }
         });
         
+        Ext.resumeLayouts();
         this.getLayout().resumeAnimations();
     },
     
@@ -287,5 +289,19 @@ Ext.define('portal.widgets.panel.RecordPanel', {
         }, this);
         
         this.add(newItems);
+    },
+    
+    /**
+     * Expands the row with the specified recordId. If that ID DNE, this has no effect.
+     * 
+     * The group containing the row will also be expanded.
+     */
+    expandRecordById: function(recordId) {
+        this._eachRow(function(row) {
+            if (row.recordId === recordId) {
+                row.ownerCt.expand();
+                row.expand();
+            }
+        });
     }
 });

@@ -92,30 +92,16 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 iconRenderer: Ext.bind(me._spatialBoundsRenderer, me)
             }],
             childPanelGenerator: function(record) {                  
+                //For every filter panel we generate, also generate a portal.layer.Layer and 
+                //attach it to the CSWRecord/KnownLayer
                 var newLayer = null;
-                
-                //VT:if this is deserialized, we don't need to regenerate the layer
-                if(record.get('layer')) {                        
-                    newLayer =  record.get('layer');                                    
-                }else if(record instanceof portal.csw.CSWRecord){                        
+                if (record instanceof portal.csw.CSWRecord) {                        
                     newLayer = cfg.layerFactory.generateLayerFromCSWRecord(record);                                                     
-                }else{
+                } else {
                     newLayer = cfg.layerFactory.generateLayerFromKnownLayer(record);                      
-                }           
-                record.set('layer',newLayer);
-                var filterForm = cfg.layerFactory.formFactory.getFilterForm(newLayer).form; //ALWAYS recreate filter form - see https://jira.csiro.au/browse/AUS-2588
-                filterForm.setLayer(newLayer);
-                var filterPanel = me._getInlineLayerPanel(filterForm);
-                
-                //Update the layer panel to use
-                if (filterForm) {
-                    var filterer = newLayer.get('filterer');
-                    if (filterer) {
-                        var existingParams = filterer.getParameters();
-                        filterForm.getForm().setValues(existingParams);
-                    }
                 }
-                return filterPanel;
+                record.set('layer', newLayer);
+                return me._getInlineLayerPanel(newLayer.get('filterForm'));
            }
         });
 
