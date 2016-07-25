@@ -17,7 +17,7 @@
  *
  */
 Ext.define('portal.widgets.panel.CommonBaseRecordPanel', {
-    extend : 'portal.widgets.panel.RecordPanel',
+    extend : 'portal.widgets.panel.recordpanel.RecordPanel',
     alias: 'widget.commonbaserecordpanel',
     browseCatalogueDNSMessage : false, //VT: Flags the do not show message when browse catalogue is clicked.
     map : null,

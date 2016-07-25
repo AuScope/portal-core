@@ -4,7 +4,7 @@
  * Provides basic functionality for expanding/collapsing this and any potential
  * child classes of this class.
  */
-Ext.define('portal.widgets.panel.RecordPanelAbstractChild', {
+Ext.define('portal.widgets.panel.recordpanel.AbstractChild', {
     extend: 'Ext.panel.Panel',
 
     config: {

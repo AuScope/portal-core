@@ -5,8 +5,8 @@
  * 
  * The grid panel was deprecated as part of AUS-2685
  */
-Ext.define('portal.widgets.panel.RecordGroupPanel', {
-    extend : 'portal.widgets.panel.RecordPanelAbstractChild',
+Ext.define('portal.widgets.panel.recordpanel.GroupPanel', {
+    extend : 'portal.widgets.panel.recordpanel.AbstractChild',
     xtype : 'recordgrouppanel',
 
     /**
