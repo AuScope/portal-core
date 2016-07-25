@@ -6,7 +6,7 @@
  * The grid panel was deprecated as part of AUS-2685
  */
 Ext.define('portal.widgets.panel.RecordGroupPanel', {
-    extend : 'Ext.panel.Panel',
+    extend : 'portal.widgets.panel.RecordPanelAbstractChild',
     xtype : 'recordgrouppanel',
 
     /**
@@ -18,6 +18,7 @@ Ext.define('portal.widgets.panel.RecordGroupPanel', {
         
         Ext.apply(config, {
             collapsed: true,
+            groupMode: true,
             bodyPadding: '0 0 0 0',
             header: {
                 style: 'cursor: pointer;',
@@ -73,45 +74,5 @@ Ext.define('portal.widgets.panel.RecordGroupPanel', {
         this.visibleItemCount = visibleItemCount;
         title = Ext.util.Format.format('{0} ({1} item{2})', title, visibleItemCount, (visibleItemCount != 1 ? 's' : ''));
         return this.callParent([title]);
-    },
-
-    onChildExpand : function(groupPanel, rowPanel) {
-        groupPanel.ownerCt.suspendLayouts();
-        groupPanel.ownerCt.items.each(function(sibling) {
-            if (sibling.getItemId() !== portal.widgets.plugins.CollapsedAccordian.HIDDEN_ID && sibling.getId() !== groupPanel.getId()) {
-                sibling.collapseChildren();
-            }
-        });
-        groupPanel.ownerCt.resumeLayouts();
-    },
-
-    /**
-     * Collapses all children panels of this group
-     */
-    collapseChildren : function() {
-        this.items.each(function(item) {
-            if (item.getItemId() !== portal.widgets.plugins.CollapsedAccordian.HIDDEN_ID) {
-                if (item.getCollapsed() === false) {
-                    item.collapse();
-                }
-            }
-        }, this);
-    },
-
-    initComponent : function() {
-        this.callParent(arguments);
-
-        this.items.each(function(item) {
-            if (item.getItemId() !== portal.widgets.plugins.CollapsedAccordian.HIDDEN_ID) {
-                item.on('beforeexpand', function(item) {
-                    this.fireEvent('childexpand', this, item);
-                }, this);
-            }
-        }, this);
-
-        this.on({
-            childexpand : this.onChildExpand,
-            scope : this
-        });
     }
 });

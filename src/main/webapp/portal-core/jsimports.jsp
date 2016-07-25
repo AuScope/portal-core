@@ -141,6 +141,7 @@
 <script src="portal-core/js/portal/widgets/grid/plugin/RowExpanderContainer.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/widgets/grid/plugin/InlineContextMenu.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/widgets/layout/AccordianDefault.js?v=${buildTimestamp}" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/panel/RecordPanelAbstractChild.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/widgets/panel/RecordGroupPanel.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/widgets/panel/RecordRowPanel.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/widgets/panel/RecordPanel.js?v=${buildTimestamp}" type="text/javascript"></script>

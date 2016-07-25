@@ -35,14 +35,17 @@ Ext.define('portal.widgets.panel.RecordPanel', {
      *  childPanelGenerator: function(record) - Called when records are added to the store. Return a generated Ext.Container for display in the specified row's expander
      * }
      */
-    constructor : function(config) {        
+    constructor : function(config) {
+        var grouped = config.store.isGrouped();
+        
         //Ensure we setup the correct layout
         Ext.apply(config, {
             layout: {
                 type: 'accordion',
+                hideCollapseTool: !grouped,
                 collapseFirst: true,
                 fill: false,
-                multi: true
+                multi: grouped
             },
             autoScroll: true,
             plugins: ['collapsedaccordian']
@@ -91,13 +94,22 @@ Ext.define('portal.widgets.panel.RecordPanel', {
      * Enumerates each RecordRowPanel and passes them one by one to callback
      */
     _eachRow: function(callback, scope) {
-        this._eachGroup(function(recordGroupPanel) {
-            recordGroupPanel.items.each(function(recordRowPanel) {
-                if (recordRowPanel instanceof portal.widgets.panel.RecordRowPanel) {
+        //If we are grouped, our rows are children of groups. Otherwise they can be found at the top level
+        if (this.store.isGrouped()) {
+            this._eachGroup(function(recordGroupPanel) {
+                recordGroupPanel.items.each(function(recordRowPanel) {
+                    if (recordRowPanel instanceof portal.widgets.panel.RecordRowPanel) {
+                        callback.call(scope, recordRowPanel);
+                    }
+                });
+            });
+        } else {
+            this.items.each(function(recordRowPanel) {
+                if (recordRowPanel instanceof portal.widgets.panel.RecordRowPanel) { 
                     callback.call(scope, recordRowPanel);
                 }
             });
-        });
+        }
     },
     
     /**
@@ -138,6 +150,83 @@ Ext.define('portal.widgets.panel.RecordPanel', {
             }
             recordRowPanel.tipMap = {};
         });
+    },
+    
+    /**
+     * Generates a RecordRowPanel config object for a given record (also registers it internally so ensure this config gets added to the widget)
+     */
+    _generateRecordRowConfig: function(record, groupMode) {
+        var tools = [];
+        Ext.each(this.tools, function(tool) {
+            var fieldValue = record.get(tool.field);
+            var clickBind = Ext.isEmpty(tool.clickHandler) ? null : Ext.bind(this._clickMarshaller, this, [record, tool.field, tool.clickHandler], false);
+            var doubleClickBind = Ext.isEmpty(tool.doubleClickHandler) ? null : Ext.bind(this._clickMarshaller, this, [record, tool.field, tool.doubleClickHandler], false);
+            tools.push({
+                itemId: tool.field,
+                stopEvent: tool.stopEvent,
+                clickHandler: clickBind,
+                doubleClickHandler: doubleClickBind,
+                icon: tool.iconRenderer(fieldValue, record)
+            });
+        }, this);
+        
+        var recordId = record.getId();
+        var newItemId = Ext.id(null, 'record-row-');
+        this.recordRowMap[recordId] = newItemId; 
+        return {
+            xtype: 'recordrowpanel',
+            recordId: recordId,
+            itemId: newItemId,
+            title: record.get(this.titleField), 
+            titleIndex: this.titleIndex,
+            groupMode: groupMode,
+            tools: tools,
+            items: [this.childPanelGenerator(record)],
+            listeners: {
+                scope: this,
+                afterrender: this._installToolTips
+            }
+        };
+    },
+    
+    /**
+     * Generates all widgets for a grouped data store
+     */
+    _generateGrouped: function() {
+      //Run through our groups of records, creating new 
+        //items as we go 
+        var newItems = [];
+        var groups = this.store.getGroups();
+        groups.each(function(groupObj) {
+            var rows = [];
+            
+            //Create a RecordRowPanel for each row we receive
+            Ext.each(groupObj.items, function(record) {
+                rows.push(this._generateRecordRowConfig(record, false));
+            }, this);
+            
+            var newGroup = {
+                xtype: 'recordgrouppanel',
+                title: groupObj.getConfig().groupKey,
+                items: rows
+            };
+            
+            newItems.push(newGroup);
+        }, this);
+        
+        this.add(newItems);
+    },
+    
+    /**
+     * Generates all widgets for an un-grouped data store
+     */
+    _generateUnGrouped: function() {
+        var rows = [];
+        this.store.each(function(record) {
+            rows.push(this._generateRecordRowConfig(record, true));
+        }, this);
+        
+        this.add(rows);
     },
     
     /**
@@ -238,57 +327,11 @@ Ext.define('portal.widgets.panel.RecordPanel', {
         }
         this.recordRowMap = {};
         
-        //Run through our groups of records, creating new 
-        //items as we go 
-        var newItems = [];
-        var groups = store.getGroups();
-        groups.each(function(groupObj) {
-            var rows = [];
-            
-            //Create a RecordRowPanel for each row we receive
-            Ext.each(groupObj.items, function(record) {
-                var tools = [];
-                Ext.each(this.tools, function(tool) {
-                    var fieldValue = record.get(tool.field);
-                    var clickBind = Ext.isEmpty(tool.clickHandler) ? null : Ext.bind(this._clickMarshaller, this, [record, tool.field, tool.clickHandler], false);
-                    var doubleClickBind = Ext.isEmpty(tool.doubleClickHandler) ? null : Ext.bind(this._clickMarshaller, this, [record, tool.field, tool.doubleClickHandler], false);
-                    tools.push({
-                        itemId: tool.field,
-                        stopEvent: tool.stopEvent,
-                        clickHandler: clickBind,
-                        doubleClickHandler: doubleClickBind,
-                        icon: tool.iconRenderer(fieldValue, record)
-                    });
-                }, this);
-                
-                var recordId = record.getId();
-                var newItemId = Ext.id(null, 'record-row-');
-                this.recordRowMap[recordId] = newItemId; 
-                rows.push({
-                    xtype: 'recordrowpanel',
-                    recordId: recordId,
-                    itemId: newItemId,
-                    title: record.get(this.titleField), 
-                    titleIndex: this.titleIndex,
-                    tools: tools,
-                    items: [this.childPanelGenerator(record)],
-                    listeners: {
-                        scope: this,
-                        afterrender: this._installToolTips
-                    }
-                });
-            }, this);
-            
-            var newGroup = {
-                xtype: 'recordgrouppanel',
-                title: groupObj.getConfig().groupKey,
-                items: rows
-            };
-            
-            newItems.push(newGroup);
-        }, this);
-        
-        this.add(newItems);
+        if (store.isGrouped()) {
+            this._generateGrouped();
+        } else {
+            this._generateUnGrouped();
+        }
     },
     
     /**
@@ -299,7 +342,9 @@ Ext.define('portal.widgets.panel.RecordPanel', {
     expandRecordById: function(recordId) {
         this._eachRow(function(row) {
             if (row.recordId === recordId) {
-                row.ownerCt.expand();
+                if (this.store.isGrouped()) {
+                    row.ownerCt.expand();
+                }
                 row.expand();
             }
         });

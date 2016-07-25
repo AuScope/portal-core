@@ -4,7 +4,7 @@
  * The grid panel was deprecated as part of AUS-2685
  */
 Ext.define('portal.widgets.panel.RecordRowPanel', {
-    extend : 'Ext.panel.Panel',
+    extend : 'portal.widgets.panel.RecordPanelAbstractChild',
     xtype : 'recordrowpanel',
     
     config: {
