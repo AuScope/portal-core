@@ -45,7 +45,20 @@ public class HttpServiceCaller {
 
     public String getMethodResponseAsString(HttpRequestBase method) throws ConnectException, UnknownHostException,
             ConnectTimeoutException, Exception {
-        return this.getMethodResponseAsString(method, null);
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(this.connectionTimeOut)
+                .setSocketTimeout(this.connectionTimeOut)
+                .build();       
+        
+        HttpClientConnectionManager man= new PoolingHttpClientConnectionManager();
+
+        try (CloseableHttpClient httpClient = HttpClientBuilder.create()
+                    .useSystemProperties()
+                    .setConnectionManager(man)
+                    .setDefaultRequestConfig(requestConfig)
+                    .build()) {
+            return getMethodResponseAsString(method, httpClient);
+        } 
     }
 
     /**
