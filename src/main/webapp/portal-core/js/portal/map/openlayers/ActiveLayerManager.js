@@ -25,6 +25,11 @@ Ext.define('portal.map.openlayers.ActiveLayerManager', {
             var map = layer.get('renderer').map;
             var activeLayerStore = ActiveLayerManager.getActiveLayerStore(map);
             activeLayerStore.suspendEvents(true);
+            // The insert() used below will trigger removal events and an event driven clean up operation.
+            // So we set a flag to block it.
+            if (activeLayerStore.getCount()>0) {
+                activeLayerStore.addingLayer=true;
+            }
             activeLayerStore.insert(0,layer);
             activeLayerStore.resumeEvents();
             this.saveApplicationState(map);
