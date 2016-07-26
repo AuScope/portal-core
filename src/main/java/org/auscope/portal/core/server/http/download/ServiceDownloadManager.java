@@ -28,7 +28,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.auscope.portal.core.configuration.ServiceConfiguration;
 import org.auscope.portal.core.configuration.ServiceConfigurationItem;
-import org.auscope.portal.core.server.http.HttpClientResponse;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.util.DOMResponseUtil;
 import org.auscope.portal.core.util.FileIOUtil;
@@ -247,8 +246,11 @@ public class ServiceDownloadManager {
 
         public void downloadNormal(DownloadResponse resp, String theUrl) {
             HttpGet method = new HttpGet(theUrl);
-            // Our request may fail (due to timeout or otherwise)
-            try (HttpClientResponse httpResponse = serviceCaller.getMethodResponseAsHttpResponse(method)) {
+            try {
+                // Our request may fail (due to timeout or otherwise)
+                // We need to ensure that this httpResponse is NOT closed. That is the responsibility of the
+                // classes using this service
+                HttpResponse httpResponse = serviceCaller.getMethodResponseAsHttpResponse(method);
 
                 resp.setResponseStream(httpResponse.getEntity().getContent());
                 Header header = httpResponse.getEntity().getContentType();
