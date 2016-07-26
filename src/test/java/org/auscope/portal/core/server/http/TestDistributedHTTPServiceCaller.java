@@ -7,13 +7,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import junit.framework.Assert;
+
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
-
-import junit.framework.Assert;
 
 @SuppressWarnings("deprecation")
 public class TestDistributedHTTPServiceCaller extends PortalTestClass {
@@ -87,8 +87,8 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
      */
     @Test
     public void testBlockingNext() throws Exception {
-        final long delay2ms = 1500;
-        final long timeEpsilonMs = 300; //This should be an order of magnitude smaller than the above delays
+        final long delay2ms = 3000;
+        final long timeEpsilonMs = 600; //This should be an order of magnitude smaller than the above delays
         final ConnectException expectedError = new ConnectException("fooBARbaz");
         final DistributedHTTPServiceCaller dsc = new DistributedHTTPServiceCaller(Arrays.asList(mockMethod1,
                 mockMethod2), mockServiceCaller);
@@ -140,9 +140,9 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
      */
     @Test
     public void testFastestOrdering() throws Exception {
-        final long delay1ms = 1200;
-        final long delay2ms = 300;
-        final long delay3ms = 750;
+        final long delay1ms = 2400;
+        final long delay2ms = 600;
+        final long delay3ms = 1500;
 
         final DistributedHTTPServiceCaller dsc = new DistributedHTTPServiceCaller(
                 Arrays.asList(mockMethod1, mockMethod2, mockMethod3),
