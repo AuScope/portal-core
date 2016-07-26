@@ -5,12 +5,12 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.web.servlet.view.AbstractView;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONSerializer;
 import net.sf.json.JsonConfig;
 import net.sf.json.util.CycleDetectionStrategy;
-
-import org.springframework.web.servlet.view.AbstractView;
 
 /**
  * User: Mathew Wyatt Date: 23/03/2009 Time: 12:26:29 PM
@@ -38,6 +38,7 @@ public class JSONView extends AbstractView {
         cfg.setCycleDetectionStrategy(CycleDetectionStrategy.LENIENT);
     }
 
+    @Override
     protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         response.setContentType(getContentType());

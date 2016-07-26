@@ -19,6 +19,7 @@ public class SingleValue implements ValueEnumType {
         value = node.getTextContent();
     }
 
+    @Override
     public String getType() {
         return type;
     }

@@ -30,7 +30,7 @@ public class WMSSelectors implements KnownLayerSelector {
     public WMSSelectors(SelectorsMode layersMode, List<String> layerNames) {
         this();
         this.layersMode = layersMode;
-        wmsSelectors = new ArrayList<WMSSelector>();
+        wmsSelectors = new ArrayList<>();
         for (String layerName : layerNames) {
             WMSSelector wmsSelector = new WMSSelector(layerName);
             wmsSelectors.add(wmsSelector);

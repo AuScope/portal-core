@@ -12,5 +12,5 @@ public class AWSEC2NamespaceContext extends IterableNamespace {
 
     public AWSEC2NamespaceContext() {
         map.put("aws", "http://ec2.amazonaws.com/doc/2015-10-01/");
-    };
+    }
 }

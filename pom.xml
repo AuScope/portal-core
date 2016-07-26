@@ -34,7 +34,7 @@
             <dependency>
                 <groupId>io.spring.platform</groupId>
                 <artifactId>platform-bom</artifactId>
-                <version>1.1.2.RELEASE</version>
+                <version>1.1.5.RELEASE</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -396,7 +396,7 @@
         <dependency>
             <groupId>xmlunit</groupId>
             <artifactId>xmlunit</artifactId>
-            <version>1.6</version>
+            <version>1.6</version><!--$NO-MVN-MAN-VER$-->
         </dependency>
         <dependency>
             <groupId>log4j</groupId>

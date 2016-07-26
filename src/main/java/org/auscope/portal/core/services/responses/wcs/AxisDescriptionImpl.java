@@ -42,18 +42,22 @@ public class AxisDescriptionImpl implements AxisDescription {
         }
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public String getLabel() {
         return label;
     }
 
+    @Override
     public ValueEnumType[] getValues() {
         return values;
     }

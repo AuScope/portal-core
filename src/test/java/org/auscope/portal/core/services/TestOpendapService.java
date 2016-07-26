@@ -4,9 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import junit.framework.Assert;
-
 import org.apache.http.client.methods.HttpRequestBase;
+import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.OPeNDAPGetDataMethodMaker;
 import org.auscope.portal.core.services.methodmakers.OPeNDAPGetDataMethodMaker.OPeNDAPFormat;
@@ -18,12 +17,14 @@ import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
 
+import junit.framework.Assert;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
 import ucar.nc2.Dimension;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 
+@SuppressWarnings("deprecation")
 public class TestOpendapService extends PortalTestClass {
     private HttpServiceCaller mockServiceCaller = context.mock(HttpServiceCaller.class);
     private OPeNDAPGetDataMethodMaker mockMethodMaker = context.mock(OPeNDAPGetDataMethodMaker.class);
@@ -34,15 +35,16 @@ public class TestOpendapService extends PortalTestClass {
      * OpendapService that uses an injected mock NetcdfDataset
      */
     private class TestableOpendapService extends OpendapService {
-        NetcdfDataset dataset;
+        // NetcdfDataset dataset;
 
         public TestableOpendapService(HttpServiceCaller serviceCaller,
                 OPeNDAPGetDataMethodMaker getDataMethodMaker,
                 NetcdfDataset dataset) {
             super(serviceCaller, getDataMethodMaker);
-            this.dataset = dataset;
+            // this.dataset = dataset;
         }
 
+        @Override
         protected NetcdfDataset fetchDataset(String serviceUrl) {
             return mockDataset;
         }
@@ -131,19 +133,23 @@ public class TestOpendapService extends PortalTestClass {
         final OPeNDAPFormat format = OPeNDAPFormat.ASCII;
 
         final HttpRequestBase mockMethod = context.mock(HttpRequestBase.class);
-        final InputStream mockResponse = context.mock(InputStream.class);
 
-        context.checking(new Expectations() {
-            {
-                oneOf(mockMethodMaker).getMethod(serviceUrl, format, mockDataset, constraints);
-                will(returnValue(mockMethod));
-                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
-                will(returnValue(mockResponse));
+        try (final HttpClientInputStream mockResponse = context.mock(HttpClientInputStream.class)) {
+
+            context.checking(new Expectations() {
+                {
+                    oneOf(mockMethodMaker).getMethod(serviceUrl, format, mockDataset, constraints);
+                    will(returnValue(mockMethod));
+                    oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
+                    will(returnValue(mockResponse));
+                    allowing(mockResponse).close();
+                }
+            });
+
+            try (InputStream response = service.getData(serviceUrl, format, constraints)) {
+                Assert.assertSame(mockResponse, response);
             }
-        });
-
-        InputStream response = service.getData(serviceUrl, format, constraints);
-        Assert.assertSame(mockResponse, response);
+        }
     }
 
     @Test(expected = PortalServiceException.class)

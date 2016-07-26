@@ -63,7 +63,7 @@ public class TestKnownLayerService extends PortalTestClass {
         mockKnownLayerList.add(new KnownLayer("id2", mockSelector2));
         mockKnownLayerList.add(new FakeKnownLayerChild("id3", mockSelector3));
 
-        cswRecordList = new ArrayList<CSWRecord>();
+        cswRecordList = new ArrayList<>();
         cswRecordList.add(context.mock(CSWRecord.class, "mockRecord1"));
         cswRecordList.add(context.mock(CSWRecord.class, "mockRecord2"));
         cswRecordList.add(context.mock(CSWRecord.class, "mockRecord3"));
@@ -106,7 +106,7 @@ public class TestKnownLayerService extends PortalTestClass {
      *
      * The ordering of either list is NOT taken into account
      */
-    private void assertListContentsSame(List expected, List actual) {
+    private static void assertListContentsSame(List<?> expected, List<?> actual) {
         Assert.assertEquals(expected.size(), actual.size());
 
         for (int i = 0; i < expected.size(); i++) {
@@ -213,7 +213,6 @@ public class TestKnownLayerService extends PortalTestClass {
         });
 
         // Act
-        @SuppressWarnings("unchecked")
         List<KnownLayerAndRecords> groups =
                 knownLayerService.groupKnownLayerRecords(FakeKnownLayerChild.class).getKnownLayers();
 

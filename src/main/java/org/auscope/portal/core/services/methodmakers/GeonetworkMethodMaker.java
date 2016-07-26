@@ -1,7 +1,7 @@
 package org.auscope.portal.core.services.methodmakers;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
+
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -65,10 +65,8 @@ public class GeonetworkMethodMaker extends AbstractMethodMaker {
      * @param sessionCookie
      *            Session cookie returned from a succesful login response
      * @return
-     * @throws UnsupportedEncodingException
      */
-    public HttpRequestBase makeInsertRecordMethod(String baseGeonetworkUrl, String mdMetadataXml, String sessionCookie)
-            throws UnsupportedEncodingException {
+    public HttpRequestBase makeInsertRecordMethod(String baseGeonetworkUrl, String mdMetadataXml, String sessionCookie) {
         String url = urlPathConcat(baseGeonetworkUrl, "srv/en/csw");
         HttpPost method = new HttpPost(url);
 
@@ -139,10 +137,8 @@ public class GeonetworkMethodMaker extends AbstractMethodMaker {
      * @param sessionCookie
      *            Session cookie returned from a successful login response
      * @return
-     * @throws UnsupportedEncodingException
      */
-    public HttpRequestBase makeRecordMetadataGetMethod(String baseGeonetworkUrl, String uuid, String sessionCookie)
-            throws UnsupportedEncodingException {
+    public HttpRequestBase makeRecordMetadataGetMethod(String baseGeonetworkUrl, String uuid, String sessionCookie) {
         String url = urlPathConcat(baseGeonetworkUrl, String.format("srv/en/xml.metadata.get?uuid=%1$s", uuid));
 
         HttpGet method = new HttpGet(url);

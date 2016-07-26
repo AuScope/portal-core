@@ -1,6 +1,7 @@
 package org.auscope.portal.core.services.cloud;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -34,6 +35,7 @@ import org.jclouds.sts.domain.UserAndSessionCredentials;
 import org.jclouds.sts.options.AssumeRoleOptions;
 
 import com.google.common.base.Supplier;
+import com.google.common.io.Files;
 
 /**
  * Service for providing storage of objects (blobs) in a cloud using the JClouds library
@@ -83,7 +85,7 @@ public class CloudStorageService {
     private boolean requireSts=false;
 
     private String adminEmail = "cg-admin@csiro.au";
-    
+
     /**
      * @return the adminEmail
      */
@@ -103,7 +105,7 @@ public class CloudStorageService {
      * @return whether AWS cross account authorization is mandatory.
      */
     public boolean isRequireSts() {
-      return requireSts;
+        return requireSts;
     }
 
     /**
@@ -111,7 +113,7 @@ public class CloudStorageService {
      * @param requireSts if true, AWS cross account authorization will be mandatory.
      */
     public void setRequireSts(boolean requireSts) {
-      this.requireSts = requireSts;
+        this.requireSts = requireSts;
     }
 
     /**
@@ -256,27 +258,29 @@ public class CloudStorageService {
             if(accessKey!=null && secretKey!=null)
                 builder.credentials(accessKey, secretKey);
 
-            STSApi api = builder.buildApi(STSApi.class);
+            try (STSApi api = builder.buildApi(STSApi.class)) {
+                AssumeRoleOptions assumeRoleOptions = new AssumeRoleOptions().durationSeconds(3600)
+                        .externalId(clientSecret);
+                final UserAndSessionCredentials credentials = api.assumeRole(arn, "anvgl", assumeRoleOptions);
 
-            AssumeRoleOptions assumeRoleOptions = new AssumeRoleOptions().durationSeconds(3600).externalId(clientSecret);
-            final UserAndSessionCredentials credentials = api.assumeRole(arn, "anvgl", assumeRoleOptions);
+                Supplier<Credentials> credentialsSupplier = new Supplier<Credentials>() {
+                    @Override
+                    public Credentials get() {
+                        return credentials.getCredentials();
+                    }
+                };
 
-            Supplier<Credentials> credentialsSupplier = new Supplier<Credentials>() {
-                @Override
-                public Credentials get() {
-                    return credentials.getCredentials();
+                ContextBuilder builder2 = ContextBuilder.newBuilder("aws-s3").overrides(properties)
+                        .credentialsSupplier(credentialsSupplier);
+
+                if (this.endpoint != null) {
+                    builder2.endpoint(this.endpoint);
                 }
-            };
 
-            ContextBuilder builder2 = ContextBuilder.newBuilder("aws-s3").overrides(properties)
-                    .credentialsSupplier(credentialsSupplier);
-
-            if (this.endpoint != null) {
-                builder2.endpoint(this.endpoint);
+                return builder2.buildView(BlobStoreContext.class);
+            } catch (IOException e) {
+                throw new PortalServiceException(e.getMessage(), e);
             }
-
-            return builder2.buildView(BlobStoreContext.class);
-
         } else {
             if(isRequireSts())
                 throw new PortalServiceException("AWS cross account access is required, but not configured");
@@ -460,7 +464,7 @@ public class CloudStorageService {
      * @param s
      * @return
      */
-    private String sanitise(String s) {
+    private static String sanitise(String s) {
         return s.replaceAll("[^a-zA-Z0-9_\\-]", "_");
     }
 
@@ -541,7 +545,7 @@ public class CloudStorageService {
         try {
             BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
             Blob blob = bs.getBlob(getBucket(job), keyForJobFile(job, myKey));
-            return blob.getPayload().getInput();
+            return blob.getPayload().openStream();
         } catch (Exception ex) {
             log.error(String.format("Unable to get job file '%1$s' for job %2$s:", myKey, job));
             log.debug("error:", ex);
@@ -555,7 +559,7 @@ public class CloudStorageService {
      * @param md
      * @return
      */
-    private CloudFileInformation metadataToCloudFile(StorageMetadata md) {
+    private static CloudFileInformation metadataToCloudFile(StorageMetadata md) {
         //Skip objects that are not files
         if (md.getType() != StorageType.BLOB) {
             return null;
@@ -619,7 +623,7 @@ public class CloudStorageService {
             //Paging is a little awkward - this list method may return an incomplete list requiring followup queries
             PageSet<? extends StorageMetadata> currentMetadataPage = bs.list(bucketName, ListContainerOptions.Builder.inDirectory(baseKey));
             String nextMarker = null;
-            List<CloudFileInformation> jobFiles = new ArrayList<CloudFileInformation>();
+            List<CloudFileInformation> jobFiles = new ArrayList<>();
             do {
                 if (nextMarker != null) {
                     currentMetadataPage = bs.list(bucketName, ListContainerOptions.Builder
@@ -667,9 +671,9 @@ public class CloudStorageService {
             for (File file : files) {
 
                 Blob newBlob = bs.blobBuilder(keyForJobFile(job, file.getName()))
-                        .payload(file)
+                        .payload(Files.asByteSource(file))
+                        .contentLength(file.length())
                         .build();
-
                 bs.putBlob(bucketName, newBlob);
 
                 log.debug(file.getName() + " uploaded to '" + bucketName + "' container");

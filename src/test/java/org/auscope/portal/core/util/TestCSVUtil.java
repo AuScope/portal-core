@@ -42,11 +42,9 @@ public class TestCSVUtil extends PortalTestClass {
 
     /**
      * Tests closeQuietely works as intended when a null reference is passed
-     * 
-     * @throws Exception
      */
     @Test
-    public void testCSVHeader() throws Exception {
+    public void testCSVHeader() {
         String[] headers = csvUtil.getHeaders();
         Assert.assertNotNull(headers);
         Assert.assertEquals(23, headers.length);

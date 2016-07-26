@@ -15,11 +15,9 @@ import org.junit.Test;
 public class TestStagedFile extends PortalTestClass {
     /**
      * Tests equals and hashcode align
-     * 
-     * @throws Exception
      */
     @Test
-    public void testEquality() throws Exception {
+    public void testEquality() {
         CloudJob c1 = new CloudJob(123);
         CloudJob c2 = new CloudJob(456);
 

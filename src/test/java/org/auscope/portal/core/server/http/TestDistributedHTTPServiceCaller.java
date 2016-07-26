@@ -1,6 +1,5 @@
 package org.auscope.portal.core.server.http;
 
-import java.io.InputStream;
 import java.net.ConnectException;
 import java.util.Arrays;
 import java.util.List;
@@ -8,14 +7,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.Assert;
-
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
 
+import junit.framework.Assert;
+
+@SuppressWarnings("deprecation")
 public class TestDistributedHTTPServiceCaller extends PortalTestClass {
 
     private HttpRequestBase mockMethod1 = context.mock(HttpRequestBase.class, "method1");
@@ -26,9 +26,9 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
     private Object mockAdditionalInfo3 = context.mock(Object.class, "mockAddInfo3");
     private HttpServiceCaller mockServiceCaller = context.mock(HttpServiceCaller.class);
     private ExecutorService threadPool;
-    private InputStream mockInputStream1 = context.mock(InputStream.class, "stream1");
-    private InputStream mockInputStream2 = context.mock(InputStream.class, "stream2");
-    private InputStream mockInputStream3 = context.mock(InputStream.class, "stream3");
+    private HttpClientInputStream mockInputStream1 = context.mock(HttpClientInputStream.class, "stream1");
+    private HttpClientInputStream mockInputStream2 = context.mock(HttpClientInputStream.class, "stream2");
+    private HttpClientInputStream mockInputStream3 = context.mock(HttpClientInputStream.class, "stream3");
 
     @Before
     public void initialise() {
@@ -43,7 +43,7 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
      * @param upperBound
      * @param epsilon
      */
-    private void assertRange(long value, long lowerBound, long upperBound) {
+    private static void assertRange(long value, long lowerBound, long upperBound) {
         if (value < lowerBound ||
                 value > upperBound) {
             Assert.fail(String.format("%1$s is not in the range [%2$s, %3$s]", value, lowerBound, upperBound));

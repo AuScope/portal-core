@@ -19,8 +19,6 @@ import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.test.jmock.ReadableServletOutputStream;
 import org.auscope.portal.core.util.FileIOUtil;
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -43,12 +41,6 @@ public class TestFileStagingService extends PortalTestClass {
 
     private FileStagingService service;
     private CloudJob job;
-
-    private Mockery context = new Mockery() {
-        {
-            setImposteriser(ClassImposteriser.INSTANCE);
-        }
-    };
 
     /**
      * This sets up a temporary directory in the target directory for the JobFileService to utilise as a staging area
@@ -113,7 +105,7 @@ public class TestFileStagingService extends PortalTestClass {
      * @param job
      * @param exists
      */
-    private void assertStagedDirectory(CloudJob job, boolean exists) {
+    private static void assertStagedDirectory(CloudJob job, boolean exists) {
         File stageInDir = new File(FileStagingService.pathConcat(testStagingInfo.getStageInDirectory(),
                 FileStagingService.getBaseFolderForJob(job)));
         Assert.assertEquals(exists, stageInDir.exists());
@@ -129,7 +121,7 @@ public class TestFileStagingService extends PortalTestClass {
      * @param fileName
      * @param exists
      */
-    private void assertStagedFile(CloudJob job, String fileName, boolean exists) throws Exception {
+    private static void assertStagedFile(CloudJob job, String fileName, boolean exists) throws Exception {
         assertStagedFile(job, fileName, exists, null);
     }
 
@@ -141,7 +133,7 @@ public class TestFileStagingService extends PortalTestClass {
      * @param expectedData
      *            if not null and file exists, file data will be tested against this value
      */
-    private void assertStagedFile(CloudJob job, String fileName, boolean exists, byte[] expectedData) throws Exception {
+    private static void assertStagedFile(CloudJob job, String fileName, boolean exists, byte[] expectedData) throws Exception {
         String stageInDir = FileStagingService.pathConcat(testStagingInfo.getStageInDirectory(),
                 FileStagingService.getBaseFolderForJob(job));
         File stageInFile = new File(FileStagingService.pathConcat(stageInDir, fileName));
@@ -239,25 +231,25 @@ public class TestFileStagingService extends PortalTestClass {
         service.generateStageInDirectory(job);
 
         //Should either return null or throw exception
-        try {
-            OutputStream file = service.writeFile(job, FileStagingService.pathConcat("..", "testFile1"));
+        try (OutputStream file = service.writeFile(job, FileStagingService.pathConcat("..", "testFile1"))) {
             Assert.assertNull(file);
         } catch (Exception ex) {
+            // empty
         }
-        try {
-            OutputStream file = service.writeFile(job, "testFile1" + File.pathSeparator + "testFile2");
+        try (OutputStream file = service.writeFile(job, "testFile1" + File.pathSeparator + "testFile2")) {
             Assert.assertNull(file);
         } catch (Exception ex) {
+            // empty
         }
-        try {
-            InputStream file = service.readFile(job, FileStagingService.pathConcat("..", "testFile1"));
+        try (InputStream file = service.readFile(job, FileStagingService.pathConcat("..", "testFile1"))) {
             Assert.assertNull(file);
         } catch (Exception ex) {
+            // empty
         }
-        try {
-            InputStream file = service.readFile(job, "testFile1" + File.pathSeparator + "testFile2");
+        try (InputStream file = service.readFile(job, "testFile1" + File.pathSeparator + "testFile2")) {
             Assert.assertNull(file);
         } catch (Exception ex) {
+            // empty
         }
 
         service.deleteStageInDirectory(job);
@@ -308,7 +300,7 @@ public class TestFileStagingService extends PortalTestClass {
         final MultipartHttpServletRequest request = context.mock(MultipartHttpServletRequest.class);
         final MultipartFile file = context.mock(MultipartFile.class);
         final String fileName = "myFileName";
-        final ArrayList<MultipartFile> files = new ArrayList<MultipartFile>();
+        final ArrayList<MultipartFile> files = new ArrayList<>();
         files.add(file);
         files.add(file);
 
@@ -341,33 +333,36 @@ public class TestFileStagingService extends PortalTestClass {
      */
     @Test
     public void testFileDownload() throws Exception {
-        final ReadableServletOutputStream outStream = new ReadableServletOutputStream();
-        final byte[] data = new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 8, 5, 8, 9, 9, 9, 91, 1, 1};
-        final HttpServletResponse mockResponse = context.mock(HttpServletResponse.class);
-        final String fileName = "myFileName";
+        try (final ReadableServletOutputStream outStream = new ReadableServletOutputStream()) {
+            final byte[] data = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 8, 5, 8, 9, 9, 9, 91, 1, 1 };
+            final HttpServletResponse mockResponse = context.mock(HttpServletResponse.class);
+            final String fileName = "myFileName";
 
-        //Start by creating our file that we want to download
-        service.generateStageInDirectory(job);
-        OutputStream fos = service.writeFile(job, fileName);
-        fos.write(data);
-        fos.close();
+            // Start by creating our file that we want to download
+            service.generateStageInDirectory(job);
+            OutputStream fos = service.writeFile(job, fileName);
+            fos.write(data);
+            fos.close();
 
-        context.checking(new Expectations() {
-            {
-                //This is so we can inject our own fake output stream so we can inspect the result
-                oneOf(mockResponse).getOutputStream();
-                will(returnValue(outStream));
-                oneOf(mockResponse).setContentType("application/octet-stream");
-                allowing(mockResponse).setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
-            }
-        });
+            context.checking(new Expectations() {
+                {
+                    // This is so we can inject our own fake output stream so we
+                    // can inspect the result
+                    oneOf(mockResponse).getOutputStream();
+                    will(returnValue(outStream));
+                    oneOf(mockResponse).setContentType("application/octet-stream");
+                    allowing(mockResponse).setHeader("Content-Disposition",
+                            "attachment; filename=\"" + fileName + "\"");
+                }
+            });
 
-        //'Download' the file
-        service.handleFileDownload(job, fileName, mockResponse);
+            // 'Download' the file
+            service.handleFileDownload(job, fileName, mockResponse);
 
-        //Inspect the data we downloaded
-        Assert.assertArrayEquals(data, outStream.getDataWritten());
-
+            // Inspect the data we downloaded
+            Assert.assertArrayEquals(data, outStream.getDataWritten());
+        }
+        
         service.deleteStageInDirectory(job);
         assertStagedDirectory(job, false);
     }

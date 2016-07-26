@@ -55,12 +55,8 @@ public class TestFileIOUtil extends PortalTestClass {
      * @throws Exception
      */
     @Test
-    public void testCloseQuietlyNull() throws Exception {
-        context.checking(new Expectations() {
-            {
-
-            }
-        });
+    public void testCloseQuietlyNull() {
+        context.checking(new Expectations());
 
         FileIOUtil.closeQuietly(null);
     }

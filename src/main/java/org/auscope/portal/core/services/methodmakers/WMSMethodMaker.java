@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.NameValuePair;
@@ -22,7 +23,6 @@ import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord;
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord_1_1_1;
 import org.auscope.portal.core.util.HttpUtil;
 import org.xml.sax.SAXException;
-import org.apache.commons.httpclient.HttpException;
 
 /**
  * A class for generating methods that can interact with a OGC Web Map Service
@@ -344,6 +344,7 @@ public class WMSMethodMaker extends AbstractMethodMaker implements WMSMethodMake
     /**
      * Test whether wms 1.3.0 is accepted. Not sure if there is a better way of testing though.
      */
+    @SuppressWarnings("unused")
     @Override
     public boolean accepts(String wmsUrl, String version, StringBuilder errStr) {
         //VT: if version is already specified, just return
@@ -367,9 +368,8 @@ public class WMSMethodMaker extends AbstractMethodMaker implements WMSMethodMake
             HttpGet method = new HttpGet();
             method.setURI(HttpUtil.parseURI(wmsUrl, existingParam));
 
-            InputStream response = serviceCaller.getMethodResponseAsStream(method);
-            try {
-                GetCapabilitiesRecord record = new GetCapabilitiesRecord_1_1_1(response);
+            try (InputStream response = serviceCaller.getMethodResponseAsStream(method)) {
+                new GetCapabilitiesRecord_1_1_1(response);
             } catch (IOException e) {
                 // IOException is equivalent to HTTPException
                 // So we have to catch IOException here, rather than below, in order to distinguish
@@ -421,9 +421,9 @@ public class WMSMethodMaker extends AbstractMethodMaker implements WMSMethodMake
     @Override
     public GetCapabilitiesRecord getGetCapabilitiesRecord(HttpRequestBase method)
             throws Exception {
-        InputStream response = serviceCaller.getMethodResponseAsStream(method);
-
-        return new GetCapabilitiesRecord_1_1_1(response);
+        try (InputStream response = serviceCaller.getMethodResponseAsStream(method)) {
+            return new GetCapabilitiesRecord_1_1_1(response);
+        }
     }
 
     @Override

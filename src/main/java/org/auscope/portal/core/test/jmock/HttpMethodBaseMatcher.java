@@ -3,24 +3,24 @@ package org.auscope.portal.core.test.jmock;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
-import junit.framework.Assert;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
-import org.auscope.portal.core.util.FileIOUtil;
 import org.hamcrest.Description;
 import org.junit.matchers.TypeSafeMatcher;
 
+import junit.framework.Assert;
+
 /**
  * A JUnit matcher for matching HttpMethodBase objects based on a few simplified terms
- * 
+ *
  * @author Josh Vote
  *
  */
+@SuppressWarnings("deprecation")
 public class HttpMethodBaseMatcher extends TypeSafeMatcher<HttpRequestBase> {
     /**
      * What different types of HttpMethods we can match for
@@ -38,7 +38,7 @@ public class HttpMethodBaseMatcher extends TypeSafeMatcher<HttpRequestBase> {
 
     /**
      * Creates a new matcher looking for the specified elements
-     * 
+     *
      * @param type
      *            If not null, the type of method to match for
      * @param url
@@ -55,7 +55,7 @@ public class HttpMethodBaseMatcher extends TypeSafeMatcher<HttpRequestBase> {
 
     /**
      * Creates a new matcher looking for the specified elements
-     * 
+     *
      * @param type
      *            If not null, the type of method to match for
      * @param url

@@ -40,6 +40,7 @@ public class Interval implements ValueEnumType {
             resolution = new Double(tempNode.getTextContent());
     }
 
+    @Override
     public String getType() {
         return type;
     }

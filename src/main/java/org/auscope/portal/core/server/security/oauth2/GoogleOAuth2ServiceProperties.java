@@ -17,7 +17,7 @@ import com.racquettrack.security.oauth.OAuth2ServiceProperties;
 public class GoogleOAuth2ServiceProperties extends OAuth2ServiceProperties {
     /**
      * Create a new properties object with the following deployment specific params
-     * 
+     *
      * @param clientId
      *            The google OAuth2 client ID
      * @param clientSecret
@@ -31,7 +31,7 @@ public class GoogleOAuth2ServiceProperties extends OAuth2ServiceProperties {
         this.setUserAuthorisationUri("https://accounts.google.com/o/oauth2/auth");
         this.setAccessTokenUri("https://accounts.google.com/o/oauth2/token");
 
-        Map<String, String> additionalAuthParams = new HashMap<String, String>();
+        Map<String, String> additionalAuthParams = new HashMap<>();
         additionalAuthParams.put("scope", "https://www.googleapis.com/auth/userinfo.email");
         this.setAdditionalAuthParams(additionalAuthParams);
 

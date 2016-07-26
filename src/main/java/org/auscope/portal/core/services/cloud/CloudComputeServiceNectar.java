@@ -53,7 +53,7 @@ public class CloudComputeServiceNectar extends CloudComputeService {
     private ComputeServiceContext context;
     private NovaApi novaApi; //will be null for non nova API's
 
-    private Set<String> skippedZones = new HashSet<String>();
+    private Set<String> skippedZones = new HashSet<>();
 
     private Predicate<NodeMetadata> terminateFilter;
 
@@ -69,9 +69,9 @@ public class CloudComputeServiceNectar extends CloudComputeService {
     private ContextBuilder builder;
 
     private String zone; //can be null
-    
+
     private String adminEmail = "cg-admin@csiro.au";
-    
+
     /**
      * @return the adminEmail
      */
@@ -153,7 +153,8 @@ public class CloudComputeServiceNectar extends CloudComputeService {
         this.secretKey = secretKey;
     }
 
-    public void init() throws PortalServiceException {
+    @SuppressWarnings("unchecked")
+    public void init() {
         Properties overrides = new Properties();
 
         String typeString = "openstack-nova";
@@ -199,80 +200,82 @@ public class CloudComputeServiceNectar extends CloudComputeService {
      *            A string that is made available to the job when it starts execution (this will be Base64 encoded before being sent to the VM)
      * @return null if execution fails or the instance ID of the running VM
      */
-  public String executeJob(CloudJob job, String userDataString) throws PortalServiceException {
+    @Override
+    public String executeJob(CloudJob job, String userDataString) throws PortalServiceException {
 
-    // We have different template options depending on provider
-    NodeMetadata result;
-    Set<? extends NodeMetadata> results = Collections.emptySet();
-    TemplateOptions options = null;
-    // Iterate all regions
-    for (String location : novaApi.getConfiguredZones()) {
-      Optional<? extends AvailabilityZoneApi> serverApi = novaApi.getAvailabilityZoneApi(location);
-      Iterable<? extends AvailabilityZone> zones = serverApi.get().list();
+        // We have different template options depending on provider
+        NodeMetadata result;
+        Set<? extends NodeMetadata> results = Collections.emptySet();
+        TemplateOptions options = null;
+        // Iterate all regions
+        for (String location : novaApi.getConfiguredZones()) {
+            Optional<? extends AvailabilityZoneApi> serverApi = novaApi.getAvailabilityZoneApi(location);
+            Iterable<? extends AvailabilityZone> zones = serverApi.get().list();
 
-      for (AvailabilityZone currentZone : zones) {
-        if (skippedZones.contains(currentZone.getName())) {
-          logger.info(String.format("skipping: '%1$s' - configured as a skipped zone", currentZone.getName()));
-          continue;
+            for (AvailabilityZone currentZone : zones) {
+                if (skippedZones.contains(currentZone.getName())) {
+                    logger.info(String.format("skipping: '%1$s' - configured as a skipped zone", currentZone.getName()));
+                    continue;
+                }
+
+                if (!currentZone.getState().available()) {
+                    logger.info(String.format("skipping: '%1$s' - not available", currentZone.getName()));
+                    continue;
+                }
+
+                logger.info(String.format("Trying '%1$s'", currentZone.getName()));
+                options = ((NovaTemplateOptions) computeService.templateOptions()).keyPairName(getKeypair())
+                        .availabilityZone(currentZone.getName()).userData(userDataString.getBytes(Charset.forName("UTF-8")));
+
+                Template template = computeService.templateBuilder().imageId(job.getComputeVmId())
+                        .hardwareId(job.getComputeInstanceType()).options(options).build();
+
+                try {
+                    results = computeService.createNodesInGroup(getGroupName(), 1, template);
+                    this.itActuallyLaunchedHere = currentZone.getName();
+                    break;
+                } catch (RunNodesException e) {
+                    logger.error(String.format("launch failed at '%1$s', '%2$s'", location, currentZone.getName()));
+                    logger.debug(e.getMessage());
+                    try {
+                        // FIXME:
+                        // I think this could possibly delete EVERY NODE RUN
+                        // from PORTAL-CORE...
+                        // JClouds is not very clever here -
+                        // issue: how do you delete thing you didnt name and
+                        // dont have an ID for??
+                        Set<? extends NodeMetadata> destroyedNodes = computeService.destroyNodesMatching(this.terminateFilter);
+                        logger.warn(String.format("cleaned up %1$s nodes: %2$s", destroyedNodes.size(), destroyedNodes));
+                    } catch (Exception z) {
+                        logger.warn("couldnt clean it up");
+                    }
+                    continue;
+                }
+            }
+        }
+        if (results.isEmpty()) {
+            // Now we have tried everything....
+            logger.error("run out of places to try...");
+            throw new PortalServiceException(
+                    "An unexpected error has occured while executing your job. Most likely this is from the lack of available resources. Please try using"
+                            + "a smaller virtual machine",
+                            "Please report it to " +getAdminEmail()+".");
+        } else {
+            result = results.iterator().next();
         }
 
-        if (!currentZone.getState().available()) {
-          logger.info(String.format("skipping: '%1$s' - not available", currentZone.getName()));
-          continue;
-        }
+        logger.info(String.format("We have a successful launch @ '%1$s'", this.itActuallyLaunchedHere));
 
-        logger.info(String.format("Trying '%1$s'", currentZone.getName()));
-        options = ((NovaTemplateOptions) computeService.templateOptions()).keyPairName(getKeypair())
-            .availabilityZone(currentZone.getName()).userData(userDataString.getBytes(Charset.forName("UTF-8")));
-
-        Template template = computeService.templateBuilder().imageId(job.getComputeVmId())
-            .hardwareId(job.getComputeInstanceType()).options(options).build();
-
-        try {
-          results = computeService.createNodesInGroup(getGroupName(), 1, template);
-          this.itActuallyLaunchedHere = currentZone.getName();
-          break;
-        } catch (RunNodesException e) {
-          logger.error(String.format("launch failed at '%1$s', '%2$s'", location, currentZone.getName()));
-          logger.debug(e.getMessage());
-          try {
-            // FIXME:
-            // I think this could possibly delete EVERY NODE RUN
-            // from PORTAL-CORE...
-            // JClouds is not very clever here -
-            // issue: how do you delete thing you didnt name and
-            // dont have an ID for??
-            Set<? extends NodeMetadata> destroyedNodes = computeService.destroyNodesMatching(this.terminateFilter);
-            logger.warn(String.format("cleaned up %1$s nodes: %2$s", destroyedNodes.size(), destroyedNodes));
-          } catch (Exception z) {
-            logger.warn("couldnt clean it up");
-          }
-          continue;
-        }
-      }
+        return result.getId();
     }
-    if (results.isEmpty()) {
-      // Now we have tried everything....
-      logger.error("run out of places to try...");
-      throw new PortalServiceException(
-          "An unexpected error has occured while executing your job. Most likely this is from the lack of available resources. Please try using"
-              + "a smaller virtual machine",
-          "Please report it to " +getAdminEmail()+".");
-    } else {
-      result = results.iterator().next();
-    }
 
-    logger.info(String.format("We have a successful launch @ '%1$s'", this.itActuallyLaunchedHere));
-
-    return result.getId();
-  }
-
-  /**
+    /**
      * Makes a request that the VM started by job be terminated
      *
      * @param job
      *            The job whose execution should be terminated
      */
+    @Override
     public void terminateJob(CloudJob job) {
         computeService.destroyNode(job.getComputeInstanceId());
     }
@@ -280,10 +283,11 @@ public class CloudComputeServiceNectar extends CloudComputeService {
     /**
      * An array of compute types that are available through this compute service
      */
+    @Override
     public ComputeType[] getAvailableComputeTypes(Integer minimumVCPUs, Integer minimumRamMB, Integer minimumRootDiskGB) {
         Set<? extends Hardware> hardwareSet = computeService.listHardwareProfiles();
 
-        List<ComputeType> computeTypes = new ArrayList<ComputeType>();
+        List<ComputeType> computeTypes = new ArrayList<>();
 
         for (Hardware hw : hardwareSet) {
             ComputeType ct = new ComputeType(hw.getId());
@@ -351,6 +355,7 @@ public class CloudComputeServiceNectar extends CloudComputeService {
      * @return console output as string or null
      * @return
      */
+    @Override
     public String getConsoleLog(CloudJob job, int numLines) throws PortalServiceException {
         String computeInstanceId = job.getComputeInstanceId();
         if (computeInstanceId == null) {
@@ -374,7 +379,7 @@ public class CloudComputeServiceNectar extends CloudComputeService {
             logger.error("Unable to retrieve console logs for " + computeInstanceId, ex);
             throw new PortalServiceException("Unable to retrieve console logs for " + computeInstanceId, ex);
         }
-     }
+    }
 
     /**
      * Attempts to lookup low level status information about this job's compute instance from the remote cloud.
@@ -385,6 +390,7 @@ public class CloudComputeServiceNectar extends CloudComputeService {
      * @return
      * @throws PortalServiceException
      */
+    @Override
     public InstanceStatus getJobStatus(CloudJob job) throws PortalServiceException {
         if (StringUtils.isEmpty(job.getComputeInstanceId())) {
             throw new PortalServiceException("No compute instance ID has been set");

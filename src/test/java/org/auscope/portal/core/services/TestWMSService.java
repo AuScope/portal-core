@@ -35,8 +35,8 @@ public class TestWMSService extends PortalTestClass {
     private HttpRequestBase mockMethod;
 
     @Before
-    public void setup() throws Exception {
-        List<WMSMethodMakerInterface> methodMaker = new ArrayList<WMSMethodMakerInterface>();
+    public void setup() {
+        List<WMSMethodMakerInterface> methodMaker = new ArrayList<>();
         mockServiceCaller = context.mock(HttpServiceCaller.class);
         mockMethodMaker = context.mock(WMSMethodMaker.class);
         mockMethod = context.mock(HttpRequestBase.class);
@@ -52,67 +52,70 @@ public class TestWMSService extends PortalTestClass {
     @Test
     public void testParsingWMS111() throws Exception {
         final String serviceUrl = "http://service/wms";
-        final InputStream is = ResourceUtil
-                .loadResourceAsStream("org/auscope/portal/core/test/responses/wms/GetCapabilitiesControllerWMSResponse_1_1_1.xml");
+        try (final InputStream is = ResourceUtil
+                .loadResourceAsStream(
+                        "org/auscope/portal/core/test/responses/wms/GetCapabilitiesControllerWMSResponse_1_1_1.xml")) {
 
-        final GetCapabilitiesRecord getCapRecord = new GetCapabilitiesRecord_1_1_1(is);
+            final GetCapabilitiesRecord getCapRecord = new GetCapabilitiesRecord_1_1_1(is);
 
-        context.checking(new Expectations() {
-            {
-                oneOf(mockMethodMaker).accepts(with(any(String.class)), with((String) null), with(any(StringBuilder.class)));
-                will(returnValue(true));
+            context.checking(new Expectations() {
+                {
+                    oneOf(mockMethodMaker).accepts(with(any(String.class)), with((String) null),
+                            with(any(StringBuilder.class)));
+                    will(returnValue(true));
 
-                oneOf(mockMethodMaker).getCapabilitiesMethod(serviceUrl);
-                will(returnValue(mockMethod));
+                    oneOf(mockMethodMaker).getCapabilitiesMethod(serviceUrl);
+                    will(returnValue(mockMethod));
 
-                oneOf(mockMethodMaker).getGetCapabilitiesRecord(mockMethod);
-                will(returnValue(getCapRecord));
+                    oneOf(mockMethodMaker).getGetCapabilitiesRecord(mockMethod);
+                    will(returnValue(getCapRecord));
 
-                oneOf(mockMethod).releaseConnection();
-            }
-        });
+                    oneOf(mockMethod).releaseConnection();
+                }
+            });
 
-        GetCapabilitiesRecord record = service.getWmsCapabilities(serviceUrl, null);
-        Assert.assertNotNull(record);
-        Assert.assertEquals("wms", record.getServiceType());
-        Assert.assertEquals("Test organization", record.getOrganisation());
-        Assert.assertEquals("http://localhost:8080/geoserver/wms?SERVICE=WMS&", record.getMapUrl());
-        Assert.assertArrayEquals(new String[] {
-                "EPSG:4326",
-                "EPSG:3857",
-                "epsg:4326",
-                "AUTO:42003",
-                "AUTO:42004",
-                "EPSG:WGS84(DD)"}, record.getLayerSRS());
+            GetCapabilitiesRecord record = service.getWmsCapabilities(serviceUrl, null);
+            Assert.assertNotNull(record);
+            Assert.assertEquals("wms", record.getServiceType());
+            Assert.assertEquals("Test organization", record.getOrganisation());
+            Assert.assertEquals("http://localhost:8080/geoserver/wms?SERVICE=WMS&", record.getMapUrl());
+            Assert.assertArrayEquals(new String[] {
+                    "EPSG:4326",
+                    "EPSG:3857",
+                    "epsg:4326",
+                    "AUTO:42003",
+                    "AUTO:42004",
+                    "EPSG:WGS84(DD)" }, record.getLayerSRS());
 
-        List<GetCapabilitiesWMSLayerRecord> layers = record.getLayers();
-        Assert.assertNotNull(layers);
-        Assert.assertEquals(22, layers.size());
+            List<GetCapabilitiesWMSLayerRecord> layers = record.getLayers();
+            Assert.assertNotNull(layers);
+            Assert.assertEquals(22, layers.size());
 
-        //Test our second
-        GetCapabilitiesWMSLayerRecord layer = layers.get(1);
-        CSWGeographicBoundingBox bbox = layer.getBoundingBox();
-        Assert.assertEquals("An Abstract", layer.getAbstract());
-        Assert.assertEquals("http://www.metadataURL.com", layer.getMetadataURL());
-        Assert.assertEquals(3, bbox.getEastBoundLongitude(), 0.01);
-        Assert.assertEquals(-2, bbox.getSouthBoundLatitude(), 0.01);
-        Assert.assertEquals(-1, bbox.getWestBoundLongitude(), 0.01);
-        Assert.assertEquals(4, bbox.getNorthBoundLatitude(), 0.01);
-        Assert.assertEquals("nurc:Arc_Sample", layer.getName());
-        Assert.assertArrayEquals(new String[] {"EPSG:4326"}, layer.getChildLayerSRS());
-        Assert.assertEquals("A sample ArcGrid file", layer.getTitle());
+            // Test our second
+            GetCapabilitiesWMSLayerRecord layer = layers.get(1);
+            CSWGeographicBoundingBox bbox = layer.getBoundingBox();
+            Assert.assertEquals("An Abstract", layer.getAbstract());
+            Assert.assertEquals("http://www.metadataURL.com", layer.getMetadataURL());
+            Assert.assertEquals(3, bbox.getEastBoundLongitude(), 0.01);
+            Assert.assertEquals(-2, bbox.getSouthBoundLatitude(), 0.01);
+            Assert.assertEquals(-1, bbox.getWestBoundLongitude(), 0.01);
+            Assert.assertEquals(4, bbox.getNorthBoundLatitude(), 0.01);
+            Assert.assertEquals("nurc:Arc_Sample", layer.getName());
+            Assert.assertArrayEquals(new String[] { "EPSG:4326" }, layer.getChildLayerSRS());
+            Assert.assertEquals("A sample ArcGrid file", layer.getTitle());
 
-        //And our last record
-        layer = layers.get(21);
-        bbox = layer.getBoundingBox();
-        Assert.assertEquals("Layer-Group type layer: tiger-ny", layer.getAbstract());
-        Assert.assertEquals(-73.907005, bbox.getEastBoundLongitude(), 0.00001);
-        Assert.assertEquals(40.679648, bbox.getSouthBoundLatitude(), 0.00001);
-        Assert.assertEquals(-74.047185, bbox.getWestBoundLongitude(), 0.00001);
-        Assert.assertEquals(40.882078, bbox.getNorthBoundLatitude(), 0.00001);
-        Assert.assertEquals("tiger-ny", layer.getName());
-        Assert.assertArrayEquals(new String[] {"EPSG:4326"}, layer.getChildLayerSRS());
-        Assert.assertEquals("tiger-ny", layer.getTitle());
+            // And our last record
+            layer = layers.get(21);
+            bbox = layer.getBoundingBox();
+            Assert.assertEquals("Layer-Group type layer: tiger-ny", layer.getAbstract());
+            Assert.assertEquals(-73.907005, bbox.getEastBoundLongitude(), 0.00001);
+            Assert.assertEquals(40.679648, bbox.getSouthBoundLatitude(), 0.00001);
+            Assert.assertEquals(-74.047185, bbox.getWestBoundLongitude(), 0.00001);
+            Assert.assertEquals(40.882078, bbox.getNorthBoundLatitude(), 0.00001);
+            Assert.assertEquals("tiger-ny", layer.getName());
+            Assert.assertArrayEquals(new String[] { "EPSG:4326" }, layer.getChildLayerSRS());
+            Assert.assertEquals("tiger-ny", layer.getTitle());
+        }
     }
 
     /**

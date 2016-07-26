@@ -1,12 +1,15 @@
 package org.auscope.portal.core.services.methodmakers.sissvoc;
 
 import java.net.URLDecoder;
-import junit.framework.Assert;
+
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.junit.Before;
 import org.junit.Test;
 
+import junit.framework.Assert;
+
+@SuppressWarnings("deprecation")
 public class TestSISSVoc2MethodMaker extends PortalTestClass {
     SISSVoc2MethodMaker mm;
 
@@ -56,11 +59,9 @@ public class TestSISSVoc2MethodMaker extends PortalTestClass {
 
     /**
      * Tests the getRepositoryInfoMethod performs correctly
-     * 
-     * @throws Exception
      */
     @Test
-    public void testRepoInfo() throws Exception {
+    public void testRepoInfo() {
         HttpRequestBase method = mm.getRepositoryInfoMethod("http://example.org");
 
         Assert.assertEquals("http://example.org/RepositoryInfo", method.getURI().toString());

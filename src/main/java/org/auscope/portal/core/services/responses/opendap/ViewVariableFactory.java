@@ -4,13 +4,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 import org.apache.commons.lang.NullArgumentException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
 import ucar.ma2.InvalidRangeException;
@@ -20,7 +19,7 @@ import ucar.nc2.dataset.NetcdfDataset;
 
 /**
  * Contains factory methods for generating ViewVariables
- * 
+ *
  * @author vot002
  *
  */
@@ -37,7 +36,7 @@ public class ViewVariableFactory {
 
     /**
      * Parses a variable recursively into appropriate ViewVariable implementations
-     * 
+     *
      * @throws IOException
      * @throws
      */
@@ -66,7 +65,7 @@ public class ViewVariableFactory {
             //Otherwise we have a multi dimensional variable that we can parse as a grid
         } else if (dimensions.size() > 0) {
             SimpleGrid grid = new SimpleGrid(var.getName(), var.getDataType().name(), var.getUnitsString(), null);
-            List<AbstractViewVariable> childAxes = new ArrayList<AbstractViewVariable>();
+            List<AbstractViewVariable> childAxes = new ArrayList<>();
 
             //Recursively parse each dimension (which should map to a variable in the parent group)
             for (Dimension d : dimensions) {
@@ -103,7 +102,7 @@ public class ViewVariableFactory {
 
     /**
      * Parses a JSONObject into its appropriate ViewVariable implementation
-     * 
+     *
      * @param obj
      * @return
      */
@@ -140,7 +139,7 @@ public class ViewVariableFactory {
             JSONArray axes = obj.getJSONArray("axes");
             SimpleGrid grid = new SimpleGrid(attemptGetString(obj, "name"), attemptGetString(obj, "dataType"),
                     attemptGetString(obj, "units"), null);
-            List<AbstractViewVariable> childAxes = new ArrayList<AbstractViewVariable>();
+            List<AbstractViewVariable> childAxes = new ArrayList<>();
 
             for (int i = 0; i < axes.size(); i++) {
                 AbstractViewVariable var = parseJSONRecursive(axes.getJSONObject(i));
@@ -162,7 +161,7 @@ public class ViewVariableFactory {
 
     /**
      * Generate a list of ViewVariables direct from a dataset.
-     * 
+     *
      * @param ds
      * @return
      * @throws IOException
@@ -173,7 +172,7 @@ public class ViewVariableFactory {
 
     /**
      * Generate a list of ViewVariables direct from a dataset. The list will be filtered to only include variables with the specified name
-     * 
+     *
      * @param ds
      * @param variableNameFilter
      *            if not null, all ViewVariables in the response will have the name variableNameFilter
@@ -182,7 +181,7 @@ public class ViewVariableFactory {
      */
     public static AbstractViewVariable[] fromNetCDFDataset(NetcdfDataset ds, String variableNameFilter)
             throws IOException {
-        List<AbstractViewVariable> result = new ArrayList<AbstractViewVariable>();
+        List<AbstractViewVariable> result = new ArrayList<>();
 
         for (Variable var : ds.getVariables()) {
 
@@ -202,12 +201,12 @@ public class ViewVariableFactory {
 
     /**
      * Generates a list of ViewVariables from an already encoded JSONArray
-     * 
+     *
      * @param arr
      * @return
      */
     public static AbstractViewVariable[] fromJSONArray(JSONArray arr) {
-        List<AbstractViewVariable> result = new ArrayList<AbstractViewVariable>();
+        List<AbstractViewVariable> result = new ArrayList<>();
 
         for (int i = 0; i < arr.size(); i++) {
             AbstractViewVariable parsedViewVar = parseJSONRecursive(arr.getJSONObject(i));

@@ -250,7 +250,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
     }
 
     @Test
-    public void testToViewBadOnlineResources() throws Exception {
+    public void testToViewBadOnlineResources() {
         ViewCSWRecordFactory factory = new ViewCSWRecordFactory();
 
         final String serviceName = "sn";

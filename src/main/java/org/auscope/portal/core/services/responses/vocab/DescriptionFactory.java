@@ -19,7 +19,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * Factory class for instantiating Description
- * 
+ *
  * @author Josh Vote
  *
  */
@@ -46,7 +46,7 @@ public class DescriptionFactory {
         XPathExpression getInlineDescExpr = DOMUtil.compileXPathExpr("rdf:Description", nc);
 
         NodeList relationNodes = (NodeList) getRelationsExpr.evaluate(descriptionNode, XPathConstants.NODESET);
-        List<Description> descriptions = new ArrayList<Description>();
+        List<Description> descriptions = new ArrayList<>();
 
         //Parsing our relations is complicated by the fact that a Concept/NamedIndividual can be defined inline
         //or 'linked' via a string in the rdf:about
@@ -77,7 +77,7 @@ public class DescriptionFactory {
     /**
      * Given a rdf:Description node, parse it into a Description object. Unless the node defines all related Descriptions inline the resulting Description node
      * will be populated with related Descriptions that have the 'href' flag set.
-     * 
+     *
      * @throws XPathExpressionException
      */
     protected Description attemptParseDescription(Node node) throws XPathExpressionException {
@@ -99,7 +99,7 @@ public class DescriptionFactory {
      * Given a description and a map of descriptions keyed by URN. Attempt to replace each 'href' relation with an object from descriptions.
      *
      * The replacements will occur directly into descs
-     * 
+     *
      * @param descs
      * @param descriptionsMap
      */
@@ -118,7 +118,7 @@ public class DescriptionFactory {
      * Given a description and a map of descriptions keyed by URN. Attempt to replace each 'href' relation with an object from descriptions.
      *
      * This function will NOT traverse any relations
-     * 
+     *
      * @param desc
      * @param descriptionsMap
      */
@@ -144,9 +144,9 @@ public class DescriptionFactory {
     /**
      * Merge the entirety of 2 sets of descriptions into a single array. Any duplicates will be removed with precedence being given to the non href duplicate.
      */
-    private Description[] mergeDescriptionArrays(Description[] array1, Description[] array2) {
-        List<Description> source = new ArrayList<Description>(Arrays.asList(array2));
-        List<Description> destination = new ArrayList<Description>(Arrays.asList(array1));
+    private static Description[] mergeDescriptionArrays(Description[] array1, Description[] array2) {
+        List<Description> source = new ArrayList<>(Arrays.asList(array2));
+        List<Description> destination = new ArrayList<>(Arrays.asList(array1));
 
         //Iterate our source list looking for duplicates
         for (Description candidate : source) {
@@ -229,7 +229,7 @@ public class DescriptionFactory {
      */
     public Description[] parseFromRDF(Node rdfNode) {
         //Firstly parse all of our descriptions into a map keyed by their urn
-        Map<String, Description> parsedDescriptions = new HashMap<String, Description>();
+        Map<String, Description> parsedDescriptions = new HashMap<>();
         try {
             XPathExpression getDescriptionExpr = DOMUtil.compileXPathExpr("rdf:Description", nc);
             NodeList descriptionNodes = (NodeList) getDescriptionExpr.evaluate(rdfNode, XPathConstants.NODESET);
@@ -250,7 +250,7 @@ public class DescriptionFactory {
         }
 
         //Finally we return an array of our "top concepts"
-        List<Description> topConcepts = new ArrayList<Description>();
+        List<Description> topConcepts = new ArrayList<>();
         for (String urn : parsedDescriptions.keySet()) {
             for (Description topConcept : parsedDescriptions.get(urn).getTopConcepts()) {
                 if (!topConcept.isHref()) {

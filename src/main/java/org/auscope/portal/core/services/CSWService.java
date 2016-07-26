@@ -1,6 +1,7 @@
 package org.auscope.portal.core.services;
 
 import java.io.InputStream;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -95,13 +96,15 @@ public class CSWService {
                     startPosition, this.endpoint.getCqlText());
         }
 
-        InputStream responseStream = this.serviceCaller.getMethodResponseAsStream(method);
+        try (InputStream responseStream = this.serviceCaller.getMethodResponseAsStream(method)) {
+            log.trace(String.format("%1$s - Response received", this.endpoint.getServiceUrl()));
 
-        log.trace(String.format("%1$s - Response received", this.endpoint.getServiceUrl()));
+            // Parse the response into newCache (remember that maps are NOT
+            // thread safe)
+            Document responseDocument = DOMUtil.buildDomFromStream(responseStream);
+            OWSExceptionParser.checkForExceptionResponse(responseDocument);
 
-        // Parse the response into newCache (remember that maps are NOT thread safe)
-        Document responseDocument = DOMUtil.buildDomFromStream(responseStream);
-        OWSExceptionParser.checkForExceptionResponse(responseDocument);
-        return new CSWGetRecordResponse(this.endpoint, responseDocument, transformerFactory);
+            return new CSWGetRecordResponse(this.endpoint, responseDocument, transformerFactory);
+        }
     }
 }

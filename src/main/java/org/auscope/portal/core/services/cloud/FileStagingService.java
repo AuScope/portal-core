@@ -14,8 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.cloud.StagedFile;
-import org.auscope.portal.core.cloud.StagingInformation;
 import org.auscope.portal.core.cloud.StagedFileOwner;
+import org.auscope.portal.core.cloud.StagingInformation;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.util.FileIOUtil;
 import org.springframework.web.multipart.MultipartFile;
@@ -176,7 +176,7 @@ public class FileStagingService {
      * @throws IOException
      *             If the directory creation fails
      */
-    public boolean stageInDirectoryExists(StagedFileOwner job) throws PortalServiceException {
+    public boolean stageInDirectoryExists(StagedFileOwner job) {
         String jobInputDir = pathConcat(stagingInformation.getStageInDirectory(), getBaseFolderForJob(job));
         return new File(jobInputDir).exists();
     }
@@ -376,14 +376,14 @@ public class FileStagingService {
     public List<StagedFile> handleMultiFileUpload(StagedFileOwner job, MultipartHttpServletRequest request)
             throws PortalServiceException {
 
-        List<StagedFile> result = new ArrayList<StagedFile>();
+        List<StagedFile> result = new ArrayList<>();
 
         List<MultipartFile> files = request.getFiles("file");
         if (files == null) {
             throw new PortalServiceException("No file parameter provided.");
         }
 
-        if (null != files && files.size() > 0) {
+        if (files.size() > 0) {
             for (MultipartFile multipartFile : files) {
                 result.add(fileUploadHelper(job, multipartFile));
             }
@@ -416,6 +416,7 @@ public class FileStagingService {
      *            Must have its fileStorageId parameter set
      * @throws IOException
      */
+    @SuppressWarnings("resource")
     public void handleFileDownload(StagedFileOwner job, String fileName, HttpServletResponse response)
             throws PortalServiceException {
         String directory = pathConcat(stagingInformation.getStageInDirectory(), getBaseFolderForJob(job));

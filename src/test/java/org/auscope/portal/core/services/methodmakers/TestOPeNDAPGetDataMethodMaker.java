@@ -1,8 +1,13 @@
 package org.auscope.portal.core.services.methodmakers;
 
 import java.io.IOException;
+import java.util.List;
+
+import org.apache.http.Consts;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.auscope.portal.core.services.methodmakers.OPeNDAPGetDataMethodMaker.OPeNDAPFormat;
 import org.auscope.portal.core.services.responses.opendap.AbstractViewVariable;
 import org.auscope.portal.core.services.responses.opendap.SimpleAxis;
@@ -12,6 +17,7 @@ import org.auscope.portal.core.test.PortalTestClass;
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Test;
+
 import ucar.ma2.Array;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -49,6 +55,13 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
         Assert.assertEquals(opendapUrl + ".dods", method.getURI().toString());
     }
 
+    private static List <NameValuePair> parseQuery(final String query) {
+        if (query != null && query.length() > 0) {
+            return URLEncodedUtils.parse(query, Consts.UTF_8);
+        }
+        return null;
+    }
+
     /**
      * Tests a single constraint when it does NOT have to calculate the minimum bounding box
      * 
@@ -68,8 +81,8 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
         Assert.assertNotNull(method);
         Assert.assertTrue(method.getURI().toString().startsWith(opendapUrl));
         URIBuilder builder = new URIBuilder();
-        builder.setQuery(String.format("%1$s[%2$d:%3$d]", a1.getName(), (int) a1.getDimensionBounds().getFrom(),
-                (int) a1.getDimensionBounds().getTo()));
+        builder.setParameters(parseQuery(String.format("%1$s[%2$d:%3$d]", a1.getName(), (int) a1.getDimensionBounds().getFrom(),
+                (int) a1.getDimensionBounds().getTo())));
 
         Assert.assertEquals(builder.build().getQuery(),
                 method.getURI().getQuery());
@@ -83,8 +96,8 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
         Assert.assertTrue(method.getURI().toString().startsWith(opendapUrl));
 
         builder = new URIBuilder();
-        builder.setQuery(String.format("%1$s[%2$d:%3$d]", a2.getName(), (int) a2.getDimensionBounds().getFrom(),
-                (int) a2.getDimensionBounds().getTo()));
+        builder.setParameters(parseQuery(String.format("%1$s[%2$d:%3$d]", a2.getName(), (int) a2.getDimensionBounds().getFrom(),
+                (int) a2.getDimensionBounds().getTo())));
         Assert.assertEquals(builder.build().getQuery(),
                 method.getURI().getQuery());
     }
@@ -131,7 +144,7 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
         Assert.assertNotNull(method);
         Assert.assertTrue(method.getURI().toString().startsWith(opendapUrl));
         URIBuilder builder = new URIBuilder();
-        builder.setQuery(String.format("%1$s[1:2]", a1.getName()));
+        builder.setParameters(parseQuery(String.format("%1$s[1:2]", a1.getName())));
 
         Assert.assertEquals(builder.build().getQuery(),
                 method.getURI().getQuery());
@@ -165,7 +178,7 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
         Assert.assertNotNull(method);
         Assert.assertTrue(method.getURI().toString().startsWith(opendapUrl));
         builder = new URIBuilder();
-        builder.setQuery(String.format("%1$s[1:3]", a2.getName()));
+        builder.setParameters(parseQuery(String.format("%1$s[1:3]", a2.getName())));
 
         Assert.assertEquals(builder.build().getQuery(),
                 method.getURI().getQuery());
@@ -199,7 +212,7 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
         Assert.assertNotNull(method);
         Assert.assertTrue(method.getURI().toString().startsWith(opendapUrl));
         builder = new URIBuilder();
-        builder.setQuery(String.format("%1$s[0:3]", a3.getName()));
+        builder.setParameters(parseQuery(String.format("%1$s[0:3]", a3.getName())));
         Assert.assertEquals(builder.build().getQuery(),
                 method.getURI().getQuery());
     }
@@ -262,7 +275,7 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
         Assert.assertNotNull(method);
         Assert.assertTrue(method.getURI().toString().startsWith(opendapUrl));
         URIBuilder builder = new URIBuilder();
-        builder.setQuery(String.format("%1$s[1:2][2:3]", g1.getName()));
+        builder.setParameters(parseQuery(String.format("%1$s[1:2][2:3]", g1.getName())));
 
         Assert.assertEquals(builder.build().getQuery(),
                 method.getURI().getQuery());
@@ -325,7 +338,7 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
         Assert.assertNotNull(method);
         Assert.assertTrue(method.getURI().toString().startsWith(opendapUrl));
         URIBuilder builder = new URIBuilder();
-        builder.setQuery(String.format("%1$s[1:2],%2$s[2:3]", a1.getName(), a2.getName()));
+        builder.setParameters(parseQuery(String.format("%1$s[1:2],%2$s[2:3]", a1.getName(), a2.getName())));
         Assert.assertEquals((builder.build()).getQuery(),
                 method.getURI().getQuery());
     }

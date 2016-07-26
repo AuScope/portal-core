@@ -1,9 +1,9 @@
 package org.auscope.portal.core.services;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.apache.http.client.methods.HttpRequestBase;
+import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.sissvoc.SISSVoc2MethodMaker;
 import org.auscope.portal.core.services.responses.vocab.Concept;
@@ -40,23 +40,24 @@ public class TestSISSVoc2Service extends PortalTestClass {
         final String repository = "repository";
         final String label = "label";
 
-        final InputStream responseStream = ResourceUtil
-                .loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/SISSVocResponse.xml");
-        final Concept[] expectedResult = new Concept[] {context.mock(Concept.class)};
+        try (final HttpClientInputStream responseStream = new HttpClientInputStream(ResourceUtil
+                .loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/SISSVocResponse.xml"), null)) {
+            final Concept[] expectedResult = new Concept[] { context.mock(Concept.class) };
 
-        context.checking(new Expectations() {
-            {
-                oneOf(mockMethodMaker).getConceptByLabelMethod(serviceUrl, repository, label);
-                will(returnValue(mockMethod));
-                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
-                will(returnValue(responseStream));
-                oneOf(mockConceptFactory).parseFromRDF(with(any(Node.class)));
-                will(returnValue(expectedResult));
-                oneOf(mockMethod).releaseConnection();
-            }
-        });
+            context.checking(new Expectations() {
+                {
+                    oneOf(mockMethodMaker).getConceptByLabelMethod(serviceUrl, repository, label);
+                    will(returnValue(mockMethod));
+                    oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
+                    will(returnValue(responseStream));
+                    oneOf(mockConceptFactory).parseFromRDF(with(any(Node.class)));
+                    will(returnValue(expectedResult));
+                    oneOf(mockMethod).releaseConnection();
+                }
+            });
 
-        Assert.assertSame(expectedResult, service.getConceptByLabel(serviceUrl, repository, label));
+            Assert.assertSame(expectedResult, service.getConceptByLabel(serviceUrl, repository, label));
+        }
     }
 
     /**
@@ -94,29 +95,30 @@ public class TestSISSVoc2Service extends PortalTestClass {
         final String repository = "repository";
         final String commodityParent = "parent";
 
-        final InputStream responseStream = ResourceUtil
-                .loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/sparqlCommoditiesResponse.xml");
+        try (final HttpClientInputStream responseStream = new HttpClientInputStream(ResourceUtil
+                .loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/sparqlCommoditiesResponse.xml"),null)) {
 
-        context.checking(new Expectations() {
-            {
-                oneOf(mockMethodMaker).getCommodityMethod(serviceUrl, repository, commodityParent);
-                will(returnValue(mockMethod));
-                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
-                will(returnValue(responseStream));
-                oneOf(mockMethod).releaseConnection();
-            }
-        });
+            context.checking(new Expectations() {
+                {
+                    oneOf(mockMethodMaker).getCommodityMethod(serviceUrl, repository, commodityParent);
+                    will(returnValue(mockMethod));
+                    oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
+                    will(returnValue(responseStream));
+                    oneOf(mockMethod).releaseConnection();
+                }
+            });
 
-        Concept[] result = service.getCommodityConcepts(serviceUrl, repository, commodityParent);
-        Assert.assertNotNull(result);
-        Assert.assertEquals(3, result.length);
+            Concept[] result = service.getCommodityConcepts(serviceUrl, repository, commodityParent);
+            Assert.assertNotNull(result);
+            Assert.assertEquals(3, result.length);
 
-        Assert.assertEquals("Silver", result[0].getLabel());
-        Assert.assertEquals("urn:cgi:classifier:GA:commodity:Ag", result[0].getUrn());
-        Assert.assertEquals("Agate", result[1].getLabel());
-        Assert.assertEquals("urn:cgi:classifier:GA:commodity:Aga", result[1].getUrn());
-        Assert.assertEquals("Moss agate", result[2].getLabel());
-        Assert.assertEquals("urn:cgi:classifier:GA:commodity:Agam", result[2].getUrn());
+            Assert.assertEquals("Silver", result[0].getLabel());
+            Assert.assertEquals("urn:cgi:classifier:GA:commodity:Ag", result[0].getUrn());
+            Assert.assertEquals("Agate", result[1].getLabel());
+            Assert.assertEquals("urn:cgi:classifier:GA:commodity:Aga", result[1].getUrn());
+            Assert.assertEquals("Moss agate", result[2].getLabel());
+            Assert.assertEquals("urn:cgi:classifier:GA:commodity:Agam", result[2].getUrn());
+        }
     }
 
     /**

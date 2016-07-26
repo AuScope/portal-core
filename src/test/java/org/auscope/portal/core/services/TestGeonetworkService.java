@@ -2,11 +2,9 @@ package org.auscope.portal.core.services;
 
 import java.net.URI;
 
-import junit.framework.Assert;
-
-import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.message.BasicHeader;
+import org.auscope.portal.core.server.http.HttpClientResponse;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.methodmakers.GeonetworkMethodMaker;
@@ -16,18 +14,13 @@ import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.test.ResourceUtil;
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestGeonetworkService extends PortalTestClass {
+import junit.framework.Assert;
 
-    private Mockery context = new Mockery() {
-        {
-            setImposteriser(ClassImposteriser.INSTANCE);
-        }
-    };
+@SuppressWarnings("deprecation")
+public class TestGeonetworkService extends PortalTestClass {
 
     private HttpServiceCaller serviceCaller;
     private GeonetworkMethodMaker gnMethodMaker;
@@ -50,7 +43,6 @@ public class TestGeonetworkService extends PortalTestClass {
     @Test
     public void testSuccessfulRequest() throws Exception {
         final String sessionCookie = "sessionCookie";
-        final HttpResponse mockLoginResponse = context.mock(HttpResponse.class);
         final HttpRequestBase insertRecordMethod = context.mock(HttpRequestBase.class, "insertRecordMethod");
         final HttpRequestBase recordMetadataShowMethod = context
                 .mock(HttpRequestBase.class, "recordMetadataShowMethod");
@@ -76,67 +68,75 @@ public class TestGeonetworkService extends PortalTestClass {
                 new CSWGeographicElement[0]);
         final URI responseUri = new URI("http://foo.bar.baz");
 
-        context.checking(new Expectations() {
-            {
-                allowing(gnMethodMaker).makeInsertRecordMethod(with(any(String.class)), with(any(String.class)),
-                        with(any(String.class)));
-                will(returnValue(insertRecordMethod));
-                allowing(gnMethodMaker).makeRecordMetadataGetMethod(endpoint, uuid, sessionCookie);
-                will(returnValue(recordMetadataGetMethod));
-                allowing(gnMethodMaker).makeRecordMetadataShowMethod(endpoint, uuid, sessionCookie);
-                will(returnValue(recordMetadataShowMethod));
-                allowing(gnMethodMaker).makeRecordPublicMethod(endpoint, recordId, sessionCookie);
-                will(returnValue(recordPublicMethod));
-                allowing(gnMethodMaker).makeUserLoginMethod(endpoint, userName, password);
-                will(returnValue(loginMethod));
-                allowing(gnMethodMaker).makeUserLogoutMethod(endpoint, sessionCookie);
-                will(returnValue(logoutMethod));
+        try (final HttpClientResponse mockLoginResponse = context.mock(HttpClientResponse.class)) {
 
-                allowing(mockLoginResponse).getFirstHeader("Set-Cookie");
-                will(returnValue(new BasicHeader("Set-Cookie", sessionCookie)));
+            context.checking(new Expectations() {
+                {
+                    allowing(gnMethodMaker).makeInsertRecordMethod(with(any(String.class)), with(any(String.class)),
+                            with(any(String.class)));
+                    will(returnValue(insertRecordMethod));
+                    allowing(gnMethodMaker).makeRecordMetadataGetMethod(endpoint, uuid, sessionCookie);
+                    will(returnValue(recordMetadataGetMethod));
+                    allowing(gnMethodMaker).makeRecordMetadataShowMethod(endpoint, uuid, sessionCookie);
+                    will(returnValue(recordMetadataShowMethod));
+                    allowing(gnMethodMaker).makeRecordPublicMethod(endpoint, recordId, sessionCookie);
+                    will(returnValue(recordPublicMethod));
+                    allowing(gnMethodMaker).makeUserLoginMethod(endpoint, userName, password);
+                    will(returnValue(loginMethod));
+                    allowing(gnMethodMaker).makeUserLogoutMethod(endpoint, sessionCookie);
+                    will(returnValue(logoutMethod));
 
-                oneOf(serviceCaller).getMethodResponseAsString(insertRecordMethod);
-                will(returnValue(insertResponse));
-                oneOf(serviceCaller).getMethodResponseAsString(recordMetadataGetMethod);
-                will(returnValue(recordGetMetadata));
-                oneOf(serviceCaller).getMethodResponseAsString(recordPublicMethod);
-                will(returnValue(recordPublicResponse));
-                oneOf(serviceCaller).getMethodResponseAsHttpResponse(loginMethod);
-                will(returnValue(mockLoginResponse));
-                oneOf(serviceCaller).responseToString(mockLoginResponse);
-                will(returnValue(loginResponse));
-                oneOf(serviceCaller).getMethodResponseAsString(logoutMethod);
-                will(returnValue(logoutResponse));
+                    allowing(mockLoginResponse).getFirstHeader("Set-Cookie");
+                    will(returnValue(new BasicHeader("Set-Cookie", sessionCookie)));
 
-                allowing(recordMetadataShowMethod).getURI();
-                will(returnValue(responseUri));
-            }
-        });
+                    oneOf(serviceCaller).getMethodResponseAsString(insertRecordMethod);
+                    will(returnValue(insertResponse));
+                    oneOf(serviceCaller).getMethodResponseAsString(recordMetadataGetMethod);
+                    will(returnValue(recordGetMetadata));
+                    oneOf(serviceCaller).getMethodResponseAsString(recordPublicMethod);
+                    will(returnValue(recordPublicResponse));
+                    oneOf(serviceCaller).getMethodResponseAsHttpResponse(loginMethod);
+                    will(returnValue(mockLoginResponse));
+                    oneOf(serviceCaller).responseToString(mockLoginResponse);
+                    will(returnValue(loginResponse));
+                    oneOf(serviceCaller).getMethodResponseAsString(logoutMethod);
+                    will(returnValue(logoutResponse));
 
-        Assert.assertEquals(responseUri.toString(), service.makeCSWRecordInsertion(record));
+                    allowing(recordMetadataShowMethod).getURI();
+                    will(returnValue(responseUri));
+                    
+                    allowing(mockLoginResponse).close();
+                }
+            });
+
+            Assert.assertEquals(responseUri.toString(), service.makeCSWRecordInsertion(record));
+        }
     }
 
     @Test(expected = Exception.class)
     public void testBadLoginRequest() throws Exception {
         final HttpRequestBase loginMethod = context.mock(HttpRequestBase.class, "loginMethod");
-        final HttpResponse mockLoginResponse = context.mock(HttpResponse.class);
         final String loginResponse = "<html>The contents doesn't matter as a failed GN login returns a static page</html>";
 
         final CSWRecord record = new CSWRecord("a", "b", "c", "", new CSWOnlineResourceImpl[0],
                 new CSWGeographicElement[0]);
 
-        context.checking(new Expectations() {
-            {
-                allowing(gnMethodMaker).makeUserLoginMethod(endpoint, userName, password);
-                will(returnValue(loginMethod));
+        try (final HttpClientResponse mockLoginResponse = context.mock(HttpClientResponse.class)) {
+            context.checking(new Expectations() {
+                {
+                    allowing(gnMethodMaker).makeUserLoginMethod(endpoint, userName, password);
+                    will(returnValue(loginMethod));
 
-                oneOf(serviceCaller).getMethodResponseAsHttpResponse(loginMethod);
-                will(returnValue(mockLoginResponse));
-                oneOf(serviceCaller).responseToString(mockLoginResponse);
-                will(returnValue(loginResponse));
-            }
-        });
+                    oneOf(serviceCaller).getMethodResponseAsHttpResponse(loginMethod);
+                    will(returnValue(mockLoginResponse));
+                    oneOf(serviceCaller).responseToString(mockLoginResponse);
+                    will(returnValue(loginResponse));
 
-        service.makeCSWRecordInsertion(record);
+                    allowing(mockLoginResponse).close();
+                }
+            });
+
+            service.makeCSWRecordInsertion(record);
+        }
     }
 }

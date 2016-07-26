@@ -40,7 +40,7 @@ public class CSVUtil {
         if (columnIndex.length != columns.length) {
             throw new IOException("Not all columns are found");
         }
-        HashMap<String, ArrayList<String>> result = new HashMap<String, ArrayList<String>>();
+        HashMap<String, ArrayList<String>> result = new HashMap<>();
 
         for (String column : columns) {
             result.put(column, new ArrayList<String>());

@@ -110,7 +110,7 @@ public class CloudComputeServiceAws extends CloudComputeService {
         this(null, accessKey, secretKey, null);
     }
 
-    private static String getJaxpImplementationInfo(String componentName, Class componentClass) {
+    private static String getJaxpImplementationInfo(String componentName, Class<?> componentClass) {
         CodeSource source = componentClass.getProtectionDomain().getCodeSource();
         return MessageFormat.format("{0} implementation: {1} loaded from: {2}", componentName, componentClass.getName(),
                 source == null ? "Java Runtime" : source.getLocation());
@@ -222,6 +222,7 @@ public class CloudComputeServiceAws extends CloudComputeService {
         }
     }
 
+    @Override
     public String executeJob(CloudJob job, String userDataString) throws PortalServiceException {
         String vmId = job.getComputeVmId();
         if (vmId.contains("/")) {
@@ -230,6 +231,7 @@ public class CloudComputeServiceAws extends CloudComputeService {
         try {
             userDataString = com.amazonaws.util.Base64.encodeAsString(userDataString.getBytes("Utf-8"));
         } catch (UnsupportedEncodingException e) {
+            // can't happen
         }
 
         RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
@@ -287,6 +289,7 @@ public class CloudComputeServiceAws extends CloudComputeService {
      *            The job whose execution should be terminated
      * @throws PortalServiceException
      */
+    @Override
     public void terminateJob(CloudJob job) throws PortalServiceException {
         AmazonEC2 ec2 = getEc2Client(job);
 
@@ -298,6 +301,7 @@ public class CloudComputeServiceAws extends CloudComputeService {
     /**
      * An array of compute types that are available through this compute service
      */
+    @Override
     public ComputeType[] getAvailableComputeTypes(Integer minimumVCPUs, Integer minimumRamMB,
             Integer minimumRootDiskGB) {
         // InstanceType[] types = InstanceType.values();
@@ -317,48 +321,49 @@ public class CloudComputeServiceAws extends CloudComputeService {
             builder.endpoint(getEndpoint());
         }
 
-        ComputeServiceContext context = builder.buildView(ComputeServiceContext.class);
-        ComputeService computeService = context.getComputeService();
-        Set<? extends Hardware> hardwareSet = computeService.listHardwareProfiles();
+        try (ComputeServiceContext context = builder.buildView(ComputeServiceContext.class)) {
+            ComputeService computeService = context.getComputeService();
+            Set<? extends Hardware> hardwareSet = computeService.listHardwareProfiles();
 
-        List<ComputeType> computeTypes = new ArrayList<ComputeType>();
+            List<ComputeType> computeTypes = new ArrayList<>();
 
-        for (Hardware hw : hardwareSet) {
-            ComputeType ct = new ComputeType(hw.getId());
+            for (Hardware hw : hardwareSet) {
+                ComputeType ct = new ComputeType(hw.getId());
 
-            ct.setDescription(hw.getName());
-            double vCpus = 0;
-            for (Processor p : hw.getProcessors()) {
-                vCpus += p.getCores();
-            }
-            ct.setVcpus((int) vCpus);
-            ct.setRamMB(hw.getRam());
-
-            double rootDiskGB = 0;
-            double ephemeralDiskGB = 0;
-            for (Volume v : hw.getVolumes()) {
-                if (v.isBootDevice()) {
-                    rootDiskGB += v.getSize();
-                } else {
-                    ephemeralDiskGB += v.getSize();
+                ct.setDescription(hw.getName());
+                double vCpus = 0;
+                for (Processor p : hw.getProcessors()) {
+                    vCpus += p.getCores();
                 }
-            }
-            ct.setRootDiskGB((int) rootDiskGB);
-            ct.setEphemeralDiskGB((int) ephemeralDiskGB);
+                ct.setVcpus((int) vCpus);
+                ct.setRamMB(hw.getRam());
 
-            // Skip anything that doesn't match our filters
-            if (minimumVCPUs != null && minimumVCPUs > ct.getVcpus()) {
-                continue;
-            } else if (minimumRamMB != null && minimumRamMB > ct.getRamMB()) {
-                continue;
-            } else if (minimumRootDiskGB != null && minimumRootDiskGB > ct.getRootDiskGB()) {
-                continue;
+                double rootDiskGB = 0;
+                double ephemeralDiskGB = 0;
+                for (Volume v : hw.getVolumes()) {
+                    if (v.isBootDevice()) {
+                        rootDiskGB += v.getSize();
+                    } else {
+                        ephemeralDiskGB += v.getSize();
+                    }
+                }
+                ct.setRootDiskGB((int) rootDiskGB);
+                ct.setEphemeralDiskGB((int) ephemeralDiskGB);
+
+                // Skip anything that doesn't match our filters
+                if (minimumVCPUs != null && minimumVCPUs > ct.getVcpus()) {
+                    continue;
+                } else if (minimumRamMB != null && minimumRamMB > ct.getRamMB()) {
+                    continue;
+                } else if (minimumRootDiskGB != null && minimumRootDiskGB > ct.getRootDiskGB()) {
+                    continue;
+                }
+
+                computeTypes.add(ct);
             }
 
-            computeTypes.add(ct);
+            return computeTypes.toArray(new ComputeType[computeTypes.size()]);
         }
-
-        return computeTypes.toArray(new ComputeType[computeTypes.size()]);
     }
 
     /**
@@ -372,6 +377,7 @@ public class CloudComputeServiceAws extends CloudComputeService {
      * @return console output as string or null
      * @return
      */
+    @Override
     public String getConsoleLog(CloudJob job, int numLines) throws PortalServiceException {
         GetConsoleOutputRequest req = new GetConsoleOutputRequest(job.getComputeInstanceId());
 
@@ -393,6 +399,7 @@ public class CloudComputeServiceAws extends CloudComputeService {
      * @return
      * @throws PortalServiceException
      */
+    @Override
     public InstanceStatus getJobStatus(CloudJob job) throws PortalServiceException {
 
         //If the job has just been submitted - don't go checking with AWS, we'll probably get a missing VM message
@@ -435,6 +442,9 @@ public class CloudComputeServiceAws extends CloudComputeService {
             switch (ex.getErrorCode()) {
             case "InvalidInstanceID.NotFound":
                 return InstanceStatus.Missing;
+            default:
+                // ignore all other cases
+                break;
             }
 
             switch (ex.getStatusCode()) {

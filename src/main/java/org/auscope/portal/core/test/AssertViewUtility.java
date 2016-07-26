@@ -21,7 +21,7 @@ public class AssertViewUtility {
         } else if (expected instanceof List) {
             Assert.assertTrue(message, actual instanceof List);
 
-            assertListsEqual((List) expected, (List) actual);
+            assertListsEqual((List<?>) expected, (List<?>) actual);
         } else {
             Assert.assertEquals(message, expected, actual);
         }
@@ -33,7 +33,7 @@ public class AssertViewUtility {
      * @param expected
      * @param actual
      */
-    public static void assertListsEqual(List expected, List actual) {
+    public static void assertListsEqual(List<?> expected, List<?> actual) {
         Assert.assertEquals(String.format("Sizes vary. Expected %1$s, got %2$s", expected, actual), expected.size(), actual.size());
 
         for (int i = 0; i < expected.size(); i++) {

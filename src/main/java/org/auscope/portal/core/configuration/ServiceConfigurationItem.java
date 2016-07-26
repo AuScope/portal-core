@@ -25,13 +25,13 @@ public class ServiceConfigurationItem {
      * Check url starts with input parameter; This is a bit tricky to match because portal sometimes works as a proxy. We can fine tune this to better suit our
      * cases as it comes along.
      * 
-     * @param url
+     * @param myUrl
      *            - the url to match
      * @return true input contains url
      */
-    public boolean matchUrl(String url) {
+    public boolean matchUrl(String myUrl) {
         try {
-            return java.net.URLDecoder.decode(url, "UTF-8").contains(this.url);
+            return java.net.URLDecoder.decode(myUrl, "UTF-8").contains(this.url);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             return false;

@@ -4,7 +4,6 @@ import javax.xml.xpath.XPathExpressionException;
 
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
 
-// TODO: Auto-generated Javadoc
 /**
  * This class represents WMS Layer node within GetCapabilites WMS response.
  *
@@ -80,6 +79,7 @@ public interface GetCapabilitiesWMSLayerRecord {
     /**
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString();
 
 }

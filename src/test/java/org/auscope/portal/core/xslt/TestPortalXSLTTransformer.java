@@ -29,7 +29,7 @@ public class TestPortalXSLTTransformer extends PortalTestClass {
     private PortalXSLTTransformer transformer;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         transformer = new PortalXSLTTransformer("/org/auscope/portal/core/xslt/wfsToKml.xsl");
     }
 

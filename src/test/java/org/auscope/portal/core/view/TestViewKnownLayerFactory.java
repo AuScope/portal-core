@@ -19,11 +19,9 @@ public class TestViewKnownLayerFactory extends PortalTestClass {
 
     /**
      * Tests the optional params include/exclude values as appropriate
-     * 
-     * @throws Exception
      */
     @Test
-    public void testToViewOptionalParams() throws Exception {
+    public void testToViewOptionalParams() {
         final ViewKnownLayerFactory factory = new ViewKnownLayerFactory();
         final KnownLayer knownLayer = new KnownLayer("id", mockSelector);
         final double x = 1.0;

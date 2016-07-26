@@ -58,7 +58,7 @@ public abstract class AbstractMethodMaker {
      * @return
      */
     protected List<NameValuePair> extractQueryParams(String url) {
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        List<NameValuePair> params = new ArrayList<>();
 
         String[] parts = url.split("\\?");
         if (parts.length != 2) {

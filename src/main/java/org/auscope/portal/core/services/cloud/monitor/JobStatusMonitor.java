@@ -10,7 +10,7 @@ import org.auscope.portal.core.cloud.CloudJob;
 
 /**
  * A simple class containing event listeners and the ability to poll CloudJob instances for information about their current status
- * 
+ *
  * @author Josh Vote
  *
  */
@@ -25,7 +25,7 @@ public class JobStatusMonitor {
 
     /**
      * Creates a new instance of this class
-     * 
+     *
      * @param jobStatusReader
      * @param jobStatusChangeListeners
      */
@@ -49,7 +49,7 @@ public class JobStatusMonitor {
 
     /**
      * Force a status update of a particular job. This is a blocking method that will not return until all status change listeners have finished their updates.
-     * 
+     *
      * @param job
      *            The job to update - may have its fields modified by status change listeners
      * @throws JobStatusException
@@ -74,18 +74,18 @@ public class JobStatusMonitor {
     /**
      * Force a status update of a particular collection of jobs. This is a blocking method that will not return until all status change listeners have finished
      * their updates for all jobs whose status has changed.
-     * 
+     *
      * If any job throws an exception, the exception will be stored and subsequent jobs will continue to be updated. At the end of all updates, all exceptions
      * thrown will be wrapped in a single JobStatusException and rethrown
-     * 
+     *
      * @param jobs
      *            The job collection to update - may have its member fields modified by status change listeners
      * @throws JobStatusException
      *             If and only if one or more job status updates fail
      */
     public void statusUpdate(Collection<? extends CloudJob> jobs) throws JobStatusException {
-        List<Throwable> exceptions = new ArrayList<Throwable>();
-        List<CloudJob> failedUpdates = new ArrayList<CloudJob>();
+        List<Throwable> exceptions = new ArrayList<>();
+        List<CloudJob> failedUpdates = new ArrayList<>();
 
         for (CloudJob job : jobs) {
             //Do all updates before throwing exceptions

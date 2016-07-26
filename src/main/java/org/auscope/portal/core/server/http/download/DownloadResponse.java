@@ -50,6 +50,7 @@ public class DownloadResponse {
         return requestURL;
     }
 
+    @Override
     public String toString() {
         try {
             return this.getResponseAsString() + this.getExceptionAsString();

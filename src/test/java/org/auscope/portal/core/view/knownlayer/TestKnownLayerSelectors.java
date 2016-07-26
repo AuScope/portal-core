@@ -4,8 +4,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.auscope.portal.core.services.responses.csw.CSWOnlineResourceImpl;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.test.PortalTestClass;
@@ -13,11 +11,14 @@ import org.auscope.portal.core.view.knownlayer.KnownLayerSelector.RelationType;
 import org.junit.Before;
 import org.junit.Test;
 
+import junit.framework.Assert;
+
 /**
  * Unit tests for the various KnownLayerSelector implementations
  * 
  * @author Josh Vote
  */
+@SuppressWarnings("deprecation")
 public class TestKnownLayerSelectors extends PortalTestClass {
 
     private List<CSWRecord> recordList;
@@ -29,7 +30,7 @@ public class TestKnownLayerSelectors extends PortalTestClass {
      */
     @Before
     public void setupRecordList() throws Exception {
-        recordList = new ArrayList<CSWRecord>();
+        recordList = new ArrayList<>();
 
         //WWW:LINK-1.0-http--link
         //OGC:WFS-1.0.0-http-get-feature

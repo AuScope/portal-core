@@ -140,13 +140,13 @@ public class TestDescribeCoverageRecord extends PortalTestClass {
         Assert.assertNotNull(record.getSpatialDomain());
         Assert.assertEquals(2, record.getSpatialDomain().getEnvelopes().length);
 
-        SimpleEnvelope env0 = (SimpleEnvelope) record.getSpatialDomain().getEnvelopes()[0];
+        SimpleEnvelope env0 = record.getSpatialDomain().getEnvelopes()[0];
         Assert.assertEquals(179.982, env0.getEastBoundLongitude(), 0.000001);
         Assert.assertEquals(63.041, env0.getSouthBoundLatitude(), 0.000001);
         Assert.assertEquals(-179.123, env0.getWestBoundLongitude(), 0.000001);
         Assert.assertEquals(82.415, env0.getNorthBoundLatitude(), 0.000001);
 
-        SimpleEnvelope env1 = (SimpleEnvelope) record.getSpatialDomain().getEnvelopes()[1];
+        SimpleEnvelope env1 = record.getSpatialDomain().getEnvelopes()[1];
         Assert.assertEquals(2173789.735, env1.getEastBoundLongitude(), 0.00001);
         Assert.assertEquals(-1151631.237, env1.getSouthBoundLatitude(), 0.00001);
         Assert.assertEquals(-825267.555, env1.getWestBoundLongitude(), 0.00001);
@@ -182,7 +182,7 @@ public class TestDescribeCoverageRecord extends PortalTestClass {
         SpatialDomain sd = record.getSpatialDomain();
         Assert.assertNotNull(sd);
         Assert.assertEquals(1, record.getSpatialDomain().getEnvelopes().length);
-        SimpleEnvelope env = (SimpleEnvelope) record.getSpatialDomain().getEnvelopes()[0];
+        SimpleEnvelope env = record.getSpatialDomain().getEnvelopes()[0];
         Assert.assertEquals(153.62049699996703, env.getEastBoundLongitude(), 0.00001);
         Assert.assertEquals(-43.69864800000154, env.getSouthBoundLatitude(), 0.00001);
         Assert.assertEquals(112.87212699999998, env.getWestBoundLongitude(), 0.00001);

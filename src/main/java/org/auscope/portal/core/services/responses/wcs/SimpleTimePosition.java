@@ -19,6 +19,7 @@ public class SimpleTimePosition implements TemporalDomain {
     private Date timePosition;
     private String type;
 
+    @Override
     public String getType() {
         return type;
     }

@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
 import org.auscope.portal.core.services.responses.wcs.Resolution;
@@ -115,7 +116,7 @@ public class TestWCSMethodMakerGetCoverage extends PortalTestClass {
 
     @Test
     public void testOptionalArguments() throws Exception {
-        Map<String, String> customParams = new HashMap<String, String>();
+        Map<String, String> customParams = new HashMap<>();
         customParams.put("param1", "param1value");
         customParams.put("param2", "param2value");
 
@@ -147,6 +148,7 @@ public class TestWCSMethodMakerGetCoverage extends PortalTestClass {
                     "inputCrs", mockBbox, new TimeConstraint("time"), null);
             Assert.fail();
         } catch (IllegalArgumentException ex) {
+            // empty
         }
 
         try {
@@ -154,33 +156,36 @@ public class TestWCSMethodMakerGetCoverage extends PortalTestClass {
                     0, 5), new Resolution(5, 0), "inputCrs", mockBbox, new TimeConstraint("time"), null);
             Assert.fail();
         } catch (IllegalArgumentException ex) {
+            // empty
         }
     }
 
-    private void compareBboxesInQuery(String queryString, double expectedNorth, double expectedSouth,
+    private static void compareBboxesInQuery(String queryString, double expectedNorth, double expectedSouth,
             double expectedEast, double expectedWest) {
-        Scanner sc = new Scanner(queryString);
+        try (Scanner sc = new Scanner(queryString)) {
+            // Extract our param list as a list of doubles
+            String bboxParams = sc.findInLine("&bbox=.*?&");
+            bboxParams = bboxParams.split("=")[1];
+            bboxParams = bboxParams.replace("&", "");
+            try (@SuppressWarnings("resource")
+                Scanner sc2 = new Scanner(bboxParams).useDelimiter(",")) {
 
-        //Extract our param list as a list of doubles
-        String bboxParams = sc.findInLine("&bbox=.*?&");
-        bboxParams = bboxParams.split("=")[1];
-        bboxParams = bboxParams.replace("&", "");
-        sc = new Scanner(bboxParams).useDelimiter(",");
+                Assert.assertTrue(sc2.hasNextDouble());
+                double minx = sc2.nextDouble();
+                Assert.assertTrue(sc2.hasNextDouble());
+                double miny = sc2.nextDouble();
+                Assert.assertTrue(sc2.hasNextDouble());
+                double maxx = sc2.nextDouble();
+                Assert.assertTrue(sc2.hasNextDouble());
+                double maxy = sc2.nextDouble();
 
-        Assert.assertTrue(sc.hasNextDouble());
-        double minx = sc.nextDouble();
-        Assert.assertTrue(sc.hasNextDouble());
-        double miny = sc.nextDouble();
-        Assert.assertTrue(sc.hasNextDouble());
-        double maxx = sc.nextDouble();
-        Assert.assertTrue(sc.hasNextDouble());
-        double maxy = sc.nextDouble();
+                Assert.assertEquals(expectedNorth, maxy, 0.01);
+                Assert.assertEquals(expectedSouth, miny, 0.01);
 
-        Assert.assertEquals(expectedNorth, maxy, 0.01);
-        Assert.assertEquals(expectedSouth, miny, 0.01);
-
-        Assert.assertEquals(expectedWest, minx, 0.01);
-        Assert.assertEquals(expectedEast, maxx, 0.01);
+                Assert.assertEquals(expectedWest, minx, 0.01);
+                Assert.assertEquals(expectedEast, maxx, 0.01);
+            }
+        }
     }
 
     /**

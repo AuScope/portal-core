@@ -41,7 +41,7 @@ public class TestSOSMethodMaker extends PortalTestClass {
      * @throws IOException
      * @throws ParserConfigurationException
      */
-    private boolean testSOSParam(HttpRequestBase sosRequest, String paramName, String paramValue)
+    private static boolean testSOSParam(HttpRequestBase sosRequest, String paramName, String paramValue)
             throws ParserConfigurationException, IOException, SAXException {
         //Get methods involve finding the request parameter "version=X"
         if (sosRequest instanceof HttpGet) {
@@ -79,11 +79,9 @@ public class TestSOSMethodMaker extends PortalTestClass {
 
     /**
      * Ensure we are always specifying sos end point and request type
-     * 
-     * @throws Exception
      */
     @Test
-    public void testMandatoryParam() throws Exception {
+    public void testMandatoryParam() {
         String sosUrl = "";
         String request = "";
 

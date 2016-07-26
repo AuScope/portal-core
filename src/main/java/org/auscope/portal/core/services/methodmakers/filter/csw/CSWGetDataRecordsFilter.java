@@ -43,7 +43,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
 
         all
     }
-    
+
     /**
      * The different ways of sorting the returned CSW records
      */
@@ -52,21 +52,21 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
          * Use the service's default ordering
          */
         serviceDefault,
-        
-        /** 
+
+        /**
          * Sort by title, ascending alphabetically
          */
-        title, 
-        
-        /** 
+        title,
+
+        /**
          * Sort by publication date, descending (newest first)
          */
-        publicationDate;     
+        publicationDate;
 
         /**
          * gets a SortType enum based upon the string that is passed in. If the
          * string is not valid then return a default.
-         * 
+         *
          * @param value
          *            the value to test
          * @return a SortType enum if the value was okay
@@ -93,7 +93,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
 
     /** The abstract. */
     private String abstract_ = null;
-    
+
     /** A field for title OR abstract, if we want to search on either */
     private String titleOrAbstract = null;
 
@@ -105,7 +105,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
 
     /** The publication date's upper bound. */
     private DateTime publicationDateTo = null;
-    
+
     /** The metadata change date's lower bound. */
     private DateTime metadataChangeDateFrom = null;
 
@@ -134,18 +134,18 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     private KeywordMatchType keywordMatchType;
 
     private Type type;
-    
+
     private SortType sortType;
-    
+
     private String basicSearchTerm;
-    
+
     /**
      * Default constructor for creating a filter in a factory method manner.
-     * Create an empty filter and set the fields manually. 
+     * Create an empty filter and set the fields manually.
      */
     public CSWGetDataRecordsFilter() {
     }
-    
+
     /**
      * Generates a new filter generator for the specified fields.
      *
@@ -206,14 +206,14 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
         this.title = title;
         this.type = type;
     }
-    
+
     /**
      * Utility method for generating the body of a filter fragment.
-     * 
+     *
      * @return a filter fragment
      */
     private String generateFilterFragment() {
-        List<String> fragments = new ArrayList<String>();
+        List<String> fragments = new ArrayList<>();
 
         // if it is a basic search we'll use the basicSearchTerm field on some specific fields
         if (basicSearchTerm != null && !basicSearchTerm.isEmpty()) {
@@ -222,9 +222,9 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
                     this.generatePropertyIsLikeFragment("abstract", "*" + this.basicSearchTerm + "*"),
                     this.generatePropertyIsLikeFragment("keywords", "*" + this.basicSearchTerm + "*"),
                     this.generatePropertyIsLikeFragment("orgName", "*" + this.basicSearchTerm + "*"))
-            );
+                    );
         }
-        
+
         // advanced search
         else {
 
@@ -254,7 +254,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
 
             if (publicationDateTo != null) {
                 fragments
-                        .add(this.generatePropertyIsLessThanOrEqualTo("publicationDate", publicationDateTo.toString()));
+                .add(this.generatePropertyIsLessThanOrEqualTo("publicationDate", publicationDateTo.toString()));
             }
 
             if (type != null && type != Type.all) {
@@ -275,7 +275,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
             }
 
             if (keywords != null && keywords.length > 0) {
-                List<String> keywordFragments = new ArrayList<String>();
+                List<String> keywordFragments = new ArrayList<>();
                 for (String keyword : keywords) {
                     if (keyword != null && !keyword.isEmpty()) {
                         // keywordFragments.add(this.generatePropertyIsEqualToFragment("gmd:identificationInfo/gmd:MD_DataIdentification/gmd:descriptiveKeywords/gmd:MD_Keywords/gmd:keyword/gco:CharacterString",
@@ -338,7 +338,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
         // unsuitable here
         // as it contains no methods to iterate the contained list of
         // Namespaces
-        HashMap<String, String> namespaces = new HashMap<String, String>();
+        HashMap<String, String> namespaces = new HashMap<>();
         namespaces.put("xmlns:ogc", "http://www.opengis.net/ogc");
         return this.generateFilter(this.generateFilterFragment(), namespaces);
     }
@@ -460,7 +460,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     public void setAbstract(String abstract_) {
         this.abstract_ = abstract_;
     }
-   
+
     /**
      * @return the titleOrAbstract
      */
@@ -488,7 +488,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     public void setAuthorSurname(String authorSurname) {
         this.authorSurname = authorSurname;
     }
-   
+
     /**
      * @return the publicationDateFrom
      */

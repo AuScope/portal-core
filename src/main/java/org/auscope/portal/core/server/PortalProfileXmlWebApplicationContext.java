@@ -11,6 +11,7 @@ import org.springframework.web.context.support.XmlWebApplicationContext;
 public class PortalProfileXmlWebApplicationContext extends
         XmlWebApplicationContext {
 
+    @Override
     protected String[] getDefaultConfigLocations() {
 
         String profile = this.getServletContext().getInitParameter("AUSCOPE_PORTAL_PROFILE");

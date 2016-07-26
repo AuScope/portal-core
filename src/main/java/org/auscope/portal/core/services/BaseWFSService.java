@@ -79,7 +79,7 @@ public abstract class BaseWFSService {
 
     protected HttpRequestBase generateWFSRequest(String wfsUrl, String featureType, String featureId,
             String filterString, Integer maxFeatures, String srs, ResultType resultType, String outputFormat)
-            throws URISyntaxException {
+                    throws URISyntaxException {
         return generateWFSRequest(wfsUrl, featureType, featureId, filterString, maxFeatures, srs, resultType,
                 outputFormat, null);
     }
@@ -133,9 +133,7 @@ public abstract class BaseWFSService {
      * @throws PortalServiceException
      */
     protected WFSCountResponse getWfsFeatureCount(HttpRequestBase method) throws PortalServiceException {
-        try {
-            //Make the request and parse the response
-            InputStream responseStream = httpServiceCaller.getMethodResponseAsStream(method);
+        try (InputStream responseStream = httpServiceCaller.getMethodResponseAsStream(method)) {
             Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
             OWSExceptionParser.checkForExceptionResponse(responseDoc);
 
@@ -209,11 +207,11 @@ public abstract class BaseWFSService {
             XPathExpression xPathGetAbstract = DOMUtil.compileXPathExpr(
                     "wfs:WFS_Capabilities/wfs:FeatureTypeList/wfs:FeatureType/wfs:Abstract", new WFSNamespaceContext());
             NodeList abstractNodes = (NodeList) xPathGetAbstract.evaluate(responseDoc, XPathConstants.NODESET);
-            Map<String, String> featureAbstracts = new HashMap<String, String>();
+            Map<String, String> featureAbstracts = new HashMap<>();
             XPathExpression xPathGetMetadataURL = DOMUtil.compileXPathExpr(
                     "wfs:WFS_Capabilities/wfs:FeatureTypeList/wfs:FeatureType/wfs:MetadataURL", new WFSNamespaceContext());
             NodeList metadataURLNodes = (NodeList) xPathGetMetadataURL.evaluate(responseDoc, XPathConstants.NODESET);
-            Map<String, String> metadataURLs = new HashMap<String, String>();
+            Map<String, String> metadataURLs = new HashMap<>();
 
             for (int i = 0; i < nameNodes.getLength(); i++) {
                 String typeName = nameNodes.item(i).getTextContent();

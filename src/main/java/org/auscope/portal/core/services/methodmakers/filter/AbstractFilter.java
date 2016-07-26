@@ -185,7 +185,7 @@ public abstract class AbstractFilter implements IFilter {
      */
     protected String generatePropertyIsLikeFragment(String propertyName, String literal, char wildCard,
             char singleChar, char escapeChar, Boolean matchCase, MatchActionType matchAction) {
-        HashMap<String, String> attributes = new HashMap<String, String>();
+        HashMap<String, String> attributes = new HashMap<>();
         attributes.put("wildCard", Character.toString(wildCard));
         attributes.put("singleChar", Character.toString(singleChar));
         attributes.put("escapeChar", Character.toString(escapeChar));
@@ -252,7 +252,7 @@ public abstract class AbstractFilter implements IFilter {
      */
     protected String generatePropertyIsEqualToFragment(String propertyName, String literal, Boolean matchCase,
             MatchActionType matchAction) {
-        HashMap<String, String> attributes = new HashMap<String, String>();
+        HashMap<String, String> attributes = new HashMap<>();
         if (matchCase != null) {
             attributes.put("matchCase", Boolean.toString(matchCase));
         }
@@ -294,7 +294,7 @@ public abstract class AbstractFilter implements IFilter {
      */
     protected String generatePropertyIsGreaterThanOrEqualTo(String propertyName, String literal, Boolean matchCase,
             MatchActionType matchAction) {
-        HashMap<String, String> attributes = new HashMap<String, String>();
+        HashMap<String, String> attributes = new HashMap<>();
         if (matchCase != null) {
             attributes.put("matchCase", Boolean.toString(matchCase));
         }
@@ -336,7 +336,7 @@ public abstract class AbstractFilter implements IFilter {
      */
     protected String generatePropertyIsNotEqualTo(String propertyName, String literal, Boolean matchCase,
             MatchActionType matchAction) {
-        HashMap<String, String> attributes = new HashMap<String, String>();
+        HashMap<String, String> attributes = new HashMap<>();
         if (matchCase != null) {
             attributes.put("matchCase", Boolean.toString(matchCase));
         }
@@ -377,7 +377,7 @@ public abstract class AbstractFilter implements IFilter {
      * @return
      */
     protected String generateDatePropertyIsLessThan(String propertyName, Boolean matchCase, String function) {
-        HashMap<String, String> attributes = new HashMap<String, String>();
+        HashMap<String, String> attributes = new HashMap<>();
         if (matchCase != null) {
             attributes.put("matchCase", Boolean.toString(matchCase));
         }
@@ -397,7 +397,7 @@ public abstract class AbstractFilter implements IFilter {
      */
     protected String generatePropertyIsLessThan(String propertyName, String literal, Boolean matchCase,
             MatchActionType matchAction ) {
-        HashMap<String, String> attributes = new HashMap<String, String>();
+        HashMap<String, String> attributes = new HashMap<>();
         if (matchCase != null) {
             attributes.put("matchCase", Boolean.toString(matchCase));
         }
@@ -438,13 +438,13 @@ public abstract class AbstractFilter implements IFilter {
      * @return
      */
     protected String generateDatePropertyIsGreaterThan(String propertyName, Boolean matchCase, String function) {
-        HashMap<String, String> attributes = new HashMap<String, String>();
+        HashMap<String, String> attributes = new HashMap<>();
         if (matchCase != null) {
             attributes.put("matchCase", Boolean.toString(matchCase));
         }
         return generatePropertyComparisonFragment("ogc:PropertyIsGreaterThan", attributes, propertyName, null, function);
-    }    
-    
+    }
+
     /**
      * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
      *
@@ -459,13 +459,13 @@ public abstract class AbstractFilter implements IFilter {
      * @return
      */
     protected String generateDatePropertyIsGreaterThanOrEqualTo(String propertyName, Boolean matchCase, String function) {
-        HashMap<String, String> attributes = new HashMap<String, String>();
+        HashMap<String, String> attributes = new HashMap<>();
         if (matchCase != null) {
             attributes.put("matchCase", Boolean.toString(matchCase));
         }
         return generatePropertyComparisonFragment("ogc:PropertyIsGreaterThanOrEqualTo", attributes, propertyName, null, function);
-    }   
-    
+    }
+
     /**
      * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
      *
@@ -479,7 +479,7 @@ public abstract class AbstractFilter implements IFilter {
      */
     protected String generatePropertyIsGreaterThan(String propertyName, String literal, Boolean matchCase,
             MatchActionType matchAction ) {
-        HashMap<String, String> attributes = new HashMap<String, String>();
+        HashMap<String, String> attributes = new HashMap<>();
         if (matchCase != null) {
             attributes.put("matchCase", Boolean.toString(matchCase));
         }
@@ -520,7 +520,7 @@ public abstract class AbstractFilter implements IFilter {
      */
     protected String generatePropertyIsLessThanOrEqualTo(String propertyName, String literal, Boolean matchCase,
             MatchActionType matchAction) {
-        HashMap<String, String> attributes = new HashMap<String, String>();
+        HashMap<String, String> attributes = new HashMap<>();
         if (matchCase != null) {
             attributes.put("matchCase", Boolean.toString(matchCase));
         }
@@ -674,31 +674,31 @@ public abstract class AbstractFilter implements IFilter {
     }
 
     /**
-    *
-    * @param inputDate a string of date with format "yyyy-MM-dd HH:mm:ss"
-    * @return ogc:function name = "dateParse" ...
-    */
-   protected String generateFunctionDateParse(String inputDate) {
+     *
+     * @param inputDate a string of date with format "yyyy-MM-dd HH:mm:ss"
+     * @return ogc:function name = "dateParse" ...
+     */
+    protected String generateFunctionDateParse(String inputDate) {
 
-       return String.format("<ogc:Function name=\"dateParse\"> "
-                           + "<ogc:Literal>yyyy-MM-dd HH:mm:ss</ogc:Literal>"
-                           + "<ogc:Literal>  %s </ogc:Literal> "
-                          + "</ogc:Function>", inputDate);
-   }
-   
-   /**
-   * Converts a year into a date for use in queries where the data is a date.
-   * In this case a PropertyIsGreaterThanOrEqualTo query and a PropertyIsLessThanTo using the parsed date is
-   * probably the best we can do. (could do a PropertyIsBetween as well)
-   * @param inputDate a string of date with format "yyyy"
-   * @return ogc:function name = "dateParse"
-   */
-  protected String generateFunctionYearParse(int inputYear) {
+        return String.format("<ogc:Function name=\"dateParse\"> "
+                + "<ogc:Literal>yyyy-MM-dd HH:mm:ss</ogc:Literal>"
+                + "<ogc:Literal>  %s </ogc:Literal> "
+                + "</ogc:Function>", inputDate);
+    }
 
-      return String.format("<ogc:Function name=\"dateParse\"> "
-                          + "<ogc:Literal>yyyy</ogc:Literal>"
-                          + "<ogc:Literal>%d</ogc:Literal>"
-                         + "</ogc:Function>", inputYear);
-  }
+    /**
+     * Converts a year into a date for use in queries where the data is a date.
+     * In this case a PropertyIsGreaterThanOrEqualTo query and a PropertyIsLessThanTo using the parsed date is
+     * probably the best we can do. (could do a PropertyIsBetween as well)
+     * @param inputDate a string of date with format "yyyy"
+     * @return ogc:function name = "dateParse"
+     */
+    protected String generateFunctionYearParse(int inputYear) {
+
+        return String.format("<ogc:Function name=\"dateParse\"> "
+                + "<ogc:Literal>yyyy</ogc:Literal>"
+                + "<ogc:Literal>%d</ogc:Literal>"
+                + "</ogc:Function>", inputYear);
+    }
 
 }

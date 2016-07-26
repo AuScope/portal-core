@@ -39,11 +39,9 @@ public class TestCSWGetRecordResponse extends PortalTestClass {
     }
 
     /**
-     *
-     * @throws Exception
      */
     @Test
-    public void testGetCSWRecords() throws Exception {
+    public void testGetCSWRecords() {
         String parentFileId = "7c0dcd76-60bd-46d8-ade1-5e83362bb44a";
         List<CSWRecord> recs = this.recordResponse.getRecords();
 

@@ -5,6 +5,7 @@ import java.net.ConnectException;
 import java.util.List;
 
 import org.apache.http.client.methods.HttpRequestBase;
+import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.sissvoc.SISSVoc3MethodMaker;
 import org.auscope.portal.core.services.methodmakers.sissvoc.SISSVoc3MethodMaker.Format;
@@ -37,7 +38,7 @@ public class TestSISSVoc3Service extends PortalTestClass {
         service.setPageSize(50);
     }
 
-    private boolean containsResourceUri(List<Resource> list, String uri) {
+    private static boolean containsResourceUri(List<Resource> list, String uri) {
         for (Resource res : list) {
             if (res.getURI().equals(uri)) {
                 return true;
@@ -53,37 +54,40 @@ public class TestSISSVoc3Service extends PortalTestClass {
      */
     @Test
     public void testGetAllConcepts() throws Exception {
-        final InputStream rs1 = ResourceUtil
-                .loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/SISSVoc3_ConceptsRDF_MoreData.xml");
-        final InputStream rs2 = ResourceUtil
-                .loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/SISSVoc3_ConceptsRDF_NoMoreData.xml");
+        try (final HttpClientInputStream rs1 = new HttpClientInputStream(ResourceUtil
+                .loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/SISSVoc3_ConceptsRDF_MoreData.xml"), null);
+        final InputStream rs2 = new HttpClientInputStream(ResourceUtil
+                        .loadResourceAsStream(
+                                "org/auscope/portal/core/test/responses/sissvoc/SISSVoc3_ConceptsRDF_NoMoreData.xml"), null)) {
 
-        context.checking(new Expectations() {
-            {
-                oneOf(mockMethodMaker).getAllConcepts(baseUrl, repository, Format.Rdf, service.getPageSize(), 0);
-                will(returnValue(mockMethod));
-                oneOf(mockMethodMaker).getAllConcepts(baseUrl, repository, Format.Rdf, service.getPageSize(), 1);
-                will(returnValue(mockMethod2));
+            context.checking(new Expectations() {
+                {
+                    oneOf(mockMethodMaker).getAllConcepts(baseUrl, repository, Format.Rdf, service.getPageSize(), 0);
+                    will(returnValue(mockMethod));
+                    oneOf(mockMethodMaker).getAllConcepts(baseUrl, repository, Format.Rdf, service.getPageSize(), 1);
+                    will(returnValue(mockMethod2));
 
-                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
-                will(returnValue(rs1));
-                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod2);
-                will(returnValue(rs2));
+                    oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
+                    will(returnValue(rs1));
+                    oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod2);
+                    will(returnValue(rs2));
 
-                oneOf(mockMethod).releaseConnection();
-                oneOf(mockMethod2).releaseConnection();
-            }
-        });
+                    oneOf(mockMethod).releaseConnection();
+                    oneOf(mockMethod2).releaseConnection();
+                }
+            });
 
-        Model model = service.getAllConcepts();
-        Assert.assertNotNull(model);
-        List<Resource> resources = Lists.newArrayList(model.listSubjects());
-        Assert.assertEquals(7, resources.size());
-        Assert.assertTrue(containsResourceUri(resources,
-                "http://resource.auscope.org/classifier/AuScope/commodity/Energy"));
-        Assert.assertTrue(containsResourceUri(resources, "http://resource.auscope.org/classifier/PIRSA/commodity/U3O8"));
-        Assert.assertFalse(containsResourceUri(resources,
-                "http://resource.auscope.org/classifier/GA/Non-Existent-Resource/"));
+            Model model = service.getAllConcepts();
+            Assert.assertNotNull(model);
+            List<Resource> resources = Lists.newArrayList(model.listSubjects());
+            Assert.assertEquals(7, resources.size());
+            Assert.assertTrue(containsResourceUri(resources,
+                    "http://resource.auscope.org/classifier/AuScope/commodity/Energy"));
+            Assert.assertTrue(
+                    containsResourceUri(resources, "http://resource.auscope.org/classifier/PIRSA/commodity/U3O8"));
+            Assert.assertFalse(containsResourceUri(resources,
+                    "http://resource.auscope.org/classifier/GA/Non-Existent-Resource/"));
+        }
     }
 
     /**
@@ -93,29 +97,31 @@ public class TestSISSVoc3Service extends PortalTestClass {
      */
     @Test(expected = PortalServiceException.class)
     public void testGetAllDescriptionsCommsError() throws Exception {
-        final String repository = "repository";
+        // final String repository = "repository";
 
-        final InputStream rs1 = ResourceUtil
-                .loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/SISSVoc3_ConceptsRDF_MoreData.xml");
+        try (final HttpClientInputStream rs1 = new HttpClientInputStream(ResourceUtil
+                .loadResourceAsStream(
+                        "org/auscope/portal/core/test/responses/sissvoc/SISSVoc3_ConceptsRDF_MoreData.xml"), null)) {
 
-        context.checking(new Expectations() {
-            {
-                oneOf(mockMethodMaker).getAllConcepts(baseUrl, repository, Format.Rdf, service.getPageSize(), 0);
-                will(returnValue(mockMethod));
-                oneOf(mockMethodMaker).getAllConcepts(baseUrl, repository, Format.Rdf, service.getPageSize(), 1);
-                will(returnValue(mockMethod2));
+            context.checking(new Expectations() {
+                {
+                    oneOf(mockMethodMaker).getAllConcepts(baseUrl, repository, Format.Rdf, service.getPageSize(), 0);
+                    will(returnValue(mockMethod));
+                    oneOf(mockMethodMaker).getAllConcepts(baseUrl, repository, Format.Rdf, service.getPageSize(), 1);
+                    will(returnValue(mockMethod2));
 
-                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
-                will(returnValue(rs1));
-                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod2);
-                will(throwException(new ConnectException("error")));
+                    oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
+                    will(returnValue(rs1));
+                    oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod2);
+                    will(throwException(new ConnectException("error")));
 
-                oneOf(mockMethod).releaseConnection();
-                oneOf(mockMethod2).releaseConnection();
-            }
-        });
+                    oneOf(mockMethod).releaseConnection();
+                    oneOf(mockMethod2).releaseConnection();
+                }
+            });
 
-        service.getAllConcepts();
+            service.getAllConcepts();
+        }
     }
 
     /**
@@ -127,36 +133,38 @@ public class TestSISSVoc3Service extends PortalTestClass {
     public void testGetResourceByUri() throws Exception {
         final String uri = "http://resource.auscope.org/classifier/GA/commodity/Au";
 
-        final InputStream rs1 = ResourceUtil
-                .loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/SISSVoc3_ResourceRDF.xml");
+        try (final HttpClientInputStream rs1 = new HttpClientInputStream(ResourceUtil
+                .loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/SISSVoc3_ResourceRDF.xml"), null)) {
 
-        context.checking(new Expectations() {
-            {
-                oneOf(mockMethodMaker).getResourceByUri(baseUrl, repository, uri, Format.Rdf);
-                will(returnValue(mockMethod));
+            context.checking(new Expectations() {
+                {
+                    oneOf(mockMethodMaker).getResourceByUri(baseUrl, repository, uri, Format.Rdf);
+                    will(returnValue(mockMethod));
 
-                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
-                will(returnValue(rs1));
+                    oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
+                    will(returnValue(rs1));
 
-                oneOf(mockMethod).releaseConnection();
+                    oneOf(mockMethod).releaseConnection();
+                }
+            });
+
+            Resource res = service.getResourceByUri(uri);
+            Assert.assertNotNull(res);
+
+            Property skosDefn = res.getModel().createProperty("http://www.w3.org/2004/02/skos/core#", "definition");
+            List<Statement> matchingStatements = Lists.newArrayList(res.listProperties(skosDefn));
+
+            boolean foundEnglishDef = false;
+            for (Statement statement : matchingStatements) {
+                if (statement.getObject().asLiteral().getLanguage().equals("en")) {
+                    foundEnglishDef = true;
+                    Assert.assertEquals("Gold is a highly sought-after precious metal in jewelry.",
+                            statement.getObject()
+                                    .asLiteral().getString());
+                }
             }
-        });
-
-        Resource res = service.getResourceByUri(uri);
-        Assert.assertNotNull(res);
-
-        Property skosDefn = res.getModel().createProperty("http://www.w3.org/2004/02/skos/core#", "definition");
-        List<Statement> matchingStatements = Lists.newArrayList(res.listProperties(skosDefn));
-
-        boolean foundEnglishDef = false;
-        for (Statement statement : matchingStatements) {
-            if (statement.getObject().asLiteral().getLanguage().equals("en")) {
-                foundEnglishDef = true;
-                Assert.assertEquals("Gold is a highly sought-after precious metal in jewelry.", statement.getObject()
-                        .asLiteral().getString());
-            }
+            Assert.assertTrue("No English skos definition found!", foundEnglishDef);
         }
-        Assert.assertTrue("No English skos definition found!", foundEnglishDef);
     }
 
     /**
