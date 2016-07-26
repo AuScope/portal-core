@@ -86,4 +86,17 @@ public class TestCSVUtil extends PortalTestClass {
         Assert.assertEquals("JHP9", columns.get("name").get(1));
 
     }
+    
+    /** 
+     * Tests that if you input duplicate columns to 'getColumnOfInterest', it returns the correct number of elements
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testDuplicateCols() throws Exception {
+        String[] dup_names = {"name","name","FID"};
+        HashMap<String, ArrayList<String>> columns = csvUtil.getColumnOfInterest(dup_names);
+        Assert.assertEquals(5, columns.get("name").size());
+        Assert.assertEquals(5, columns.get("FID").size());
+    }
 }
