@@ -268,9 +268,10 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                     if(!(csws instanceof Array)){
                         csws = [csws];
                     }
-                    for(var i=0; i < csws.length; i++){
+                    for(var i=csws.length-1; i>=0; i--){
                         csws[i].set('customlayer',true);
                         customPanel.getStore().insert(0,csws[i]);
+                        customPanel.ensureVisible(0);
                     }
                     
                 }
