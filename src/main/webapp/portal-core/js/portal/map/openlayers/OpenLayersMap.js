@@ -241,7 +241,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                             // layers get filtered based on the service provider
                             // or from a single provider and based on the layer name
                             if (resourcesToIterate[k].get('name') != serviceFilter &&
-                                    this._getDomain(resourcesToIterate[k].get('url')) != serviceFilter) {
+                                    this._getDomain(resourcesToIterate[k].get('url')) != this._getDomain(serviceFilter)) {
                                 continue;
                             }
                         }
