@@ -68,7 +68,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 },
                 iconRenderer: me._deleteRenderer
             },{
-                field: 'loading',
+                field: ['loading', 'active'],
                 stopEvent: true,
                 clickHandler: Ext.bind(me._loadingClickHandler, me),
                 tipRenderer: Ext.bind(me._loadingTipRenderer, me),
