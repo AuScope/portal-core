@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
-import java.net.UnknownHostException;
 import java.util.Arrays;
 
 import org.apache.commons.httpclient.HttpException;
@@ -20,7 +19,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -43,8 +41,7 @@ public class HttpServiceCaller {
         this.connectionTimeOut = connectionTimeOut;
     }
 
-    public String getMethodResponseAsString(HttpRequestBase method) throws ConnectException, UnknownHostException,
-            ConnectTimeoutException, Exception {
+    public String getMethodResponseAsString(HttpRequestBase method) throws IOException {
         RequestConfig requestConfig = RequestConfig.custom()
                 .setConnectTimeout(this.connectionTimeOut)
                 .setSocketTimeout(this.connectionTimeOut)
@@ -69,10 +66,9 @@ public class HttpServiceCaller {
      * @param httpClient
      *            The client that will be used
      * @return
-     * @throws Exception
-     */
-    public String getMethodResponseAsString(HttpRequestBase method, HttpClient client) throws ConnectException,
-            UnknownHostException, ConnectTimeoutException, Exception {
+     * @throws IOException 
+     */    
+    public String getMethodResponseAsString(HttpRequestBase method, HttpClient client) throws IOException {
         //invoke the method
         HttpResponse httpResponse = this.invokeTheMethod(method, client);
 
@@ -98,9 +94,10 @@ public class HttpServiceCaller {
      * @param method
      *            The method to be executed
      * @return
+     * @throws IOException 
      */
     @SuppressWarnings("resource")
-    public HttpClientInputStream getMethodResponseAsStream(HttpRequestBase method) throws Exception {
+    public HttpClientInputStream getMethodResponseAsStream(HttpRequestBase method) throws IOException {
         RequestConfig requestConfig = RequestConfig.custom()
                 .setConnectTimeout(this.connectionTimeOut)
                 .setSocketTimeout(this.connectionTimeOut)
@@ -125,8 +122,10 @@ public class HttpServiceCaller {
      * @param httpClient
      *            The client that will be used
      * @return
+     * @throws IOException 
+     * @throws  
      */
-    public InputStream getMethodResponseAsStream(HttpRequestBase method, HttpClient client) throws Exception {
+    public InputStream getMethodResponseAsStream(HttpRequestBase method, HttpClient client) throws IOException {
         //invoke the method
         HttpResponse httpResponse = this.invokeTheMethod(method, client);
         return httpResponse.getEntity().getContent();
@@ -138,8 +137,10 @@ public class HttpServiceCaller {
      * @param method
      *            The method to be executed
      * @return
+     * @throws IOException 
+     * @throws  
      */
-    public byte[] getMethodResponseAsBytes(HttpRequestBase method) throws Exception {
+    public byte[] getMethodResponseAsBytes(HttpRequestBase method) throws IOException {
         RequestConfig requestConfig = RequestConfig.custom()
                 .setConnectTimeout(this.connectionTimeOut)
                 .setSocketTimeout(this.connectionTimeOut)
@@ -165,9 +166,8 @@ public class HttpServiceCaller {
      *            The client that will be used
      * @return
      * @throws IOException 
-     * @throws IllegalStateException 
      */
-    public byte[] getMethodResponseAsBytes(HttpRequestBase method, HttpClient client) throws IllegalStateException, IOException {
+    public byte[] getMethodResponseAsBytes(HttpRequestBase method, HttpClient client) throws IOException {
         //invoke the method
         HttpResponse httpResponse = this.invokeTheMethod(method, client);
 
@@ -182,7 +182,7 @@ public class HttpServiceCaller {
     }
 
     @SuppressWarnings("resource")
-    public HttpClientResponse getMethodResponseAsHttpResponse(HttpRequestBase method) throws IllegalStateException, IOException {
+    public HttpClientResponse getMethodResponseAsHttpResponse(HttpRequestBase method) throws IOException {
         RequestConfig requestConfig = RequestConfig.custom()
                 .setConnectTimeout(this.connectionTimeOut)
                 .setSocketTimeout(this.connectionTimeOut)
@@ -204,9 +204,8 @@ public class HttpServiceCaller {
      * @param method
      * @param httpClient
      * @throws IOException 
-     * @throws IllegalStateException 
      */
-    private HttpResponse invokeTheMethod(HttpRequestBase method, HttpClient client) throws IllegalStateException, IOException {
+    private HttpResponse invokeTheMethod(HttpRequestBase method, HttpClient client) throws IOException {
         if(client==null) throw new IllegalArgumentException("HttpClient must not be null");
         
         log.debug("method=" + method.getURI());

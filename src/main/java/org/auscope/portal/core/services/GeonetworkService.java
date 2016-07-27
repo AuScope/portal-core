@@ -1,7 +1,13 @@
 package org.auscope.portal.core.services;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,6 +23,7 @@ import org.auscope.portal.core.util.DOMUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * A service class that provides high level interactions with Geonetwork
@@ -57,9 +64,10 @@ public class GeonetworkService {
      * 
      * @param record
      * @return
-     * @throws Exception
+     * @throws ParserConfigurationException 
+     * @throws TransformerException 
      */
-    private static String cswRecordToMDMetadataXml(CSWRecord record) throws Exception {
+    private static String cswRecordToMDMetadataXml(CSWRecord record) throws PortalServiceException, TransformerException {
         CSWRecordTransformer transformer = new CSWRecordTransformer(); //more than meets the eye
         Node mdMetadataNode = transformer.transformToNode(record);
         return DOMUtil.buildStringFromDom(mdMetadataNode, true);
@@ -94,22 +102,29 @@ public class GeonetworkService {
     }
 
     /**
-     * Attempts to query geonetwork for a record with the specified UUID. If succesful the underlying "record id" (not uuid) is returned which is used by
+     * Attempts to query geonetwork for a record with the specified UUID. If successful the underlying "record id" (not uuid) is returned which is used by
      * certain operations in this service
      *
      * @param uuid
      * @return
+     * @throws PortalServiceException 
+     * @throws IOException 
      */
-    private String convertUUIDToRecordID(String uuid, String sessionCookie) throws Exception {
+    private String convertUUIDToRecordID(String uuid, String sessionCookie) throws PortalServiceException, IOException {
         HttpRequestBase metadataInfoMethod = gnMethodMaker.makeRecordMetadataGetMethod(endpoint, uuid, sessionCookie);
         String responseString = serviceCaller.getMethodResponseAsString(metadataInfoMethod);
-        Document responseDoc = DOMUtil.buildDomFromString(responseString);
+        Node idNode;
+        try {
+            Document responseDoc = DOMUtil.buildDomFromString(responseString);
 
-        XPathExpression getIdExpr = DOMUtil.compileXPathExpr("/gmd:MD_Metadata/geonet:info/id",
-                new CSWNamespaceContext());
-        Node idNode = (Node) getIdExpr.evaluate(responseDoc, XPathConstants.NODE);
+            XPathExpression getIdExpr = DOMUtil.compileXPathExpr("/gmd:MD_Metadata/geonet:info/id",
+                    new CSWNamespaceContext());
+            idNode = (Node) getIdExpr.evaluate(responseDoc, XPathConstants.NODE);
+        } catch (XPathExpressionException | ParserConfigurationException | SAXException e) {
+            throw new PortalServiceException(e.getMessage(),e);
+        }
         if (idNode == null) {
-            throw new Exception("Response does not contain geonetwork info about record's internal ID");
+            throw new PortalServiceException("Response does not contain geonetwork info about record's internal ID");
         }
         String recordId = idNode.getTextContent();
 
@@ -125,19 +140,30 @@ public class GeonetworkService {
      * 
      * @param record
      * @return
-     * @throws Exception
+     * @throws PortalServiceException 
+     * @throws IOException 
      */
-    public String makeCSWRecordInsertion(CSWRecord record) throws Exception {
-        String mdMetadataXml = cswRecordToMDMetadataXml(record);
+    public String makeCSWRecordInsertion(CSWRecord record) throws PortalServiceException, IOException {
+        String mdMetadataXml;
+        try {
+            mdMetadataXml = cswRecordToMDMetadataXml(record);
+        } catch (TransformerException e1) {
+            throw new PortalServiceException(e1.getMessage(),e1);
+        }
         String gnResponseString = null;
 
         //Login and extract our cookies (this will be our session id)
-        HttpRequestBase methodLogin = gnMethodMaker.makeUserLoginMethod(endpoint, userName, password);
+        HttpRequestBase methodLogin;
+        try {
+            methodLogin = gnMethodMaker.makeUserLoginMethod(endpoint, userName, password);
+        } catch (URISyntaxException e) {
+            throw new PortalServiceException(e.getMessage(),e);
+        }
         try (HttpClientResponse gnResponse = serviceCaller.getMethodResponseAsHttpResponse(methodLogin)) {
             gnResponseString = serviceCaller.responseToString(gnResponse);
             logger.debug(String.format("GN Login response: %1$s", gnResponseString));
             if (!gnResponseString.contains("<ok />")) {
-                throw new Exception("Geonetwork login failed");
+                throw new PortalServiceException("Geonetwork login failed");
             }
 
             String sessionCookie = gnResponse.getFirstHeader("Set-Cookie").getValue();
@@ -152,7 +178,7 @@ public class GeonetworkService {
             // next step
             String uuid = extractUuid(gnResponseString);
             if (uuid == null || uuid.isEmpty()) {
-                throw new Exception("Unable to extract uuid");
+                throw new PortalServiceException("Unable to extract uuid");
             }
             String recordId = convertUUIDToRecordID(uuid, sessionCookie);
 

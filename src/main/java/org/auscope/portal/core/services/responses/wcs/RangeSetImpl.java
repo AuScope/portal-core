@@ -1,6 +1,7 @@
 package org.auscope.portal.core.services.responses.wcs;
 
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.auscope.portal.core.services.namespaces.WCSNamespaceContext;
 import org.auscope.portal.core.util.DOMUtil;
@@ -16,7 +17,7 @@ public class RangeSetImpl implements RangeSet {
     private ValueEnumType[] nullValues;
     private AxisDescription[] axisDescriptions;
 
-    public RangeSetImpl(Node node, WCSNamespaceContext nc) throws Exception {
+    public RangeSetImpl(Node node, WCSNamespaceContext nc) throws XPathExpressionException {
         Node tempNode = (Node) DOMUtil.compileXPathExpr("wcs:description", nc).evaluate(node, XPathConstants.NODE);
         if (tempNode != null)
             description = tempNode.getTextContent();

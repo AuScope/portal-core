@@ -1,23 +1,28 @@
 package org.auscope.portal.core.util;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.test.ResourceUtil;
+import org.junit.Assert;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
-import junit.framework.Assert;
 import net.sf.saxon.xpath.XPathFactoryImpl;
 
 /**
@@ -26,15 +31,16 @@ import net.sf.saxon.xpath.XPathFactoryImpl;
  * @author Josh Vote
  *
  */
-@SuppressWarnings("deprecation")
 public class TestDOMUtil extends PortalTestClass {
     /**
      * Simple test to ensure that the 2 DOM util methods are reversible
-     *
-     * @throws Exception
+     * @throws SAXException 
+     * @throws IOException 
+     * @throws ParserConfigurationException 
+     * @throws TransformerException 
      */
     @Test
-    public void testReversibleTransformation() throws Exception {
+    public void testReversibleTransformation() throws ParserConfigurationException, IOException, SAXException, TransformerException {
         final String originalXmlString = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/xml/TestXML_NoPrettyPrint.xml");
 
@@ -93,11 +99,13 @@ public class TestDOMUtil extends PortalTestClass {
 
     /**
      * Simple test to ensure that the DOM object is namespace aware
-     *
-     * @throws Exception
+     * @throws XPathExpressionException 
+     * @throws IOException 
+     * @throws SAXException 
+     * @throws ParserConfigurationException 
      */
     @Test
-    public void testDOMObjectNamespace() throws Exception {
+    public void testDOMObjectNamespace() throws XPathExpressionException, IOException, ParserConfigurationException, SAXException {
         //Build our DOM
         final String originalXmlString = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/xml/TestXML_NoPrettyPrint.xml");

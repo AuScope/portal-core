@@ -52,11 +52,10 @@ public class TestCSVUtil extends PortalTestClass {
 
     /**
      * Tests closeQuietely works as intended when a null reference is passed
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test
-    public void testColumnOfInterest() throws Exception {
+    public void testColumnOfInterest() throws IOException {
         String[] interest = {"FID", "elev", "wt", "sd"};
         HashMap<String, ArrayList<String>> columns = csvUtil.getColumnOfInterest(interest);
         Assert.assertNotNull(columns);
@@ -72,11 +71,10 @@ public class TestCSVUtil extends PortalTestClass {
 
     /**
      * Tests closeQuietely works as intended when a null reference is passed
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test
-    public void testName() throws Exception {
+    public void testName() throws IOException {
         String[] interest = {"name"};
         HashMap<String, ArrayList<String>> columns = csvUtil.getColumnOfInterest(interest);
         Assert.assertNotNull(columns);
@@ -89,11 +87,10 @@ public class TestCSVUtil extends PortalTestClass {
     
     /** 
      * Tests that if you input duplicate columns to 'getColumnOfInterest', it returns the correct number of elements
-     *
-     * @throws Exception
+     * @throws IOException 
      */
     @Test
-    public void testDuplicateCols() throws Exception {
+    public void testDuplicateCols() throws IOException {
         String[] dup_names = {"name","name","FID"};
         HashMap<String, ArrayList<String>> columns = csvUtil.getColumnOfInterest(dup_names);
         Assert.assertEquals(5, columns.get("name").size());

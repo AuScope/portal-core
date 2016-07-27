@@ -3,6 +3,7 @@ package org.auscope.portal.core.services;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
+import java.net.URISyntaxException;
 import java.util.Scanner;
 
 import org.apache.http.client.methods.HttpRequestBase;
@@ -42,7 +43,7 @@ public class TestBaseWFSService extends PortalTestClass {
     }
 
     @Test
-    public void testGenerateFilterRequest() throws Exception {
+    public void testGenerateFilterRequest() throws URISyntaxException {
         final String wfsUrl = "http://example.org/wfs";
         final String featureType = "my:type";
         String featureId = null;
@@ -64,7 +65,7 @@ public class TestBaseWFSService extends PortalTestClass {
     }
 
     @Test
-    public void testGenerateFilterRequestWithFormatAndIndex() throws Exception {
+    public void testGenerateFilterRequestWithFormatAndIndex() throws URISyntaxException {
         final String wfsUrl = "http://example.org/wfs";
         final String featureType = "my:type";
         String featureId = null;
@@ -88,7 +89,7 @@ public class TestBaseWFSService extends PortalTestClass {
     }
 
     @Test
-    public void testGenerateFeatureIdRequest() throws Exception {
+    public void testGenerateFeatureIdRequest() throws URISyntaxException {
         final String wfsUrl = "http://example.org/wfs";
         final String featureType = "my:type";
         final String featureId = "fid";
@@ -109,7 +110,7 @@ public class TestBaseWFSService extends PortalTestClass {
     }
 
     @Test
-    public void testGetFeatureCount() throws Exception {
+    public void testGetFeatureCount() throws PortalServiceException, IOException {
         try (HttpClientInputStream responseStream = new HttpClientInputStream(ResourceUtil
                 .loadResourceAsStream("org/auscope/portal/core/test/responses/wfs/GetWFSFeatureCount.xml"), null)) {
             context.checking(new Expectations() {
@@ -127,7 +128,7 @@ public class TestBaseWFSService extends PortalTestClass {
     }
 
     @Test(expected = PortalServiceException.class)
-    public void testGetFeatureCountError() throws Exception {
+    public void testGetFeatureCountError() throws PortalServiceException, IOException {
         context.checking(new Expectations() {
             {
                 oneOf(mockHttpServiceCaller).getMethodResponseAsStream(mockMethod);
@@ -140,7 +141,7 @@ public class TestBaseWFSService extends PortalTestClass {
     }
 
     @Test(expected = PortalServiceException.class)
-    public void testGetFeatureCountOWSError() throws Exception {
+    public void testGetFeatureCountOWSError() throws PortalServiceException, IOException {
         try (InputStream responseStream = getClass().getResourceAsStream("/OWSExceptionSample1.xml")) {
 
             context.checking(new Expectations() {
@@ -156,7 +157,7 @@ public class TestBaseWFSService extends PortalTestClass {
     }
 
     @Test(expected = PortalServiceException.class)
-    public void testOwsError() throws Exception {
+    public void testOwsError() throws PortalServiceException, IOException {
         try (InputStream responseStream = getClass().getResourceAsStream("/OWSExceptionSample1.xml")) {
             context.checking(new Expectations() {
                 {
@@ -170,7 +171,7 @@ public class TestBaseWFSService extends PortalTestClass {
     }
 
     @Test(expected = PortalServiceException.class)
-    public void testConnectError() throws Exception {
+    public void testConnectError() throws PortalServiceException, IOException {
         context.checking(new Expectations() {
             {
                 oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockMethod);
@@ -182,7 +183,7 @@ public class TestBaseWFSService extends PortalTestClass {
     }
 
     @Test
-    public void testResponse() throws Exception {
+    public void testResponse() throws PortalServiceException, IOException {
         try (Scanner sc = new java.util.Scanner(
                 ResourceUtil
                         .loadResourceAsStream("org/auscope/portal/core/test/responses/wfs/commodityGetFeatureResponse.xml"))
@@ -203,7 +204,7 @@ public class TestBaseWFSService extends PortalTestClass {
     }
 
     @Test
-    public void testGetCapabilities() throws Exception {
+    public void testGetCapabilities() throws IOException, URISyntaxException, PortalServiceException  {
         final String responseString = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/responses/wfs/GetCapabilitiesResponse.xml");
         final String wfsUrl = "http://example.org/wfs";
@@ -240,7 +241,7 @@ public class TestBaseWFSService extends PortalTestClass {
     }
 
     @Test(expected = PortalServiceException.class)
-    public void testGetCapabilities_ServiceResponseError() throws Exception {
+    public void testGetCapabilities_ServiceResponseError() throws IOException, URISyntaxException, PortalServiceException {
         final String responseString = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/responses/ows/OWSExceptionSample1.xml");
         final String wfsUrl = "http://example.org/wfs";
@@ -259,7 +260,7 @@ public class TestBaseWFSService extends PortalTestClass {
     }
 
     @Test(expected = PortalServiceException.class)
-    public void testGetCapabilities_ServiceConnectionError() throws Exception {
+    public void testGetCapabilities_ServiceConnectionError() throws URISyntaxException, IOException, PortalServiceException {
         final String wfsUrl = "http://example.org/wfs";
 
         context.checking(new Expectations() {

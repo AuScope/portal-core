@@ -1,6 +1,7 @@
 package org.auscope.portal.core.services.methodmakers;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import org.apache.http.Consts;
@@ -38,11 +39,10 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
 
     /**
      * Tests the url for each download format
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test()
-    public void testExtension() throws Exception {
+    public void testExtension() throws IOException {
         final String opendapUrl = "http://fake.com/blah.nc";
         OPeNDAPGetDataMethodMaker methodMaker = new OPeNDAPGetDataMethodMaker();
 
@@ -64,11 +64,11 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
 
     /**
      * Tests a single constraint when it does NOT have to calculate the minimum bounding box
-     * 
-     * @throws Exception
+     * @throws IOException 
+     * @throws URISyntaxException 
      */
     @Test()
-    public void testSingleAxisConstraintNoBBox() throws Exception {
+    public void testSingleAxisConstraintNoBBox() throws IOException, URISyntaxException {
         final String opendapUrl = "http://fake.com/blah.nc";
         final OPeNDAPFormat format = OPeNDAPFormat.ASCII;
         final SimpleAxis a1 = new SimpleAxis("name1", "FLOAT", "km/h", new SimpleBounds(43, 56), null);
@@ -104,11 +104,11 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
 
     /**
      * Tests a single constraint when it MUST calculate minimum bounding box
-     * 
-     * @throws Exception
+     * @throws IOException 
+     * @throws URISyntaxException 
      */
     @Test()
-    public void testSingleAxisConstraint() throws Exception {
+    public void testSingleAxisConstraint() throws IOException, URISyntaxException {
         OPeNDAPGetDataMethodMaker methodMaker = new OPeNDAPGetDataMethodMaker();
         final String opendapUrl = "http://fake.com/blah.nc";
         final OPeNDAPFormat format = OPeNDAPFormat.ASCII;
@@ -219,9 +219,11 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
 
     /**
      * Tests a single grid constraint
+     * @throws IOException 
+     * @throws URISyntaxException 
      */
     @Test
-    public void testSingleGridConstraint() throws Exception {
+    public void testSingleGridConstraint() throws IOException, URISyntaxException {
         OPeNDAPGetDataMethodMaker methodMaker = new OPeNDAPGetDataMethodMaker();
         final String opendapUrl = "http://fake.com/blah.nc";
         final OPeNDAPFormat format = OPeNDAPFormat.ASCII;
@@ -283,9 +285,11 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
 
     /**
      * Tests a multi constraint request
+     * @throws IOException 
+     * @throws URISyntaxException 
      */
     @Test
-    public void testMultiConstraint() throws Exception {
+    public void testMultiConstraint() throws IOException, URISyntaxException {
         OPeNDAPGetDataMethodMaker methodMaker = new OPeNDAPGetDataMethodMaker();
         final String opendapUrl = "http://fake.com/blah.nc";
         final OPeNDAPFormat format = OPeNDAPFormat.ASCII;
@@ -345,11 +349,10 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
 
     /**
      * Tests that a read error is NOT ignored
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test(expected = IOException.class)
-    public void testReadError() throws Exception {
+    public void testReadError() throws IOException {
         OPeNDAPGetDataMethodMaker methodMaker = new OPeNDAPGetDataMethodMaker();
         final String opendapUrl = "http://fake.com/blah.nc";
         final OPeNDAPFormat format = OPeNDAPFormat.ASCII;

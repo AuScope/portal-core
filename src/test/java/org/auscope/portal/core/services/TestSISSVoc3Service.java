@@ -1,7 +1,9 @@
 package org.auscope.portal.core.services;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import org.apache.http.client.methods.HttpRequestBase;
@@ -49,11 +51,12 @@ public class TestSISSVoc3Service extends PortalTestClass {
 
     /**
      * Tests that iterating a repository works as expected
-     * 
-     * @throws Exception
+     * @throws URISyntaxException 
+     * @throws PortalServiceException 
+     * @throws IOException 
      */
     @Test
-    public void testGetAllConcepts() throws Exception {
+    public void testGetAllConcepts() throws PortalServiceException, URISyntaxException, IOException {
         try (final HttpClientInputStream rs1 = new HttpClientInputStream(ResourceUtil
                 .loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/SISSVoc3_ConceptsRDF_MoreData.xml"), null);
         final InputStream rs2 = new HttpClientInputStream(ResourceUtil
@@ -92,11 +95,12 @@ public class TestSISSVoc3Service extends PortalTestClass {
 
     /**
      * Tests that when iterating a repository, a single failure is reported correctly
-     * 
-     * @throws Exception
+     * @throws URISyntaxException 
+     * @throws PortalServiceException 
+     * @throws IOException 
      */
     @Test(expected = PortalServiceException.class)
-    public void testGetAllDescriptionsCommsError() throws Exception {
+    public void testGetAllDescriptionsCommsError() throws PortalServiceException, URISyntaxException, IOException {
         // final String repository = "repository";
 
         try (final HttpClientInputStream rs1 = new HttpClientInputStream(ResourceUtil
@@ -126,11 +130,12 @@ public class TestSISSVoc3Service extends PortalTestClass {
 
     /**
      * Tests that single resources are extracted correctly
-     * 
-     * @throws Exception
+     * @throws PortalServiceException 
+     * @throws IOException 
+     * @throws URISyntaxException 
      */
     @Test
-    public void testGetResourceByUri() throws Exception {
+    public void testGetResourceByUri() throws PortalServiceException, URISyntaxException, IOException {
         final String uri = "http://resource.auscope.org/classifier/GA/commodity/Au";
 
         try (final HttpClientInputStream rs1 = new HttpClientInputStream(ResourceUtil
@@ -169,11 +174,12 @@ public class TestSISSVoc3Service extends PortalTestClass {
 
     /**
      * Tests that getting a resource with a comms error fails gracefully
-     * 
-     * @throws Exception
+     * @throws IOException 
+     * @throws URISyntaxException 
+     * @throws PortalServiceException 
      */
     @Test(expected = PortalServiceException.class)
-    public void testGetConceptByUri_CommsError() throws Exception {
+    public void testGetConceptByUri_CommsError() throws URISyntaxException, IOException, PortalServiceException  {
         final String uri = "http://resource.auscope.org/classifier/GA/commodity/Au";
 
         context.checking(new Expectations() {

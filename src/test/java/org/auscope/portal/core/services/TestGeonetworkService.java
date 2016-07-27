@@ -1,6 +1,8 @@
 package org.auscope.portal.core.services;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.message.BasicHeader;
@@ -14,12 +16,10 @@ import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.test.ResourceUtil;
 import org.jmock.Expectations;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import junit.framework.Assert;
-
-@SuppressWarnings("deprecation")
 public class TestGeonetworkService extends PortalTestClass {
 
     private HttpServiceCaller serviceCaller;
@@ -41,7 +41,7 @@ public class TestGeonetworkService extends PortalTestClass {
     }
 
     @Test
-    public void testSuccessfulRequest() throws Exception {
+    public void testSuccessfulRequest() throws PortalServiceException, IOException, URISyntaxException {
         final String sessionCookie = "sessionCookie";
         final HttpRequestBase insertRecordMethod = context.mock(HttpRequestBase.class, "insertRecordMethod");
         final HttpRequestBase recordMetadataShowMethod = context
@@ -114,7 +114,7 @@ public class TestGeonetworkService extends PortalTestClass {
     }
 
     @Test(expected = Exception.class)
-    public void testBadLoginRequest() throws Exception {
+    public void testBadLoginRequest() throws IOException, URISyntaxException, PortalServiceException {
         final HttpRequestBase loginMethod = context.mock(HttpRequestBase.class, "loginMethod");
         final String loginResponse = "<html>The contents doesn't matter as a failed GN login returns a static page</html>";
 

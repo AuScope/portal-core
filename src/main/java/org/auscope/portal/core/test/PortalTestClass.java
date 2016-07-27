@@ -45,7 +45,6 @@ import junit.framework.Assert;
  * @author Josh Vote
  *
  */
-@SuppressWarnings("deprecation")
 @RunWith(JMock.class)
 public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler {
 
@@ -103,7 +102,6 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
      * @param returnValue
      *            The value to actually return
      * @return
-     * @throws Exception
      */
     protected Action delayReturnValue(long msDelay, Object returnValue) {
         return new DelayedReturnValueAction(msDelay, returnValue);
@@ -119,7 +117,6 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
      * @param throwable
      *            The object to throw
      * @return
-     * @throws Exception
      */
     protected Action delayThrowException(long msDelay, Throwable throwable) {
         return new DelayedThrowAction(throwable, msDelay);

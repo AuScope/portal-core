@@ -1,6 +1,7 @@
 package org.auscope.portal.core.services.methodmakers;
 
 import java.awt.Dimension;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -60,7 +61,7 @@ public class TestWCSMethodMakerGetCoverage extends PortalTestClass {
     }
 
     @Test
-    public void testBbox() throws Exception {
+    public void testBbox() throws URISyntaxException {
         Dimension outputSize = new Dimension(1, 2);
         Resolution outputResolution = null;
         TimeConstraint timeConstraint = null;
@@ -78,7 +79,7 @@ public class TestWCSMethodMakerGetCoverage extends PortalTestClass {
     }
 
     @Test
-    public void testTime() throws Exception {
+    public void testTime() throws URISyntaxException {
         Dimension outputSize = new Dimension(1, 1);
         Resolution outputResolution = null;
         TimeConstraint timeConstraint = new TimeConstraint("thetimeis");
@@ -97,7 +98,7 @@ public class TestWCSMethodMakerGetCoverage extends PortalTestClass {
     private void runOptionTest(String notToContain, String mustContain, String serviceURL, String layerName,
             String format, String outputCrs, Dimension outputSize,
             Resolution outputResolution, String inputCrs, CSWGeographicBoundingBox bbox, TimeConstraint timeConstraint,
-            Map<String, String> customParams) throws Exception {
+            Map<String, String> customParams) throws URISyntaxException {
 
         HttpRequestBase method = methodMaker.getCoverageMethod(serviceURL, layerName, format, outputCrs, outputSize,
                 outputResolution, inputCrs, bbox, timeConstraint, customParams);
@@ -115,7 +116,7 @@ public class TestWCSMethodMakerGetCoverage extends PortalTestClass {
     }
 
     @Test
-    public void testOptionalArguments() throws Exception {
+    public void testOptionalArguments() throws URISyntaxException {
         Map<String, String> customParams = new HashMap<>();
         customParams.put("param1", "param1value");
         customParams.put("param2", "param2value");
@@ -142,7 +143,7 @@ public class TestWCSMethodMakerGetCoverage extends PortalTestClass {
     }
 
     @Test
-    public void testBadArguments() throws Exception {
+    public void testBadArguments() throws URISyntaxException {
         try {
             methodMaker.getCoverageMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", null, null,
                     "inputCrs", mockBbox, new TimeConstraint("time"), null);
@@ -190,11 +191,10 @@ public class TestWCSMethodMakerGetCoverage extends PortalTestClass {
 
     /**
      * This test case is to ensure we correctly map North, South, East, West ordinates to a bounding box defined ambiguously as MINX-MAXX and MINY-MAXY
-     * 
-     * @throws Exception
+     * @throws URISyntaxException 
      */
     @Test
-    public void testBboxMeridians() throws Exception {
+    public void testBboxMeridians() throws URISyntaxException {
         HttpRequestBase method = methodMaker.getCoverageMethod("http://example.com/wcs", "layerName", "GeoTIFF",
                 "outputCrs", new Dimension(1, 2), null, "myCrs", mockAntiMeridianBbox, null, null);
 

@@ -1,10 +1,13 @@
 package org.auscope.portal.core.services.responses.vocab;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.auscope.portal.core.services.namespaces.VocabNamespaceContext;
 import org.auscope.portal.core.test.PortalTestClass;
@@ -14,6 +17,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 /**
  * Unit tests for ConceptFactory
@@ -55,9 +59,13 @@ public class TestConceptFactory extends PortalTestClass {
 
     /**
      * Runs the factory through a standard SISSVoc response XML
+     * @throws IOException 
+     * @throws SAXException 
+     * @throws ParserConfigurationException 
+     * @throws XPathExpressionException 
      */
     @Test
-    public void testSISSVocRDF() throws Exception {
+    public void testSISSVocRDF() throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
         //Build our expectation
         Concept concept1 = new Concept("urn:concept:1");
         Concept concept2 = new Concept("urn:concept:2");
@@ -119,9 +127,13 @@ public class TestConceptFactory extends PortalTestClass {
      * This is a legacy test for the older vocabularyServiceResponse.xml
      *
      * It tests our concepts still return EVEN if we don't define top level concepts
+     * @throws IOException 
+     * @throws SAXException 
+     * @throws ParserConfigurationException 
+     * @throws XPathExpressionException 
      */
     @Test
-    public void testGetConcepts() throws Exception {
+    public void testGetConcepts() throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
         String responseXml = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/responses/sissvoc/vocabularyServiceResponse.xml");
         Document responseDoc = DOMUtil.buildDomFromString(responseXml);

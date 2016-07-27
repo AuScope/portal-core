@@ -85,7 +85,6 @@ public class CSWCacheService {
      *            Will be involved in actually making a HTTP request
      * @param cswServiceList
      *            Must be an untyped array of CSWServiceItem objects (for bean autowiring) representing CSW URL endpoints
-     * @throws Exception
      */
     public CSWCacheService(Executor executor,
             HttpServiceCaller serviceCaller,
@@ -102,7 +101,6 @@ public class CSWCacheService {
      *            Will be involved in actually making a HTTP request
      * @param cswServiceList
      *            Must be an untyped array of CSWServiceItem objects (for bean autowiring) representing CSW URL endpoints
-     * @throws Exception
      */
     public CSWCacheService(Executor executor,
             HttpServiceCaller serviceCaller,
@@ -265,7 +263,6 @@ public class CSWCacheService {
      * Returns on WMS data records
      * 
      * @return
-     * @throws Exception
      */
     public List<CSWRecord> getWMSRecords() {
         return getFilteredRecords(OnlineResourceType.WMS);
@@ -275,7 +272,6 @@ public class CSWCacheService {
      * Returns only WCS data records
      * 
      * @return
-     * @throws Exception
      */
     public List<CSWRecord> getWCSRecords() {
         return getFilteredRecords(OnlineResourceType.WCS);
@@ -285,7 +281,6 @@ public class CSWCacheService {
      * Returns only WFS data records
      * 
      * @return
-     * @throws Exception
      */
     public List<CSWRecord> getWFSRecords() {
         return getFilteredRecords(OnlineResourceType.WFS);
@@ -296,7 +291,6 @@ public class CSWCacheService {
      * 
      * @param types
      * @return
-     * @throws Exception
      */
     private synchronized List<CSWRecord> getFilteredRecords(
             AbstractCSWOnlineResource.OnlineResourceType... types) {

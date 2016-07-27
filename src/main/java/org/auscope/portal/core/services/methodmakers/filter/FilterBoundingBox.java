@@ -220,10 +220,8 @@ public class FilterBoundingBox implements Serializable {
      * @param OgcServiceProviderType
      *            - GPT-74 - Need to change output depending on server {@link #parseFromValues(String, double, double, double, double, OgcServiceProviderType)}
      * @return the filter bounding box
-     * @throws Exception
-     *             the exception
      */
-    public static FilterBoundingBox parseFromJSON(JSONObject obj, OgcServiceProviderType OgcServiceProviderType) throws Exception {
+    public static FilterBoundingBox parseFromJSON(JSONObject obj, OgcServiceProviderType OgcServiceProviderType) {
         // Our filter bbox can come in a couple of formats
         if (obj.containsKey("lowerCornerPoints") && obj.containsKey("upperCornerPoints")) {
             FilterBoundingBox result = new FilterBoundingBox(obj.getString("bboxSrs"), null, null);
@@ -273,10 +271,8 @@ public class FilterBoundingBox implements Serializable {
      * @param obj
      *            the obj
      * @return the filter bounding box
-     * @throws Exception
-     *             the exception
      */
-    public static FilterBoundingBox parseFromJSON(JSONObject json) throws Exception {
+    public static FilterBoundingBox parseFromJSON(JSONObject json) {
         return parseFromJSON(json, OgcServiceProviderType.GeoServer);
     }
     
