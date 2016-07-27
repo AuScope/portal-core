@@ -214,7 +214,7 @@ public class ServiceDownloadManager {
             } catch (InterruptedException e) {
                 logger.error("No reason for this thread to be interrupted", e);
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(),e);
             } finally {
                 endPointSem.release();
                 processSem.release();
@@ -361,8 +361,6 @@ public class ServiceDownloadManager {
                     }
                 }
                 return tempZip;
-            } catch (Exception e) {
-                throw e;
             } finally {
                 zos.close();
             }

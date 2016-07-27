@@ -30,12 +30,11 @@ import org.jmock.api.ExpectationError;
 import org.jmock.integration.junit4.JMock;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-
-import junit.framework.Assert;
 
 /**
  * Base class for all unit test classes to inherit from

@@ -10,9 +10,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.hamcrest.Description;
+import org.junit.Assert;
 import org.junit.matchers.TypeSafeMatcher;
-
-import junit.framework.Assert;
 
 /**
  * A JUnit matcher for matching HttpMethodBase objects based on a few simplified terms
@@ -20,7 +19,6 @@ import junit.framework.Assert;
  * @author Josh Vote
  *
  */
-@SuppressWarnings("deprecation")
 public class HttpMethodBaseMatcher extends TypeSafeMatcher<HttpRequestBase> {
     /**
      * What different types of HttpMethods we can match for
