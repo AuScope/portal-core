@@ -3,6 +3,7 @@ package org.auscope.portal.core.services;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -20,7 +21,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * A service class that provides high level interactions with Geonetwork
- * 
+ *
  * @author Josh Vote
  *
  */
@@ -54,7 +55,7 @@ public class GeonetworkService {
 
     /**
      * Helper method for transforming an arbitrary CSWRecord into a <gmd:MD_Metadata> representation
-     * 
+     *
      * @param record
      * @return
      * @throws Exception
@@ -67,7 +68,7 @@ public class GeonetworkService {
 
     /**
      * Returns the record id from the response of an insert operation (or empty string if N/A)
-     * 
+     *
      * @param gnResponse
      *            A response from a CSWInsert operation
      * @return
@@ -122,7 +123,7 @@ public class GeonetworkService {
      * Attempts to insert the specified CSWRecord into Geonetwork. The record will be made publicly viewable.
      *
      * If successful the URL of the newly created record will be returned
-     * 
+     *
      * @param record
      * @return
      * @throws Exception
@@ -134,7 +135,7 @@ public class GeonetworkService {
         //Login and extract our cookies (this will be our session id)
         HttpRequestBase methodLogin = gnMethodMaker.makeUserLoginMethod(endpoint, userName, password);
         try (HttpClientResponse gnResponse = serviceCaller.getMethodResponseAsHttpResponse(methodLogin)) {
-            gnResponseString = serviceCaller.responseToString(gnResponse);
+            gnResponseString = IOUtils.toString(gnResponse.getEntity().getContent());
             logger.debug(String.format("GN Login response: %1$s", gnResponseString));
             if (!gnResponseString.contains("<ok />")) {
                 throw new Exception("Geonetwork login failed");
