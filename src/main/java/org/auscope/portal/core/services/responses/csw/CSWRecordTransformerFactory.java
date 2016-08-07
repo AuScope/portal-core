@@ -29,7 +29,7 @@ public class CSWRecordTransformerFactory {
      * @throws ParserConfigurationException 
      * @throws PortalServiceException 
      */
-    public CSWRecordTransformer newCSWRecordTransformer() throws ParserConfigurationException, PortalServiceException {
+    public CSWRecordTransformer newCSWRecordTransformer() throws PortalServiceException {
         return new CSWRecordTransformer();
     }
 }
