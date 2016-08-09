@@ -116,8 +116,6 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @param srsName
      *            - Can be null or empty
      * @return
-     * @throws Exception
-     *             if service URL or featureType is not provided
      */
     public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures,
             String srsName) {
@@ -140,8 +138,6 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @param resultType
      *            - Can be null - The type of response set you wish to request (default is Results)
      * @return
-     * @throws Exception
-     *             if service URL or featureType is not provided
      */
     public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures,
             String srsName, ResultType resultType) {
@@ -166,8 +162,6 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @param outputFormat
      *            - Can be null - The format you wish the response to take
      * @return
-     * @throws Exception
-     *             if service URL or featureType is not provided
      */
     public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures,
             String srsName, ResultType resultType, String outputFormat) {
@@ -195,8 +189,6 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @param startIndex
      *            - This is for services that supports paging.
      * @return
-     * @throws Exception
-     *             if service URL or featureType is not provided
      */
     public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures,
             String srsName, ResultType resultType, String outputFormat, String startIndex) {

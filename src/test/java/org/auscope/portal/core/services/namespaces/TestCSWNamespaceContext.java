@@ -4,15 +4,13 @@ import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 
 import org.auscope.portal.core.test.PortalTestClass;
+import org.junit.Assert;
 import org.junit.Test;
-
-import junit.framework.Assert;
 
 /**
  * @author san218
  * @version $Id$
  */
-@SuppressWarnings("deprecation")
 public class TestCSWNamespaceContext extends PortalTestClass {
 
     private String TEST_PREFIX = "gmd";

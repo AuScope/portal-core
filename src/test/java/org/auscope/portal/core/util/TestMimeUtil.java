@@ -1,11 +1,9 @@
 package org.auscope.portal.core.util;
 
 import org.auscope.portal.core.test.PortalTestClass;
+import org.junit.Assert;
 import org.junit.Test;
 
-import junit.framework.Assert;
-
-@SuppressWarnings("deprecation")
 public class TestMimeUtil extends PortalTestClass {
     @Test
     public void testNullString() {

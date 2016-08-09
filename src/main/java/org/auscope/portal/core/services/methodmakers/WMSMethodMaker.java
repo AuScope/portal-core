@@ -8,11 +8,9 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -381,26 +379,15 @@ public class WMSMethodMaker extends AbstractMethodMaker implements WMSMethodMake
             }
             return true;
             
-        } catch (ClientProtocolException e) {
-            log.error("WMSMethodMaker::Accepts(): ClientProtocolException");
-            errStr.delete(0, errStr.length());
-            errStr.append("I cannot resolve your WMS URL");
-            return false;
-
         } catch (SAXException|ParserConfigurationException e) {
             log.error("WMSMethodMaker::Accepts(): SAXException or ParserConfigurationException: "+e.getMessage()+"| type: "+e.toString());
             errStr.delete(0, errStr.length());
             errStr.append("I can resolve your WMS URL, but there was an XML format error");
             return false;
-            
-        } catch (HttpException e) {
-            log.error("WMSMethodMaker::Accepts(): httpexception:"+e.getMessage());
-            errStr.delete(0, errStr.length());
-            errStr.append("I cannot resolve your WMS URL, there was an HTTP error: "+e.getMessage());
-            return false;
-            
-        } catch (Exception e) {
-            log.error("WMSMethodMaker::Accepts(): exception: "+e.getMessage()+"| type: "+e.toString());
+                        
+        }
+        catch (URISyntaxException e1) {
+            log.error("WMSMethodMaker::Accepts(): URISyntaxException: "+e1.getMessage()+"| type: "+e1.toString());
             errStr.delete(0, errStr.length());
             errStr.append("Either I cannot resolve your WMS URL or cannot retrieve the web page");
             return false;
@@ -419,10 +406,11 @@ public class WMSMethodMaker extends AbstractMethodMaker implements WMSMethodMake
     
 
     @Override
-    public GetCapabilitiesRecord getGetCapabilitiesRecord(HttpRequestBase method)
-            throws Exception {
+    public GetCapabilitiesRecord getGetCapabilitiesRecord(HttpRequestBase method) throws IOException  {
         try (InputStream response = serviceCaller.getMethodResponseAsStream(method)) {
             return new GetCapabilitiesRecord_1_1_1(response);
+        } catch (ParserConfigurationException | SAXException e) {
+            throw new IOException(e.getMessage(), e);
         }
     }
 

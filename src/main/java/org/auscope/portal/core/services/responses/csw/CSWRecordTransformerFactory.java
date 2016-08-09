@@ -1,5 +1,8 @@
 package org.auscope.portal.core.services.responses.csw;
 
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.auscope.portal.core.services.PortalServiceException;
 import org.w3c.dom.Node;
 
 /**
@@ -23,8 +26,10 @@ public class CSWRecordTransformerFactory {
      * Creates a new instance of CSWRecordTransformer and generates an empty document that will be used for constructing DOM.
      * 
      * @return
+     * @throws ParserConfigurationException 
+     * @throws PortalServiceException 
      */
-    public CSWRecordTransformer newCSWRecordTransformer() throws Exception {
+    public CSWRecordTransformer newCSWRecordTransformer() throws PortalServiceException {
         return new CSWRecordTransformer();
     }
 }

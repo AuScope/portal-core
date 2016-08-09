@@ -17,17 +17,17 @@ public class TestResourceURIResolver extends PortalTestClass {
     }
 
     @Test
-    public void testGetFileRelative() throws Exception {
+    public void testGetFileRelative() throws TransformerException {
         Assert.assertNotNull(resolver.resolve("test-resource.txt", null));
     }
 
     @Test
-    public void testGetFileAbsolute() throws Exception {
+    public void testGetFileAbsolute() throws TransformerException {
         Assert.assertNotNull(resolver.resolve("/org/auscope/portal/core/xslt/test-resource.txt", null));
     }
 
     @Test(expected = TransformerException.class)
-    public void testGetFileDne() throws Exception {
+    public void testGetFileDne() throws TransformerException {
         resolver.resolve("file-that-dne", null);
     }
 }

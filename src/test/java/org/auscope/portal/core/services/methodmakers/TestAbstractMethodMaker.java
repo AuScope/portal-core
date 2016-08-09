@@ -59,9 +59,7 @@ public class TestAbstractMethodMaker extends PortalTestClass {
     }
 
     /**
-     * Tests the various edge cases with the URL concatentation
-     * 
-     * @throws Exception
+     * Tests the various edge cases with the URL concatenation
      */
     @Test
     public void testUrlPathConcat() {

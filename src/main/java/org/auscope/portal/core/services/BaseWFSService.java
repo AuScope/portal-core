@@ -69,7 +69,6 @@ public abstract class BaseWFSService {
      *            [optional] - Whether to request all features (default) or just the count
      * @return
      * @throws URISyntaxException
-     * @throws Exception
      */
     protected HttpRequestBase generateWFSRequest(String wfsUrl, String featureType, String featureId,
             String filterString, Integer maxFeatures, String srs, ResultType resultType) throws URISyntaxException {
@@ -105,7 +104,6 @@ public abstract class BaseWFSService {
      *            [optional] - The format the response should take
      * @return
      * @throws URISyntaxException
-     * @throws Exception
      */
     protected HttpRequestBase generateWFSRequest(String wfsUrl, String featureType, String featureId,
             String filterString, Integer maxFeatures, String srs, ResultType resultType, String outputFormat,

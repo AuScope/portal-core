@@ -14,17 +14,17 @@ import org.auscope.portal.core.services.responses.opendap.SimpleAxis;
 import org.auscope.portal.core.services.responses.opendap.SimpleBounds;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.jmock.Expectations;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import junit.framework.Assert;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
+import ucar.ma2.InvalidRangeException;
 import ucar.nc2.Dimension;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 
-@SuppressWarnings("deprecation")
 public class TestOpendapService extends PortalTestClass {
     private HttpServiceCaller mockServiceCaller = context.mock(HttpServiceCaller.class);
     private OPeNDAPGetDataMethodMaker mockMethodMaker = context.mock(OPeNDAPGetDataMethodMaker.class);
@@ -60,9 +60,12 @@ public class TestOpendapService extends PortalTestClass {
 
     /**
      * Tests simple axis parsing
+     * @throws PortalServiceException 
+     * @throws InvalidRangeException 
+     * @throws IOException 
      */
     @Test
-    public void testGetSimpleAxisVariables() throws Exception {
+    public void testGetSimpleAxisVariables() throws PortalServiceException, IOException, InvalidRangeException {
         final String serviceUrl = "http://example.org/opendap";
         final String variableName = "foo";
         final String variableUnits = "ms/s";
@@ -121,12 +124,12 @@ public class TestOpendapService extends PortalTestClass {
         Assert.assertEquals(0, variable.getDimensionBounds().getFrom(), 0.001);
         Assert.assertEquals(mockDimension1Data.length, variable.getDimensionBounds().getTo(), 0.001);
 
-        Assert.assertEquals(mockDimension1Data[0], variable.getValueBounds().getFrom());
-        Assert.assertEquals(mockDimension1Data[mockDimension1Data.length - 1], variable.getValueBounds().getTo());
+        Assert.assertEquals(mockDimension1Data[0], variable.getValueBounds().getFrom(), 0.001);
+        Assert.assertEquals(mockDimension1Data[mockDimension1Data.length - 1], variable.getValueBounds().getTo(), 0.001);
     }
 
     @Test
-    public void testGetData() throws Exception {
+    public void testGetData() throws IOException, PortalServiceException {
         final String serviceUrl = "http://example.org/opendap";
         final AbstractViewVariable[] constraints = new AbstractViewVariable[] {new SimpleAxis("foo", "DOUBLE", "ms/s",
                 null, new SimpleBounds(1.1, 1.3))};
@@ -153,7 +156,7 @@ public class TestOpendapService extends PortalTestClass {
     }
 
     @Test(expected = PortalServiceException.class)
-    public void testGetDataErrorRequest() throws Exception {
+    public void testGetDataErrorRequest() throws IOException, PortalServiceException {
         final String serviceUrl = "http://example.org/opendap";
         final AbstractViewVariable[] constraints = new AbstractViewVariable[] {new SimpleAxis("foo", "DOUBLE", "ms/s",
                 null, new SimpleBounds(1.1, 1.3))};

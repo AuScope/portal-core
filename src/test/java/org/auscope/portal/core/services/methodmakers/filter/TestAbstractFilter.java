@@ -1,9 +1,14 @@
 package org.auscope.portal.core.services.methodmakers.filter;
 
+import java.io.IOException;
+
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.commons.lang.NotImplementedException;
 import org.auscope.portal.core.test.AbstractFilterTestUtilities;
 import org.junit.Assert;
 import org.junit.Test;
+import org.xml.sax.SAXException;
 
 public class TestAbstractFilter extends AbstractFilter {
 
@@ -46,11 +51,12 @@ public class TestAbstractFilter extends AbstractFilter {
 
     /**
      * Tries to parse the XML that the filters generate - exceptions will be thrown if not well formed
-     *
-     * @throws Exception
+     * @throws SAXException 
+     * @throws IOException 
+     * @throws ParserConfigurationException 
      */
     @Test
-    public void testWellFormedXML() throws Exception {
+    public void testWellFormedXML() throws ParserConfigurationException, IOException, SAXException {
         AbstractFilterTestUtilities.parsefilterStringXML(this.generatePropertyIsEqualToFragment("myPropertyName",
                 "myLiteral"));
         AbstractFilterTestUtilities.parsefilterStringXML(this.generatePropertyIsNotEqualTo("myPropertyName",

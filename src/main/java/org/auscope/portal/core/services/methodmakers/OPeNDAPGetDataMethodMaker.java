@@ -1,5 +1,7 @@
 package org.auscope.portal.core.services.methodmakers;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.List;
@@ -42,9 +44,9 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
      *
      * @param ds
      * @param var
-     * @throws Exception
+     * @throws IOException 
      */
-    private void calculateIndexBounds(NetcdfDataset ds, AbstractViewVariable var) throws Exception {
+    private void calculateIndexBounds(NetcdfDataset ds, AbstractViewVariable var) throws IOException {
         if (var instanceof SimpleAxis) {
             calculateIndexBounds(ds, (SimpleAxis) var);
         } else if (var instanceof SimpleGrid) {
@@ -55,7 +57,7 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
         }
     }
 
-    private static void calculateIndexBounds(NetcdfDataset ds, SimpleAxis axis) throws Exception {
+    private static void calculateIndexBounds(NetcdfDataset ds, SimpleAxis axis) throws IOException {
         //Only calculate dimension bounds if required (and possible)
         if (axis.getValueBounds() != null && axis.getDimensionBounds() == null) {
             String parentGroupName = "";
@@ -96,7 +98,7 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
         }
     }
 
-    private void calculateIndexBounds(NetcdfDataset ds, SimpleGrid grid) throws Exception {
+    private void calculateIndexBounds(NetcdfDataset ds, SimpleGrid grid) throws IOException {
         for (AbstractViewVariable var : grid.getAxes()) {
             calculateIndexBounds(ds, var);
         }
@@ -151,7 +153,7 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
     }
 
     public HttpRequestBase getMethod(String opendapUrl, OPeNDAPFormat format, NetcdfDataset ds,
-            AbstractViewVariable[] constraints) throws Exception {
+            AbstractViewVariable[] constraints) throws IOException {
 
         //Generate our base URL (which depends on the format)
         HttpRequestBase method = null;
@@ -175,7 +177,11 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
 
             URIBuilder builder = new URIBuilder(method.getURI());
             builder.setParameters(parseQuery(URLEncoder.encode((generateQueryForConstraints(constraints)), "UTF-8"), Consts.UTF_8));
-            method.setURI(builder.build());
+            try {
+                method.setURI(builder.build());
+            } catch (URISyntaxException e) {
+                throw new IOException(e.getMessage(), e);
+            }
         }
 
         logger.debug(String.format("url='%1$s' query='%2$s'", opendapUrl, method.getURI()));

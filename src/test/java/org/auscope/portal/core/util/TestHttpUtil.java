@@ -1,6 +1,7 @@
 package org.auscope.portal.core.util;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,10 +19,10 @@ import org.junit.Test;
 public class TestHttpUtil extends PortalTestClass {
     /**
      * Ensure whitespace is encoded using %20 instead of '+'
-     * @throws Exception
+     * @throws URISyntaxException 
      */
     @Test
-    public void testWhitespaceEscaping() throws Exception {
+    public void testWhitespaceEscaping() throws URISyntaxException  {
         final List<NameValuePair> params = Arrays.asList((NameValuePair) new BasicNameValuePair("param1", "value with space"), (NameValuePair) new BasicNameValuePair("param2", "valuewithoutspace"));
         final String hostUrl = "http://example.com/path";
         URI uri = HttpUtil.parseURI(hostUrl, params);

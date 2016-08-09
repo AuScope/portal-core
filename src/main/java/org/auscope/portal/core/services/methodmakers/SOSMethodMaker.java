@@ -28,10 +28,6 @@ public class SOSMethodMaker extends AbstractMethodMaker {
      * @param serviceURL
      *            - required, SOS End Point
      * @return
-     * @throws Exception
-     *             if service URL or request not provided
-     *
-     * @return
      */
     //    public HttpMethodBase getCapabilitiesMethod(String serviceURL) {
     //        GetMethod method = new GetMethod(serviceURL);
@@ -65,8 +61,6 @@ public class SOSMethodMaker extends AbstractMethodMaker {
      *            - optional - FilterBoundingBox object -> convert to 52NorthSOS BBOX format : maxlat,minlon,minlat,maxlon(,srsURI) srsURI format :
      *            "http://www.opengis.net/def/crs/EPSG/0/"+epsg code
      * @return httpMethod
-     * @throws Exception
-     *             if service URL or request are not provided
      */
     public HttpRequestBase makePostMethod(String serviceURL, String request, String featureOfInterest,
             Date beginPosition, Date endPosition, FilterBoundingBox bbox) {

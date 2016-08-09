@@ -1,5 +1,7 @@
 package org.auscope.portal.core.services.methodmakers;
 
+import java.net.URISyntaxException;
+
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.junit.Assert;
@@ -7,27 +9,27 @@ import org.junit.Test;
 
 public class TestWCSMethodMakerDescribeCoverage extends PortalTestClass {
     @Test(expected = IllegalArgumentException.class)
-    public void testBadLayer() throws Exception {
+    public void testBadLayer() throws URISyntaxException  {
         new WCSMethodMaker().describeCoverageMethod("http://fake.com", "");
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testNullLayer() throws Exception {
+    public void testNullLayer() throws URISyntaxException  {
         new WCSMethodMaker().describeCoverageMethod("http://fake.com", null);
     }
 
     @Test(expected = NullPointerException.class)
-    public void testNullUrl() throws Exception {
+    public void testNullUrl() throws URISyntaxException  {
         new WCSMethodMaker().describeCoverageMethod(null, "layer_name");
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testBadUrl() throws Exception {
+    public void testBadUrl() throws URISyntaxException  {
         new WCSMethodMaker().describeCoverageMethod("", "layer_name");
     }
 
     @Test
-    public void testSimple() throws Exception {
+    public void testSimple() throws URISyntaxException  {
         HttpRequestBase method = new WCSMethodMaker().describeCoverageMethod("http://fake.com/bob", "layer_name");
 
         Assert.assertNotNull(method);

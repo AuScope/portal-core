@@ -1,12 +1,17 @@
 package org.auscope.portal.core.services.responses.wms;
 
+import java.io.IOException;
 import java.io.InputStream;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.test.ResourceUtil;
 import org.junit.Assert;
 import org.junit.Test;
+import org.xml.sax.SAXException;
 
 /**
  * Unit tests for GetCapabilitiesRecord.
@@ -22,12 +27,13 @@ public class TestGetCapabilitiesRecord extends PortalTestClass {
 
     /**
      * Tests that all relevant information is parsed from the specified WMS GetCapabilities document.
-     *
-     * @throws Exception
-     *             Test Failure
+     * @throws IOException 
+     * @throws SAXException 
+     * @throws ParserConfigurationException 
+     * @throws XPathExpressionException 
      */
     @Test
-    public void testParseWMSDocument() throws Exception {
+    public void testParseWMSDocument() throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
         //Build our record
         try (final InputStream xmlStream = ResourceUtil
                 .loadResourceAsStream("org/auscope/portal/core/test/responses/wms/wmsGetCapabilities.xml")) {
@@ -99,7 +105,7 @@ public class TestGetCapabilitiesRecord extends PortalTestClass {
     }
 
     @Test
-    public void testParseWMS_1_3_0() throws Exception {
+    public void testParseWMS_1_3_0() throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
         //Build our record
         try (final InputStream xmlStream = ResourceUtil
                 .loadResourceAsStream(

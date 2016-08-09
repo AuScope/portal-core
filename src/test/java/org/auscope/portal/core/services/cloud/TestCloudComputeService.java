@@ -20,6 +20,7 @@ import org.jclouds.openstack.nova.v2_0.domain.zonescoped.AvailabilityZone;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ZoneState;
 import org.jclouds.openstack.nova.v2_0.extensions.AvailabilityZoneApi;
 import org.jmock.Expectations;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,9 +30,6 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-import junit.framework.Assert;
-
-@SuppressWarnings("deprecation")
 public class TestCloudComputeService extends PortalTestClass {
 
     private final ComputeService mockComputeService = context.mock(ComputeService.class);
@@ -67,9 +65,11 @@ public class TestCloudComputeService extends PortalTestClass {
 
     /**
      * Tests that job execution correctly calls and parses a response from AmazonEC2
+     * @throws RunNodesException 
+     * @throws PortalServiceException 
      */
     @Test
-    public void testExecuteJob() throws Exception {
+    public void testExecuteJob() throws RunNodesException, PortalServiceException {
         final String userDataString = "user-data-string";
         final String expectedInstanceId = "instance-id";
 
@@ -130,9 +130,11 @@ public class TestCloudComputeService extends PortalTestClass {
 
     /**
      * Tests that job execution correctly calls and parses a response from AmazonEC2 when EC2 reports failure by returning 0 running instances.
+     * @throws RunNodesException 
+     * @throws PortalServiceException 
      */
     @Test(expected = PortalServiceException.class)
-    public void testExecuteJobFailure() throws Exception {
+    public void testExecuteJobFailure() throws RunNodesException, PortalServiceException {
         final String userDataString = "user-data-string";
 
         context.checking(new Expectations() {
@@ -194,9 +196,11 @@ public class TestCloudComputeService extends PortalTestClass {
 
     /**
      * Tests that job execution correctly calls and parses a response from AmazonEC2 when EC2 reports failure by returning 0 running instances.
+     * @throws RunNodesException 
+     * @throws PortalServiceException 
      */
     @Test(expected = PortalServiceException.class)
-    public void testExecuteJobFailure_EmptyResults() throws Exception {
+    public void testExecuteJobFailure_EmptyResults() throws RunNodesException, PortalServiceException {
         final String userDataString = "user-data-string";
 
         context.checking(new Expectations() {
@@ -270,9 +274,11 @@ public class TestCloudComputeService extends PortalTestClass {
 
     /**
      * Tests that specified zones are skipped correctly
+     * @throws RunNodesException 
+     * @throws PortalServiceException 
      */
     @Test
-    public void testSkippedZones() throws Exception {
+    public void testSkippedZones() throws RunNodesException, PortalServiceException {
         final String userDataString = "user-data-string";
         final String expectedInstanceId = "instance-id";
 
@@ -339,9 +345,11 @@ public class TestCloudComputeService extends PortalTestClass {
 
     /**
      * Tests that job execution correctly calls and parses a response from AmazonEC2 despite the first zone failing
+     * @throws RunNodesException 
+     * @throws PortalServiceException 
      */
     @Test
-    public void testExecuteJobBadZone() throws Exception {
+    public void testExecuteJobBadZone() throws RunNodesException, PortalServiceException {
         final String userDataString = "user-data-string";
         final String expectedInstanceId = "instance-id";
 
@@ -436,7 +444,7 @@ public class TestCloudComputeService extends PortalTestClass {
     }
 
     @Test
-    public void testGetJobStatus() throws Exception {
+    public void testGetJobStatus() throws PortalServiceException {
         job.setComputeInstanceId("i-running");
 
         context.checking(new Expectations() {{
@@ -451,7 +459,7 @@ public class TestCloudComputeService extends PortalTestClass {
     }
 
     @Test(expected=PortalServiceException.class)
-    public void testGetJobStatus_IOError() throws Exception {
+    public void testGetJobStatus_IOError() throws PortalServiceException  {
         job.setComputeInstanceId("i-running");
 
         context.checking(new Expectations() {{

@@ -104,11 +104,12 @@ public class TestSOSMethodMaker extends PortalTestClass {
 
     /**
      * Ensure we are always specifying service="SOS"
-     * 
-     * @throws Exception
+     * @throws SAXException 
+     * @throws IOException 
+     * @throws ParserConfigurationException 
      */
     @Test
-    public void testServiceParam() throws Exception {
+    public void testServiceParam() throws ParserConfigurationException, IOException, SAXException {
         final String sosUrl = "http://example.url";
         final String request = "GetObservation";
 
@@ -119,11 +120,12 @@ public class TestSOSMethodMaker extends PortalTestClass {
 
     /**
      * Ensure we are always specifying version="2.0.0"
-     * 
-     * @throws Exception
+     * @throws SAXException 
+     * @throws IOException 
+     * @throws ParserConfigurationException 
      */
     @Test
-    public void testVersionParam() throws Exception {
+    public void testVersionParam() throws ParserConfigurationException, IOException, SAXException {
         final String expectedVersion = "2.0.0";
         final String sosUrl = "http://example.url";
         final String request = "GetObservation";
@@ -142,7 +144,7 @@ public class TestSOSMethodMaker extends PortalTestClass {
     }
 
     @Test
-    public void testOptionalParams() throws Exception {
+    public void testOptionalParams() throws ParserConfigurationException, IOException, SAXException {
         final String sosUrl = "http://example.url";
         final String request = "GetObservation";
         final String featureID = "testID";

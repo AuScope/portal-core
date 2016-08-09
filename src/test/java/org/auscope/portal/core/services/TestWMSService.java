@@ -3,8 +3,12 @@ package org.auscope.portal.core.services;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
@@ -20,6 +24,7 @@ import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.xml.sax.SAXException;
 
 /**
  * Unit tests for GetCapabilitiesService
@@ -46,11 +51,15 @@ public class TestWMSService extends PortalTestClass {
 
     /**
      * Tests parsing of a standard WMS GetCapabilities response
-     * 
-     * @throws Exception
+     * @throws XPathExpressionException 
+     * @throws IOException 
+     * @throws URISyntaxException 
+     * @throws SAXException 
+     * @throws ParserConfigurationException 
+     * @throws PortalServiceException 
      */
     @Test
-    public void testParsingWMS111() throws Exception {
+    public void testParsingWMS111() throws XPathExpressionException, URISyntaxException, IOException, ParserConfigurationException, SAXException, PortalServiceException {
         final String serviceUrl = "http://service/wms";
         try (final InputStream is = ResourceUtil
                 .loadResourceAsStream(
@@ -120,9 +129,12 @@ public class TestWMSService extends PortalTestClass {
 
     /**
      * Tests that failure is passed up the chain as expected
+     * @throws PortalServiceException 
+     * @throws IOException 
+     * @throws URISyntaxException 
      */
     @Test(expected = PortalServiceException.class)
-    public void testRequestFailure() throws Exception {
+    public void testRequestFailure() throws PortalServiceException, URISyntaxException, IOException {
         final String serviceUrl = "http://service/wms";
         context.checking(new Expectations() {
             {
@@ -143,7 +155,7 @@ public class TestWMSService extends PortalTestClass {
     }
 
     @Test
-    public void testGetFeatureInfo() throws Exception {
+    public void testGetFeatureInfo() throws PortalServiceException, URISyntaxException, IOException {
         final String wmsUrl = "http://example.org/wms";
         final String format = "format";
         final String layer = "layer";
@@ -184,7 +196,7 @@ public class TestWMSService extends PortalTestClass {
     }
 
     @Test
-    public void testGetFeatureInfoPost() throws Exception {
+    public void testGetFeatureInfoPost() throws PortalServiceException, URISyntaxException, IOException {
         final String wmsUrl = "http://example.org/wms";
         final String format = "format";
         final String layer = "layer";
@@ -225,7 +237,7 @@ public class TestWMSService extends PortalTestClass {
     }
 
     @Test(expected = PortalServiceException.class)
-    public void testGetFeatureInfoError() throws Exception {
+    public void testGetFeatureInfoError() throws PortalServiceException, URISyntaxException, IOException {
         final String wmsUrl = "http://example.org/wms";
         final String format = "format";
         final String layer = "layer";
@@ -263,7 +275,7 @@ public class TestWMSService extends PortalTestClass {
     }
 
     @Test(expected = PortalServiceException.class)
-    public void testGetFeatureInfoOwsError() throws Exception {
+    public void testGetFeatureInfoOwsError() throws PortalServiceException, URISyntaxException, IOException {
         final String wmsUrl = "http://example.org/wms";
         final String format = "format";
         final String layer = "layer";

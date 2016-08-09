@@ -39,7 +39,6 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
      * Generates a method that performs a CSW GetRecords request for a maximum of 1000 records
      * 
      * @return
-     * @throws Exception
      */
     public HttpRequestBase makeMethod(String serviceUrl) {
         return this.makeMethod(serviceUrl, null, ResultType.Results, 1000, 1, null);
@@ -51,8 +50,6 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
      * @param filter
      *            [Optional] The filter to constrain our request
      * @return
-     * @throws UnsupportedEncodingException
-     *             If the PostMethod body cannot be encoded ISO-8859-1
      */
     public HttpRequestBase makeMethod(String serviceUrl, CSWGetDataRecordsFilter filter, ResultType resultType,
             int maxRecords) {

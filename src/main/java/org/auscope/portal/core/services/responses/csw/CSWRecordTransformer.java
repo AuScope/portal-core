@@ -8,12 +8,14 @@ import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.namespaces.CSWNamespaceContext;
 import org.auscope.portal.core.util.DOMUtil;
 import org.w3c.dom.Document;
@@ -64,13 +66,17 @@ public class CSWRecordTransformer {
 
     /**
      * Creates a new instance of this class and generates an empty document that will be used for constructing DOM.
-     *
-     * @throws Exception
+     * @throws ParserConfigurationException 
      */
-    public CSWRecordTransformer() throws Exception {
+    public CSWRecordTransformer() throws PortalServiceException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true); // never forget this!
-        DocumentBuilder builder = factory.newDocumentBuilder();
+        DocumentBuilder builder;
+        try {
+            builder = factory.newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
+            throw new PortalServiceException(e.getMessage(),e);
+        }
 
         //Build an empty document and a simple mdMetadataNode template
         this.document = builder.newDocument();

@@ -79,8 +79,6 @@ public class TestBasePortalController extends PortalTestClass {
 
     /**
      * Tests that BasePortalController has consistent return types for the various options
-     * 
-     * @throws Exception
      */
     @Test
     public void testConsistencyOfResponses() {
@@ -125,11 +123,10 @@ public class TestBasePortalController extends PortalTestClass {
 
     /**
      * Tests the responses are correctly written to a zip output stream
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test
-    public void writeResponseToZip() throws Exception {
+    public void writeResponseToZip() throws IOException {
         DownloadResponse dr1 = new DownloadResponse("http://example.org");
         String dr1Response = "dr1-response-contents";
         dr1.setResponseStream(new ByteArrayInputStream(dr1Response.getBytes()));
@@ -164,11 +161,10 @@ public class TestBasePortalController extends PortalTestClass {
 
     /**
      * Tests piping input->output works as expected
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test
-    public void testWriteInputToOutputStream() throws Exception {
+    public void testWriteInputToOutputStream() throws IOException {
         final int bufferSize = 134;
         try (final InputStream mockInput = context.mock(InputStream.class);
                 final OutputStream outputStream = context.mock(OutputStream.class)) {
@@ -197,11 +193,10 @@ public class TestBasePortalController extends PortalTestClass {
 
     /**
      * Tests piping input->output correctly closes input streams (where appropriate)
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test
-    public void testWriteInputToOutputStreamClosing() throws Exception {
+    public void testWriteInputToOutputStreamClosing() throws IOException {
         //VT: I removed the IOException expectation because if given an array of inputstream and 1 fail,
         //we should return the rest and encapsulate the exception in the file to inform users.
         final int bufferSize = 134;
@@ -225,11 +220,10 @@ public class TestBasePortalController extends PortalTestClass {
 
     /**
      * Tests piping input->output correctly closes input streams (where appropriate)
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test
-    public void testWriteInputToOutputStreamClosing2() throws Exception {
+    public void testWriteInputToOutputStreamClosing2() throws IOException {
         final int bufferSize = 134;
         try (final InputStream mockInput = context.mock(InputStream.class);
                 final OutputStream outputStream = context.mock(OutputStream.class)) {

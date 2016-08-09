@@ -1,5 +1,6 @@
 package org.auscope.portal.core.view.knownlayer;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,28 +9,25 @@ import org.auscope.portal.core.services.responses.csw.CSWOnlineResourceImpl;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.view.knownlayer.KnownLayerSelector.RelationType;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import junit.framework.Assert;
 
 /**
  * Unit tests for the various KnownLayerSelector implementations
  * 
  * @author Josh Vote
  */
-@SuppressWarnings("deprecation")
 public class TestKnownLayerSelectors extends PortalTestClass {
 
     private List<CSWRecord> recordList;
 
     /**
      * Loads record list with a set of 5 example CSW records
-     * 
-     * @throws Exception
+     * @throws MalformedURLException 
      */
     @Before
-    public void setupRecordList() throws Exception {
+    public void setupRecordList() throws MalformedURLException {
         recordList = new ArrayList<>();
 
         //WWW:LINK-1.0-http--link

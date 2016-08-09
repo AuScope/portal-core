@@ -1,5 +1,7 @@
 package org.auscope.portal.core.server.http.download;
 
+import java.io.IOException;
+
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -15,7 +17,7 @@ public class FileDownloadService {
     }
 
     @SuppressWarnings("resource")
-    public DownloadResponse singleFileDownloadFromURL(String url) throws Exception {
+    public DownloadResponse singleFileDownloadFromURL(String url) throws IOException {
 
         HttpGet method = new HttpGet(url);
         HttpResponse httpResponse = serviceCaller.getMethodResponseAsHttpResponse(method);

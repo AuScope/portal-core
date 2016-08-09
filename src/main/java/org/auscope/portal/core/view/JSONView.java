@@ -1,5 +1,6 @@
 package org.auscope.portal.core.view;
 
+import java.io.IOException;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,7 +41,7 @@ public class JSONView extends AbstractView {
 
     @Override
     protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+            HttpServletResponse response) throws IOException {
         response.setContentType(getContentType());
 
         if (jsonArray != null) { //convert just the array

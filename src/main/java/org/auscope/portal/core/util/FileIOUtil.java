@@ -35,7 +35,7 @@ public class FileIOUtil {
 
     protected final static Log log = LogFactory.getLog(FileIOUtil.class);
 
-    public static String convertExceptionToString(Exception ex, String debugQuery) {
+    public static String convertExceptionToString(Throwable ex, String debugQuery) {
         StringWriter sw = null;
         PrintWriter pw = null;
         String message = "";
@@ -332,7 +332,7 @@ public class FileIOUtil {
      * @param errorFileName
      *            The name of the error file in the zip (defaults to 'error.txt')
      */
-    public static void writeErrorToZip(ZipOutputStream zout, String debugQuery, Exception exceptionToPrint,
+    public static void writeErrorToZip(ZipOutputStream zout, String debugQuery, Throwable exceptionToPrint,
             String errorFileName) {
         String message = null;
         StringWriter sw = null;
@@ -368,7 +368,6 @@ public class FileIOUtil {
      *            The size (in bytes) of the in memory buffer
      * @param closeInput
      *            if true, the input will be closed prior to this method returning
-     * @throws Exception
      * @throws IOException
      */
     public static void writeInputToOutputStream(InputStream input, OutputStream output, int bufferSize,
@@ -481,7 +480,6 @@ public class FileIOUtil {
      * @param e
      * @param out
      * @param closeStream
-     * @throws Exception
      */
     public static void writeExceptionToXMLStream(Exception e, OutputStream out, boolean closeStream) throws IOException {
         writeExceptionToXMLStream(e, out, closeStream, "");
@@ -493,7 +491,6 @@ public class FileIOUtil {
      * @param e
      * @param out
      * @param closeStream
-     * @throws Exception
      */
     public static void writeExceptionToXMLStream(Exception e, OutputStream out, boolean closeStream,
             String additionalMsg) throws IOException {

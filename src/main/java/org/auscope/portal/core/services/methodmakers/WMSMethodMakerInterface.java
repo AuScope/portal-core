@@ -1,5 +1,6 @@
 package org.auscope.portal.core.services.methodmakers;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 
 import org.apache.http.client.methods.HttpRequestBase;
@@ -23,7 +24,7 @@ public interface WMSMethodMakerInterface {
      */
     public HttpRequestBase getCapabilitiesMethod(String wmsUrl) throws URISyntaxException;
 
-    public GetCapabilitiesRecord getGetCapabilitiesRecord(HttpRequestBase method) throws Exception;
+    public GetCapabilitiesRecord getGetCapabilitiesRecord(HttpRequestBase method) throws IOException;
 
     /**
      * Test whether wms 1.3.0 is accepted. Not sure if there is a better way of testing though.

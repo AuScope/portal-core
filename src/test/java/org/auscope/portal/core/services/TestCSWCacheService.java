@@ -1,6 +1,7 @@
 package org.auscope.portal.core.services;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,8 +51,6 @@ public class TestCSWCacheService extends PortalTestClass {
 
     /**
      * Initialises each of our unit tests with a new CSWFilterService
-     * 
-     * @throws Exception
      */
     @Before
     public void setUp() {
@@ -76,11 +75,10 @@ public class TestCSWCacheService extends PortalTestClass {
 
     /**
      * Tests a regular update goes through and makes multiple requests over multiple threads
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test
-    public void testMultiUpdate() throws Exception {
+    public void testMultiUpdate() throws IOException {
         final String moreRecordsString = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
         final String noMoreRecordsString = ResourceUtil
@@ -130,7 +128,11 @@ public class TestCSWCacheService extends PortalTestClass {
 
             // Start our updating and wait for our threads to finish
             Assert.assertTrue(this.cswCacheService.updateCache());
-            Thread.sleep(50);
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                Assert.fail("Test sleep interrupted. Test aborted.");
+            }
             try {
                 threadExecutor.getExecutorService().shutdown();
                 threadExecutor.getExecutorService().awaitTermination(180, TimeUnit.SECONDS);
@@ -153,11 +155,10 @@ public class TestCSWCacheService extends PortalTestClass {
 
     /**
      * Tests a regular update goes through and makes multiple requests over multiple threads
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test
-    public void testMultiUpdateWithErrors() throws Exception {
+    public void testMultiUpdateWithErrors() throws IOException {
         final String moreRecordsString = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
         final String noMoreRecordsString = ResourceUtil
@@ -205,7 +206,11 @@ public class TestCSWCacheService extends PortalTestClass {
 
             // Start our updating and wait for our threads to finish
             Assert.assertTrue(this.cswCacheService.updateCache());
-            Thread.sleep(50);
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                Assert.fail("Test sleep interrupted. Test aborted.");
+            }
             try {
                 threadExecutor.getExecutorService().shutdown();
                 threadExecutor.getExecutorService().awaitTermination(180, TimeUnit.SECONDS);
@@ -228,11 +233,10 @@ public class TestCSWCacheService extends PortalTestClass {
 
     /**
      * Tests a regular update goes through and makes multiple requests over multiple threads
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test
-    public void testMultiUpdateAllErrors() throws Exception {
+    public void testMultiUpdateAllErrors() throws IOException {
         final Map<String, Integer> expectedResult = new HashMap<>();
 
         context.checking(new Expectations() {
@@ -248,7 +252,11 @@ public class TestCSWCacheService extends PortalTestClass {
 
         //Start our updating and wait for our threads to finish
         Assert.assertTrue(this.cswCacheService.updateCache());
-        Thread.sleep(50);
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            Assert.fail("Test sleep interrupted. Test aborted.");
+        }
         try {
             threadExecutor.getExecutorService().shutdown();
             threadExecutor.getExecutorService().awaitTermination(180, TimeUnit.SECONDS);
@@ -270,11 +278,10 @@ public class TestCSWCacheService extends PortalTestClass {
 
     /**
      * Success if only a single update is able to run at any given time (Subsequent updates are terminated)
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test
-    public void testSingleUpdate() throws Exception {
+    public void testSingleUpdate() throws IOException {
         final long delay = 1000;
         final String cswResponse = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse_NoMoreRecords.xml");
@@ -305,11 +312,10 @@ public class TestCSWCacheService extends PortalTestClass {
 
     /**
      * Tests cache service correctly merges records based on keywords
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test
-    public void testRecordMerging() throws Exception {
+    public void testRecordMerging() throws IOException {
         final String mergeRecordsString = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse_MergeRecords.xml");
         try (final HttpClientInputStream t1r1 = new HttpClientInputStream(
@@ -336,7 +342,11 @@ public class TestCSWCacheService extends PortalTestClass {
 
             // Start our updating and wait for our threads to finish
             Assert.assertTrue(this.cswCacheService.updateCache(3, 2000));
-            Thread.sleep(50);
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                Assert.fail("Test sleep interrupted. Test aborted.");
+            }
             try {
                 threadExecutor.getExecutorService().shutdown();
                 threadExecutor.getExecutorService().awaitTermination(180, TimeUnit.SECONDS);
@@ -374,11 +384,10 @@ public class TestCSWCacheService extends PortalTestClass {
 
     /**
      * Tests cache service correctly merges online resources when they have the same name, type and URL (sans parameters)
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test
-    public void testOnlineResourceMerging() throws Exception {
+    public void testOnlineResourceMerging() throws IOException {
         final String mergeRecordsString = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse_MergeableResources.xml");
         
@@ -406,7 +415,11 @@ public class TestCSWCacheService extends PortalTestClass {
 
             // Start our updating and wait for our threads to finish
             Assert.assertTrue(this.cswCacheService.updateCache(3, 2000));
-            Thread.sleep(50);
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                Assert.fail("Test sleep interrupted. Test aborted.");
+            }
             try {
                 threadExecutor.getExecutorService().shutdown();
                 threadExecutor.getExecutorService().awaitTermination(180, TimeUnit.SECONDS);
@@ -444,11 +457,10 @@ public class TestCSWCacheService extends PortalTestClass {
 
     /**
      * Tests keyword cache gets properly populated
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test
-    public void testKeywordCache() throws Exception {
+    public void testKeywordCache() throws IOException {
         final String noMoreRecordsString = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse_NoMoreRecords.xml");
 
@@ -491,7 +503,11 @@ public class TestCSWCacheService extends PortalTestClass {
 
             // Start our updating and wait for our threads to finish
             Assert.assertTrue(this.cswCacheService.updateCache(3, 2000));
-            Thread.sleep(50);
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                Assert.fail("Test sleep interrupted. Test aborted.");
+            }
             try {
                 threadExecutor.getExecutorService().shutdown();
                 threadExecutor.getExecutorService().awaitTermination(180, TimeUnit.SECONDS);
@@ -511,11 +527,10 @@ public class TestCSWCacheService extends PortalTestClass {
 
     /**
      * Tests a regular update fails when receiving an OWS error response or connection exceptions
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test
-    public void testVariousErrors() throws Exception {
+    public void testVariousErrors() throws IOException {
         final String owsErrorString = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/responses/ows/OWSExceptionSample1.xml");
         final ByteArrayInputStream t1r1 = new ByteArrayInputStream(owsErrorString.getBytes());
@@ -541,7 +556,11 @@ public class TestCSWCacheService extends PortalTestClass {
 
         //Start our updating and wait for our threads to finish
         Assert.assertTrue(this.cswCacheService.updateCache(3, 2000));
-        Thread.sleep(50);
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            Assert.fail("Test sleep interrupted. Test aborted.");
+        }
         try {
             threadExecutor.getExecutorService().shutdown();
             threadExecutor.getExecutorService().awaitTermination(180, TimeUnit.SECONDS);
@@ -562,11 +581,10 @@ public class TestCSWCacheService extends PortalTestClass {
 
     /**
      * Tests a regular update goes through and makes multiple requests over multiple threads (using GetMethods)
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test
-    public void testMultiUpdateGet() throws Exception {
+    public void testMultiUpdateGet() throws IOException {
         final String moreRecordsString = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
         final String noMoreRecordsString = ResourceUtil
@@ -624,7 +642,11 @@ public class TestCSWCacheService extends PortalTestClass {
             this.cswCacheService.setForceGetMethods(true);
             Assert.assertTrue(this.cswCacheService.isForceGetMethods());
             Assert.assertTrue(this.cswCacheService.updateCache());
-            Thread.sleep(50);
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                Assert.fail("Test sleep interrupted. Test aborted.");
+            }
             try {
                 threadExecutor.getExecutorService().shutdown();
                 threadExecutor.getExecutorService().awaitTermination(180, TimeUnit.SECONDS);
@@ -647,11 +669,10 @@ public class TestCSWCacheService extends PortalTestClass {
 
     /**
      * Tests that getting a parent and child on different CSW pages will still result in the parent/child being preserved
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test
-    public void testPagedParentChildren() throws Exception {
+    public void testPagedParentChildren() throws IOException {
         final String moreRecordsString = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse_ChildRecord.xml");
         final String noMoreRecordsString = ResourceUtil
@@ -692,7 +713,11 @@ public class TestCSWCacheService extends PortalTestClass {
 
             // Start our updating and wait for our threads to finish
             Assert.assertTrue(this.cswCacheService.updateCache(3, 2000));
-            Thread.sleep(50);
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                Assert.fail("Test sleep interrupted. Test aborted.");
+            }
             try {
                 threadExecutor.getExecutorService().shutdown();
                 threadExecutor.getExecutorService().awaitTermination(180, TimeUnit.SECONDS);
