@@ -357,7 +357,7 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                 if (!success) {
                     el.setHtml('Error');
                 } else {
-                    el.setHtml(responseObj.data);
+                    el.setHtml(data);
                 }
             }
         });
