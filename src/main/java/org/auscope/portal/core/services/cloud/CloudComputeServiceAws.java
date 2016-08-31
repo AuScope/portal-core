@@ -291,17 +291,17 @@ public class CloudComputeServiceAws extends CloudComputeService {
     }
 
     final static ComputeType[] COMPUTE_TYPES = {
-           new ComputeType("m4.large", 2, 8000),
-           new ComputeType("m4.xlarge", 4, 16000),
-           new ComputeType("m4.2xlarge", 8, 32000),
-           new ComputeType("m4.4xlarge", 16, 64000),
-           new ComputeType("m4.10xlarge", 40, 160000), 
-           new ComputeType("c4.large", 2, 3750),
-           new ComputeType("c4.xlarge", 4, 7500),
-           new ComputeType("c4.2xlarge", 8, 15000),
-           new ComputeType("c4.4xlarge", 16, 30000),
-           new ComputeType("c4.8xlarge", 36, 60000),
-           new ComputeType("x1.32xlarge", 128, 1920000),
+            new ComputeType("x1.32xlarge", 128, 1920000),
+            new ComputeType("c4.8xlarge", 36, 60000),
+            new ComputeType("c4.4xlarge", 16, 30000),
+            new ComputeType("c4.2xlarge", 8, 15000),
+            new ComputeType("c4.xlarge", 4, 7500),
+            new ComputeType("c4.large", 2, 3750),
+            new ComputeType("m4.10xlarge", 40, 160000),
+            new ComputeType("m4.4xlarge", 16, 64000),
+            new ComputeType("m4.2xlarge", 8, 32000),
+            new ComputeType("m4.xlarge", 4, 16000),
+            new ComputeType("m4.large", 2, 8000)
     };
     
     /**
@@ -314,7 +314,7 @@ public class CloudComputeServiceAws extends CloudComputeService {
         ArrayList<ComputeType> result = new ArrayList<>();
         
         for (ComputeType type : COMPUTE_TYPES) {
-            if(type.getVcpus()>= minimumVCPUs && type.getRamMB()>= minimumRamMB) {
+            if(    (minimumVCPUs == null || type.getVcpus()>= minimumVCPUs) && (minimumRamMB == null || type.getRamMB()>= minimumRamMB)) {
                 result.add(type);
             }
         }
