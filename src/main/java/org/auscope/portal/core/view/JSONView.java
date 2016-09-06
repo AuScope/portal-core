@@ -43,12 +43,15 @@ public class JSONView extends AbstractView {
     protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request,
             HttpServletResponse response) throws IOException {
         response.setContentType(getContentType());
-
+        String content;
+        
         if (jsonArray != null) { //convert just the array
-            response.getWriter().write(JSONSerializer.toJSON(jsonArray, cfg).toString());
+            content = JSONSerializer.toJSON(jsonArray, cfg).toString();
         } else { //send of the object
-            response.getWriter().write(JSONSerializer.toJSON(model, cfg).toString());
+            content = JSONSerializer.toJSON(model, cfg).toString();
         }
+        
+        response.getWriter().write(content);
     }
 
 }
