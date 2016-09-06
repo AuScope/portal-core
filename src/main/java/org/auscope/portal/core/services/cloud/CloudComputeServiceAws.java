@@ -369,7 +369,8 @@ public class CloudComputeServiceAws extends CloudComputeService {
         }
 
         if (StringUtils.isEmpty(job.getComputeInstanceId())) {
-            throw new PortalServiceException("No compute instance ID has been set");
+            logger.debug("Unexpected missing job ID in getJobStatus(). Will return 'pending'. Local status: "+job.getStatus());
+            return InstanceStatus.Pending;
         }
 
         DescribeInstanceStatusRequest request = new DescribeInstanceStatusRequest();
