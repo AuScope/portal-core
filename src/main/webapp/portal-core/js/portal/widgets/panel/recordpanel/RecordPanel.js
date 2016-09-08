@@ -24,6 +24,7 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
     /**
      * Extends Ext.panel.Panel and adds the following:
      * {
+     *  allowReordering: Boolean - If true, the records will be able to be reordered by dragging and dropping. 
      *  store: Ext.data.Store - Contains the layer elements
      *  titleField: String - The field in store's underlying data model that will populate the title of each record
      *  titleIndex: Number - The 0 based index of where the title field will fit in amongst tools (default - 0)
@@ -41,10 +42,10 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
      */
     constructor : function(config) {
         var grouped = config.store.isGrouped();
-        
+
         this.recordRowMap = {};
         this.recordGroupMap = {};
-        
+
         //Ensure we setup the correct layout
         Ext.apply(config, {
             layout: {
@@ -72,6 +73,21 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
             scope: this
         });
 
+        //Setup our Drag Drop zones when the component is rendered.
+        if (this.rendered) {
+            this._initDDZones();
+        } else {
+            this.on({
+                afterrender: {
+                    fn: this._initDDZones,
+                    scope: this,
+                    options: {
+                        single: true
+                    }
+                }
+            });
+        }
+
         //If our store is already loaded - fill panel with existing contents
         if (this.store.getCount()) {
             var existingRecords = null;
@@ -89,6 +105,75 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
             return toolCfg.field[0];
         } else {
             return toolCfg.field;
+        }
+    },
+
+    /**
+     * Register drag/drop zones (if applicable)
+     */
+    _initDDZones: function() {
+        var me = this;
+        if (this.allowReordering) {
+            var dragEl = this.getEl();
+            this.ddGroup = Ext.id(undefined, 'recordpanel-dd-');
+            this.dragZone = new Ext.dd.DragZone(dragEl, {
+                ddGroup: this.ddGroup,
+                getDragData: function(e) {
+                    console.log('dragging target:', e.target);
+
+                    var el = Ext.fly(e.target);
+                    if (!el.hasCls('recordrowpanel')) {
+                        el = el.up('.recordrowpanel');
+                    }
+
+                    if (el) {
+                        var xy = el.getXY();
+
+                        //Back reference our component from the DOM and then use that to lookup our record
+                        var rowPanel = Ext.getCmp(el.dom.id);
+                        var record = me.store.getById(rowPanel.recordId);
+
+                        //Only show the header in the drag
+                        el = el.down('.x-panel-header');
+                        var sourceEl = el.dom;
+                        var d = sourceEl.cloneNode(true);
+                        d.id = Ext.id();
+
+                        return {
+                            ddel: d,
+                            sourceEl: sourceEl,
+                            repairXY: xy,
+                            source: me,
+                            draggedRecord: record
+                        }
+                    }
+                },
+
+                // Provide coordinates for the proxy to slide back to on failed drag.
+                // This is the original XY coordinates of the draggable element captured
+                // in the getDragData method.
+                getRepairXY: function() {
+                    return this.dragData.repairXY;
+                }
+            });
+
+
+            this.dropTarget = new Ext.dd.DropTarget(dragEl, {
+                ddGroup : this.ddGroup,
+                notifyEnter: function(ddSource, e, data) {
+                    if (data.source === me) {
+                        return;
+                    }
+
+                    console.log('TODO: notify enter');
+                },
+                notifyDrop: function(ddSource, e, data) {
+                    if (data.source === me) {
+                        return;
+                    }
+                    console.log('TODO: notify drop');
+                }
+            });
         }
     },
 

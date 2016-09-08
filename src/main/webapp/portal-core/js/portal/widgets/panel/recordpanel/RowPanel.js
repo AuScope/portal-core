@@ -63,6 +63,7 @@ Ext.define('portal.widgets.panel.recordpanel.RowPanel', {
         Ext.apply(config, {
             layout : 'fit',
             border: true,
+            cls: 'recordrowpanel',
             bodyStyle: {
                 'border-color': '#ededed'
             },
