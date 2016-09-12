@@ -67,9 +67,11 @@ Ext.define('portal.widgets.panel.recordpanel.RowPanel', {
             bodyStyle: {
                 'border-color': '#ededed'
             },
+            margin: '0 0 0 0',
             header : {
                 titlePosition : Ext.isNumber(config.titleIndex) ? config.titleIndex : 0,
                 border: false,
+                cls: 'recordrowpanelheader',
                 style : {
                     'background-color':'white',
                     'border-color': '#ededed'

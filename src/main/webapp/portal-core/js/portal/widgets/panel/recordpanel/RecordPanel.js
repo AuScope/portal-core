@@ -9,6 +9,7 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
     xtype : 'recordpanel',
 
     config: {
+        allowReordering: false,
         store: null,
         titleField: 'name',
         titleIndex: 0,
@@ -107,7 +108,7 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
             return toolCfg.field;
         }
     },
-
+    
     /**
      * Register drag/drop zones (if applicable)
      */
@@ -119,8 +120,6 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
             this.dragZone = new Ext.dd.DragZone(dragEl, {
                 ddGroup: this.ddGroup,
                 getDragData: function(e) {
-                    console.log('dragging target:', e.target);
-
                     var el = Ext.fly(e.target);
                     if (!el.hasCls('recordrowpanel')) {
                         el = el.up('.recordrowpanel');
@@ -160,20 +159,81 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
 
             this.dropTarget = new Ext.dd.DropTarget(dragEl, {
                 ddGroup : this.ddGroup,
-                notifyEnter: function(ddSource, e, data) {
-                    if (data.source === me) {
-                        return;
-                    }
-
-                    console.log('TODO: notify enter');
-                },
                 notifyDrop: function(ddSource, e, data) {
-                    if (data.source === me) {
-                        return;
+                    var dropSuccess = false;
+                    if (Ext.isNumber(me.lastDDInsertionIdx)) {
+                        var rec = data.draggedRecord;
+                        var oldIdx = me.store.indexOf(rec);
+                        var newIdx = me.lastDDInsertionIdx;
+                        
+                        if (oldIdx < newIdx) {
+                            newIdx--;
+                        }
+                        
+                        me.store.remove(rec, true);
+                        me.store.insert(newIdx, rec);
+                        dropSuccess = true;
                     }
-                    console.log('TODO: notify drop');
+                    
+                    me._clearDropTarget();
+                    return dropSuccess;
+                },
+                notifyOver: function(ddSource, e, data) {
+                    //To generate our highlight we need to iterate all row panels and look
+                    //for the row under our mouse (not ideal - but should be quick)
+                    var pageX = e.getX();
+                    var pageY = e.getY();
+                    var recordPanelEls = data.source.getEl().query('.recordrowpanel', false);
+                    // Returns 0 if no intercept. Returns -1 if in top half of box, Returns 1 if in bottom half
+                    var boxIntercept = function(x, y, box) {
+                        if (x < box.x || x >= (box.x + box.width) ||
+                            y < box.y || y >= (box.y + box.height)) {
+                            return 0;
+                        } else if (y < (box.y + box.height / 2)) {
+                            return -1;
+                        } else {
+                            return 1;
+                        }
+                    };
+                    
+                    var isHighlightMade = false;
+                    me._clearDropTarget();
+                    Ext.each(recordPanelEls, function(el, idx) {
+                        var box = el.getBox();
+                        var intercept = 0;
+                        if (intercept = boxIntercept(pageX, pageY, box)) {
+                            if (intercept < 0) {
+                                el.addCls('recordpanel-insertabove');
+                            } else {
+                                el.addCls('recordpanel-insertbelow');
+                            }
+                        
+                            isHighlightMade = true;
+                            me.lastDDHighlight = el;
+                            me.lastDDInsertionIdx = intercept < 0 ? idx : (idx + 1);
+                            return false;
+                        }
+                    });
+                    
+                    return isHighlightMade ? Ext.dd.DropZone.prototype.dropAllowed : false;
+                },
+                notifyOut: function(ddSource, e, data) {
+                    me._clearDropTarget();
                 }
             });
+        }
+    },
+    
+    /**
+     * If there is a drag drop highlight set, this function will clear the
+     * visual highlight effect and associated element references.
+     */
+    _clearDropTarget: function() {
+        if (this.lastDDHighlight) {
+            this.lastDDHighlight.removeCls('recordpanel-insertabove');
+            this.lastDDHighlight.removeCls('recordpanel-insertbelow');
+            this.lastDDHighlight = null;
+            this.lastDDInsertionIdx = null;
         }
     },
 
