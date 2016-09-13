@@ -25,7 +25,7 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
     /**
      * Extends Ext.panel.Panel and adds the following:
      * {
-     *  allowReordering: Boolean - If true, the records will be able to be reordered by dragging and dropping. 
+     *  allowReordering: Boolean - If true, the records will be able to be reordered by dragging and dropping. Currently only supported with non grouped stores.
      *  store: Ext.data.Store - Contains the layer elements
      *  titleField: String - The field in store's underlying data model that will populate the title of each record
      *  titleIndex: Number - The 0 based index of where the title field will fit in amongst tools (default - 0)
@@ -114,10 +114,10 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
      */
     _initDDZones: function() {
         var me = this;
-        if (this.allowReordering) {
+        if (me.allowReordering && !me.store.isGrouped()) {
             var dragEl = this.getEl();
-            this.ddGroup = Ext.id(undefined, 'recordpanel-dd-');
-            this.dragZone = new Ext.dd.DragZone(dragEl, {
+            me.ddGroup = Ext.id(undefined, 'recordpanel-dd-');
+            me.dragZone = new Ext.dd.DragZone(dragEl, {
                 ddGroup: this.ddGroup,
                 getDragData: function(e) {
                     var el = Ext.fly(e.target);
@@ -158,7 +158,7 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
 
 
             this.dropTarget = new Ext.dd.DropTarget(dragEl, {
-                ddGroup : this.ddGroup,
+                ddGroup : me.ddGroup,
                 notifyDrop: function(ddSource, e, data) {
                     var dropSuccess = false;
                     if (Ext.isNumber(me.lastDDInsertionIdx)) {
@@ -170,8 +170,10 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
                             newIdx--;
                         }
                         
-                        me.store.remove(rec, true);
-                        me.store.insert(newIdx, rec);
+                        if (oldIdx !== newIdx) {
+                            me.store.remove(rec, true);
+                            me.store.insert(newIdx, rec);
+                        }
                         dropSuccess = true;
                     }
                     

@@ -63,5 +63,4 @@ Ext.define('portal.widgets.panel.recordpanel.AbstractChild', {
             scope : this
         });
     }
-
 });
