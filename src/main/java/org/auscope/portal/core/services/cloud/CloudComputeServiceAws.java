@@ -258,7 +258,14 @@ public class CloudComputeServiceAws extends CloudComputeService {
             // Placement(getZone()));
         }
 
-        RunInstancesResult runInstances = ec2.runInstances(runInstancesRequest);
+        // Wrap any AWS exception into a PortalServiceException
+        RunInstancesResult runInstances;
+        try {
+            runInstances = ec2.runInstances(runInstancesRequest);
+        }
+        catch (AmazonServiceException ex) {
+            throw new PortalServiceException("AWS RunInstances request failed", ex);
+        }
 
         // TAG EC2 INSTANCES
         List<Instance> instances = runInstances.getReservation().getInstances();
