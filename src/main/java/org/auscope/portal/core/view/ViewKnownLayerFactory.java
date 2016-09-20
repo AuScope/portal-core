@@ -25,6 +25,7 @@ public class ViewKnownLayerFactory {
         obj.put("description", k.getDescription());
         obj.put("id", k.getId());
         obj.put("proxyUrl", k.getProxyUrl());
+        obj.put("proxyGetFeatureInfoUrl", k.getProxyGetFeatureInfoUrl());
         obj.put("proxyCountUrl", k.getProxyCountUrl());
         obj.put("proxyStyleUrl", k.getProxyStyleUrl());
         obj.put("proxyDownloadUrl", k.getProxyDownloadUrl());
