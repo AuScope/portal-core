@@ -35,6 +35,9 @@ public class KnownLayer implements Serializable {
     /** URL to proxy data requests through */
     private String proxyUrl;
 
+    /** URL to proxy WMS Get Feature Info requests through */
+    private String proxyGetFeatureInfoUrl;
+    
     /** URL to proxy data count requests through */
     private String proxyCountUrl;
 
@@ -204,6 +207,14 @@ public class KnownLayer implements Serializable {
     public void setProxyUrl(String proxyUrl) {
         this.proxyUrl = proxyUrl;
     }
+    
+    public String getProxyGetFeatureInfoUrl() {
+		return proxyGetFeatureInfoUrl;
+	}
+
+	public void setProxyGetFeatureInfoUrl(String proxyGetFeatureInfoUrl) {
+		this.proxyGetFeatureInfoUrl = proxyGetFeatureInfoUrl;
+	}
 
     /**
      * Gets the URL to proxy data count requests through

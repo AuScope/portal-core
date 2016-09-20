@@ -18,6 +18,7 @@ Ext.define('portal.knownlayer.KnownLayer', {
         { name: 'description', type: 'string' }, //A human readable description of this KnownLayer
         { name: 'group', type: 'string' }, //A term in which like KnownLayers can be grouped under
         { name: 'proxyUrl', type: 'string' }, //A URL of a backend controller method for fetching available data with a filter specific for this KnonwLayer
+        { name: 'proxyGetFeatureInfoUrl', type: 'string' }, // A URL of a backend controller method for processing the WMS Get Feature Info response
         { name: 'proxyCountUrl', type: 'string' }, //A URL of a backend controller method for fetching the count of data available (eg for WFS a URL that will set featureType=hits)
         { name: 'proxyStyleUrl', type: 'string' }, // A URL of a backend controller method for fetching style
         { name: 'proxyDownloadUrl', type: 'string' }, // A URL of a backend controller method for download request
