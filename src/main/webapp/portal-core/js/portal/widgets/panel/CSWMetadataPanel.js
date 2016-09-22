@@ -83,9 +83,9 @@ Ext.define('portal.widgets.panel.CSWMetadataPanel', {
         anchor : '100%',
         value : this.cswRecord.get('contactOrg')
       }];
-      items.concat(this.extraItems);
+      items = items.concat(this.extraItems);
       if (this.cswRecord!=null) {
-        items.concat({
+          items = items.concat({
                     fieldLabel : 'Resources',
                     xtype : 'onlineresourcepanel',
                     cswRecords : this.cswRecord
