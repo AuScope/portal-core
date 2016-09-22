@@ -478,11 +478,23 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
      * Updates the empty text hidden/visible status depending on whether any records are showing.
      */
     _updateEmptyText: function() {
-        if (this.items.getCount() <= 2) {
-            this.down('#emptytext').setHidden(false);
+        var visibleItems = 0;
+        
+        if (this.store.isGrouped()) {
+            this._eachGroup(function(recordGroupPanel) {
+                if (recordGroupPanel.isVisible()) {
+                    visibleItems++;
+                }
+            });
         } else {
-            this.down('#emptytext').setHidden(true);
+            this._eachRow(function(recordRowPanel) {
+                if (recordRowPanel.isVisible()) {
+                    visibleItems++;
+                }
+            });
         }
+        
+        this.down('#emptytext').setHidden(visibleItems !== 0);
     },
 
     /**
