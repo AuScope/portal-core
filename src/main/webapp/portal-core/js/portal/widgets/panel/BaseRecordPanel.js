@@ -26,10 +26,9 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         var menuItems = [me._getVisibleBoundFilterAction(),me._getActivelayerFilterAction(),
                          me._getDataLayerFilterAction(),me._getImageLayerFilterAction()];
 
-        Ext.apply(cfg, {
-            cls : 'auscope-dark-grid',
-            emptyText : '<p class="centeredlabel">No records match the current filter.</p>',
-            dockedItems : [{
+        var dockedItems = null;
+        if (cfg.hideSearch !== true) {
+            dockedItems = [{
                 xtype : 'toolbar',
                 dock : 'top',
                 portalName : 'search-bar', //used for distinguishing this toolbar
@@ -52,7 +51,13 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                     menu : menuItems
                    
                 }]
-            }],
+            }];
+        }
+        
+        Ext.apply(cfg, {
+            cls : 'auscope-dark-grid',
+            emptyText : '<p class="centeredlabel">No records match the current filter.</p>',
+            dockedItems : dockedItems,
             titleField: 'name',
             titleIndex: 2,
             tools: [{
