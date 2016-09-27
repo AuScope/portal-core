@@ -26,6 +26,7 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
      * Extends Ext.panel.Panel and adds the following:
      * {
      *  allowReordering: Boolean - If true, the records will be able to be reordered by dragging and dropping. Currently only supported with non grouped stores.
+     *  emptyText: String - HTML string that will be shown when the contents of this panel are empty.
      *  store: Ext.data.Store - Contains the layer elements
      *  titleField: String - The field in store's underlying data model that will populate the title of each record
      *  titleIndex: Number - The 0 based index of where the title field will fit in amongst tools (default - 0)
@@ -56,6 +57,15 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
                 fill: false,
                 multi: grouped
             },
+            items: [{
+                xtype: 'panel',
+                itemId: 'emptytext',
+                collapsed: false,
+                header: {
+                    hidden: true
+                },
+                html: config.emptyText
+            }],
             autoScroll: true,
             plugins: ['collapsedaccordian']
         });
@@ -463,6 +473,29 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
             this.add(rows);
         }
     },
+    
+    /**
+     * Updates the empty text hidden/visible status depending on whether any records are showing.
+     */
+    _updateEmptyText: function() {
+        var visibleItems = 0;
+        
+        if (this.store.isGrouped()) {
+            this._eachGroup(function(recordGroupPanel) {
+                if (recordGroupPanel.isVisible()) {
+                    visibleItems++;
+                }
+            });
+        } else {
+            this._eachRow(function(recordRowPanel) {
+                if (recordRowPanel.isVisible()) {
+                    visibleItems++;
+                }
+            });
+        }
+        
+        this.down('#emptytext').setHidden(visibleItems !== 0);
+    },
 
     /**
      * Handle updating renderers/tips for the modified fields
@@ -546,6 +579,8 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
 
         Ext.resumeLayouts();
         this.getLayout().resumeAnimations();
+        
+        this._updateEmptyText();
     },
 
     /**
@@ -572,6 +607,8 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
         } else {
             this._generateUnGrouped();
         }
+        
+        this._updateEmptyText();
     },
 
     /**
@@ -593,6 +630,8 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
         Ext.resumeLayouts();
         this.getLayout().resumeAnimations();
         this.doLayout();
+        
+        this._updateEmptyText();
     },
 
     /**
@@ -629,6 +668,8 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
         Ext.resumeLayouts();
         this.getLayout().resumeAnimations();
         this.doLayout();
+        
+        this._updateEmptyText();
     },
 
     /**
