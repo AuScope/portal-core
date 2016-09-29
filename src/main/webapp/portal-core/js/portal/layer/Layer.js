@@ -27,6 +27,8 @@ Ext.define('portal.layer.Layer', {
         { name: 'downloader', type: 'auto' }, //A concrete implementation of a portal.layer.downloader.Downloader
         { name: 'querier', type: 'auto' }, //A concrete implementation of a portal.layer.querier.Querier
         { name: 'cswRecords', type: 'auto'}, //The source of all underlying data is an array of portal.csw.CSWRecord objects
+        { name: 'loading', type: 'boolean', defaultValue: false },//Whether this layer is currently loading data or not
+        { name: 'active', type: 'boolean', defaultValue: false },//Whether this layer is current active on the map.
         //{ name: 'loading', type: 'boolean', defaultValue: false }, //Whether this layer is currently loading data or not
         { name: 'filterForm', type: 'auto'}, //The portal.layer.filterer.BaseFilterForm that houses the GUI for editing this layer's filterer
         { name: 'renderOnAdd', type: 'boolean', defaultValue: false }, //If true then this layer should be rendered the moment it is added as a layer. Currently used by KML
@@ -56,7 +58,8 @@ Ext.define('portal.layer.Layer', {
     },                
 
     onRenderStarted : function(renderer, onlineResources, filterer) {
-        //this.set('loading', true);
+        this.set('loading', true);
+        this.set('active', true);
         this.get('source').set('loading', true);
         this.get('source').set('active', true);
     },
@@ -70,6 +73,7 @@ Ext.define('portal.layer.Layer', {
     onRenderFinished : function(renderer) {
         //this.set('loading', false);
         this.get('source').set('loading', false);
+        this.set('loading', false);
 
         var map = renderer.map;
         var layerStore = map.layerStore;
