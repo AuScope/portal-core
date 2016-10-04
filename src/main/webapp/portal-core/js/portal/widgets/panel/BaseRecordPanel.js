@@ -54,7 +54,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             }];
         }
         
-        Ext.apply(cfg, {
+        Ext.applyIf(cfg, {
             cls : 'auscope-dark-grid',
             emptyText : '<p class="centeredlabel">No records match the current filter.</p>',
             dockedItems : dockedItems,
