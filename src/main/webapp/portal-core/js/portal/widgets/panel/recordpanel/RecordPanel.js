@@ -41,6 +41,9 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
      *             iconRenderer - function(value, record) - Called whenever the underlying field updates. Return String URL to icon that will be displayed in tip.
      *  childPanelGenerator: function(record) - Called when records are added to the store. Return a generated Ext.Container for display in the specified row's expander
      * }
+     * 
+     * And the following events:
+     * reorder(recordPanel, record, newIndex, oldIndex) - Fired when the store is reordered (by user interaction)
      */
     constructor : function(config) {
         var grouped = config.store.isGrouped();
@@ -183,6 +186,7 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
                         if (oldIdx !== newIdx) {
                             me.store.remove(rec, true);
                             me.store.insert(newIdx, rec);
+                            me.fireEvent('reorder', me, rec, newIdx, oldIdx);
                         }
                         dropSuccess = true;
                     }
@@ -370,6 +374,9 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
         var recordId = record.getId();
         var newItemId = Ext.id(null, 'record-row-');
         this.recordRowMap[recordId] = newItemId; 
+        
+        var childPanel = this.childPanelGenerator ? this.childPanelGenerator(record) : null;
+        
         return {
             xtype: 'recordrowpanel',
             recordId: recordId,
@@ -378,7 +385,7 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
             titleIndex: this.titleIndex,
             groupMode: groupMode,
             tools: tools,
-            items: [this.childPanelGenerator(record)],
+            items: childPanel ? [childPanel] : null,
             listeners: {
                 scope: this,
                 afterrender: this._installToolTips
