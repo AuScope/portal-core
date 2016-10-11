@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,9 +29,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.collect.Lists;
+
 /**
  * Unit tests for CSWCacheService
- * 
+ *
  * @author Josh Vote
  */
 public class TestCSWCacheService extends PortalTestClass {
@@ -75,7 +79,7 @@ public class TestCSWCacheService extends PortalTestClass {
 
     /**
      * Tests a regular update goes through and makes multiple requests over multiple threads
-     * @throws IOException 
+     * @throws IOException
      */
     @Test
     public void testMultiUpdate() throws IOException {
@@ -155,7 +159,7 @@ public class TestCSWCacheService extends PortalTestClass {
 
     /**
      * Tests a regular update goes through and makes multiple requests over multiple threads
-     * @throws IOException 
+     * @throws IOException
      */
     @Test
     public void testMultiUpdateWithErrors() throws IOException {
@@ -233,7 +237,7 @@ public class TestCSWCacheService extends PortalTestClass {
 
     /**
      * Tests a regular update goes through and makes multiple requests over multiple threads
-     * @throws IOException 
+     * @throws IOException
      */
     @Test
     public void testMultiUpdateAllErrors() throws IOException {
@@ -278,7 +282,7 @@ public class TestCSWCacheService extends PortalTestClass {
 
     /**
      * Success if only a single update is able to run at any given time (Subsequent updates are terminated)
-     * @throws IOException 
+     * @throws IOException
      */
     @Test
     public void testSingleUpdate() throws IOException {
@@ -312,7 +316,7 @@ public class TestCSWCacheService extends PortalTestClass {
 
     /**
      * Tests cache service correctly merges records based on keywords
-     * @throws IOException 
+     * @throws IOException
      */
     @Test
     public void testRecordMerging() throws IOException {
@@ -384,13 +388,13 @@ public class TestCSWCacheService extends PortalTestClass {
 
     /**
      * Tests cache service correctly merges online resources when they have the same name, type and URL (sans parameters)
-     * @throws IOException 
+     * @throws IOException
      */
     @Test
     public void testOnlineResourceMerging() throws IOException {
         final String mergeRecordsString = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse_MergeableResources.xml");
-        
+
         try (final HttpClientInputStream t1r1 = new HttpClientInputStream(
                 new ByteArrayInputStream(mergeRecordsString.getBytes()), null)) {
 
@@ -457,7 +461,7 @@ public class TestCSWCacheService extends PortalTestClass {
 
     /**
      * Tests keyword cache gets properly populated
-     * @throws IOException 
+     * @throws IOException
      */
     @Test
     public void testKeywordCache() throws IOException {
@@ -526,8 +530,81 @@ public class TestCSWCacheService extends PortalTestClass {
     }
 
     /**
+     * Tests keyword cache gets properly populated per endpoint
+     * @throws IOException
+     */
+    @Test
+    public void testKeywordsByEndpointCache() throws IOException {
+        final String noMoreRecordsString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse_NoMoreRecords.xml");
+        final String singleRecordString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse_SingleRecordNoMore.xml");
+
+        List<String> expectedResult1 = Arrays.asList("Australia", "Contact", "DS_poi", "DS_poly_landmarks", "EarthResourcesML", "GeologicUnit", "Manhattan", "MappedFeature", "MineralOccurrenceML", "ShearDisplacementStructure", "WATER-Hydrology", "WFS", "World", "auxiliary", "er:Commodity", "er:Mine", "er:MineralOccurrence", "er:MiningActivity", "er:MiningFeatureOccurrence", "gsml:Contact", "gsml:GeologicUnit", "gsml:MappedFeature", "gsml:ShearDisplacementStructure", "landmarks", "manhattan", "poi", "points_of_interest", "poly_landmarks");
+        List<String> expectedResult2 = Arrays.asList("GeologicUnit", "MappedFeature", "WFS", "gsml:GeologicUnit", "gsml:MappedFeature");
+
+        try (final HttpClientInputStream t1r1 = new HttpClientInputStream(new ByteArrayInputStream(noMoreRecordsString.getBytes()), null)) {
+            try (final HttpClientInputStream t2r1 = new HttpClientInputStream(new ByteArrayInputStream(singleRecordString.getBytes()), null)) {
+                context.checking(new Expectations() {
+                    {
+                        // Thread 1 will make 1 requests
+                        oneOf(httpServiceCaller).getMethodResponseAsStream(
+                                with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)));
+                        will(returnValue(t1r1));
+
+                        // Thread 2 will make 1 requests
+                        oneOf(httpServiceCaller).getMethodResponseAsStream(
+                                with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 2), null)));
+                        will(returnValue(t2r1));
+
+                        // Thread 3 will error
+                        exactly(3).of(httpServiceCaller).getMethodResponseAsStream(
+                                with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)));
+                        will(throwException(new ConnectException()));
+                    }
+                });
+
+                // Start our updating and wait for our threads to finish
+                Assert.assertTrue(this.cswCacheService.updateCache(3, 2000));
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    Assert.fail("Test sleep interrupted. Test aborted.");
+                }
+                try {
+                    threadExecutor.getExecutorService().shutdown();
+                    threadExecutor.getExecutorService().awaitTermination(180, TimeUnit.SECONDS);
+                } catch (Exception ex) {
+                    threadExecutor.getExecutorService().shutdownNow();
+                    Assert.fail("Exception whilst waiting for update to finish " + ex.getMessage());
+                }
+
+                // Check our expected responses
+                Assert.assertNull(cswCacheService.getKeywordsForEndpoint("DOES NOT EXIST"));
+                Set<String> id1Actual = cswCacheService.getKeywordsForEndpoint("id:1");
+                Set<String> id2Actual = cswCacheService.getKeywordsForEndpoint("id:2");
+                Assert.assertNotNull(id1Actual);
+                Assert.assertNotNull(id2Actual);
+
+                List<String> id1Sorted = Lists.newArrayList(id1Actual);
+                List<String> id2Sorted = Lists.newArrayList(id2Actual);
+                Collections.sort(id1Sorted);
+                Collections.sort(id2Sorted);
+
+                Assert.assertEquals("id1 Size Differs", expectedResult1.size(), id1Sorted.size());
+                Assert.assertEquals("id2 Size Differs", expectedResult2.size(), id2Sorted.size());
+
+                for (int i = 0; i < expectedResult1.size(); i++) {
+                    Assert.assertEquals("Mismatch on id1 at " + i,  expectedResult1.get(i), id1Sorted.get(i));
+                }
+                for (int i = 0; i < expectedResult2.size(); i++) {
+                    Assert.assertEquals("Mismatch on id2 at " + i,  expectedResult2.get(i), id2Sorted.get(i));
+                }
+            }
+        }
+    }
+
+    /**
      * Tests a regular update fails when receiving an OWS error response or connection exceptions
-     * @throws IOException 
+     * @throws IOException
      */
     @Test
     public void testVariousErrors() throws IOException {
@@ -581,7 +658,7 @@ public class TestCSWCacheService extends PortalTestClass {
 
     /**
      * Tests a regular update goes through and makes multiple requests over multiple threads (using GetMethods)
-     * @throws IOException 
+     * @throws IOException
      */
     @Test
     public void testMultiUpdateGet() throws IOException {
@@ -669,7 +746,7 @@ public class TestCSWCacheService extends PortalTestClass {
 
     /**
      * Tests that getting a parent and child on different CSW pages will still result in the parent/child being preserved
-     * @throws IOException 
+     * @throws IOException
      */
     @Test
     public void testPagedParentChildren() throws IOException {

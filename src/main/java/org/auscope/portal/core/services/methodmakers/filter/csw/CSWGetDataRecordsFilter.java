@@ -100,6 +100,12 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     /** The Author's surname */
     private String authorSurname = null;
 
+    /** Date on which the record was created or updated within the catalogue. */
+    private DateTime modifiedDateFrom = null;
+
+    /** Date on which the record was created or updated within the catalogue. */
+    private DateTime modifiedDateTo = null;
+
     /** The publication date's lower bound. */
     private DateTime publicationDateFrom = null;
 
@@ -318,6 +324,14 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
             if (metadataChangeDateTo != null) {
                 fragments.add(this.generatePropertyIsLessThanOrEqualTo("changeDate", metadataChangeDateTo.toString()));
             }
+
+            if (modifiedDateFrom != null) {
+                fragments.add(this.generatePropertyIsGreaterThanOrEqualTo("modified", modifiedDateFrom.toString()));
+            }
+
+            if (modifiedDateTo != null) {
+                fragments.add(this.generatePropertyIsLessThanOrEqualTo("modified", modifiedDateTo.toString()));
+            }
         }
 
         String fragment = this.generateAndComparisonFragment(fragments.toArray(new String[fragments.size()]));
@@ -473,6 +487,38 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
      */
     public void setTitleOrAbstract(String titleOrAbstract) {
         this.titleOrAbstract = titleOrAbstract;
+    }
+
+    /**
+     * Date on which the record was created or updated within the catalogue.
+     * @return
+     */
+    public DateTime getModifiedDateFrom() {
+        return modifiedDateFrom;
+    }
+
+    /**
+     * Date on which the record was created or updated within the catalogue.
+     * @return
+     */
+    public void setModifiedDateFrom(DateTime modifiedDateFrom) {
+        this.modifiedDateFrom = modifiedDateFrom;
+    }
+
+    /**
+     * Date on which the record was created or updated within the catalogue.
+     * @return
+     */
+    public DateTime getModifiedDateTo() {
+        return modifiedDateTo;
+    }
+
+    /**
+     * Date on which the record was created or updated within the catalogue.
+     * @return
+     */
+    public void setModifiedDateTo(DateTime modifiedDateTo) {
+        this.modifiedDateTo = modifiedDateTo;
     }
 
     /**

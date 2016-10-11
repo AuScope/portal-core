@@ -26,7 +26,7 @@ Ext.define('portal.widgets.panel.recordpanel.AbstractChild', {
         if (thisPanel.getGroupMode()) {
             thisPanel.ownerCt.suspendLayouts();
             thisPanel.ownerCt.items.each(function(sibling) {
-                if (sibling.getItemId() !== portal.widgets.plugins.CollapsedAccordian.HIDDEN_ID && sibling.getId() !== thisPanel.getId()) {
+                if (sibling instanceof portal.widgets.panel.recordpanel.AbstractChild && sibling.getId() !== thisPanel.getId()) {
                     sibling.collapseChildren();
                 }
             });
@@ -39,7 +39,7 @@ Ext.define('portal.widgets.panel.recordpanel.AbstractChild', {
      */
     collapseChildren : function() {
         this.items.each(function(item) {
-            if (item.getItemId() !== portal.widgets.plugins.CollapsedAccordian.HIDDEN_ID) {
+            if (item instanceof portal.widgets.panel.recordpanel.AbstractChild) {
                 if (item.getCollapsed() === false) {
                     item.collapse();
                 }
@@ -51,7 +51,7 @@ Ext.define('portal.widgets.panel.recordpanel.AbstractChild', {
         this.callParent(arguments);
 
         this.items.each(function(item) {
-            if (item.getItemId() !== portal.widgets.plugins.CollapsedAccordian.HIDDEN_ID) {
+            if (item instanceof portal.widgets.panel.recordpanel.AbstractChild) {
                 item.on('beforeexpand', function(item) {
                     this.fireEvent('childexpand', this, item);
                 }, this);
