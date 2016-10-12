@@ -51,7 +51,7 @@ Ext.define('portal.layer.legend.wms.WMSLegend', {
 
     statics : {
 
-        generateImageUrl : function(wmsURL,wmsName,wmsVersion,width,sld_body,isSld_body,styles) {
+        generateImageUrl : function(wmsURL,wmsName,wmsVersion,applicationProfile,width,sld_body,isSld_body,styles) {
             var url = wmsURL;
             var last_char = url.charAt(url.length - 1);
             if ((last_char !== "?") && (last_char !== "&")) {
@@ -72,10 +72,6 @@ Ext.define('portal.layer.legend.wms.WMSLegend', {
             if (width) {
                 url += '&WIDTH=' + width;  
             }
-            // GPT-MS: Ugly hack that checks if we are making a GetLegendGraphic request to an ArcGIS Server and sets a fixed width
-            else if (wmsURL.toUpperCase().indexOf("MAPSERVER/WMSSERVER") > -1)  {
-            	 url += '&WIDTH=300';
-            }
             
             //vt: The sld for legend does not require any filter therefore it should be
             // able to accomadate all sld length.
@@ -91,7 +87,7 @@ Ext.define('portal.layer.legend.wms.WMSLegend', {
             // GPT-MS -- I don't believe the below works. GetLegendGraphic takes a STYLE parameter, not a STYLES parameter. Have left it as is. 
             if (this.styles) {
                 url += '&STYLES=' + escape(this.styles);
-            } else if (wmsURL.toUpperCase().indexOf("MAPSERVER/WMSSERVER") > -1){
+            } else if (applicationProfile && applicationProfile.indexOf("Esri:ArcGIS Server") > -1) {
             	var sld = portal.util.xml.SimpleDOM.parseStringToDOM(sld_body);
             	// GPT-MS : This would be better as an XPath '/StyledLayerDescriptor/UserStyle/Name" but I couldn't get it to work.  
             	url += '&STYLE=' + sld.getElementsByTagName("UserStyle")[0].getElementsByTagName("Name")[0].textContent;
@@ -101,7 +97,7 @@ Ext.define('portal.layer.legend.wms.WMSLegend', {
         },
     
         /* Hits the WMS controller to doa  getCapabilties call on the layer and retrieve the LegendGraphicURL element */
-        generateLegendGraphicFromGetCapabilities : function(wmsURL,wmsName,wmsVersion,width,sld_body,isSld_body,styles, callback) {
+        generateLegendGraphicFromGetCapabilities : function(wmsURL,wmsName,wmsVersion,applicationProfile,width,sld_body,isSld_body,styles, callback) {
             portal.util.Ajax.request({
                 url: "getLegendURL.do",
                 timeout : 30000,    // Yes this seems a long time but was necessary
@@ -115,25 +111,25 @@ Ext.define('portal.layer.legend.wms.WMSLegend', {
                     callback(data);
                 },
                 failure: function(message) {
-                    var getLegendGraphicUrl = portal.layer.legend.wms.WMSLegend.generateImageUrl(wmsURL,wmsName,wmsVersion,width,sld_body,isSld_body,styles);
+                    var getLegendGraphicUrl = portal.layer.legend.wms.WMSLegend.generateImageUrl(wmsURL,wmsName,wmsVersion,applicationProfile,width,sld_body,isSld_body,styles);
                     callback(getLegendGraphicUrl);
                 }
             });
         },
 
         // WMS Can specify a <legendUrl> image - retrieve from the service
-        generateLegendUrl : function(wmsURL,wmsName,wmsVersion,width,sld_body,isSld_body,styles, tryGetCapabilitiesFirst, callback) {
+        generateLegendUrl : function(wmsURL,wmsName,wmsVersion,applicationProfile,width,sld_body,isSld_body,styles, tryGetCapabilitiesFirst, callback) {
             
             // first check the getCapabilities if configured to do so
             if (tryGetCapabilitiesFirst) {
-                this.generateLegendGraphicFromGetCapabilities(wmsURL,wmsName,wmsVersion,width,sld_body,isSld_body,styles, callback);
+                this.generateLegendGraphicFromGetCapabilities(wmsURL,wmsName,wmsVersion,applicationProfile,width,sld_body,isSld_body,styles, callback);
             } else {
                 // the default behaviour: try a getLegendGraphic call and use the getCapabilties iff it fails
-                var getLegendGraphicUrl = portal.layer.legend.wms.WMSLegend.generateImageUrl(wmsURL,wmsName,wmsVersion,width,sld_body,isSld_body,styles);
+                var getLegendGraphicUrl = portal.layer.legend.wms.WMSLegend.generateImageUrl(wmsURL,wmsName,wmsVersion,applicationProfile,width,sld_body,isSld_body,styles);
                 if (getLegendGraphicUrl) {
                     callback(getLegendGraphicUrl);
                 } else {
-                    this.generateLegendGraphicFromGetCapabilities(wmsURL,wmsName,wmsVersion,width,sld_body,isSld_body,styles, callback);
+                    this.generateLegendGraphicFromGetCapabilities(wmsURL,wmsName,wmsVersion,applicationProfile,width,sld_body,isSld_body,styles, callback);
                 }
             }
         }

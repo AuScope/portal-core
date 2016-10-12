@@ -26,9 +26,12 @@ Ext.define('portal.map.openlayers.primitives.WMSOverlay', {
         if(wmsOnlineResources.length > 0 && wmsOnlineResources[0].get('version')){
             wmsVersion = wmsOnlineResources[0].get('version');
         }        
-                        
+        var applicationProfile = "";
+        if(wmsOnlineResources.length > 0 && wmsOnlineResources[0].get('applicationProfile')){
+            applicationProfile = wmsOnlineResources[0].get('applicationProfile');
+        } 
+        
         var singleTile = cfg.layer.get('source').get('singleTile');
-        var forceWMSGet = cfg.layer.get('source').get('forceWMSGet');
         
         var cswboundingBox= this._getCSWBoundingBox(cswRecord);        
 
@@ -54,13 +57,13 @@ Ext.define('portal.map.openlayers.primitives.WMSOverlay', {
             additionalOptions.ratio = 1;
         }
         
-        if (forceWMSGet == false) {
+        if (applicationProfile !== "Esri:ArcGIS Server") {
         	additionalOptions.tileOptions.maxGetUrlLength = 1500;
         }
         
         if(this.getSld_body() && this.getSld_body().length > 0){            
             options.sld_body = this.getSld_body();
-            options.styles = this._getStylesFromSLD();
+            options.styles = this._getStylesFromSLD(applicationProfile);
             options.tiled = true;
         } 
 
@@ -84,12 +87,14 @@ Ext.define('portal.map.openlayers.primitives.WMSOverlay', {
      */
     
 
-    _getStylesFromSLD : function() {
-        if (this.getWmsUrl().toUpperCase().indexOf("MAPSERVER/WMSSERVER") < 0) return null;
-        var sld = portal.util.xml.SimpleDOM.parseStringToDOM(this.getSld_body());
-        // GPT-MS : This would be better as an XPath
-        // '/StyledLayerDescriptor/UserStyle/Name" but I couldn't get it to work.
-        return sld.getElementsByTagName("UserStyle")[0].getElementsByTagName("Name")[0].textContent;
+    _getStylesFromSLD : function(applicationProfile) {
+        if (applicationProfile && applicationProfile.indexOf("Esri:ArcGIS Server") > -1) {
+            var sld = portal.util.xml.SimpleDOM.parseStringToDOM(this.getSld_body());
+            // GPT-MS : This would be better as an XPath
+            // '/StyledLayerDescriptor/UserStyle/Name" but I couldn't get it to work.
+            return sld.getElementsByTagName("UserStyle")[0].getElementsByTagName("Name")[0].textContent;
+        }
+        return null;
     },
     
     _getCSWBoundingBox : function(cswrecords){
