@@ -34,19 +34,7 @@ Ext.define('portal.layer.querier.Querier', {
         //VT: default to use GET rather then post.
         var postMethod = false;
         var sld_body=null;
-        // GPT-MS: Check whether service is ArcGIS, if so, don't set sld_body
-        // TODO Refactor task GPT-230
-        if(queryTarget.get('layer').get('renderer').sld_body && queryTarget.get('onlineResource').get('url').toUpperCase().indexOf("MAPSERVER/WMSSERVER") < 0){
-            sld_body=queryTarget.get('layer').get('renderer').sld_body;
-            //VT: if post is undefined and we have a very long sld_body
-            //VT: we are goign to take a best guess approach and use post instead of get
-            if(post === undefined && sld_body.length > 1500){
-                postMethod = true;
-                console.log('You really should not be using this method if the query' +
-                        'is going be long as it generates a GET spring request to and' +
-                        ' there are limitation to the lenght of a URI in GET method');
-            }
-        }
+
 
         if(post != undefined){
             postMethod = post;
@@ -77,9 +65,8 @@ Ext.define('portal.layer.querier.Querier', {
                 bbox.westBoundLongitude,
                 bbox.southBoundLatitude);
 
-
-        //Build our proxy URL
-        var queryString = Ext.Object.toQueryString({
+        
+        var queryParams = Ext.Object.merge({
             WMS_URL : serviceUrl,
             lat : lonLat.lat,
             lng : lonLat.lon,
@@ -94,8 +81,42 @@ Ext.define('portal.layer.querier.Querier', {
             postMethod : postMethod,
             version : wmsOnlineResource.get('version'),
             feature_count : feature_count
-        });
+        }, this.generateSLDParams (queryTarget,infoFormat))
+        
+        //Build our proxy URL
+        var queryString = Ext.Object.toQueryString(queryParams);
         return Ext.urlAppend('wmsMarkerPopup.do', queryString);
+    },
+    
+    generateSLDParams : function (queryTarget,infoFormat) {
+        var postMethod = false;
+        var applicationProfile = queryTarget.get('onlineResource').get('applicationProfile');
+        
+        if (applicationProfile && applicationProfile.indexOf("Esri:ArcGIS Server") > -1) {
+             
+             return {
+                 postMethod : postMethod,
+                 SLD_BODY : null,
+                 INFO_FORMAT : infoFormat ? infoFormat : 'text/xml'
+             }
+         }
+         else if (queryTarget.get('layer').get('renderer').sld_body){
+            postMethod = false
+            sld_body=queryTarget.get('layer').get('renderer').sld_body;
+            //VT: if post is undefined and we have a very long sld_body
+            //VT: we are goign to take a best guess approach and use post instead of get
+            if(sld_body.length > 1500){
+                postMethod = true;
+                console.log('You really should not be using this method if the query' +
+                        'is going be long as it generates a GET spring request to and' +
+                        ' there are limitation to the lenght of a URI in GET method');
+            }
+            return {
+                postMethod : postMethod,
+                SLD_BODY : sld_body,
+                INFO_FORMAT : infoFormat ? infoFormat : 'application/vnd.ogc.gml/3.1.1'
+            }
+        }
     },
 
     /**

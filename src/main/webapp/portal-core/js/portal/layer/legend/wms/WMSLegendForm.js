@@ -42,13 +42,14 @@ Ext.define('portal.layer.legend.wms.WMSLegendForm', {
             var dimensions = {maxWidth:330,height:30}; // Of all graphics so can resize window - accumulative height, max width (allow for title)
 
             for (var j = 0; j < wmsOnlineResources.length; j++) {
-
-                var width = config.sld_body ? null : this.getWidth();
+                var applicationProfile = wmsOnlineResources[j].get('applicationProfile');
+                var width = this._determineWidth(applicationProfile, config.sld_body);
 
                 portal.layer.legend.wms.WMSLegend.generateLegendUrl(
                     wmsOnlineResources[j].get('url'), 
                     wmsOnlineResources[j].get('name'),
                     wmsOnlineResources[j].get('version'),
+                    applicationProfile,
                     width,
                     config.sld_body,
                     config.isSld_body,
@@ -91,14 +92,16 @@ Ext.define('portal.layer.legend.wms.WMSLegendForm', {
         
         // do some AJAX stuff to populate the list of image URLS
         for (loopIndex; loopIndex < wmsOnlineResources.length; loopIndex++) {
-
-            var width = config.sld_body ? null : this.getWidth();
-
+            var applicationProfile = wmsOnlineResources[loopIndex].get('applicationProfile');
+            var width = this._determineWidth(applicationProfile, config.sld_body);
+            
+           
             var handler = portal.layer.legend.wms.WMSLegend.generateLegendUrl(
                     
                 wmsOnlineResources[loopIndex].get('url'), 
                 wmsOnlineResources[loopIndex].get('name'),
                 wmsOnlineResources[loopIndex].get('version'),
+                applicationProfile,
                 width,
                 config.sld_body,
                 config.isSld_body,
@@ -159,6 +162,16 @@ Ext.define('portal.layer.legend.wms.WMSLegendForm', {
             form.setWidth(dimensions.maxWidth);
         };
         image.src=url;
+    },
+    
+    _determineWidth : function(applicationProfile, sld_body) {
+        if (applicationProfile && applicationProfile.indexOf("Esri:ArcGIS Server") > -1) {
+            return 300;
+        } else if (sld_body) {
+            return null;
+        } else {
+            return this.getWidth();
+        }
     }
 
 });

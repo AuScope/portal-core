@@ -58,17 +58,18 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
     _handleWMSQuery : function(queryTarget,callback,scope){
       //VT:app-schema wms requires the gml version to be declared in the info_format
         var methodPost = false;
+        var applicationProfile = queryTarget.get('onlineResource').get('applicationProfile');
 
         if(queryTarget.get('layer').get('filterer').getParameters().postMethod){
             methodPost = queryTarget.get('layer').get('filterer').getParameters().postMethod;
         }
 
-        var sld_body=null;
-        // GPT-MS: Check whether service is ArcGIS, if so, don't set sld_body in GetFeatureInfo
-        // TODO Refactor task GPT-230
-        if(queryTarget.get('layer').get('renderer').sld_body || wmsOnlineResource.get('url').toUpperCase().indexOf("MAPSERVER/WMSSERVER") < 0){
+        var sld_body;
+        if (applicationProfile && applicationProfile.indexOf("Esri:ArcGIS Server") > -1) {
+            sld_body = null;
+        } else if (queryTarget.get('layer').get('renderer').sld_body){
             sld_body=queryTarget.get('layer').get('renderer').sld_body;
-            if(!methodPost && sld_body.length > 1200){//VT; if the length of the sld is too long we HAVE to use post
+            if (!methodPost && sld_body.length > 1200){//VT; if the length of the sld is too long we HAVE to use post
                 methodPost = true
             }
         }
@@ -92,28 +93,34 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
                 bbox.westBoundLongitude,
                 bbox.southBoundLatitude);
 
-
+        var queryParams = Ext.Object.merge({
+            WMS_URL : serviceUrl,
+            lat : lonLat.lat,
+            lng : lonLat.lon,
+            QUERY_LAYERS : typeName,
+            x : tileInfo.getOffset().x,
+            y : tileInfo.getOffset().y,
+            BBOX : bboxString,
+            WIDTH : tileInfo.getWidth(),
+            HEIGHT : tileInfo.getHeight(),
+            INFO_FORMAT : 'application/vnd.ogc.gml/3.1.1',
+            SLD_BODY : sld_body,
+            postMethod : methodPost,
+            version : wmsOnlineResource.get('version')                
+            }, this.generateSLDParams(queryTarget, null));
+        
+        var proxyGetFeatureInfoUrl ="wmsMarkerPopup.do";
+        if (queryTarget.get('layer').get('source').get('proxyGetFeatureInfoUrl')) {
+            proxyGetFeatureInfoUrl = queryTarget.get('layer').get('source').get('proxyGetFeatureInfoUrl');
+        }
+        
         //Start off by making a request for the GML at the specified location
         //We need to extract the survey line ID of the place we clicked
         Ext.Ajax.request({
-            url : 'wmsMarkerPopup.do',
+            url : proxyGetFeatureInfoUrl,
             timeout : 180000,
             scope : this,
-            params : {
-                WMS_URL : serviceUrl,
-                lat : lonLat.lat,
-                lng : lonLat.lon,
-                QUERY_LAYERS : typeName,
-                x : tileInfo.getOffset().x,
-                y : tileInfo.getOffset().y,
-                BBOX : bboxString,
-                WIDTH : tileInfo.getWidth(),
-                HEIGHT : tileInfo.getHeight(),
-                INFO_FORMAT : 'application/vnd.ogc.gml/3.1.1',
-                SLD_BODY : sld_body,
-                postMethod : methodPost,
-                version : wmsOnlineResource.get('version')                
-            },
+            params : queryParams,
             method : 'POST',//VT: potentially long sld_body forces us to use "POST" instead of "GET"
             callback : function(options, success, response) {
                 if (!success) {
