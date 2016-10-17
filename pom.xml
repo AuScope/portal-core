@@ -32,8 +32,8 @@
 -->
     <distributionManagement>
         <snapshotRepository>
-          <id>snapshots</id>
-          <url>http://maven-int.ga.gov.au/nexus/content/repositories/snapshots</url>
+          <id>nexus.gadevs</id>
+	  <url>https://nexus.gadevs.ga/repository/maven-snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 
