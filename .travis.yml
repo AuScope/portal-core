@@ -3,7 +3,7 @@ before_install: "git clone -b travis `git config --get remote.origin.url` target
 script: "[ ${TRAVIS_PULL_REQUEST} = 'false' ] && mvn clean deploy --settings target/travis/settings.xml || mvn clean verify --settings target/travis/settings.xml"
 branches:
         only:              
-                - develop
+                - master-ga2
 jdk:
   - oraclejdk8
 env:
