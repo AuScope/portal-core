@@ -126,7 +126,7 @@ public class ViewCSWRecordFactory {
         obj.put("name", res.getName());
         obj.put("description", res.getDescription().toString());
         obj.put("version", res.getVersion());
-
+        obj.put("applicationProfile", res.getApplicationProfile());
         return obj;
     }
 
