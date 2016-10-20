@@ -45,6 +45,27 @@ import com.google.common.io.Files;
  */
 public class CloudStorageService {
 
+    /**
+     * The various levels of STS support that an instance of CloudStorageService can implement
+     * @author Josh Vote (CSIRO)
+     *
+     */
+    public enum STSRequirement {
+        /**
+         * Only STS enabled jobs will be allowed to read/write data using this instance. Non STS
+         * enabled jobs will error when using this class
+         */
+        Mandatory,
+        /**
+         * STS jobs will use STS as per normal, non STS jobs will use the inbuilt credentials
+         */
+        Permissable,
+        /**
+         * ALL jobs (STS or otherwise) will be forced to use the inbuilt credentials
+         */
+        ForceNone
+    }
+
     /** The bucket name used when no bucket is specified */
     public static final String DEFAULT_BUCKET = "portal-core-storage-service";
 
@@ -82,7 +103,7 @@ public class CloudStorageService {
 
     private boolean stripExpectHeader;
 
-    private boolean requireSts=false;
+    private STSRequirement stsRequirement  = STSRequirement.Permissable;
 
     private String adminEmail = "cg-admin@csiro.au";
 
@@ -101,19 +122,19 @@ public class CloudStorageService {
     }
 
     /**
-     * Returns whether AWS cross account authorization is mandatory.
-     * @return whether AWS cross account authorization is mandatory.
+     * Returns whether AWS cross account authorization is mandatory, optional or forced off
+     * @return
      */
-    public boolean isRequireSts() {
-        return requireSts;
+    public STSRequirement getStsRequirement() {
+        return stsRequirement;
     }
 
     /**
-     * Sets whether AWS cross account authorization is mandatory.
-     * @param requireSts if true, AWS cross account authorization will be mandatory.
+     * Sets whether AWS cross account authorization is mandatory, optional or forced off
+     * @param stsRequirement
      */
-    public void setRequireSts(boolean requireSts) {
-        this.requireSts = requireSts;
+    public void setStsRequirement(STSRequirement stsRequirement) {
+        this.stsRequirement = stsRequirement;
     }
 
     /**
@@ -245,6 +266,11 @@ public class CloudStorageService {
     }
 
     public BlobStoreContext getBlobStoreContext(String arn, String clientSecret) throws PortalServiceException {
+        if (stsRequirement == STSRequirement.ForceNone) {
+            arn = null;
+            clientSecret = null;
+        }
+
         Properties properties = new Properties();
         properties.setProperty("jclouds.relax-hostname", relaxHostName ? "true" : "false");
         properties.setProperty("jclouds.strip-expect-header", stripExpectHeader ? "true" : "false");
@@ -282,8 +308,9 @@ public class CloudStorageService {
                 throw new PortalServiceException(e.getMessage(), e);
             }
         } else {
-            if(isRequireSts())
+            if (stsRequirement == STSRequirement.Mandatory) {
                 throw new PortalServiceException("AWS cross account access is required, but not configured");
+            }
 
             ContextBuilder builder = ContextBuilder.newBuilder(provider).overrides(properties);
 
