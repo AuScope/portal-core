@@ -40,7 +40,7 @@ public class TestCloudStorageService extends PortalTestClass {
 
     private BlobStoreContext mockBlobStoreContext = context.mock(BlobStoreContext.class);
     private CloudJob job;
-    private CloudStorageService service;
+    private CloudStorageServiceJClouds service;
 
     private final String jobStorageBaseKey = "job/base/key";
 
@@ -331,7 +331,7 @@ public class TestCloudStorageService extends PortalTestClass {
 
     @Test(expected=PortalServiceException.class)
     public void testStsRequired() throws PortalServiceException {
-        CloudStorageService stsService = new CloudStorageService("dummy1", "dummy2", "dummy3");
+        CloudStorageServiceJClouds stsService = new CloudStorageServiceJClouds("dummy1", "dummy2", "dummy3");
         stsService.setRequireSts(true);
         stsService.getBlobStoreContext(null, null);
     }
