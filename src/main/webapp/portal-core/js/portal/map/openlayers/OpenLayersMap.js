@@ -676,9 +676,11 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                 //See ANVGL-106 for why we need to forcibly reorder thse
                 addprimitives : Ext.bind(function() {
                     //Move highlight layer to top
-                    var highlightLayer = this.highlightPrimitiveManager.vectorLayer;
-                    this.map.setLayerIndex(highlightLayer, this.map.layers.length);
                     
+                    var highlightLayer = this.highlightPrimitiveManager.vectorLayer;
+                    if (highlightLayer) {
+                        this.map.setLayerIndex(highlightLayer, this.map.layers.length);
+                    }
                     //Move drawing layer to top
                     var ctrls = this.map.getControlsByClass('OpenLayers.Control.DrawFeature');
                     if (!Ext.isEmpty(ctrls)) {
