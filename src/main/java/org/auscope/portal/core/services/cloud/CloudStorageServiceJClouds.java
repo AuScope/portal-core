@@ -52,18 +52,6 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
     private boolean requireSts=false;
 
     /**
-     * The region identifier string for this service (if any). Can be
-     * null/empty. Currently this field is NON functional, it is only for
-     * descriptive purposes due to limitations in JClouds.
-     */
-    private String regionName;
-
-    /** Username credential for accessing the storage service */
-    private String accessKey;
-    /** Password credentials for accessing the storage service */
-    private String secretKey;
-
-    /**
      * Returns whether AWS cross account authorization is mandatory.
      * @return whether AWS cross account authorization is mandatory.
      */
@@ -189,12 +177,10 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
      */
     public CloudStorageServiceJClouds(String endpoint, String provider, String accessKey, String secretKey, String regionName,
             boolean relaxHostName, boolean stripExpectHeader) {
-        super(endpoint, provider);
+        super(endpoint, provider, regionName);
 
         this.relaxHostName=relaxHostName;
         this.stripExpectHeader=stripExpectHeader;
-        this.regionName=regionName;
-        
     }
 
     public BlobStoreContext getBlobStoreContext(String arn, String clientSecret) throws PortalServiceException {
@@ -202,14 +188,14 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
         properties.setProperty("jclouds.relax-hostname", relaxHostName ? "true" : "false");
         properties.setProperty("jclouds.strip-expect-header", stripExpectHeader ? "true" : "false");
 
-        if (regionName != null) {
-            properties.setProperty("jclouds.region", regionName);
+        if (getRegionName() != null) {
+            properties.setProperty("jclouds.region", getRegionName());
         }
 
         if(! TextUtil.isNullOrEmpty(arn)) {
             ContextBuilder builder = ContextBuilder.newBuilder("sts");
-            if(accessKey!=null && secretKey!=null)
-                builder.credentials(accessKey, secretKey);
+            if(getAccessKey()!=null && getSecretKey()!=null)
+                builder.credentials(getAccessKey(), getSecretKey());
 
             try (STSApi api = builder.buildApi(STSApi.class)) {
                 AssumeRoleOptions assumeRoleOptions = new AssumeRoleOptions().durationSeconds(3600)
@@ -240,8 +226,8 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
 
             ContextBuilder builder = ContextBuilder.newBuilder(getProvider()).overrides(properties);
 
-            if (accessKey != null && secretKey != null)
-                builder.credentials(accessKey, secretKey);
+            if (getAccessKey() != null && getSecretKey() != null)
+                builder.credentials(getAccessKey(), getSecretKey());
 
             if (getEndpoint() != null) {
                 builder.endpoint(getEndpoint());

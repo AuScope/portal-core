@@ -22,18 +22,85 @@ import org.auscope.portal.core.util.TextUtil;
 public abstract class CloudStorageService {
     private final Log log = LogFactory.getLog(getClass());
 
-    abstract InputStream getJobFile(CloudFileOwner job, String logFile) throws PortalServiceException;
+    abstract public InputStream getJobFile(CloudFileOwner job, String logFile) throws PortalServiceException;
 
-    abstract CloudFileInformation[] listJobFiles(CloudFileOwner job) throws PortalServiceException;
+    abstract public CloudFileInformation[] listJobFiles(CloudFileOwner job) throws PortalServiceException;
 
-    abstract void deleteJobFiles(CloudFileOwner job) throws PortalServiceException;
+    abstract public void deleteJobFiles(CloudFileOwner job) throws PortalServiceException;
 
-    abstract void uploadJobFiles(CloudFileOwner curJob, File[] files) throws PortalServiceException;
+    abstract public void uploadJobFiles(CloudFileOwner curJob, File[] files) throws PortalServiceException;
 
-    abstract CloudFileInformation getJobFileMetadata(CloudFileOwner job, String fileName) throws PortalServiceException;
+    abstract public CloudFileInformation getJobFileMetadata(CloudFileOwner job, String fileName) throws PortalServiceException;
+
+    /**
+     * The region identifier string for this service (if any). Can be
+     * null/empty. Currently this field is NON functional, it is only for
+     * descriptive purposes due to limitations in JClouds.
+     */
+    private String regionName;
+    /**
+     * @return the regionName
+     */
+    public String getRegionName() {
+        return regionName;
+    }
+
+    /**
+     * @param regionName the regionName to set
+     */
+    public void setRegionName(String regionName) {
+        this.regionName = regionName;
+    }
+
+    /**
+     * @return the accessKey
+     */
+    public String getAccessKey() {
+        return accessKey;
+    }
+
+    /**
+     * @param accessKey the accessKey to set
+     */
+    public void setAccessKey(String accessKey) {
+        this.accessKey = accessKey;
+    }
+
+    /**
+     * @return the secretKey
+     */
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    /**
+     * @param secretKey the secretKey to set
+     */
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
+
+    /**
+     * @param provider the provider to set
+     */
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
+    /**
+     * @param endpoint the endpoint to set
+     */
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+    }
+
+    /** Username credential for accessing the storage service */
+    private String accessKey;
+    /** Password credentials for accessing the storage service */
+    private String secretKey;
 
     /** The bucket name used when no bucket is specified */
-    public static final String DEFAULT_BUCKET = "portal-core-storage-service";
+    public static final String DEFAULT_BUCKET = "vgl";
 
     /**
      * Prefix to apply to any job files stored (will be appended with job id) -
@@ -69,10 +136,11 @@ public abstract class CloudStorageService {
 
     private String adminEmail = "cg-admin@csiro.au";
 
-    public CloudStorageService(String endpoint, String provider) {
+    public CloudStorageService(String endpoint, String provider, String regionName) {
         this.endpoint = endpoint;
         this.provider = provider;
-
+        this.regionName= regionName;
+        
         try {
             this.jobPrefix = "job-" + InetAddress.getLocalHost().getHostName() + "-";
         } catch (UnknownHostException e) {
