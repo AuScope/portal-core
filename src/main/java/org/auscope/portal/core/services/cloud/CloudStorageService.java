@@ -29,6 +29,7 @@ import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.io.ContentMetadata;
+import org.jclouds.openstack.swift.v1.blobstore.RegionScopedBlobStoreContext;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.sts.STSApi;
 import org.jclouds.sts.domain.UserAndSessionCredentials;
@@ -254,8 +255,13 @@ public class CloudStorageService {
         properties.setProperty("jclouds.relax-hostname", relaxHostName ? "true" : "false");
         properties.setProperty("jclouds.strip-expect-header", stripExpectHeader ? "true" : "false");
 
+        Class<? extends BlobStoreContext> targetClass = BlobStoreContext.class;
         if (regionName != null) {
-            properties.setProperty("jclouds.region", regionName);
+            if (provider.contains("openstack") || provider.contains("swift")) {
+                targetClass = RegionScopedBlobStoreContext.class;
+            } else {
+                properties.setProperty("jclouds.region", regionName);
+            }
         }
 
         if(! TextUtil.isNullOrEmpty(arn)) {
@@ -282,7 +288,7 @@ public class CloudStorageService {
                     builder2.endpoint(this.endpoint);
                 }
 
-                return builder2.buildView(BlobStoreContext.class);
+                return builder2.buildView(targetClass);
             } catch (IOException e) {
                 throw new PortalServiceException(e.getMessage(), e);
             }
@@ -300,7 +306,16 @@ public class CloudStorageService {
                 builder.endpoint(this.endpoint);
             }
 
-            return builder.build(BlobStoreContext.class);
+            return builder.build(targetClass);
+        }
+    }
+
+    private BlobStore getBlobStore(String arn, String clientSecret) throws PortalServiceException {
+        BlobStoreContext ctx = getBlobStoreContext(arn, clientSecret);
+        if (regionName != null && ctx instanceof RegionScopedBlobStoreContext) {
+            return ((RegionScopedBlobStoreContext) ctx).getBlobStore(regionName);
+        } else {
+            return ctx.getBlobStore();
         }
     }
 
@@ -549,7 +564,7 @@ public class CloudStorageService {
         String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
 
         try {
-            BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
+            BlobStore bs = getBlobStore(arn, clientSecret);
             Blob blob = bs.getBlob(getBucket(job), keyForJobFile(job, myKey));
             return blob.getPayload().openStream();
         } catch (Exception ex) {
@@ -598,7 +613,7 @@ public class CloudStorageService {
         String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
 
         try {
-            BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
+            BlobStore bs = getBlobStore(arn, clientSecret);
             StorageMetadata md = bs.blobMetadata(getBucket(job), keyForJobFile(job, myKey));
             return metadataToCloudFile(md);
         } catch (Exception ex) {
@@ -621,7 +636,7 @@ public class CloudStorageService {
         String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
 
         try {
-            BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
+            BlobStore bs = getBlobStore(arn, clientSecret);
             String baseKey = generateBaseKey(job);
 
             String bucketName = getBucket(job);
@@ -670,7 +685,7 @@ public class CloudStorageService {
         String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
 
         try {
-            BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
+            BlobStore bs = getBlobStore(arn, clientSecret);
 
             String bucketName = getBucket(job);
             bs.createContainerInLocation(null, bucketName);
@@ -710,7 +725,7 @@ public class CloudStorageService {
         String arn = job.getProperty(CloudJob.PROPERTY_STS_ARN);
         String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
         try {
-            BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
+            BlobStore bs = getBlobStore(arn, clientSecret);
             bs.deleteDirectory(getBucket(job), jobToBaseKey(job));
         } catch (Exception ex) {
             log.error("Error in removing job files or storage key.", ex);
