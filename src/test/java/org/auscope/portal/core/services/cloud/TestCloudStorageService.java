@@ -72,7 +72,7 @@ public class TestCloudStorageService extends PortalTestClass {
 
                     oneOf(mockPayload).openStream();
                     will(returnValue(mockReturnedInputStream));
-                    
+
                     allowing(mockReturnedInputStream).close();
                     allowing(mockPayload).close();
                 }
@@ -113,8 +113,8 @@ public class TestCloudStorageService extends PortalTestClass {
 
     /**
      * Tests that requests for listing files successfully call all dependencies
-     * @throws URISyntaxException 
-     * @throws PortalServiceException 
+     * @throws URISyntaxException
+     * @throws PortalServiceException
      */
     @Test
     public void testListOutputJobFiles() throws URISyntaxException, PortalServiceException  {
@@ -199,7 +199,7 @@ public class TestCloudStorageService extends PortalTestClass {
 
     /**
      * Tests that requests for uploading files successfully call all dependencies
-     * @throws PortalServiceException 
+     * @throws PortalServiceException
      */
     @Test
     public void testUploadJobFiles() throws PortalServiceException {
@@ -263,7 +263,7 @@ public class TestCloudStorageService extends PortalTestClass {
 
     /**
      * Tests that requests for deleting files successfully call all dependencies
-     * @throws PortalServiceException 
+     * @throws PortalServiceException
      */
     @Test
     public void testDeleteJobFiles() throws PortalServiceException {
@@ -332,7 +332,7 @@ public class TestCloudStorageService extends PortalTestClass {
     @Test(expected=PortalServiceException.class)
     public void testStsRequired() throws PortalServiceException {
         CloudStorageService stsService = new CloudStorageService("dummy1", "dummy2", "dummy3");
-        stsService.setRequireSts(true);
+        stsService.setStsRequirement(STSRequirement.Mandatory);
         stsService.getBlobStoreContext(null, null);
     }
 
