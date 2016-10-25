@@ -49,7 +49,7 @@
     <!-- Project properties -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jclouds.version>1.9.1</jclouds.version>
+        <jclouds.version>2.0.0-SNAPSHOT</jclouds.version>
     </properties>
     <build>
         <finalName>${project.artifactId}-${project.version}</finalName>
@@ -315,6 +315,14 @@
             <id>cgsrv8.arrc.csiro.au</id>
             <name>AuScope Nexus - PortalRepo</name>
             <url>http://cgsrv8.arrc.csiro.au/nexus/content/groups/PortalRepository/</url>
+        </repository>
+        
+        <repository>
+            <id>jclouds-snapshots</id>
+            <url>https://repository.apache.org/content/repositories/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </repositories>
     <!-- Dependencies -->
