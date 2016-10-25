@@ -181,7 +181,7 @@ public class TestCloudComputeServiceAws extends PortalTestClass{
      * In this case we expect it to return pending. If it's only a few seconds in the future then it's probably just a minor date/time
      * shifting error (or a daylight savings time shift). If it's a LONG time in the future, what can we expect? It's probably overengineering
      * the checks if we start accounting for the latter.
-     * @throws PortalServiceException 
+     * @throws PortalServiceException
      */
     @Test
     public void testJobStatus_FutureJob() throws PortalServiceException  {
@@ -203,7 +203,7 @@ public class TestCloudComputeServiceAws extends PortalTestClass{
     @Test(expected=PortalServiceException.class)
     public void testStsRequired() throws PortalServiceException  {
         final TestableCCS stsService = new TestableCCS(mockClient);
-        stsService.setRequireSts(true);
+        stsService.setStsRequirement(STSRequirement.Mandatory);
         stsService.getCredentials(null, null);
     }
 
