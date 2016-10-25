@@ -43,14 +43,19 @@ public abstract class GenericFilter extends AbstractFilter {
     }
 
     private String parseDateType(JSONObject obj){
+        DateTimeFormatter outFormatter = DateTimeFormat
+                .forPattern("yyyy-MM-dd");
+        DateTime date = outFormatter
+                .parseDateTime(obj.getString("value").split("T")[0]);
+        String stringDate = outFormatter.print(date) + " 00:00:00";
         if(Predicate.valueOf(obj.getString("predicate")) == (Predicate.BIGGER_THAN)){
             return this.generateDatePropertyIsGreaterThan(
                     obj.getString("xpath"),false,
-                    this.generateFunctionDateParse(obj.getString("value")));
+                    this.generateFunctionDateParse(stringDate));
         }else if(Predicate.valueOf(obj.getString("predicate")) == (Predicate.SMALLER_THAN)){
             return this.generateDatePropertyIsLessThan(
                     obj.getString("xpath"),false,
-                    this.generateFunctionDateParse(obj.getString("value")));
+                    this.generateFunctionDateParse(stringDate));
         }else throw new UnsupportedOperationException("Unable to parse date string fragment.");
 
     }
@@ -74,7 +79,7 @@ public abstract class GenericFilter extends AbstractFilter {
             throw new IllegalStateException(unInitializedSelectedFilterMessage);
         }
 
-        String[] frags = this.selectedFilters.split(",");
+        String[] frags = this.selectedFilters.split("(?<=\\}),");
 
         if(frags.length==0){
             throw new IllegalStateException(unInitializedSelectedFilterMessage);
