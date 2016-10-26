@@ -70,7 +70,7 @@ public class ViewKnownLayerFactory {
             obj.put("layerMode", SelectorsMode.NA);
         }
 
-        if(k.getFilterCollection()!=null && !k.getFilterCollection().isEmpty()){
+        if(k.getFilterCollection()!=null){
             obj.put("filterCollection",k.getFilterCollection());
         }
 

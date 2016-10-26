@@ -1,6 +1,8 @@
-package org.auscope.portal.core.uifilter;
+package org.auscope.portal.core.uifilter.xpathfilter;
 
-public class UIDropDownProvider extends IFilterObject{
+import org.auscope.portal.core.uifilter.Predicate;
+
+public class UIDropDownProvider extends AbstractXPathFilter{
 
     public final String TYPE ="PROVIDER";//VT what about sissvoc dropdown, or provider drop down
 

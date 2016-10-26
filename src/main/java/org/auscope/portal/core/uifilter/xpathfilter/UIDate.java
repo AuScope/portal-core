@@ -1,12 +1,13 @@
-package org.auscope.portal.core.uifilter;
+package org.auscope.portal.core.uifilter.xpathfilter;
 
+import org.auscope.portal.core.uifilter.Predicate;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import net.sf.json.JSONObject;
 
-public class UIDate extends IFilterObject{
+public class UIDate extends AbstractXPathFilter{
 
     public final String TYPE ="DATE";
 

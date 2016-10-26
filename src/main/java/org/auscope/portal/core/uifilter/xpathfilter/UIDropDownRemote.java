@@ -1,6 +1,8 @@
-package org.auscope.portal.core.uifilter;
+package org.auscope.portal.core.uifilter.xpathfilter;
 
-public class UIDropDownRemote extends IFilterObject{
+import org.auscope.portal.core.uifilter.Predicate;
+
+public class UIDropDownRemote extends AbstractXPathFilter{
 
     public final String TYPE ="REMOTE";
 

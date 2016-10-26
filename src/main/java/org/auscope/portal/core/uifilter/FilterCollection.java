@@ -2,36 +2,67 @@ package org.auscope.portal.core.uifilter;
 
 import java.util.List;
 
+import org.auscope.portal.core.uifilter.mandatory.AbstractMandatoryParamBinding;
+import org.auscope.portal.core.uifilter.mandatory.UIHiddenParam;
+import org.auscope.portal.core.uifilter.xpathfilter.AbstractXPathFilter;
+
 public class FilterCollection {
 
-    private List<IFilterObject> collection;
+    private List<AbstractXPathFilter> xpathFilters;
+    private List<AbstractMandatoryParamBinding> hiddenParams;
+    private List<AbstractMandatoryParamBinding> mandatoryFilters;
 
-    private List<FixedFilterObject> fixedAttributes;
 
-    public List<IFilterObject> getCollection() {
-        return collection;
+
+    /**
+     * @return the mandatoryFilters
+     */
+    public List<AbstractMandatoryParamBinding> getMandatoryFilters() {
+        return mandatoryFilters;
     }
 
-    public void setCollection(List<IFilterObject> collection) {
-        this.collection = collection;
-
+    /**
+     * @param mandatoryFilters the mandatoryFilters to set
+     */
+    public void setMandatoryFilters(List<AbstractMandatoryParamBinding> mandatoryFilters) {
+        this.mandatoryFilters = mandatoryFilters;
     }
 
-    public boolean isEmpty(){
-        if(collection == null || collection.isEmpty()){
-            return true;
-        }else{
-            return false;
-        }
+
+    /**
+     * @return the xpathFilters
+     */
+    public List<AbstractXPathFilter> getXpathFilters() {
+        return xpathFilters;
     }
 
-    public List<FixedFilterObject> getFixedAttributes() {
-        return fixedAttributes;
+
+    /**
+     * @param xpathFilters the xpathFilters to set
+     */
+    public void setXpathFilters(List<AbstractXPathFilter> xpathFilters) {
+        this.xpathFilters = xpathFilters;
     }
 
-    public void setFixedAttributes(List<FixedFilterObject> fixedAttributes) {
-        this.fixedAttributes = fixedAttributes;
+    /**
+     * @return the hiddenParams
+     */
+    public List<AbstractMandatoryParamBinding> getHiddenParams() {
+        return hiddenParams;
     }
+
+    /**
+     * @param hiddenParams the hiddenParams to set
+     */
+    public void setHiddenParams(List<AbstractMandatoryParamBinding> hiddenParams) {
+        this.hiddenParams = hiddenParams;
+    }
+
+
+
+
+
+
 
 
 

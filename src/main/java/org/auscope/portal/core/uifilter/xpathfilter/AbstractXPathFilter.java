@@ -1,6 +1,8 @@
-package org.auscope.portal.core.uifilter;
+package org.auscope.portal.core.uifilter.xpathfilter;
 
-public abstract class IFilterObject {
+import org.auscope.portal.core.uifilter.*;
+
+public abstract class AbstractXPathFilter {
 
     private String xpath;
     private String value;

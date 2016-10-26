@@ -30,12 +30,12 @@ public abstract class GenericFilter extends AbstractFilter {
 
     /** Log object for this class. */
     protected final Log logger = LogFactory.getLog(getClass());
-    protected String selectedFilters = "";
+    protected String xPathFilters = "";
 
     // ----------------------------------------------------------- Constructors
 
-    public GenericFilter(String selectedFilters) {
-        this.selectedFilters = selectedFilters;
+    public GenericFilter(String xPathFilters) {
+        this.xPathFilters = xPathFilters;
     }
 
     public GenericFilter() {
@@ -73,16 +73,16 @@ public abstract class GenericFilter extends AbstractFilter {
 
     public List<String> generateParameterFragments(){
         List<String> results=new ArrayList<String>();
-        final String unInitializedSelectedFilterMessage = "SelectedFilters has not been properly initialized. Make sure you have initialized via the constructor.";
+        final String unInitializedXPathFiltersMessage = "xPathFilters has not been properly initialized. Make sure you have initialized via the constructor.";
 
-        if(this.selectedFilters==null){
-            throw new IllegalStateException(unInitializedSelectedFilterMessage);
+        if(this.xPathFilters==null){
+            throw new IllegalStateException(unInitializedXPathFiltersMessage);
         }
 
-        String[] frags = this.selectedFilters.split("(?<=\\}),");
+        String[] frags = this.xPathFilters.split("(?<=\\}),");
 
         if(frags.length==0){
-            throw new IllegalStateException(unInitializedSelectedFilterMessage);
+            throw new IllegalStateException(unInitializedXPathFiltersMessage);
         }
 
         for(String frag:frags){
