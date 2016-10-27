@@ -1,9 +1,7 @@
-package org.auscope.portal.core.uifilter.xpathfilter;
+package org.auscope.portal.core.uifilter.optional.xpath;
 
 import org.auscope.portal.core.uifilter.Predicate;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+
 
 import net.sf.json.JSONObject;
 

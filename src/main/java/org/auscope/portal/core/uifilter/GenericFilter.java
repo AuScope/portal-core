@@ -1,9 +1,12 @@
 package org.auscope.portal.core.uifilter;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -63,8 +66,8 @@ public abstract class GenericFilter extends AbstractFilter {
     private String parseTextType(JSONObject obj){
         if(Predicate.valueOf(obj.getString("predicate")) == (Predicate.ISLIKE)){
             return this.generatePropertyIsLikeFragment(
-                    obj.getString("xpath"), obj.getString("value"));
-        }else if(Predicate.valueOf(obj.getString("predicate")) == (Predicate.EQUAL)){
+                    obj.getString("xpath"), "*" + obj.getString("value") + "*");
+        }else if(Predicate.valueOf(obj.getString("predicate")) == (Predicate.ISEQUAL)){
             return this.generatePropertyIsEqualToFragment(
                     obj.getString("xpath"), obj.getString("value"));
         }else throw new UnsupportedOperationException("Unable to parse text string fragment.");
@@ -79,20 +82,27 @@ public abstract class GenericFilter extends AbstractFilter {
             throw new IllegalStateException(unInitializedXPathFiltersMessage);
         }
 
-        String[] frags = this.xPathFilters.split("(?<=\\}),");
+        JSONArray jArray = (JSONArray) JSONSerializer.toJSON("["+this.xPathFilters+"]");
 
-        if(frags.length==0){
+        if(jArray.isEmpty()){
             throw new IllegalStateException(unInitializedXPathFiltersMessage);
         }
 
-        for(String frag:frags){
-            JSONObject obj = JSONObject.fromObject(frag);
-            if(obj.getString("type").equals("DATE")){
-                results.add(parseDateType(obj));
-            }else if(obj.getString("type").equals("TEXT")){
-                results.add(parseTextType(obj));
+        if(jArray.isArray()){
+            for(int i=0;i<jArray.size();i++){
+                if(jArray.get(i) instanceof JSONObject){
+                    JSONObject jobj=(JSONObject)jArray.get(i);
+                    if(jobj.getString("type").equals("DATE")){
+                        results.add(parseDateType(jobj));
+                    }else if(jobj.getString("type").equals("TEXT") || jobj.getString("type").equals("DROPDOWNSELECTLIST")){
+                        results.add(parseTextType(jobj));
+                    }
+                }
             }
+
         }
+
+
         return results;
     }
 

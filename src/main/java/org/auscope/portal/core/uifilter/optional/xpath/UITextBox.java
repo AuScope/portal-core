@@ -1,4 +1,4 @@
-package org.auscope.portal.core.uifilter.xpathfilter;
+package org.auscope.portal.core.uifilter.optional.xpath;
 
 import org.auscope.portal.core.uifilter.Predicate;
 

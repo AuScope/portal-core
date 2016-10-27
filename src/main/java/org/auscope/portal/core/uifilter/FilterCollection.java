@@ -4,11 +4,11 @@ import java.util.List;
 
 import org.auscope.portal.core.uifilter.mandatory.AbstractMandatoryParamBinding;
 import org.auscope.portal.core.uifilter.mandatory.UIHiddenParam;
-import org.auscope.portal.core.uifilter.xpathfilter.AbstractXPathFilter;
+import org.auscope.portal.core.uifilter.optional.xpath.AbstractXPathFilter;
 
 public class FilterCollection {
 
-    private List<AbstractXPathFilter> xpathFilters;
+    private List<AbstractBaseFilter> optionalFilters;
     private List<AbstractMandatoryParamBinding> hiddenParams;
     private List<AbstractMandatoryParamBinding> mandatoryFilters;
 
@@ -29,20 +29,7 @@ public class FilterCollection {
     }
 
 
-    /**
-     * @return the xpathFilters
-     */
-    public List<AbstractXPathFilter> getXpathFilters() {
-        return xpathFilters;
-    }
 
-
-    /**
-     * @param xpathFilters the xpathFilters to set
-     */
-    public void setXpathFilters(List<AbstractXPathFilter> xpathFilters) {
-        this.xpathFilters = xpathFilters;
-    }
 
     /**
      * @return the hiddenParams
@@ -56,6 +43,20 @@ public class FilterCollection {
      */
     public void setHiddenParams(List<AbstractMandatoryParamBinding> hiddenParams) {
         this.hiddenParams = hiddenParams;
+    }
+
+    /**
+     * @return the optionalFilters
+     */
+    public List<AbstractBaseFilter> getOptionalFilters() {
+        return optionalFilters;
+    }
+
+    /**
+     * @param optionalFilters the optionalFilters to set
+     */
+    public void setOptionalFilters(List<AbstractBaseFilter> optionalFilters) {
+        this.optionalFilters = optionalFilters;
     }
 
 
