@@ -92,9 +92,9 @@ public abstract class GenericFilter extends AbstractFilter {
             for(int i=0;i<jArray.size();i++){
                 if(jArray.get(i) instanceof JSONObject){
                     JSONObject jobj=(JSONObject)jArray.get(i);
-                    if(jobj.getString("type").equals("DATE")){
+                    if(jobj.getString("type").equals("OPTIONAL.DATE")){
                         results.add(parseDateType(jobj));
-                    }else if(jobj.getString("type").equals("TEXT") || jobj.getString("type").equals("DROPDOWNSELECTLIST")){
+                    }else if(jobj.getString("type").equals("OPTIONAL.TEXT") || jobj.getString("type").equals("OPTIONAL.DROPDOWNSELECTLIST")){
                         results.add(parseTextType(jobj));
                     }
                 }

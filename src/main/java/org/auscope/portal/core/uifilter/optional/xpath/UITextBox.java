@@ -4,7 +4,7 @@ import org.auscope.portal.core.uifilter.Predicate;
 
 public class UITextBox extends AbstractXPathFilter {
 
-    public final String TYPE ="TEXT";
+    public final String TYPE ="OPTIONAL.TEXT";
 
     public UITextBox(String label,String xpath,String value,Predicate predicate){
         this.setLabel(label);

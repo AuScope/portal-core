@@ -6,7 +6,7 @@ import org.auscope.portal.core.uifilter.AbstractBaseFilter;
 
 public class UICheckBoxGroupProvider extends AbstractBaseFilter{
 
-    public final String TYPE ="PROVIDER";//VT what about sissvoc dropdown, or provider drop down
+    public final String TYPE ="OPTIONAL.PROVIDER";//VT what about sissvoc dropdown, or provider drop down
 
     public UICheckBoxGroupProvider(String label,String value){
         this.setLabel(label);

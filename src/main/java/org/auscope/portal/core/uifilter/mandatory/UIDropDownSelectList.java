@@ -1,14 +1,17 @@
 package org.auscope.portal.core.uifilter.mandatory;
 
+import java.util.List;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 
 public class UIDropDownSelectList extends AbstractMandatoryParamBinding{
 
-    public final String TYPE ="DROPDOWNSELECTLIST";
-    private ImmutablePair<String,String> options;
+    public final String TYPE ="MANDATORY.DROPDOWNSELECTLIST";
+    private List<ImmutablePair<String,String>> options;
 
-    public UIDropDownSelectList(String parameter, String value, ImmutablePair<String,String> options){
+    public UIDropDownSelectList(String label,String parameter, String value, List<ImmutablePair<String,String>> options){
+        this.setLabel(label);
         this.setParameter(parameter);
         this.setValue(value);
         this.setOptions(options);
@@ -19,17 +22,13 @@ public class UIDropDownSelectList extends AbstractMandatoryParamBinding{
         return TYPE;
     }
 
-    /**
-     * @return the options
-     */
-    public ImmutablePair<String,String> getOptions() {
+    public List<ImmutablePair<String,String>> getOptions() {
         return options;
     }
 
-    /**
-     * @param options the options to set
-     */
-    public void setOptions(ImmutablePair<String,String> options) {
+    public void setOptions(List<ImmutablePair<String,String>> options) {
         this.options = options;
     }
+
+
 }
