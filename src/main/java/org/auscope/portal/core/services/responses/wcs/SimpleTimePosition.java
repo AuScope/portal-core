@@ -1,10 +1,12 @@
 package org.auscope.portal.core.services.responses.wcs;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 
 /**
@@ -19,6 +21,7 @@ public class SimpleTimePosition implements TemporalDomain {
     private Date timePosition;
     private String type;
 
+    @Override
     public String getType() {
         return type;
     }
@@ -27,7 +30,7 @@ public class SimpleTimePosition implements TemporalDomain {
         return timePosition;
     }
 
-    public SimpleTimePosition(Node node) throws Exception {
+    public SimpleTimePosition(Node node) throws DOMException, ParseException {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         df.setTimeZone(TimeZone.getTimeZone("GMT")); // assumption - Make everything GMT
 

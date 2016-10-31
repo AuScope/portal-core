@@ -18,7 +18,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * A factory class for creating instances of skos:Concept and child classes
- * 
+ *
  * @author Josh Vote
  *
  */
@@ -31,7 +31,7 @@ public class ConceptFactory {
      * Parses a owl:NamedIndividual element (ignoring any relations)
      *
      * If the specified node is missing requisite data null will be returned
-     * 
+     *
      * @param node
      * @return
      * @throws XPathExpressionException
@@ -82,7 +82,7 @@ public class ConceptFactory {
 
     private Concept[] relateConceptByDescription(Description[] descs, Map<String, Concept> parsedConceptMap,
             List<String> traversedUrns) {
-        List<Concept> concepts = new ArrayList<Concept>();
+        List<Concept> concepts = new ArrayList<>();
 
         for (int i = 0; i < descs.length; i++) {
             String urn = descs[i].getUrn();
@@ -102,7 +102,7 @@ public class ConceptFactory {
 
     /**
      * Given a concept described by desc; populate all relations in concept as defined by desc sourcing concepts from parsedConceptMap
-     * 
+     *
      * @param concept
      * @param desc
      * @param parsedConceptMap
@@ -132,7 +132,7 @@ public class ConceptFactory {
      */
     public Concept[] parseFromRDF(Node rdf) {
         //A map of concepts keyed by their URN's
-        Map<String, Concept> parsedConceptMap = new HashMap<String, Concept>();
+        Map<String, Concept> parsedConceptMap = new HashMap<>();
 
         //Parse all of our concepts and named individuals (but ignore all relations)
         try {
@@ -158,7 +158,7 @@ public class ConceptFactory {
 
         //After getting a map of all parsed concepts we populate the relations
         //We can do this by reading the rdf:Description elements
-        List<Concept> topLevelConcepts = new ArrayList<Concept>();
+        List<Concept> topLevelConcepts = new ArrayList<>();
         DescriptionFactory df = new DescriptionFactory();
         for (Description description : df.parseFromRDF(rdf)) {
             Concept concept = parsedConceptMap.get(description.getUrn());

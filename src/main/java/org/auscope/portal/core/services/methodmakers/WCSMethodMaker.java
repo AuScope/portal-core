@@ -48,7 +48,6 @@ public class WCSMethodMaker extends AbstractMethodMaker {
      *            [Optional] a list of additional request parameters
      * @return
      * @throws URISyntaxException
-     * @throws Exception
      */
     public HttpRequestBase getCoverageMethod(String serviceURL, String coverageName,
             String format, String outputCrs, Dimension outputSize, Resolution outputResolution, String inputCrs,
@@ -82,7 +81,7 @@ public class WCSMethodMaker extends AbstractMethodMaker {
             builder.setParameter("response_crs", outputCrs);
         }
 
-        if (inputCrs != null && !inputCrs.isEmpty()) {
+        if (!inputCrs.isEmpty()) {
             builder.setParameter("crs", inputCrs);
         }
 
@@ -144,7 +143,6 @@ public class WCSMethodMaker extends AbstractMethodMaker {
      *            The name of the coverage to query
      * @return
      * @throws URISyntaxException
-     * @throws Exception
      */
     public HttpRequestBase describeCoverageMethod(String serviceUrl, String coverageName) throws URISyntaxException {
         HttpGet httpMethod = new HttpGet();
@@ -175,7 +173,6 @@ public class WCSMethodMaker extends AbstractMethodMaker {
      *            The WCS endpoint to query
      * @return
      * @throws URISyntaxException
-     * @throws Exception
      */
     public HttpRequestBase getCapabilitiesMethod(String serviceUrl) throws URISyntaxException {
         HttpGet httpMethod = new HttpGet();

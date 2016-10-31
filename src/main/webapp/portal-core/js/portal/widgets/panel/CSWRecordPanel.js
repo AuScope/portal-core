@@ -3,6 +3,7 @@
  * records conforming to the portal.csw.CSWRecord Model
  */
 Ext.define('portal.widgets.panel.CSWRecordPanel', {
+    alias: 'widget.cswrecordpanel',
     extend : 'portal.widgets.panel.BaseRecordPanel',
 
     constructor : function(cfg) {

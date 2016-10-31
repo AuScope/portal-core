@@ -12,6 +12,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,11 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-
-import net.sf.json.JSONNull;
-import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -31,11 +28,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.server.http.download.DownloadResponse;
 
+import net.sf.json.JSONNull;
+import net.sf.json.JSONObject;
+
 public class FileIOUtil {
 
     protected final static Log log = LogFactory.getLog(FileIOUtil.class);
 
-    public static String convertExceptionToString(Exception ex, String debugQuery) {
+    public static String convertExceptionToString(Throwable ex, String debugQuery) {
         StringWriter sw = null;
         PrintWriter pw = null;
         String message = "";
@@ -101,36 +101,18 @@ public class FileIOUtil {
     public static boolean copyFile(File source, File destination) {
         boolean success = false;
         log.debug(source.getPath() + " -> " + destination.getPath());
-        FileInputStream input = null;
-        FileOutputStream output = null;
         byte[] buffer = new byte[8192];
         int bytesRead;
 
-        try {
-            input = new FileInputStream(source);
-            output = new FileOutputStream(destination);
+        try (FileInputStream input = new FileInputStream(source);
+             FileOutputStream output = new FileOutputStream(destination)) {
             while ((bytesRead = input.read(buffer)) >= 0) {
                 output.write(buffer, 0, bytesRead);
             }
             success = true;
-
         } catch (IOException e) {
             log.warn("Could not copy file: " + e.getMessage());
-
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException e) {
-                }
-            }
-            if (output != null) {
-                try {
-                    output.close();
-                } catch (IOException e) {
-                }
-            }
-        }
+        } 
 
         return success;
     }
@@ -312,7 +294,7 @@ public class FileIOUtil {
             try {
                 downloadURI = new URI(download.getRequestURL());
             } catch (URISyntaxException e1) {
-                log.error("Invalid URL", e1);
+                throw new IOException(e1.getMessage(), e1);
             }
 
             String downloadDomain = downloadURI.getHost().replace(".","_");
@@ -325,6 +307,7 @@ public class FileIOUtil {
             //TODO: VT - this method can be further improved if we thread this method as we are processing each stream one by one.
             // Check that attempt to request is successful
             if (!download.hasException()) {
+                @SuppressWarnings("resource") // closed in writeInputToOutputStream or intentionally left open
                 InputStream stream = download.getResponseAsStream();
 
                 //Write stream into the zip entry
@@ -349,7 +332,7 @@ public class FileIOUtil {
      * @param errorFileName
      *            The name of the error file in the zip (defaults to 'error.txt')
      */
-    public static void writeErrorToZip(ZipOutputStream zout, String debugQuery, Exception exceptionToPrint,
+    public static void writeErrorToZip(ZipOutputStream zout, String debugQuery, Throwable exceptionToPrint,
             String errorFileName) {
         String message = null;
         StringWriter sw = null;
@@ -385,7 +368,6 @@ public class FileIOUtil {
      *            The size (in bytes) of the in memory buffer
      * @param closeInput
      *            if true, the input will be closed prior to this method returning
-     * @throws Exception
      * @throws IOException
      */
     public static void writeInputToOutputStream(InputStream input, OutputStream output, int bufferSize,
@@ -456,7 +438,7 @@ public class FileIOUtil {
                     Object dataObject = jsonObject.get("data");
                     if (dataObject != null && !JSONNull.getInstance().equals(dataObject)) {
                         JSONObject dataObjectJson = JSONObject.fromObject(dataObject);
-                        Iterator children = dataObjectJson.keys();
+                        Iterator<?> children = dataObjectJson.keys();
                         if (children.hasNext()) {
                             String firstChild = children.next().toString();
                             gmlBytes = dataObjectJson.get(firstChild).toString().getBytes();
@@ -467,7 +449,7 @@ public class FileIOUtil {
                     try {
                         downloadURI = new URI(download.getRequestURL());
                     } catch (URISyntaxException e1) {
-                        log.error("Invalid URL", e1);
+                        throw new IOException(e1.getMessage(), e1);
                     }
 
                     String downloadDomain = downloadURI.getHost().replace(".","_");
@@ -498,7 +480,6 @@ public class FileIOUtil {
      * @param e
      * @param out
      * @param closeStream
-     * @throws Exception
      */
     public static void writeExceptionToXMLStream(Exception e, OutputStream out, boolean closeStream) throws IOException {
         writeExceptionToXMLStream(e, out, closeStream, "");
@@ -510,7 +491,6 @@ public class FileIOUtil {
      * @param e
      * @param out
      * @param closeStream
-     * @throws Exception
      */
     public static void writeExceptionToXMLStream(Exception e, OutputStream out, boolean closeStream,
             String additionalMsg) throws IOException {
@@ -544,7 +524,8 @@ public class FileIOUtil {
         } catch (IOException e) {
             throw e;
         } finally {
-            out.close();
+            if(out != null)
+                out.close();
             if (closeIns) {
                 ins.close();
             }
@@ -569,7 +550,8 @@ public class FileIOUtil {
         } catch (IOException e) {
             throw e;
         } finally {
-            out.close();
+            if(out !=null)
+                out.close();
             if (closeIns) {
                 ins.close();
             }

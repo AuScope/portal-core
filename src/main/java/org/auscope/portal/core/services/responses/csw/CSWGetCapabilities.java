@@ -7,6 +7,7 @@ import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.services.namespaces.IterableNamespace;
@@ -24,6 +25,7 @@ import org.xml.sax.SAXException;
  */
 public class CSWGetCapabilities {
 
+    @SuppressWarnings("unused")
     private final Log log = LogFactory.getLog(getClass());
 
     NamespaceContext nc;
@@ -31,37 +33,25 @@ public class CSWGetCapabilities {
 
     private String title;
 
-    public CSWGetCapabilities(InputStream getCapXML) throws ParserConfigurationException, IOException, SAXException,
-            XPathExpressionException {
+    public CSWGetCapabilities(InputStream getCapXML) throws IOException {
         nc = new CSWGetCapabilitiesNamespace();
+        Document doc;
         try {
-            Document doc = DOMUtil.buildDomFromStream(getCapXML, true);
+            doc = DOMUtil.buildDomFromStream(getCapXML, true);
             this.setTitle(doc);
-
-        } catch (SAXException e) {
-            //VT: no exception should be swallowed. pass it back up to the caller.
-            log.error("Parsing error: " + e.getMessage());
-            throw e;
-        } catch (IOException e) {
-            log.error("IO error: " + e.getMessage());
-            throw e;
-        } catch (ParserConfigurationException e) {
-            log.error("Parser Config Error: " + e.getMessage());
-            throw e;
-        } catch (XPathExpressionException xpee) {
-            log.error("CSW GETCAPABILTIES xml pasing error" + xpee.getMessage());
-            throw xpee;
+        } catch (ParserConfigurationException | SAXException | XPathExpressionException e) {
+            throw new IOException(e.getMessage(), e);
         }
     }
 
     public void setTitle(Document doc) throws XPathExpressionException {
-        String title = "";
+        String t = "";
 
         Node tempNode = (Node) DOMUtil.compileXPathExpr(TITLE_EXPRESSION, nc).evaluate(doc, XPathConstants.NODE);
 
-        title = tempNode != null ? tempNode.getTextContent() : "";
+        t = tempNode != null ? tempNode.getTextContent() : "";
 
-        this.title = title;
+        this.title = t;
     }
 
     public void setTitle(String title) {
@@ -77,7 +67,7 @@ public class CSWGetCapabilities {
         public CSWGetCapabilitiesNamespace() {
             map.put("csw", "http://www.opengis.net/cat/csw/2.0.2");
             map.put("ows", "http://www.opengis.net/ows");
-        };
+        }
     }
 
 }

@@ -47,7 +47,7 @@ public class CSWRecord {
 
     /** The URIs from which file downloads will be available in some records. */
     private String[] dataSetURIs;
-    
+
     /** The data identification abstract. */
     private String dataIdentificationAbstract;
 
@@ -70,7 +70,7 @@ public class CSWRecord {
     private String dataQualityStatement;
 
     /** The csw child records */
-    private List<CSWRecord> childRecords = new ArrayList<CSWRecord>();
+    private List<CSWRecord> childRecords = new ArrayList<>();
 
     private boolean noCache;
 
@@ -80,12 +80,12 @@ public class CSWRecord {
 
     /**
      * Instantiates a new empty CSWRecord
-     * 
+     *
      * @param fileIdentifier
      */
     public CSWRecord(String fileIdentifier) {
         this(null, fileIdentifier, null, null, null, null, "");
-    }   
+    }
 
     /**
      * Instantiates a new CSW record.
@@ -108,7 +108,7 @@ public class CSWRecord {
             AbstractCSWOnlineResource[] onlineResources, CSWGeographicElement[] cswGeographicsElements) {
         this(serviceName, fileIdentifier, recordInfoUrl, dataIdentificationAbstract, onlineResources, cswGeographicsElements, "");
     }
-    
+
     /**
      * Instantiates a new CSW record.
      *
@@ -349,10 +349,10 @@ public class CSWRecord {
     public void setDescriptiveKeywords(String[] descriptiveKeywords) {
         this.descriptiveKeywords = descriptiveKeywords;
     }
-        
+
     /**
      * Sets the dataset URIs
-     * 
+     *
      * @param dataSetURIs
      *            the dataSetURIs to set
      */
@@ -506,7 +506,7 @@ public class CSWRecord {
     public void setLayerName(String layerName) {
         this.layerName = layerName;
     }
-    
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
@@ -538,7 +538,7 @@ public class CSWRecord {
      * @return the online resources by type
      */
     public AbstractCSWOnlineResource[] getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType... types) {
-        List<AbstractCSWOnlineResource> result = new ArrayList<AbstractCSWOnlineResource>();
+        List<AbstractCSWOnlineResource> result = new ArrayList<>();
 
         for (AbstractCSWOnlineResource r : onlineResources) {
             if (r == null) {
@@ -565,7 +565,7 @@ public class CSWRecord {
      * Returns a filtered list of online resource protocols that match at least one of the specified types and is accepted by the visitor. Using a
      * CSWRecordsFilterVisitor will open up alot of other filter opportunity in the future without clutering up the code. eg if we need to filter by the
      * onlineResource description, we will just need a visitor that implements CSWRecordsFilterVisitor and apply the appropriate logic.
-     * 
+     *
      * @param types
      *            The list of types you want to filter by
      * @param visitor
@@ -575,7 +575,7 @@ public class CSWRecord {
     public AbstractCSWOnlineResource[] getOnlineResourcesByType(
             CSWRecordsFilterVisitor visitor,
             AbstractCSWOnlineResource.OnlineResourceType... types) {
-        List<AbstractCSWOnlineResource> result = new ArrayList<AbstractCSWOnlineResource>();
+        List<AbstractCSWOnlineResource> result = new ArrayList<>();
 
         for (AbstractCSWOnlineResource r : onlineResources) {
             if (r == null) {

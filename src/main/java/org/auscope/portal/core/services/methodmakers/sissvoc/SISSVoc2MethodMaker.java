@@ -1,10 +1,14 @@
 package org.auscope.portal.core.services.methodmakers.sissvoc;
 
 import java.net.URISyntaxException;
+import java.util.List;
 
+import org.apache.http.Consts;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.auscope.portal.core.services.methodmakers.AbstractMethodMaker;
 
 /**
@@ -42,9 +46,16 @@ public class SISSVoc2MethodMaker extends AbstractMethodMaker {
             throws URISyntaxException {
         HttpGet method = new HttpGet(urlPathConcat(vocabUrl, "getConceptByLabel"));
         URIBuilder builder = new URIBuilder(method.getURI());
-        builder.setQuery(repository + "/" + label);
+        builder.setParameters(parseQuery(repository + "/" + label));        
         method.setURI(builder.build());
         return method;
+    }
+
+    private static List <NameValuePair> parseQuery(String query) {
+        if (query != null && query.length() > 0) {
+            return URLEncodedUtils.parse(query, Consts.UTF_8);
+        }
+        return null;
     }
 
     /**
@@ -63,7 +74,7 @@ public class SISSVoc2MethodMaker extends AbstractMethodMaker {
             throws URISyntaxException {
         HttpGet method = new HttpGet(urlPathConcat(vocabUrl, "getConceptByURI"));
         URIBuilder builder = new URIBuilder(method.getURI());
-        builder.setQuery(repository + "/" + uri);
+        builder.setParameters(parseQuery(repository + "/" + uri));        
         method.setURI(builder.build());
         return method;
     }
@@ -84,7 +95,7 @@ public class SISSVoc2MethodMaker extends AbstractMethodMaker {
             throws URISyntaxException {
         HttpGet method = new HttpGet(urlPathConcat(vocabUrl, "getCommodity"));
         URIBuilder builder = new URIBuilder(method.getURI());
-        builder.setQuery(repository + "/" + commodity);
+        builder.setParameters(parseQuery(repository + "/" + commodity));
         method.setURI(builder.build());
         return method;
     }

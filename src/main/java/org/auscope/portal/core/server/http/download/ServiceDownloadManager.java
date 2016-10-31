@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -28,7 +29,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.auscope.portal.core.configuration.ServiceConfiguration;
 import org.auscope.portal.core.configuration.ServiceConfigurationItem;
+import org.auscope.portal.core.server.http.HttpClientResponse;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
+import org.auscope.portal.core.services.responses.ows.OWSException;
 import org.auscope.portal.core.util.DOMResponseUtil;
 import org.auscope.portal.core.util.FileIOUtil;
 import org.auscope.portal.core.util.MimeUtil;
@@ -53,7 +56,7 @@ public class ServiceDownloadManager {
     private ExecutorService pool;
 
     static {
-        endpointSemaphores = new ConcurrentHashMap<String, Semaphore>();
+        endpointSemaphores = new ConcurrentHashMap<>();
     }
 
     // VT do not directly access entryCount due to multi threading. Access it
@@ -96,12 +99,12 @@ public class ServiceDownloadManager {
     }
 
     public synchronized ArrayList<DownloadResponse> downloadAll()
-            throws URISyntaxException, InterruptedException,
+            throws URISyntaxException,
             InCompleteDownloadException {
 
         Semaphore processSemaphore = new Semaphore(this.maxThreadPerSession,
                 true);
-        ArrayList<GMLDownload> gmlDownloads = new ArrayList<GMLDownload>();
+        ArrayList<GMLDownload> gmlDownloads = new ArrayList<>();
 
         for (int i = 0; i < urls.length; i++) {
             Semaphore sem = endpointSemaphores.get(this.getHost(urls[i]));
@@ -111,10 +114,14 @@ public class ServiceDownloadManager {
             pool.execute(gmlDownload);
         }
         pool.shutdown();
-        pool.awaitTermination(ServiceDownloadManager.MAX_WAIT_TIME_MINUTE,
-                TimeUnit.MINUTES);
+        try {
+            pool.awaitTermination(ServiceDownloadManager.MAX_WAIT_TIME_MINUTE,
+                    TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            logger.info("ServiceDownloadManager#downloadAll thread pool shutdown was interrupted.");
+        }
 
-        ArrayList<DownloadResponse> responses = new ArrayList<DownloadResponse>();
+        ArrayList<DownloadResponse> responses = new ArrayList<>();
         for (GMLDownload gmlDownload : gmlDownloads) {
             responses.add(gmlDownload.getGMLDownload());
         }
@@ -126,7 +133,7 @@ public class ServiceDownloadManager {
         URI uri = new URI(url);
         String query = uri.getQuery();
         String[] params = query.split("&");
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         for (String param : params) {
             String[] s = param.split("=");
             if (s.length == 2) {
@@ -152,7 +159,7 @@ public class ServiceDownloadManager {
         private boolean downloadComplete = false;
         private Semaphore endPointSem, processSem;
         private int id;
-        private String fileExtensionOverride;
+        private String downloadFileExtensionOverride;
 
         public GMLDownload(String url, Semaphore sem, int id,
                 Semaphore processSem, String fileExtensionOverride) throws URISyntaxException {
@@ -160,7 +167,7 @@ public class ServiceDownloadManager {
             this.url = url;
             this.id = id;
             this.processSem = processSem;
-            this.fileExtensionOverride = fileExtensionOverride;
+            this.downloadFileExtensionOverride = fileExtensionOverride;
             response = new DownloadResponse(getHost(url));
         }
 
@@ -207,7 +214,7 @@ public class ServiceDownloadManager {
             } catch (InterruptedException e) {
                 logger.error("No reason for this thread to be interrupted", e);
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(),e);
             } finally {
                 endPointSem.release();
                 processSem.release();
@@ -229,48 +236,49 @@ public class ServiceDownloadManager {
             return downloadComplete;
         }
 
-        public void download(DownloadResponse response, String url) {
+        public void download(DownloadResponse resp, String theUrl) {
             if (ServiceDownloadManager.this.serviceConfiguration != null) {
                 ServiceConfigurationItem serviceConfigurationItem = ServiceDownloadManager.this.serviceConfiguration
-                        .getServiceConfigurationItem(url);
+                        .getServiceConfigurationItem(theUrl);
 
                 if (serviceConfigurationItem != null && serviceConfigurationItem.doesPaging()) {
-                    this.downloadPaging(response, url);
+                    this.downloadPaging(resp, theUrl);
                 } else {
-                    this.downloadNormal(response, url);
+                    this.downloadNormal(resp, theUrl);
                 }
             } else {
-                this.downloadNormal(response, url);
+                this.downloadNormal(resp, theUrl);
             }
-
         }
 
-        public void downloadNormal(DownloadResponse response, String url) {
-            HttpGet method = new HttpGet(url);
+        public void downloadNormal(DownloadResponse resp, String theUrl) {
+            HttpGet method = new HttpGet(theUrl);
             try {
                 // Our request may fail (due to timeout or otherwise)
-                HttpResponse httpResponse = serviceCaller.getMethodResponseAsHttpResponse(method);
+                // We need to ensure that this httpResponse is NOT closed. That is the responsibility of the
+                // classes using this service
+                @SuppressWarnings("resource")
+                HttpClientResponse httpResponse = serviceCaller.getMethodResponseAsHttpResponse(method);
 
-                response.setResponseStream(httpResponse.getEntity().getContent());
+                resp.setResponseStream(httpResponse.getEntity().getContent());
                 Header header = httpResponse.getEntity().getContentType();
                 if (header != null && header.getValue().length() > 0) {
-                    response.setContentType(httpResponse.getEntity().getContentType().getValue());
+                    resp.setContentType(httpResponse.getEntity().getContentType().getValue());
                 }
 
-            } catch (Exception ex) {
+            } catch (Throwable ex) {
                 logger.error(ex, ex);
-                response.setException(ex);
+                resp.setException(ex);
             }
 
         }
 
-        public void downloadPaging(DownloadResponse response, String url) {
+        public void downloadPaging(DownloadResponse resp, String theUrl) {
             //A typical request:http://localhost:8080/AuScope-Portal/doMineFilterDownload.do?&mineName=&serviceFilter=
             //http%3A%2F%2Fauscope-services-test.arrc.csiro.au%3A80%2Fgsq-earthresource%2Fwfs&bbox=%7B%22westBoundLongitude%22%3A%22144%22%2C%22
             //southBoundLatitude%22%3A%22-27%22%2C%22eastBoundLongitude%22%3A%22148%22%2C%22northBoundLatitude%22%3A%22-25%22%2C%22crs%22%3A%22EPSG%3A4326%22%7D&
             //serviceUrl=http%3A%2F%2Fauscope-services-test.arrc.csiro.au%3A80%2Fgsq-earthresource%2Fwfs&typeName=er%3AMiningFeatureOccurrence&maxFeatures=200
             File tempDir = null;
-            FileInputStream zipStream = null;
             try {
                 tempDir = Files.createTempDirectory("APT_PAGING").toFile();
                 tempDir.deleteOnExit();
@@ -278,13 +286,14 @@ public class ServiceDownloadManager {
                 int index = 0;
 
                 while (true) {
-                    HttpGet method = new HttpGet(url + "&startIndex=" + index);
+                    HttpGet method = new HttpGet(theUrl + "&startIndex=" + index);
+                    @SuppressWarnings("resource")
                     HttpResponse httpResponse = serviceCaller.getMethodResponseAsHttpResponse(method);
 
                     Header header = httpResponse.getEntity().getContentType();
                     String fileExtension = ".xml";//VT: Default to xml as we will mostly be dealing with xml files
-                    if (this.fileExtensionOverride != null) {
-                        fileExtension = this.fileExtensionOverride;
+                    if (this.downloadFileExtensionOverride != null) {
+                        fileExtension = this.downloadFileExtensionOverride;
                     } else if (header != null && header.getValue().length() > 0) {
                         fileExtension = "."
                                 + MimeUtil.mimeToFileExtension(httpResponse.getEntity().getContentType().getValue());
@@ -302,14 +311,15 @@ public class ServiceDownloadManager {
                         break;
                     }
                 }
-                zipStream = new FileInputStream(this.zipDirectory(tempDir));
+                @SuppressWarnings("resource")
+                FileInputStream zipStream = new FileInputStream(this.zipDirectory(tempDir));
                 //VT: Zip up tempDir and we are good to go.
-                response.setResponseStream(zipStream);
-                response.setContentType("application/zip");
+                resp.setResponseStream(zipStream);
+                resp.setContentType("application/zip");
 
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 logger.error(e, e);
-                response.setException(e);
+                resp.setException(e);
             } finally {
                 //Clean up
                 if (tempDir != null) {
@@ -319,13 +329,14 @@ public class ServiceDownloadManager {
 
         }
 
-        private int getNumberOfFeature(File f) throws Exception {
-            InputStream br = new BufferedInputStream(new FileInputStream(f));
-            NamespaceContext ns = new NumberOfFeatureNamespace();
-            return DOMResponseUtil.getNumberOfFeatures(br, ns);
+        private int getNumberOfFeature(File f) throws IOException, OWSException {
+            try (InputStream br = new BufferedInputStream(new FileInputStream(f))) {
+                NamespaceContext ns = new NumberOfFeatureNamespace();
+                return DOMResponseUtil.getNumberOfFeatures(br, ns);
+            }
         }
 
-        private File zipDirectory(File zipDir) throws Exception {
+        private File zipDirectory(File zipDir) throws IOException {
 
             File tempZip = File.createTempFile("APT_", ".zip");
             ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(tempZip));
@@ -350,8 +361,6 @@ public class ServiceDownloadManager {
                     }
                 }
                 return tempZip;
-            } catch (Exception e) {
-                throw e;
             } finally {
                 zos.close();
             }

@@ -1,5 +1,7 @@
 package org.auscope.portal.core.server.http.download;
 
+import java.io.IOException;
+
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -14,7 +16,8 @@ public class FileDownloadService {
 
     }
 
-    public DownloadResponse singleFileDownloadFromURL(String url) throws Exception {
+    @SuppressWarnings("resource")
+    public DownloadResponse singleFileDownloadFromURL(String url) throws IOException {
 
         HttpGet method = new HttpGet(url);
         HttpResponse httpResponse = serviceCaller.getMethodResponseAsHttpResponse(method);
@@ -25,12 +28,11 @@ public class FileDownloadService {
         Header contentType = httpResponse.getEntity().getContentType();
 
         //create a new entry in the zip file with a timestamped name
-        String mime = null;
+        // String mime = null;
         if (contentType != null) {
             response.setContentType(contentType.getValue());
         }
 
         return response;
-
     }
 }

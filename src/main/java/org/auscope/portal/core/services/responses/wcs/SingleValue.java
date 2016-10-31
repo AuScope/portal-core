@@ -14,11 +14,12 @@ public class SingleValue implements ValueEnumType {
     private String type;
     private String value;
 
-    public SingleValue(Node node) throws Exception {
+    public SingleValue(Node node) {
         type = node.getLocalName();
         value = node.getTextContent();
     }
 
+    @Override
     public String getType() {
         return type;
     }

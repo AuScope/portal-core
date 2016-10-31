@@ -14,6 +14,8 @@ Ext.define('portal.layer.Layer', {
         KML_RECORD : 'KMLRecord'
     },
 
+    
+    // TODO: Deprecate?
     visible : true,
 
     fields: [
@@ -27,7 +29,9 @@ Ext.define('portal.layer.Layer', {
         { name: 'downloader', type: 'auto' }, //A concrete implementation of a portal.layer.downloader.Downloader
         { name: 'querier', type: 'auto' }, //A concrete implementation of a portal.layer.querier.Querier
         { name: 'cswRecords', type: 'auto'}, //The source of all underlying data is an array of portal.csw.CSWRecord objects
-        //{ name: 'loading', type: 'boolean', defaultValue: false }, //Whether this layer is currently loading data or not
+        { name: 'loading', type: 'boolean', defaultValue: false },//Whether this layer is currently loading data or not
+        { name: 'active', type: 'boolean', defaultValue: false },//Whether this layer is current active on the map.
+        { name: 'visible', type: 'boolean', defaultValue: true }, // Whether this layer is visible
         { name: 'filterForm', type: 'auto'}, //The portal.layer.filterer.BaseFilterForm that houses the GUI for editing this layer's filterer
         { name: 'renderOnAdd', type: 'boolean', defaultValue: false }, //If true then this layer should be rendered the moment it is added as a layer. Currently used by KML
         { name: 'deserialized', type: 'boolean', defaultValue: false }, //If true then this layer has been deserialized from a permanent link
@@ -52,11 +56,14 @@ Ext.define('portal.layer.Layer', {
     
     setLayerVisibility : function(visibility){
         this.get('renderer').setVisibility(visibility);
-        this.visible = visibility;
+        // TODO: Deprecate?
+        this.visible=visibility;
+        this.set('visible',visibility);
     },                
 
     onRenderStarted : function(renderer, onlineResources, filterer) {
-        //this.set('loading', true);
+        this.set('loading', true);
+        this.set('active', true);
         this.get('source').set('loading', true);
         this.get('source').set('active', true);
     },
@@ -70,6 +77,7 @@ Ext.define('portal.layer.Layer', {
     onRenderFinished : function(renderer) {
         //this.set('loading', false);
         this.get('source').set('loading', false);
+        this.set('loading', false);
 
         var map = renderer.map;
         var layerStore = map.layerStore;
@@ -80,7 +88,8 @@ Ext.define('portal.layer.Layer', {
             var onlineResourcesForLayer = [];
             var cswRecords = layerStore.data.items[i].data.cswRecords;
             for (var j = 0; j < cswRecords.length; j++) {
-                onlineResourcesForLayer = onlineResourcesForLayer.concat(cswRecords[j].data.onlineResources);
+			    if (cswRecords[j].data.onlineResources)
+                    onlineResourcesForLayer = onlineResourcesForLayer.concat(cswRecords[j].data.onlineResources);
             }
 
             var layerNameArray = [];
@@ -125,32 +134,6 @@ Ext.define('portal.layer.Layer', {
         var renderer = this.get('renderer');      
         this.removeDataFromMap();                  
         renderer.displayData(this.getAllOnlineResources(), this.get('filterer'), Ext.emptyFn);
-        
-        var group = 'group';
-        if(this.get('sourceType')=='CSWRecord'){
-            group='contactOrg';
-        }
-        
-        //VT: Custom layer doesn't contain group
-        if(this.get('source').get(group)){
-            this._expandGridGroup(this.get('source').get(group));
-        }
-                       
-    },
-    
-    _expandGridGroup : function(groupname){
-        var activeTab = Ext.getCmp('auscope-tabs-panel').getActiveTab();
-        for (var i = 0; i < activeTab.features.length; i++) {
-            if (activeTab.features[i] instanceof Ext.grid.feature.Grouping) {
-                // try to expand the group but fail gracefully if not possible
-                // for example because the group may be obtained from the "contactOrg" field
-                // GA Portal thinks the group name of a Custom layer is "Geoscience Australia"
-                try {
-                    activeTab.features[i].expand(groupname,true);
-                }
-                catch(e) {}
-            }
-        }        
     },
     
    removeDataFromMap:function(){

@@ -71,7 +71,7 @@ public class CSWServiceItem {
      * @param restrictedToRoles
      *            the list of roles (the toString method will be called on each element and stored)
      */
-    public CSWServiceItem(String serviceUrl, String recordInformationUrl, Collection restrictedRoleList) {
+    public CSWServiceItem(String serviceUrl, String recordInformationUrl, Collection<?> restrictedRoleList) {
         this.serviceUrl = serviceUrl;
         this.recordInformationUrl = recordInformationUrl;
 
@@ -159,17 +159,17 @@ public class CSWServiceItem {
     }
 
     /**
-     * Compares id against this item
+     * Compares other against this item
      * 
-     * @param id
+     * @param other
      * @return
      */
-    public boolean equals(String id) {
+    public boolean equals(String other) {
         if (this.id == null) {
-            return id == null;
+            return other == null;
         }
 
-        return this.id.equals(id);
+        return this.id.equals(other);
     }
 
     /**

@@ -12,11 +12,9 @@ public class TestJobStatusException extends PortalTestClass {
 
     /**
      * Ensures that getMessage correctly concatenates messages
-     * 
-     * @throws Exception
      */
     @Test
-    public void testGetMessage() throws Exception {
+    public void testGetMessage() {
         final Throwable ex1 = new Exception("msg1");
         final Throwable ex2 = new FileNotFoundException("msg2");
         final Throwable ex3 = new NullPointerException("msg3");
@@ -40,11 +38,9 @@ public class TestJobStatusException extends PortalTestClass {
 
     /**
      * Ensures that toString correctly concatenates messages
-     * 
-     * @throws Exception
      */
     @Test
-    public void testToString() throws Exception {
+    public void testToString() {
         final Throwable ex1 = new Exception("msg1");
         final Throwable ex2 = new FileNotFoundException("msg2");
         final Throwable ex3 = new NullPointerException("msg3");

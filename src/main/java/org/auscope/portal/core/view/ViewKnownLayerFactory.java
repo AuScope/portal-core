@@ -73,7 +73,7 @@ public class ViewKnownLayerFactory {
         return obj;
     }
 
-    private ModelMap toView(Dimension d) {
+    private static ModelMap toView(Dimension d) {
         ModelMap obj = new ModelMap();
 
         obj.put("width", d.getWidth());
@@ -82,7 +82,7 @@ public class ViewKnownLayerFactory {
         return obj;
     }
 
-    private ModelMap toView(Point p) {
+    private static ModelMap toView(Point p) {
         ModelMap obj = new ModelMap();
 
         obj.put("x", p.getX());

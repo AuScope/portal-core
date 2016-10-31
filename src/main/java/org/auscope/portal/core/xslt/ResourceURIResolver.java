@@ -16,7 +16,7 @@ import javax.xml.transform.stream.StreamSource;
 public class ResourceURIResolver implements URIResolver {
 
     /** The base from where resources should be looked up from */
-    private Class baseClass;
+    private Class<?> baseClass;
 
     /**
      * Creates a new resolver with this class as the base
@@ -31,13 +31,14 @@ public class ResourceURIResolver implements URIResolver {
      * @param clazz
      *            Will be used as the basis for all resource lookups
      */
-    public ResourceURIResolver(Class clazz) {
+    public ResourceURIResolver(Class<?> clazz) {
         baseClass = clazz;
     }
 
     /**
      * See URIResolver interface
      */
+    @SuppressWarnings("resource")
     @Override
     public Source resolve(String href, String base) throws TransformerException {
         InputStream is = baseClass.getResourceAsStream(href);

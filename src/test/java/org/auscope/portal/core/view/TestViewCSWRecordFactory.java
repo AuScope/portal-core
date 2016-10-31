@@ -1,5 +1,6 @@
 package org.auscope.portal.core.view;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +30,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
     private CSWContact mockContact = context.mock(CSWContact.class);
 
     @Test
-    public void testToView() throws Exception {
+    public void testToView() throws MalformedURLException  {
         ViewCSWRecordFactory factory = new ViewCSWRecordFactory();
 
         //for mockCSWRecord
@@ -257,7 +258,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
     }
 
     @Test
-    public void testToViewBadOnlineResources() throws Exception {
+    public void testToViewBadOnlineResources() {
         ViewCSWRecordFactory factory = new ViewCSWRecordFactory();
 
         final String serviceName = "sn";
@@ -378,11 +379,10 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
 
     /**
      * Tests that the view correctly handles a null responsible party contact.
-     *
-     * @throws Exception
+     * @throws MalformedURLException 
      */
     @Test
-    public void testToViewNoResponsibleParty() throws Exception {
+    public void testToViewNoResponsibleParty() throws MalformedURLException {
         ViewCSWRecordFactory factory = new ViewCSWRecordFactory();
 
         final String serviceName = "sn";

@@ -1,19 +1,27 @@
 package org.auscope.portal.core.services.responses.wcs;
 
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
+
+import org.auscope.portal.core.services.responses.ows.OWSException;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.test.ResourceUtil;
 import org.auscope.portal.core.util.DOMUtil;
 import org.junit.Assert;
 import org.junit.Test;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 public class TestDescribeCoverageRecord extends PortalTestClass {
 
     @Test
-    public void parseTest1() throws Exception {
+    public void parseTest1() throws IOException, ParserConfigurationException, SAXException, XPathExpressionException, DOMException, OWSException, ParseException {
         final String xmlString = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/responses/wcs/DescribeCoverageResponse1.xml");
         final Document doc = DOMUtil.buildDomFromString(xmlString);
@@ -107,7 +115,7 @@ public class TestDescribeCoverageRecord extends PortalTestClass {
     }
 
     @Test
-    public void parseTest2() throws Exception {
+    public void parseTest2() throws IOException, ParserConfigurationException, SAXException, XPathExpressionException, DOMException, OWSException, ParseException  {
         final String xmlString = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/responses/wcs/DescribeCoverageResponse2.xml");
         final Document doc = DOMUtil.buildDomFromString(xmlString);
@@ -140,13 +148,13 @@ public class TestDescribeCoverageRecord extends PortalTestClass {
         Assert.assertNotNull(record.getSpatialDomain());
         Assert.assertEquals(2, record.getSpatialDomain().getEnvelopes().length);
 
-        SimpleEnvelope env0 = (SimpleEnvelope) record.getSpatialDomain().getEnvelopes()[0];
+        SimpleEnvelope env0 = record.getSpatialDomain().getEnvelopes()[0];
         Assert.assertEquals(179.982, env0.getEastBoundLongitude(), 0.000001);
         Assert.assertEquals(63.041, env0.getSouthBoundLatitude(), 0.000001);
         Assert.assertEquals(-179.123, env0.getWestBoundLongitude(), 0.000001);
         Assert.assertEquals(82.415, env0.getNorthBoundLatitude(), 0.000001);
 
-        SimpleEnvelope env1 = (SimpleEnvelope) record.getSpatialDomain().getEnvelopes()[1];
+        SimpleEnvelope env1 = record.getSpatialDomain().getEnvelopes()[1];
         Assert.assertEquals(2173789.735, env1.getEastBoundLongitude(), 0.00001);
         Assert.assertEquals(-1151631.237, env1.getSouthBoundLatitude(), 0.00001);
         Assert.assertEquals(-825267.555, env1.getWestBoundLongitude(), 0.00001);
@@ -165,7 +173,7 @@ public class TestDescribeCoverageRecord extends PortalTestClass {
     }
 
     @Test
-    public void parseTest3() throws Exception {
+    public void parseTest3() throws IOException, ParserConfigurationException, SAXException, XPathExpressionException, DOMException, OWSException, ParseException {
         final String xmlString = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/responses/wcs/DescribeCoverageResponse3.xml");
         final Document doc = DOMUtil.buildDomFromString(xmlString);
@@ -182,7 +190,7 @@ public class TestDescribeCoverageRecord extends PortalTestClass {
         SpatialDomain sd = record.getSpatialDomain();
         Assert.assertNotNull(sd);
         Assert.assertEquals(1, record.getSpatialDomain().getEnvelopes().length);
-        SimpleEnvelope env = (SimpleEnvelope) record.getSpatialDomain().getEnvelopes()[0];
+        SimpleEnvelope env = record.getSpatialDomain().getEnvelopes()[0];
         Assert.assertEquals(153.62049699996703, env.getEastBoundLongitude(), 0.00001);
         Assert.assertEquals(-43.69864800000154, env.getSouthBoundLatitude(), 0.00001);
         Assert.assertEquals(112.87212699999998, env.getWestBoundLongitude(), 0.00001);

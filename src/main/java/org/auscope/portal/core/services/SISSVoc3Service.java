@@ -3,9 +3,6 @@ package org.auscope.portal.core.services;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -15,10 +12,6 @@ import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.sissvoc.SISSVoc3MethodMaker;
 import org.auscope.portal.core.services.methodmakers.sissvoc.SISSVoc3MethodMaker.Format;
 import org.auscope.portal.core.services.namespaces.VocabNamespaceContext;
-import org.auscope.portal.core.services.responses.vocab.Concept;
-import org.auscope.portal.core.services.responses.vocab.ConceptFactory;
-import org.auscope.portal.core.services.responses.vocab.Description;
-import org.auscope.portal.core.services.responses.vocab.DescriptionFactory;
 import org.auscope.portal.core.util.DOMUtil;
 import org.auscope.portal.core.util.FileIOUtil;
 import org.w3c.dom.Document;
@@ -120,19 +113,11 @@ public class SISSVoc3Service {
      *            receives the response Descriptions
      */
     protected boolean requestPageOfConcepts(HttpRequestBase method, Model model) throws PortalServiceException {
-        //Make our request
-        InputStream is;
-        try {
-            is = httpServiceCaller.getMethodResponseAsStream(method);
-        } catch (Exception e) {
-            method.releaseConnection();
-            throw new PortalServiceException(method, e);
-        }
-
-        //Parse the response into an XML document
-        Document doc = null;
         boolean moreData = false;
-        try {
+        //Make our request
+        try (InputStream is = httpServiceCaller.getMethodResponseAsStream(method)) {
+            // Parse the response into an XML document
+            Document doc = null;
             doc = DOMUtil.buildDomFromStream(is);
 
             VocabNamespaceContext nc = new VocabNamespaceContext();
@@ -155,7 +140,6 @@ public class SISSVoc3Service {
             throw new PortalServiceException(method, e);
         } finally {
             method.releaseConnection();
-            FileIOUtil.closeQuietly(is);
         }
 
         return moreData;
@@ -172,11 +156,11 @@ public class SISSVoc3Service {
     public Model getAllConcepts() throws PortalServiceException, URISyntaxException {
         Model model = ModelFactory.createDefaultModel();
         int pageNumber = 0;
-        int pageSize = this.pageSize;
+        int ps = this.pageSize;
 
         //Request each page in turn - put the results into Model
         do {
-            HttpRequestBase method = sissVocMethodMaker.getAllConcepts(baseUrl, repository, Format.Rdf, pageSize,
+            HttpRequestBase method = sissVocMethodMaker.getAllConcepts(baseUrl, repository, Format.Rdf, ps,
                     pageNumber);
             if (requestPageOfConcepts(method, model)) {
                 pageNumber++;
@@ -196,6 +180,7 @@ public class SISSVoc3Service {
      * @return
      * @throws PortalServiceException
      */
+    @SuppressWarnings("resource")
     public Resource getResourceByUri(String resourceUri) throws PortalServiceException {
         InputStream is = null;
         HttpRequestBase method = null;
@@ -210,7 +195,9 @@ public class SISSVoc3Service {
             throw new PortalServiceException(method, e);
         } finally {
             FileIOUtil.closeQuietly(is);
-            method.releaseConnection();
+            if (method != null) {
+                method.releaseConnection();                
+            }
         }
     }
 

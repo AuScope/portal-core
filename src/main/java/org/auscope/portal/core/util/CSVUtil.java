@@ -8,6 +8,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
 
 public class CSVUtil {
 
@@ -40,24 +42,35 @@ public class CSVUtil {
         if (columnIndex.length != columns.length) {
             throw new IOException("Not all columns are found");
         }
-        HashMap<String, ArrayList<String>> result = new HashMap<String, ArrayList<String>>();
+        HashMap<String, ArrayList<String>> result = new HashMap<>();
 
+        // Adds in an empty ArrayList for each column name
         for (String column : columns) {
             result.put(column, new ArrayList<String>());
         }
 
         String line = "";
+
+        // 'doneCols' is used to make sure that duplicate columns are not processed twice
+        Set<String> doneCols = new HashSet<String>();
+
+        // Loop over each line of CSV, setting the desired columns' values
         while ((line = csvReader.readLine()) != null) {
             if (line.isEmpty())
                 continue;
+
             String[] tokens = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)", -1);
             for (int i = 0; i < columnIndex.length; i++) {
-                if (columnIndex[i] < tokens.length) {
-                    result.get(columns[i]).add(tokens[columnIndex[i]]);
-                } else {
-                    result.get(columns[i]).add("");
+                if (!doneCols.contains(columns[i])) {
+                    if (columnIndex[i] < tokens.length) {
+                        result.get(columns[i]).add(tokens[columnIndex[i]]);
+                    } else {
+                        result.get(columns[i]).add("");
+                    }
+                    doneCols.add(columns[i]);
                 }
             }
+            doneCols.clear();
         }
 
         return result;

@@ -24,7 +24,7 @@ public class CSWRecordsHostFilter implements CSWRecordsFilterVisitor {
 
     public CSWRecordsHostFilter(String url) {
         try {
-            this.filterUrl = ((url.equals("") || url == null) ? null : new URL(url));
+            this.filterUrl = ((url == null || url.equals("")) ? null : new URL(url));
         } catch (MalformedURLException mue) {
             this.filterUrl = null;
         }

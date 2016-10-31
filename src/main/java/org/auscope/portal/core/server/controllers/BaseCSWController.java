@@ -13,12 +13,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Base class for all controllers that intend on returning CSWRecords
- * 
+ *
  * @author Josh Vote
  *
  */
 public abstract class BaseCSWController extends BasePortalController {
-
     /** Used for converting data to something the view can understand */
     protected ViewCSWRecordFactory viewCSWRecordFactory;
 
@@ -32,7 +31,7 @@ public abstract class BaseCSWController extends BasePortalController {
 
     /**
      * Utility for generating a response model that represents a number of CSWRecord objects
-     * 
+     *
      * @param records
      *            The records to transform
      * @return
@@ -43,7 +42,7 @@ public abstract class BaseCSWController extends BasePortalController {
 
     /**
      * Utility for generating a response model that represents a number of CSWRecord objects
-     * 
+     *
      * @param records
      *            The records to transform
      * @param matchedResults
@@ -55,7 +54,7 @@ public abstract class BaseCSWController extends BasePortalController {
             return generateJSONResponseMAV(false, new CSWRecord[] {}, "");
         }
 
-        List<ModelMap> recordRepresentations = new ArrayList<ModelMap>();
+        List<ModelMap> recordRepresentations = new ArrayList<>();
 
         try {
             for (CSWRecord record : records) {
@@ -70,13 +69,13 @@ public abstract class BaseCSWController extends BasePortalController {
 
     /**
      * Utility for generating a response model that represents a number of KnownLayerAndRecord objects
-     * 
+     *
      * @param knownLayers
      *            The known layers to transform
      * @return
      */
     protected ModelAndView generateKnownLayerResponse(List<KnownLayerAndRecords> knownLayers) {
-        List<ModelMap> viewKnownLayers = new ArrayList<ModelMap>();
+        List<ModelMap> viewKnownLayers = new ArrayList<>();
         for (KnownLayerAndRecords knownLayerAndRecords : knownLayers) {
             KnownLayer kl = knownLayerAndRecords.getKnownLayer();
             if (kl.isHidden()) {
@@ -84,14 +83,14 @@ public abstract class BaseCSWController extends BasePortalController {
             }
             ModelMap viewKnownLayer = viewKnownLayerFactory.toView(knownLayerAndRecords.getKnownLayer());
 
-            List<ModelMap> viewMappedRecords = new ArrayList<ModelMap>();
+            List<ModelMap> viewMappedRecords = new ArrayList<>();
             for (CSWRecord rec : knownLayerAndRecords.getBelongingRecords()) {
                 if (rec != null) {
                     viewMappedRecords.add(viewCSWRecordFactory.toView(rec));
                 }
             }
 
-            List<ModelMap> viewRelatedRecords = new ArrayList<ModelMap>();
+            List<ModelMap> viewRelatedRecords = new ArrayList<>();
             for (CSWRecord rec : knownLayerAndRecords.getRelatedRecords()) {
                 if (rec != null) {
                     viewRelatedRecords.add(viewCSWRecordFactory.toView(rec));
@@ -108,12 +107,12 @@ public abstract class BaseCSWController extends BasePortalController {
 
     /**
      * Utility for generating a response model that represents a number of CSWRecord objects
-     * 
+     *
      * @param records
      * @return
      */
     protected ModelAndView generateCSWRecordResponse(List<CSWRecord> records) {
-        List<ModelMap> viewRecords = new ArrayList<ModelMap>();
+        List<ModelMap> viewRecords = new ArrayList<>();
         for (CSWRecord rec : records) {
             if (rec.getServiceName() == null || rec.getServiceName().isEmpty()) {
                 continue;//dont include any records with an empty name (it looks bad)

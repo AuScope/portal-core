@@ -2,9 +2,7 @@ package org.auscope.portal.core.services.responses.csw;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -14,13 +12,13 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.namespaces.CSWNamespaceContext;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.test.ResourceUtil;
 import org.auscope.portal.core.util.DOMUtil;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -38,10 +36,10 @@ public class TestCSWRecordTransformer extends PortalTestClass {
     private XPathExpression exprGetAllMetadataNodes;
     private XPathExpression exprGetFirstMetadataNode;
 
-    private void setUpForResponse(String responseResourceName) throws ParserConfigurationException, SAXException,
-            IOException, XPathExpressionException {
+    private void setUpForResponse(final String responseResourceName) throws ParserConfigurationException, SAXException,
+    IOException, XPathExpressionException {
 
-        CSWNamespaceContext nc = new CSWNamespaceContext();
+        final CSWNamespaceContext nc = new CSWNamespaceContext();
         exprGetAllMetadataNodes = DOMUtil.compileXPathExpr("/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata",
                 nc);
         exprGetFirstMetadataNode = DOMUtil.compileXPathExpr(
@@ -50,22 +48,22 @@ public class TestCSWRecordTransformer extends PortalTestClass {
         // load CSW record response document
         doc = DOMUtil.buildDomFromStream(ResourceUtil.loadResourceAsStream(responseResourceName));
 
-        XPath xPath = XPathFactory.newInstance().newXPath();
+        final XPath xPath = XPathFactory.newInstance().newXPath();
         xPath.setNamespaceContext(new CSWNamespaceContext());
 
-        NodeList nodes = (NodeList) exprGetAllMetadataNodes.evaluate(doc, XPathConstants.NODESET);
+        final NodeList nodes = (NodeList) exprGetAllMetadataNodes.evaluate(doc, XPathConstants.NODESET);
 
         records = new CSWRecord[nodes.getLength()];
         for (int i = 0; i < nodes.getLength(); i++) {
-            Node metadataNode = nodes.item(i);
-            CSWRecordTransformer transformer = new CSWRecordTransformer(metadataNode);
+            final Node metadataNode = nodes.item(i);
+            final CSWRecordTransformer transformer = new CSWRecordTransformer(metadataNode);
             records[i] = transformer.transformToCSWRecord();
         }
     }
 
     @Test
     public void testGetServiceName() throws XPathExpressionException, ParserConfigurationException, SAXException,
-            IOException {
+    IOException {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
 
         Assert.assertEquals(
@@ -78,7 +76,7 @@ public class TestCSWRecordTransformer extends PortalTestClass {
     }
 
     @Test
-    public void testGetServiceUrl() throws Exception {
+    public void testGetServiceUrl() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException  {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
 
         AbstractCSWOnlineResource[] resources = this.records[4].getOnlineResourcesByType(OnlineResourceType.WFS);
@@ -95,17 +93,17 @@ public class TestCSWRecordTransformer extends PortalTestClass {
     }
 
     @Test
-    public void testDescriptiveKeywords() throws Exception {
+    public void testDescriptiveKeywords() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException  {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
 
-        String[] actual = this.records[0].getDescriptiveKeywords();
-        String[] expected = new String[] {"WFS", "GeologicUnit", "MappedFeature", "gsml:GeologicUnit",
-                "gsml:MappedFeature"};
+        final String[] actual = this.records[0].getDescriptiveKeywords();
+        final String[] expected = new String[] {"WFS", "GeologicUnit", "MappedFeature", "gsml:GeologicUnit",
+        "gsml:MappedFeature"};
         Assert.assertArrayEquals(expected, actual);
     }
 
     @Test
-    public void testMultipleOnlineResources() throws Exception {
+    public void testMultipleOnlineResources() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException  {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
 
         AbstractCSWOnlineResource[] resources = this.records[14].getOnlineResources();
@@ -156,16 +154,16 @@ public class TestCSWRecordTransformer extends PortalTestClass {
     }
 
     @Test
-    public void testGeographicBoundingBoxParsing() throws Exception {
+    public void testGeographicBoundingBoxParsing() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException  {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
 
-        CSWGeographicElement[] geoEls = this.records[0].getCSWGeographicElements();
+        final CSWGeographicElement[] geoEls = this.records[0].getCSWGeographicElements();
 
         Assert.assertNotNull(geoEls);
         Assert.assertEquals(1, geoEls.length);
         Assert.assertTrue(geoEls[0] instanceof CSWGeographicBoundingBox);
 
-        CSWGeographicBoundingBox bbox = (CSWGeographicBoundingBox) geoEls[0];
+        final CSWGeographicBoundingBox bbox = (CSWGeographicBoundingBox) geoEls[0];
 
         Assert.assertEquals(145.00, bbox.getEastBoundLongitude(), 0.001);
         Assert.assertEquals(143.00, bbox.getWestBoundLongitude(), 0.001);
@@ -174,19 +172,19 @@ public class TestCSWRecordTransformer extends PortalTestClass {
     }
 
     @Test
-    public void testContactInfo() throws Exception {
+    public void testContactInfo() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException  {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
 
-        CSWRecord rec = this.records[0];
+        final CSWRecord rec = this.records[0];
 
-        CSWResponsibleParty respParty = rec.getContact();
+        final CSWResponsibleParty respParty = rec.getContact();
         Assert.assertNotNull(respParty);
 
         Assert.assertEquals("Michael Stegherr", respParty.getIndividualName());
         Assert.assertEquals("CSIRO Exploration & Mining", respParty.getOrganisationName());
         Assert.assertEquals("Software Developer", respParty.getPositionName());
 
-        CSWContact contact = respParty.getContactInfo();
+        final CSWContact contact = respParty.getContactInfo();
         Assert.assertNotNull(contact);
 
         Assert.assertEquals("Michael.Stegherr@csiro.au", contact.getAddressEmail());
@@ -197,7 +195,7 @@ public class TestCSWRecordTransformer extends PortalTestClass {
         Assert.assertEquals("ACT", contact.getAddressAdministrativeArea());
         Assert.assertEquals("2601", contact.getAddressPostalCode());
 
-        AbstractCSWOnlineResource contactResource = contact.getOnlineResource();
+        final AbstractCSWOnlineResource contactResource = contact.getOnlineResource();
         Assert.assertNotNull(contactResource);
 
         Assert.assertEquals("http://www.em.csiro.au/", contactResource.getLinkage().toString());
@@ -207,9 +205,13 @@ public class TestCSWRecordTransformer extends PortalTestClass {
 
     /**
      * Tests that the data quality info is correctly parsed
+     * @throws IOException 
+     * @throws SAXException 
+     * @throws ParserConfigurationException 
+     * @throws XPathExpressionException 
      */
     @Test
-    public void testDataQualityInfo() throws Exception {
+    public void testDataQualityInfo() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException  {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
 
         Assert.assertEquals("Data Quality Statment 1", this.records[0].getDataQualityStatement());
@@ -219,47 +221,59 @@ public class TestCSWRecordTransformer extends PortalTestClass {
     /**
      * Tests that the record is correctly parsed with empty dataSetURI.
      * field should not be null. but should be empty
+     * @throws IOException 
+     * @throws SAXException 
+     * @throws ParserConfigurationException 
+     * @throws XPathExpressionException 
      */
     @Test
-    public void testNoDatasetURI() throws Exception {
+    public void testNoDatasetURI() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException  {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
-        Assert.assertNotNull(this.records[0].getDataSetURIs());   
+        Assert.assertNotNull(this.records[0].getDataSetURIs());
         Assert.assertTrue(this.records[0].getDataSetURIs().length == 0);
-        
+
     }
 
     /**
      * Tests that the record is correctly parsed with a single dataSetURI.
+     * @throws IOException 
+     * @throws SAXException 
+     * @throws ParserConfigurationException 
+     * @throws XPathExpressionException 
      */
     @Test
-    public void testSingleDatasetURI() throws Exception {
+    public void testSingleDatasetURI() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException  {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse_SingleDatasetURI.xml");
-        Assert.assertNotNull(this.records[0].getDataSetURIs());   
-        Assert.assertEquals("http://geology.data.vic.gov.au/searchAssistant/reference.html?q=record_id:26150", 
+        Assert.assertNotNull(this.records[0].getDataSetURIs());
+        Assert.assertEquals("http://geology.data.vic.gov.au/searchAssistant/reference.html?q=record_id:26150",
                 this.records[0].getDataSetURIs()[0]);
     }
-    
+
     /**
      * Tests that the record is correctly parsed with a single dataSetURI.
+     * @throws IOException 
+     * @throws SAXException 
+     * @throws ParserConfigurationException 
+     * @throws XPathExpressionException 
      */
     @Test
-    public void testMultipleDatasetURIs() throws Exception {
+    public void testMultipleDatasetURIs() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException  {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse_MultipleDatasetURIs.xml");
-        Assert.assertNotNull(this.records[0].getDataSetURIs());   
-        Assert.assertEquals("http://geology.data.vic.gov.au/searchAssistant/reference.html?q=record_id:26150", 
+        Assert.assertNotNull(this.records[0].getDataSetURIs());
+        Assert.assertEquals("http://geology.data.vic.gov.au/searchAssistant/reference.html?q=record_id:26150",
                 this.records[0].getDataSetURIs()[0]);
         Assert.assertEquals("http://geology.data.vic.gov.au/searchAssistant/reference.html?q=record_id:26151",
                 this.records[0].getDataSetURIs()[1]);
     }
-    
+
     /**
      * Generates an xpath-esque location for the current node for debug purposes
-     * 
+     *
      * @param node
      * @return
      */
-    private String debugLocation(Node node) {
-        Stack<String> stack = new Stack<String>();
+    private static String debugLocation(final Node node) {
+        final Stack<String> stack = new Stack<>();
 
         Node current = node;
         do {
@@ -276,10 +290,10 @@ public class TestCSWRecordTransformer extends PortalTestClass {
         return result;
     }
 
-    private List<Node> getNonTextChildNodes(Node node) {
-        List<Node> nonTextChildren = new ArrayList<Node>();
+    private static List<Node> getNonTextChildNodes(final Node node) {
+        final List<Node> nonTextChildren = new ArrayList<>();
 
-        NodeList children = node.getChildNodes();
+        final NodeList children = node.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
             if (!(children.item(i) instanceof Text)) {
                 nonTextChildren.add(children.item(i));
@@ -290,31 +304,13 @@ public class TestCSWRecordTransformer extends PortalTestClass {
     }
 
     /**
-     * Gets every attribute of node that IS NOT an xmlns:namespace="uri" attribute
-     * 
-     * @param node
-     * @return
-     */
-    private Map<String, String> getNonNamespaceAttributes(Node node) {
-        Map<String, String> result = new HashMap<String, String>();
-        NamedNodeMap expectedAttr = node.getAttributes();
-
-        for (int i = 0; i < expectedAttr.getLength(); i++) {
-            Node attr = expectedAttr.item(i);
-            System.out.println(attr);
-        }
-
-        return result;
-    }
-
-    /**
      * Asserts that 2 nodes and child nodes are equal
-     * 
+     *
      * @param expected
      * @param actual
      */
-    private void assertNodeTreesEqual(Node expected, Node actual) {
-        String debugLocationString = String.format("expected='%1$s'\nactual='%2$s'\n", debugLocation(expected),
+    private void assertNodeTreesEqual(final Node expected, final Node actual) {
+        final String debugLocationString = String.format("expected='%1$s'\nactual='%2$s'\n", debugLocation(expected),
                 debugLocation(actual));
 
         //Compare node URI + name
@@ -339,8 +335,8 @@ public class TestCSWRecordTransformer extends PortalTestClass {
         //getNonNamespaceAttributes(expected);
 
         //Compare attributes (if any)
-        NamedNodeMap expectedAttr = expected.getAttributes();
-        NamedNodeMap actualAttr = actual.getAttributes();
+        final NamedNodeMap expectedAttr = expected.getAttributes();
+        final NamedNodeMap actualAttr = actual.getAttributes();
         if (expectedAttr != null) {
             Assert.assertNotNull(debugLocationString, actualAttr);
 
@@ -354,8 +350,8 @@ public class TestCSWRecordTransformer extends PortalTestClass {
         }
 
         //Compare children (if any)
-        List<Node> expectedChildren = getNonTextChildNodes(expected);
-        List<Node> actualChildren = getNonTextChildNodes(actual);
+        final List<Node> expectedChildren = getNonTextChildNodes(expected);
+        final List<Node> actualChildren = getNonTextChildNodes(actual);
         Assert.assertEquals(debugLocationString, expectedChildren.size(), actualChildren.size());
         for (int i = 0; i < expectedChildren.size(); i++) {
             assertNodeTreesEqual(expectedChildren.get(i), actualChildren.get(i));
@@ -375,7 +371,7 @@ public class TestCSWRecordTransformer extends PortalTestClass {
     }
 
     @Test
-    public void testConstraints() throws Exception {
+    public void testConstraints() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
 
         Assert.assertArrayEquals(new String[] {"CopyrightConstraint1", "CopyrightConstraint2"},
@@ -384,22 +380,22 @@ public class TestCSWRecordTransformer extends PortalTestClass {
     }
 
     @Test
-    public void testReverseTransformation() throws Exception {
+    public void testReverseTransformation() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException, PortalServiceException {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
 
-        CSWRecordTransformer transformer = new CSWRecordTransformer();
+        final CSWRecordTransformer transformer = new CSWRecordTransformer();
 
-        Node original = (Node) exprGetFirstMetadataNode.evaluate(doc, XPathConstants.NODE);
-        Node actual = transformer.transformToNode(this.records[0]);
+        final Node original = (Node) exprGetFirstMetadataNode.evaluate(doc, XPathConstants.NODE);
+        final Node actual = transformer.transformToNode(this.records[0]);
 
         assertNodeTreesEqual(original, actual);
     }
 
     @Test
-    public void testUploadedResourceParsing() throws Exception {
+    public void testUploadedResourceParsing() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse_UploadedResources.xml");
 
-        AbstractCSWOnlineResource[] ors = this.records[0].getOnlineResources();
+        final AbstractCSWOnlineResource[] ors = this.records[0].getOnlineResources();
 
         Assert.assertNotNull(ors);
         Assert.assertEquals(1, ors.length);

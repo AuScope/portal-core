@@ -1,8 +1,7 @@
 package org.auscope.portal.core.util;
 
-import junit.framework.Assert;
-
 import org.auscope.portal.core.test.PortalTestClass;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class TestMimeUtil extends PortalTestClass {

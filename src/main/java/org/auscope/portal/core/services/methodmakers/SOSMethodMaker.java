@@ -1,7 +1,7 @@
 package org.auscope.portal.core.services.methodmakers;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpPost;
@@ -27,10 +27,6 @@ public class SOSMethodMaker extends AbstractMethodMaker {
      * 
      * @param serviceURL
      *            - required, SOS End Point
-     * @return
-     * @throws Exception
-     *             if service URL or request not provided
-     *
      * @return
      */
     //    public HttpMethodBase getCapabilitiesMethod(String serviceURL) {
@@ -65,8 +61,6 @@ public class SOSMethodMaker extends AbstractMethodMaker {
      *            - optional - FilterBoundingBox object -> convert to 52NorthSOS BBOX format : maxlat,minlon,minlat,maxlon(,srsURI) srsURI format :
      *            "http://www.opengis.net/def/crs/EPSG/0/"+epsg code
      * @return httpMethod
-     * @throws Exception
-     *             if service URL or request are not provided
      */
     public HttpRequestBase makePostMethod(String serviceURL, String request, String featureOfInterest,
             Date beginPosition, Date endPosition, FilterBoundingBox bbox) {
@@ -99,7 +93,7 @@ public class SOSMethodMaker extends AbstractMethodMaker {
         sb.append("        xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n");
         sb.append("        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
         sb.append("        xsi:schemaLocation=\"http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sos.xsd\">\n");
-        if ((beginPosition != null && !beginPosition.equals("")) && (beginPosition != null && !endPosition.equals(""))) {
+        if ((beginPosition != null && !beginPosition.equals("")) && (!endPosition.equals(""))) {
             DateTime bpDateTime = new DateTime(beginPosition);
             DateTime epDateTime = new DateTime(endPosition);
             sb.append("        <sos:temporalFilter>\n");

@@ -14,8 +14,6 @@ import java.util.regex.Pattern;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import junit.framework.Assert;
-
 import org.auscope.portal.core.test.jmock.DelayedReturnValueAction;
 import org.auscope.portal.core.test.jmock.DelayedThrowAction;
 import org.auscope.portal.core.test.jmock.FileWithNameMatcher;
@@ -32,6 +30,7 @@ import org.jmock.api.ExpectationError;
 import org.jmock.integration.junit4.JMock;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.w3c.dom.Document;
@@ -69,7 +68,7 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
      */
     @Before
     public void initialiseUncaughtExceptionHandler() {
-        expectationErrors = new ArrayList<ExpectationError>();
+        expectationErrors = new ArrayList<>();
         Thread.setDefaultUncaughtExceptionHandler(this);
     }
 
@@ -102,9 +101,8 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
      * @param returnValue
      *            The value to actually return
      * @return
-     * @throws Exception
      */
-    protected Action delayReturnValue(long msDelay, Object returnValue) throws Exception {
+    protected Action delayReturnValue(long msDelay, Object returnValue) {
         return new DelayedReturnValueAction(msDelay, returnValue);
     }
 
@@ -118,9 +116,8 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
      * @param throwable
      *            The object to throw
      * @return
-     * @throws Exception
      */
-    protected Action delayThrowException(long msDelay, Throwable throwable) throws Exception {
+    protected Action delayThrowException(long msDelay, Throwable throwable) {
         return new DelayedThrowAction(throwable, msDelay);
     }
 
@@ -192,7 +189,7 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
      * @return
      */
     protected <K, V> MapMatcher<K, V> aMap(Map<K, V> map) {
-        return new MapMatcher<K, V>(map);
+        return new MapMatcher<>(map);
     }
 
     /**
@@ -209,7 +206,7 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
             throw new IllegalArgumentException();
         }
 
-        Map<K, V> map = new HashMap<K, V>();
+        Map<K, V> map = new HashMap<>();
         for (int i = 0; i < keys.length; i++) {
             map.put(keys[i], values[i]);
         }

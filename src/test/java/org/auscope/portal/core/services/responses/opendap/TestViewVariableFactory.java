@@ -8,18 +8,18 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import junit.framework.Assert;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.view.JSONModelAndView;
 import org.jmock.Expectations;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.web.servlet.view.AbstractView;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
+import ucar.ma2.InvalidRangeException;
 import ucar.nc2.Dimension;
 import ucar.nc2.Group;
 import ucar.nc2.Variable;
@@ -47,7 +47,7 @@ public class TestViewVariableFactory extends PortalTestClass {
     private Array mockArray4 = context.mock(Array.class, "Array4");
     private Group mockGroup = context.mock(Group.class);
 
-    private void assertViewVariableEquals(SimpleAxis a1, SimpleAxis a2) {
+    private static void assertViewVariableEquals(SimpleAxis a1, SimpleAxis a2) {
         Assert.assertEquals(a1.getName(), a2.getName());
         Assert.assertEquals(a1.getDataType(), a2.getDataType());
         Assert.assertEquals(a1.getType(), a2.getType());
@@ -138,6 +138,7 @@ public class TestViewVariableFactory extends PortalTestClass {
      * Create a number of ViewVariables, convert to JSONText, parse JSONText and then test equality
      *
      * Assumption - The net.sf JSON libraries can parse/write JSON text
+     * @throws Exception 
      */
     @Test
     public void testParseJSONFull() throws Exception {
@@ -160,11 +161,9 @@ public class TestViewVariableFactory extends PortalTestClass {
 
     /**
      * Tests parsing from a JSON String where only SOME fields are specified
-     * 
-     * @throws Exception
      */
     @Test
-    public void testParseJSONPartial1() throws Exception {
+    public void testParseJSONPartial1() {
         SimpleAxis a1 = new SimpleAxis("time", null, null, null, new SimpleBounds(0, 3));
         SimpleAxis a2 = new SimpleAxis("isobaric", null, null, null, new SimpleBounds(5, 100));
         SimpleAxis a3 = new SimpleAxis("y", null, null, null, new SimpleBounds(-5.5, 22.33));
@@ -181,11 +180,9 @@ public class TestViewVariableFactory extends PortalTestClass {
 
     /**
      * Tests parsing from a JSON String where only SOME fields are specified
-     * 
-     * @throws Exception
      */
     @Test
-    public void testParseJSONPartial2() throws Exception {
+    public void testParseJSONPartial2() {
         SimpleAxis a1 = new SimpleAxis("lat", null, null, new SimpleBounds(-2, 3), null);
 
         String jsonString2 = "{\"constraints\":[{\"type\":\"axis\",\"name\":\"lat\",\"dimensionBounds\":{\"from\":-2,\"to\":3}}]}";
@@ -197,11 +194,11 @@ public class TestViewVariableFactory extends PortalTestClass {
 
     /**
      * A test of reading a mock NetCDF dataset - reading a non gridded variable with a single axis
-     * 
-     * @throws Exception
+     * @throws InvalidRangeException 
+     * @throws IOException 
      */
     @Test
-    public void testParseNetCDFNonGridded() throws Exception {
+    public void testParseNetCDFNonGridded() throws IOException, InvalidRangeException {
 
         final DataType dataType = DataType.FLOAT;
         final SimpleAxis expectation = new SimpleAxis("axis1", dataType.name(), "units1", new SimpleBounds(0, 237566),
@@ -252,11 +249,11 @@ public class TestViewVariableFactory extends PortalTestClass {
 
     /**
      * A test of reading a mock NetCDF dataset - reading a gridded variable with a two axes
-     * 
-     * @throws Exception
+     * @throws InvalidRangeException 
+     * @throws IOException 
      */
     @Test
-    public void testParseNetCDFGridded() throws Exception {
+    public void testParseNetCDFGridded() throws IOException, InvalidRangeException  {
         final DataType dataType = DataType.FLOAT;
         final SimpleAxis axis1 = new SimpleAxis("axis1", dataType.name(), "units1", new SimpleBounds(0, 23566),
                 new SimpleBounds(-3435.345, 25235.3));
@@ -356,11 +353,11 @@ public class TestViewVariableFactory extends PortalTestClass {
 
     /**
      * A test of reading a mock NetCDF dataset that fails when requesting the variable range
-     * 
-     * @throws Exception
+     * @throws InvalidRangeException 
+     * @throws IOException 
      */
     @Test(expected = IOException.class)
-    public void testParseNetCDFGriddedWithError() throws Exception {
+    public void testParseNetCDFGriddedWithError() throws IOException, InvalidRangeException  {
         final DataType dataType = DataType.FLOAT;
         final SimpleAxis expectation = new SimpleAxis("axis1", dataType.name(), "units1", new SimpleBounds(0, 237566),
                 new SimpleBounds(-3995.345, 21531.3));
@@ -403,11 +400,11 @@ public class TestViewVariableFactory extends PortalTestClass {
 
     /**
      * A test of reading a mock NetCDF dataset - reading a gridded variable with a single axis One of the dimensions parsed will NOT map to an existing variable
-     * 
-     * @throws Exception
+     * @throws InvalidRangeException 
+     * @throws IOException 
      */
     @Test
-    public void testParseNetCDFGridded_UnmappedDimension() throws Exception {
+    public void testParseNetCDFGridded_UnmappedDimension() throws IOException, InvalidRangeException {
         final DataType dataType = DataType.FLOAT;
         final SimpleAxis axis1 = new SimpleAxis("axis1", dataType.name(), "units1", new SimpleBounds(0, 23566),
                 new SimpleBounds(-3435.345, 25235.3));
@@ -418,7 +415,7 @@ public class TestViewVariableFactory extends PortalTestClass {
         final List<Variable> variableList = Arrays.asList(mockVariable1, mockVariable2);
         final List<Dimension> dimensionList1 = Arrays.asList(mockDimension1, mockDimension2);
         final List<Dimension> dimensionList2 = Arrays.asList(mockDimension1);
-        final List<Dimension> dimensionList3 = Arrays.asList(mockDimension2);
+   //     final List<Dimension> dimensionList3 = Arrays.asList(mockDimension2);
 
         //Build up our "mock" dataset
         context.checking(new Expectations() {
@@ -489,11 +486,11 @@ public class TestViewVariableFactory extends PortalTestClass {
 
     /**
      * A test of reading a mock NetCDF dataset - reading a non gridded variable with a single axis
-     * 
-     * @throws Exception
+     * @throws InvalidRangeException 
+     * @throws IOException 
      */
     @Test
-    public void testParseVariableFilter() throws Exception {
+    public void testParseVariableFilter() throws IOException, InvalidRangeException {
         final DataType dataType = DataType.FLOAT;
         final SimpleAxis axis1 = new SimpleAxis("axis1", dataType.name(), "units1", new SimpleBounds(0, 23566),
                 new SimpleBounds(-3435.345, 25235.3));

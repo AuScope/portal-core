@@ -1,7 +1,6 @@
 package org.auscope.portal.core.server.security.oauth2;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,14 +23,14 @@ import com.racquettrack.security.oauth.OAuth2UserDetailsLoader;
  *
  */
 public class GoogleOAuth2UserDetailsLoader implements
-        OAuth2UserDetailsLoader<PortalUser> {
+OAuth2UserDetailsLoader<PortalUser> {
 
     protected String defaultRole;
     protected Map<String, List<SimpleGrantedAuthority>> rolesByUser;
 
     /**
      * Creates a new GoogleOAuth2UserDetailsLoader that will assign defaultRole to every user as a granted authority.
-     * 
+     *
      * @param defaultRole
      */
     public GoogleOAuth2UserDetailsLoader(String defaultRole) {
@@ -41,18 +40,18 @@ public class GoogleOAuth2UserDetailsLoader implements
     /**
      * Creates a new GoogleOAuth2UserDetailsLoader that will assign defaultRole to every user AND any authorities found in rolesByUser if the ID matches the
      * current user ID
-     * 
+     *
      * @param defaultRole
      * @param rolesByUser
      */
     public GoogleOAuth2UserDetailsLoader(String defaultRole, Map<String, List<String>> rolesByUser) {
         this.defaultRole = defaultRole;
-        this.rolesByUser = new HashMap<String, List<SimpleGrantedAuthority>>();
+        this.rolesByUser = new HashMap<>();
 
         if (rolesByUser != null) {
             for (Entry<String, List<String>> entry : rolesByUser.entrySet()) {
                 List<String> authorityStrings = entry.getValue();
-                List<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>(
+                List<SimpleGrantedAuthority> authorities = new ArrayList<>(
                         authorityStrings.size());
                 for (String authority : authorityStrings) {
                     authorities.add(new SimpleGrantedAuthority(authority));
@@ -78,7 +77,7 @@ public class GoogleOAuth2UserDetailsLoader implements
 
     /**
      * Extracts keys from userInfo and applies them to appropriate properties in user
-     * 
+     *
      * @param user
      * @param userInfo
      */
@@ -89,7 +88,7 @@ public class GoogleOAuth2UserDetailsLoader implements
 
     @Override
     public UserDetails createUser(String id, Map<String, Object> userInfo) {
-        List<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>();
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(defaultRole));
         if (rolesByUser != null) {
             List<SimpleGrantedAuthority> additionalAuthorities = rolesByUser.get(id);

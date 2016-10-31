@@ -1,11 +1,12 @@
 package org.auscope.portal.core.server.http.download;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -33,7 +34,7 @@ public class TestServiceDownloadManager extends PortalTestClass {
     }
 
     @Test
-    public void testDownloadAll() throws Exception {
+    public void testDownloadAll() throws IOException, URISyntaxException, InCompleteDownloadException {
         final String[] serviceUrls = {
                 "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://nvclwebservices.vm.csiro.au:80/geoserverBH/wfs",
                 "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://nvclwebservices.vm.csiro.au:80/geoserverBH/wfs"};
@@ -41,32 +42,32 @@ public class TestServiceDownloadManager extends PortalTestClass {
         final String dummyJSONResponse = "{\"data\":{\"kml\":\"<someKmlHere/>\", \"gml\":\""
                 + dummyGml + "\"},\"success\":true}";
         final InputStream dummyJSONResponseIS = new ByteArrayInputStream(dummyJSONResponse.getBytes());
-        final MyHttpResponse httpResponse = new MyHttpResponse(dummyJSONResponseIS);
+        try (final MyHttpResponse httpResponse = new MyHttpResponse(dummyJSONResponseIS)) {
 
-        context.checking(new Expectations() {
-            {
-                // calling the service
-                exactly(2).of(mockServiceCaller).getMethodResponseAsHttpResponse(with(any(HttpRequestBase.class)));
-                will(returnValue(httpResponse));
+            context.checking(new Expectations() {
+                {
+                    // calling the service
+                    exactly(2).of(mockServiceCaller).getMethodResponseAsHttpResponse(with(any(HttpRequestBase.class)));
+                    will(returnValue(httpResponse));
 
-                allowing(mockServiceConfiguration).getServiceConfigurationItem(with(any(String.class)));
-                will(returnValue(null));
+                    allowing(mockServiceConfiguration).getServiceConfigurationItem(with(any(String.class)));
+                    will(returnValue(null));
+                }
+            });
+
+            ServiceDownloadManager sdm = new ServiceDownloadManager(serviceUrls, mockServiceCaller, threadPool,
+                    mockServiceConfiguration);
+            ArrayList<DownloadResponse> gmlDownloads = sdm.downloadAll();
+            for (DownloadResponse response : gmlDownloads) {
+                Assert.assertEquals(dummyJSONResponseIS, response.getResponseAsStream());
+                Assert.assertFalse(response.hasException());
+                Assert.assertNull(response.getException());
             }
-        });
-
-        ServiceDownloadManager sdm = new ServiceDownloadManager(serviceUrls, mockServiceCaller, threadPool,
-                mockServiceConfiguration);
-        ArrayList<DownloadResponse> gmlDownloads = sdm.downloadAll();
-        for (DownloadResponse response : gmlDownloads) {
-            Assert.assertEquals(dummyJSONResponseIS, response.getResponseAsStream());
-            Assert.assertFalse(response.hasException());
-            Assert.assertNull(response.getException());
         }
-
     }
 
     @Test
-    public void testDownloadAllWithPaging() throws Exception {
+    public void testDownloadAllWithPaging() throws IOException, URISyntaxException, InCompleteDownloadException {
 
         final ServiceConfigurationItem scItem = new ServiceConfigurationItem("exampleTestId", "exampleTest.com/test",
                 true);
@@ -143,7 +144,7 @@ public class TestServiceDownloadManager extends PortalTestClass {
     }
 
     @Test
-    public void testDownloadAllException() throws Exception {
+    public void testDownloadAllException() throws IOException, URISyntaxException, InCompleteDownloadException {
         final String[] serviceUrls = {
                 "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://nvclwebservices.vm.csiro.au:80/geoserverBH/wfs",
                 "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://www.mrt.tas.gov.au:80/web-services/wfs"};
@@ -152,33 +153,34 @@ public class TestServiceDownloadManager extends PortalTestClass {
                 + dummyGml + "\"},\"success\":true}";
         final InputStream dummyJSONResponseIS = new ByteArrayInputStream(dummyJSONResponse.getBytes());
 
-        final MyHttpResponse httpResponse = new MyHttpResponse(dummyJSONResponseIS);
+        try (final MyHttpResponse httpResponse = new MyHttpResponse(dummyJSONResponseIS)) {
 
-        context.checking(new Expectations() {
-            {
-                // calling the service
-                atLeast(1).of(mockServiceCaller).getMethodResponseAsHttpResponse(with(any(HttpRequestBase.class)));
-                will(onConsecutiveCalls(
-                        returnValue(httpResponse),
-                        throwException(new Exception("test exception"))));
+            context.checking(new Expectations() {
+                {
+                    // calling the service
+                    atLeast(1).of(mockServiceCaller).getMethodResponseAsHttpResponse(with(any(HttpRequestBase.class)));
+                    will(onConsecutiveCalls(
+                            returnValue(httpResponse),
+                            throwException(new IOException("test exception"))));
 
-                allowing(mockServiceConfiguration).getServiceConfigurationItem(with(any(String.class)));
-                will(returnValue(null));
-            }
-        });
+                    allowing(mockServiceConfiguration).getServiceConfigurationItem(with(any(String.class)));
+                    will(returnValue(null));
+                }
+            });
 
-        ServiceDownloadManager sdm = new ServiceDownloadManager(serviceUrls, mockServiceCaller, threadPool,
-                mockServiceConfiguration);
-        ArrayList<DownloadResponse> gmlDownloads = sdm.downloadAll();
-        Assert.assertEquals(serviceUrls.length, gmlDownloads.size());
-        for (DownloadResponse response : gmlDownloads) {
+            ServiceDownloadManager sdm = new ServiceDownloadManager(serviceUrls, mockServiceCaller, threadPool,
+                    mockServiceConfiguration);
+            ArrayList<DownloadResponse> gmlDownloads = sdm.downloadAll();
+            Assert.assertEquals(serviceUrls.length, gmlDownloads.size());
+            for (DownloadResponse response : gmlDownloads) {
 
-            if (response.hasException()) {
-                Assert.assertNotNull(response.getException());
-                Assert.assertTrue("test exception".equals(response.getException().getMessage()));
-            } else {
-                Assert.assertEquals(dummyJSONResponseIS, response.getResponseAsStream());
-                Assert.assertNull(response.getException());
+                if (response.hasException()) {
+                    Assert.assertNotNull(response.getException());
+                    Assert.assertTrue("test exception".equals(response.getException().getMessage()));
+                } else {
+                    Assert.assertEquals(dummyJSONResponseIS, response.getResponseAsStream());
+                    Assert.assertNull(response.getException());
+                }
             }
         }
     }
@@ -187,11 +189,12 @@ public class TestServiceDownloadManager extends PortalTestClass {
      * A complicated scenario that sees 3 requests being firing off to 2 shared resources.
      *
      * note - this test is built on the assumption maxThreadPerEndpoint=1 and maxThreadPerSession=2 if these values change then this test will be invalid
-     *
-     * @throws Exception
+     * @throws IOException 
+     * @throws URISyntaxException 
+     * @throws InCompleteDownloadException 
      */
     @Test
-    public void testServiceFairness() throws Exception {
+    public void testServiceFairness() throws IOException, URISyntaxException, InCompleteDownloadException {
         final String[] serviceUrls = {
                 "http://localhost/portal?serviceUrl=http://domain1/wfs",
                 "http://localhost/portal?serviceUrl=http://domain1/wfs",
@@ -272,11 +275,12 @@ public class TestServiceDownloadManager extends PortalTestClass {
 
     /**
      * Tests a download with no service URL parameter succeeds
-     * 
-     * @throws Exception
+     * @throws IOException 
+     * @throws URISyntaxException 
+     * @throws InCompleteDownloadException 
      */
     @Test
-    public void testDownloadNoServiceUrlParam() throws Exception {
+    public void testDownloadNoServiceUrlParam() throws IOException, URISyntaxException, InCompleteDownloadException {
         final String[] serviceUrls = {"http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?param1=value=1&param2=value2"};
         final String dummyGml = "<someGmlHere/>";
         final String dummyJSONResponse = "{\"data\":{\"kml\":\"<someKmlHere/>\", \"gml\":\""

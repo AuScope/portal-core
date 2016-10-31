@@ -83,6 +83,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
         return properties.put(key, value);
     }
 
+    @Override
     public String getProperty(String key) {
         return properties.get(key);
     }
@@ -92,6 +93,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
      *
      * @return
      */
+    @Override
     public Integer getId() {
         return id;
     }
@@ -164,6 +166,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
      *
      * @return
      */
+    @Override
     public String getUser() {
         return user;
     }
@@ -347,6 +350,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
      *
      * @return
      */
+    @Override
     public String getStorageBaseKey() {
         return storageBaseKey;
     }
@@ -356,6 +360,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
      *
      * @param storageBaseKey
      */
+    @Override
     public void setStorageBaseKey(String storageBaseKey) {
         this.storageBaseKey = storageBaseKey;
     }

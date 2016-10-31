@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
-import java.net.UnknownHostException;
 import java.util.Arrays;
 
 import org.apache.commons.httpclient.HttpException;
@@ -20,8 +19,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
@@ -42,9 +41,21 @@ public class HttpServiceCaller {
         this.connectionTimeOut = connectionTimeOut;
     }
 
-    public String getMethodResponseAsString(HttpRequestBase method) throws ConnectException, UnknownHostException,
-            ConnectTimeoutException, Exception {
-        return this.getMethodResponseAsString(method, null);
+    public String getMethodResponseAsString(HttpRequestBase method) throws IOException {
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(this.connectionTimeOut)
+                .setSocketTimeout(this.connectionTimeOut)
+                .build();       
+        
+        HttpClientConnectionManager man= new PoolingHttpClientConnectionManager();
+
+        try (CloseableHttpClient httpClient = HttpClientBuilder.create()
+                    .useSystemProperties()
+                    .setConnectionManager(man)
+                    .setDefaultRequestConfig(requestConfig)
+                    .build()) {
+            return getMethodResponseAsString(method, httpClient);
+        } 
     }
 
     /**
@@ -55,10 +66,9 @@ public class HttpServiceCaller {
      * @param httpClient
      *            The client that will be used
      * @return
-     * @throws Exception
-     */
-    public String getMethodResponseAsString(HttpRequestBase method, HttpClient client) throws ConnectException,
-            UnknownHostException, ConnectTimeoutException, Exception {
+     * @throws IOException 
+     */    
+    public String getMethodResponseAsString(HttpRequestBase method, HttpClient client) throws IOException {
         //invoke the method
         HttpResponse httpResponse = this.invokeTheMethod(method, client);
 
@@ -84,9 +94,22 @@ public class HttpServiceCaller {
      * @param method
      *            The method to be executed
      * @return
+     * @throws IOException 
      */
-    public InputStream getMethodResponseAsStream(HttpRequestBase method) throws Exception {
-        return this.getMethodResponseAsStream(method, null);
+    @SuppressWarnings("resource")
+    public HttpClientInputStream getMethodResponseAsStream(HttpRequestBase method) throws IOException {
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(this.connectionTimeOut)
+                .setSocketTimeout(this.connectionTimeOut)
+                .build();
+        HttpClientConnectionManager man= new PoolingHttpClientConnectionManager();
+
+        CloseableHttpClient httpClient = HttpClientBuilder.create()
+                    .useSystemProperties()
+                    .setConnectionManager(man)
+                    .setDefaultRequestConfig(requestConfig)
+                    .build();
+        return new HttpClientInputStream(this.getMethodResponseAsStream(method, httpClient), httpClient);
     }
 
     /**
@@ -99,8 +122,10 @@ public class HttpServiceCaller {
      * @param httpClient
      *            The client that will be used
      * @return
+     * @throws IOException 
+     * @throws  
      */
-    public InputStream getMethodResponseAsStream(HttpRequestBase method, HttpClient client) throws Exception {
+    public InputStream getMethodResponseAsStream(HttpRequestBase method, HttpClient client) throws IOException {
         //invoke the method
         HttpResponse httpResponse = this.invokeTheMethod(method, client);
         return httpResponse.getEntity().getContent();
@@ -112,9 +137,24 @@ public class HttpServiceCaller {
      * @param method
      *            The method to be executed
      * @return
+     * @throws IOException 
+     * @throws  
      */
-    public byte[] getMethodResponseAsBytes(HttpRequestBase method) throws Exception {
-        return getMethodResponseAsBytes(method, null);
+    public byte[] getMethodResponseAsBytes(HttpRequestBase method) throws IOException {
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(this.connectionTimeOut)
+                .setSocketTimeout(this.connectionTimeOut)
+                .build();       
+        
+        HttpClientConnectionManager man= new PoolingHttpClientConnectionManager();
+
+        try (CloseableHttpClient httpClient = HttpClientBuilder.create()
+                    .useSystemProperties()
+                    .setConnectionManager(man)
+                    .setDefaultRequestConfig(requestConfig)
+                    .build()) {
+            return getMethodResponseAsBytes(method, httpClient);
+        } 
     }
 
     /**
@@ -125,8 +165,9 @@ public class HttpServiceCaller {
      * @param httpClient
      *            The client that will be used
      * @return
+     * @throws IOException 
      */
-    public byte[] getMethodResponseAsBytes(HttpRequestBase method, HttpClient client) throws Exception {
+    public byte[] getMethodResponseAsBytes(HttpRequestBase method, HttpClient client) throws IOException {
         //invoke the method
         HttpResponse httpResponse = this.invokeTheMethod(method, client);
 
@@ -140,8 +181,21 @@ public class HttpServiceCaller {
         return response;
     }
 
-    public HttpResponse getMethodResponseAsHttpResponse(HttpRequestBase method) throws Exception {
-        return this.invokeTheMethod(method, null);
+    @SuppressWarnings("resource")
+    public HttpClientResponse getMethodResponseAsHttpResponse(HttpRequestBase method) throws IOException {
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(this.connectionTimeOut)
+                .setSocketTimeout(this.connectionTimeOut)
+                .build();
+        
+        HttpClientConnectionManager man= new PoolingHttpClientConnectionManager();
+
+        CloseableHttpClient httpClient = HttpClientBuilder.create()
+                    .useSystemProperties()
+                    .setConnectionManager(man)
+                    .setDefaultRequestConfig(requestConfig)
+                    .build();
+        return new HttpClientResponse(this.invokeTheMethod(method, httpClient), httpClient);
     }
 
     /**
@@ -149,27 +203,12 @@ public class HttpServiceCaller {
      *
      * @param method
      * @param httpClient
+     * @throws IOException 
      */
-    private HttpResponse invokeTheMethod(HttpRequestBase method, HttpClient client) throws Exception {
+    private HttpResponse invokeTheMethod(HttpRequestBase method, HttpClient client) throws IOException {
+        if(client==null) throw new IllegalArgumentException("HttpClient must not be null");
+        
         log.debug("method=" + method.getURI());
-        HttpClient httpClient = null;
-
-        if (client == null) {
-            RequestConfig requestConfig = RequestConfig.custom().
-                    setConnectTimeout(this.connectionTimeOut)
-                    .setSocketTimeout(this.connectionTimeOut)
-                    .build();
-
-            HttpClientConnectionManager man = new PoolingHttpClientConnectionManager();
-
-            httpClient = HttpClientBuilder.create()
-                    .useSystemProperties()
-                    .setConnectionManager(man)
-                    .setDefaultRequestConfig(requestConfig)
-                    .build();
-        } else {
-            httpClient = client;
-        }
 
         if (log.isTraceEnabled()) {
             log.trace("Outgoing request headers: " + Arrays.toString(method.getAllHeaders()));
@@ -183,7 +222,7 @@ public class HttpServiceCaller {
         }
 
         // make the call
-        HttpResponse response = httpClient.execute(method);
+        HttpResponse response = client.execute(method);
 
         int statusCode = response.getStatusLine().getStatusCode();
         String statusCodeText = HttpStatus.getStatusText(statusCode);

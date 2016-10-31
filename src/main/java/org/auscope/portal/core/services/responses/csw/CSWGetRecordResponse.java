@@ -2,9 +2,8 @@ package org.auscope.portal.core.services.responses.csw;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
@@ -32,9 +31,9 @@ public class CSWGetRecordResponse {
     private int nextRecord = 0;
 
     /** A map object for looking up a particular CSWRecord object by its file identifier */
-    private Map<String, CSWRecord> cswRecordLookupMap = new HashMap<String, CSWRecord>();
+//    private Map<String, CSWRecord> cswRecordLookupMap = new HashMap<String, CSWRecord>();
     /** A list object that stores orphan CSWRecord objects */
-    private List<CSWRecord> stagingOrphanRecords = new ArrayList<CSWRecord>();
+//    private List<CSWRecord> stagingOrphanRecords = new ArrayList<CSWRecord>();
 
     /**
      * Creates a new instance from the specified record response by parsing its contents
@@ -91,7 +90,7 @@ public class CSWGetRecordResponse {
         }
 
         NodeList nodes = (NodeList) exprRecordMetadata.evaluate(getRecordResponse, XPathConstants.NODESET);
-        records = new ArrayList<CSWRecord>(nodes.getLength());
+        records = new ArrayList<>(nodes.getLength());
 
         for (int i = 0; i < nodes.getLength(); i++) {
             Node metadataNode = nodes.item(i);

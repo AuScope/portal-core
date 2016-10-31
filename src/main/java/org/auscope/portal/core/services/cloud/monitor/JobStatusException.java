@@ -10,7 +10,7 @@ import org.auscope.portal.core.cloud.CloudJob;
 /**
  * General exception thrown when there is an error checking/updating job status. This class can be used as a general purpose exception or as a collection of
  * exceptions for a batch status update
- * 
+ *
  * @author Josh Vote
  *
  */
@@ -26,13 +26,13 @@ public class JobStatusException extends Exception {
 
     public JobStatusException(Collection<Throwable> t, Collection<CloudJob> jobs) {
         super(t.iterator().next());
-        this.exceptions = new ArrayList<Throwable>(t);
-        this.cloudJobs = new ArrayList<CloudJob>(jobs);
+        this.exceptions = new ArrayList<>(t);
+        this.cloudJobs = new ArrayList<>(jobs);
     }
 
     /**
      * Gets a list of all exceptions encapsulated by this job status exception
-     * 
+     *
      * @return
      */
     public List<Throwable> getExceptions() {
@@ -41,7 +41,7 @@ public class JobStatusException extends Exception {
 
     /**
      * Gets the cloud jobs associated with the throwables in exceptions. There should be a 1-1 correspondance with getExceptions
-     * 
+     *
      * @return
      */
     public List<CloudJob> getCloudJobs() {

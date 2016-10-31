@@ -65,7 +65,7 @@ public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
         }
 
         additionalInformationObjs = additionalInformation;
-        statusList = new ArrayList<ServiceCallStatus>(methods.size());
+        statusList = new ArrayList<>(methods.size());
         for (HttpRequestBase method : methods) {
             statusList.add(new ServiceCallStatus(this, method, serviceCaller));
         }
@@ -82,7 +82,6 @@ public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
         for (ServiceCallStatus status : statusList) {
             executor.execute(status);
         }
-
     }
 
     /**
@@ -244,6 +243,7 @@ public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
             return resultingError;
         }
 
+        @SuppressWarnings("resource")
         @Override
         public void run() {
             //If this thread has been interrupted before it started running - don't start processing.

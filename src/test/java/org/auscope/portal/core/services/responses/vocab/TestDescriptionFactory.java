@@ -1,10 +1,13 @@
 package org.auscope.portal.core.services.responses.vocab;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.auscope.portal.core.services.namespaces.VocabNamespaceContext;
 import org.auscope.portal.core.test.PortalTestClass;
@@ -14,6 +17,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 /**
  * Unit tests for DescriptionFactory
@@ -53,9 +57,13 @@ public class TestDescriptionFactory extends PortalTestClass {
 
     /**
      * Runs the factory through a standard SISSVoc response XML
+     * @throws IOException 
+     * @throws SAXException 
+     * @throws ParserConfigurationException 
+     * @throws XPathExpressionException 
      */
     @Test
-    public void testSISSVocRDF() throws Exception {
+    public void testSISSVocRDF() throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
         //Build our expectation
         Description concept1 = new Description("urn:concept:1");
         Description concept2 = new Description("urn:concept:2");

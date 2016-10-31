@@ -3,9 +3,8 @@ package org.auscope.portal.core.services.namespaces;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 
-import junit.framework.Assert;
-
 import org.auscope.portal.core.test.PortalTestClass;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -21,9 +20,9 @@ public class TestCSWNamespaceContext extends PortalTestClass {
     @Test
     public void testContext() {
 
-        NamespaceContext context = new CSWNamespaceContext();
+        NamespaceContext ctx = new CSWNamespaceContext();
 
-        Assert.assertEquals(TEST_NAMESPACE_URI, context.getNamespaceURI(TEST_PREFIX));
-        Assert.assertEquals(XMLConstants.NULL_NS_URI, context.getNamespaceURI(TEST_PREFIX_NOT_EXIST));
+        Assert.assertEquals(TEST_NAMESPACE_URI, ctx.getNamespaceURI(TEST_PREFIX));
+        Assert.assertEquals(XMLConstants.NULL_NS_URI, ctx.getNamespaceURI(TEST_PREFIX_NOT_EXIST));
     }
 }

@@ -30,6 +30,7 @@ public class CustomRegistry implements CustomRegistryInt {
     /**
      * @return the recordInformationUrl
      */
+    @Override
     public String getRecordInformationUrl() {
         return recordInformationUrl;
     }
@@ -38,6 +39,7 @@ public class CustomRegistry implements CustomRegistryInt {
      * @param recordInformationUrl
      *            the recordInformationUrl to set
      */
+    @Override
     public void setRecordInformationUrl(String recordInformationUrl) {
         this.recordInformationUrl = recordInformationUrl;
     }
@@ -45,6 +47,7 @@ public class CustomRegistry implements CustomRegistryInt {
     /**
      * @return the serviceUrl
      */
+    @Override
     public String getServiceUrl() {
         return serviceUrl;
     }
@@ -53,6 +56,7 @@ public class CustomRegistry implements CustomRegistryInt {
      * @param serviceUrl
      *            the serviceUrl to set
      */
+    @Override
     public void setServiceUrl(String serviceUrl) {
         this.serviceUrl = serviceUrl;
     }
@@ -60,6 +64,7 @@ public class CustomRegistry implements CustomRegistryInt {
     /**
      * @return the title
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -68,6 +73,7 @@ public class CustomRegistry implements CustomRegistryInt {
      * @param title
      *            the title to set
      */
+    @Override
     public void setTitle(String title) {
         this.title = title;
     }
@@ -75,6 +81,7 @@ public class CustomRegistry implements CustomRegistryInt {
     /**
      * @return the id
      */
+    @Override
     public String getId() {
         return id;
     }
@@ -83,6 +90,7 @@ public class CustomRegistry implements CustomRegistryInt {
      * @param id
      *            the id to set
      */
+    @Override
     public void setId(String id) {
         this.id = id;
     }

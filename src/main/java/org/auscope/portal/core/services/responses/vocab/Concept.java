@@ -220,15 +220,15 @@ public class Concept {
     /**
      * Compares a string with this individuals urn.
      *
-     * @param urn
+     * @param myUrn
      *            the urn
      * @return true, if successful
      */
-    public boolean equals(String urn) {
-        if (this.urn != null && urn != null) {
-            return this.urn.equals(urn);
+    public boolean equals(String myUrn) {
+        if (this.urn != null && myUrn != null) {
+            return this.urn.equals(myUrn);
         } else {
-            return this.urn == urn;
+            return this.urn == myUrn;
         }
     }
 

@@ -1,7 +1,10 @@
 package org.auscope.portal.core.services.methodmakers;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpGet;
@@ -38,7 +41,7 @@ public class TestWFSGetFeatureMethodMaker extends PortalTestClass {
      * @throws IOException
      * @throws ParserConfigurationException
      */
-    private boolean testWFSParam(HttpRequestBase wfsRequest, String paramName, String paramValue)
+    private static boolean testWFSParam(HttpRequestBase wfsRequest, String paramName, String paramValue)
             throws ParserConfigurationException, IOException, SAXException {
         //Get methods involve finding the request parameter "version=X"
         if (wfsRequest instanceof HttpGet) {
@@ -72,11 +75,13 @@ public class TestWFSGetFeatureMethodMaker extends PortalTestClass {
 
     /**
      * Ensure we are always using WFS 1.1.0
-     * 
-     * @throws Exception
+     * @throws URISyntaxException 
+     * @throws SAXException 
+     * @throws IOException 
+     * @throws ParserConfigurationException 
      */
     @Test
-    public void testWFSVersion() throws Exception {
+    public void testWFSVersion() throws ParserConfigurationException, IOException, SAXException, URISyntaxException {
         final String expectedVersion = "1.1.0";
         final String serviceUrl = "http://example.url";
         final String typeName = "test:typeName";
@@ -99,11 +104,13 @@ public class TestWFSGetFeatureMethodMaker extends PortalTestClass {
 
     /**
      * Ensure we are always specifying service=WFS
-     * 
-     * @throws Exception
+     * @throws URISyntaxException 
+     * @throws SAXException 
+     * @throws IOException 
+     * @throws ParserConfigurationException 
      */
     @Test
-    public void testServiceParam() throws Exception {
+    public void testServiceParam() throws ParserConfigurationException, IOException, SAXException, URISyntaxException {
         final String serviceUrl = "http://example.url";
         final String typeName = "test:typeName";
         final String featureId = "featureId";
@@ -114,7 +121,7 @@ public class TestWFSGetFeatureMethodMaker extends PortalTestClass {
     }
 
     @Test
-    public void testOptionalParams() throws Exception {
+    public void testOptionalParams() throws ParserConfigurationException, IOException, SAXException, URISyntaxException  {
         final String serviceUrl = "http://example.url";
         final String typeName = "test:typeName";
         final String srsName = "srs-name";
@@ -163,11 +170,13 @@ public class TestWFSGetFeatureMethodMaker extends PortalTestClass {
 
     /**
      * Ensure the GetCapabilities statement is well formed as per OGC specifications
-     * 
-     * @throws Exception
+     * @throws URISyntaxException 
+     * @throws SAXException 
+     * @throws IOException 
+     * @throws ParserConfigurationException 
      */
     @Test
-    public void testGetCap() throws Exception {
+    public void testGetCap() throws ParserConfigurationException, IOException, SAXException, URISyntaxException {
         final String serviceUrl = "http://example.url";
 
         WFSGetFeatureMethodMaker mm = new WFSGetFeatureMethodMaker();
@@ -186,7 +195,7 @@ public class TestWFSGetFeatureMethodMaker extends PortalTestClass {
     }
 
     @Test
-    public void testNamespaces() throws Exception {
+    public void testNamespaces() throws ParserConfigurationException, IOException, SAXException {
         WFSGetFeatureMethodMaker mm = new WFSGetFeatureMethodMaker();
         mm.setNamespaces(new MyNamespace());
 

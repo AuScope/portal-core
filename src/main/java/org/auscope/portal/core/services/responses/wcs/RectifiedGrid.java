@@ -91,22 +91,22 @@ public class RectifiedGrid implements Serializable {
     public RectifiedGrid(Node node) throws XPathExpressionException {
         WCSNamespaceContext nc = new WCSNamespaceContext();
 
-        String srsName = (String) DOMUtil.compileXPathExpr("@srsName", nc).evaluate(node, XPathConstants.STRING);
-        this.setSrsName(srsName);
+        String nodeSrsName = (String) DOMUtil.compileXPathExpr("@srsName", nc).evaluate(node, XPathConstants.STRING);
+        this.setSrsName(nodeSrsName);
 
-        String dimension = (String) DOMUtil.compileXPathExpr("@dimension", nc).evaluate(node, XPathConstants.STRING);
+        String dimensionStr = (String) DOMUtil.compileXPathExpr("@dimension", nc).evaluate(node, XPathConstants.STRING);
         try {
-            this.setDimension(Integer.parseInt(dimension));
+            this.setDimension(Integer.parseInt(dimensionStr));
         } catch (NumberFormatException ex) {
-            log.debug(String.format("Unable to parse dimension '%1$s' to int: %2$s", dimension, ex));
+            log.debug(String.format("Unable to parse dimension '%1$s' to int: %2$s", dimensionStr, ex));
         }
 
-        String envelopeLowValues = (String) DOMUtil.compileXPathExpr("gml:limits/gml:GridEnvelope/gml:low", nc)
+        String envelopeLowValuesStr = (String) DOMUtil.compileXPathExpr("gml:limits/gml:GridEnvelope/gml:low", nc)
                 .evaluate(node, XPathConstants.STRING);
-        String envelopeHighValues = (String) DOMUtil.compileXPathExpr("gml:limits/gml:GridEnvelope/gml:high", nc)
+        String envelopeHighValuesStr = (String) DOMUtil.compileXPathExpr("gml:limits/gml:GridEnvelope/gml:high", nc)
                 .evaluate(node, XPathConstants.STRING);
-        this.setEnvelopeLowValues(stringToIntVector(envelopeLowValues));
-        this.setEnvelopeHighValues(stringToIntVector(envelopeHighValues));
+        this.setEnvelopeLowValues(stringToIntVector(envelopeLowValuesStr));
+        this.setEnvelopeHighValues(stringToIntVector(envelopeHighValuesStr));
 
         String originValues = (String) DOMUtil.compileXPathExpr("gml:origin/gml:pos", nc).evaluate(node,
                 XPathConstants.STRING);
@@ -114,22 +114,22 @@ public class RectifiedGrid implements Serializable {
 
         NodeList offsetVectorNodes = (NodeList) DOMUtil.compileXPathExpr("gml:offsetVector", nc).evaluate(node,
                 XPathConstants.NODESET);
-        double[][] offsetVectors = new double[offsetVectorNodes.getLength()][];
+        double[][] offsetVectorVals = new double[offsetVectorNodes.getLength()][];
         for (int i = 0; i < offsetVectorNodes.getLength(); i++) {
             Node offsetVectorNode = offsetVectorNodes.item(i);
             String values = offsetVectorNode.getTextContent();
-            offsetVectors[i] = stringToDoubleVector(values);
+            offsetVectorVals[i] = stringToDoubleVector(values);
         }
-        this.setOffsetVectors(offsetVectors);
+        this.setOffsetVectors(offsetVectorVals);
 
         NodeList axisNameNodes = (NodeList) DOMUtil.compileXPathExpr("gml:axisName", nc).evaluate(node,
                 XPathConstants.NODESET);
-        String[] axisNames = new String[axisNameNodes.getLength()];
+        String[] axisNamesStr = new String[axisNameNodes.getLength()];
         for (int i = 0; i < axisNameNodes.getLength(); i++) {
             Node axisNameNode = axisNameNodes.item(i);
-            axisNames[i] = axisNameNode.getTextContent();
+            axisNamesStr[i] = axisNameNode.getTextContent();
         }
-        this.setAxisNames(axisNames);
+        this.setAxisNames(axisNamesStr);
     }
 
     private double[] stringToDoubleVector(String s) {

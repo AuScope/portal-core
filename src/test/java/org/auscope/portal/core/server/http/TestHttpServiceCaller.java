@@ -1,18 +1,18 @@
 package org.auscope.portal.core.server.http;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
-import junit.framework.Assert;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.params.BasicHttpParams;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker;
 import org.auscope.portal.core.services.namespaces.ErmlNamespaceContext;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.jmock.Expectations;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,13 +37,12 @@ public class TestHttpServiceCaller extends PortalTestClass {
 
     /**
      * Test a normal service successful call
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test
-    public void testHttpServiceCallerRequest() throws Exception {
-        final HttpPost method = (HttpPost) methodMaker.makePostMethod(SERVICE_URL, FEATURE_TYPE, FILTER_STRING, 0);
-        final String dummyJSONResponse = "<xml>This is a test xml response</xml>";
+    public void testHttpServiceCallerRequest() throws IOException {
+        HttpPost method = (HttpPost) methodMaker.makePostMethod(SERVICE_URL, FEATURE_TYPE, FILTER_STRING, 0);
+        String dummyJSONResponse = "<xml>This is a test xml response</xml>";
         final InputStream dummyJSONResponseIS = new ByteArrayInputStream(dummyJSONResponse.getBytes());
 
         final HttpClient client = context.mock(HttpClient.class);
@@ -61,12 +60,11 @@ public class TestHttpServiceCaller extends PortalTestClass {
 
     /**
      * Test failure call that throws error 503
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test(expected = java.net.ConnectException.class)
-    public void testHttpServiceCallerRequest503Error() throws Exception {
-        final HttpPost method = (HttpPost) methodMaker.makePostMethod(SERVICE_URL, FEATURE_TYPE, FILTER_STRING, 0);
+    public void testHttpServiceCallerRequest503Error() throws IOException {
+        HttpPost method = (HttpPost) methodMaker.makePostMethod(SERVICE_URL, FEATURE_TYPE, FILTER_STRING, 0);
         final String dummyJSONResponse = "<xml>This is a test xml response</xml>";
         final InputStream dummyJSONResponseIS = new ByteArrayInputStream(dummyJSONResponse.getBytes());
 
@@ -86,41 +84,37 @@ public class TestHttpServiceCaller extends PortalTestClass {
 
     /**
      * If there is no feature type given, we expect there to be an exception thrown
-     * 
-     * @throws Exception
      */
     @Test(expected = Exception.class)
-    public void testConstructWFSGetFeatureMethodNoFeatureType() throws Exception {
+    public void testConstructWFSGetFeatureMethodNoFeatureType() {
         methodMaker.makePostMethod(SERVICE_URL, "", FILTER_STRING, 0);
     }
 
     /**
      * If there is no URL given, expect there an error to be thrown
-     * 
-     * @throws Exception
      */
     @Test(expected = Exception.class)
-    public void testConstructWFSGetFeatureMethodNoURL() throws Exception {
+    public void testConstructWFSGetFeatureMethodNoURL() {
         methodMaker.makePostMethod("", FEATURE_TYPE, FILTER_STRING, 0);
     }
 
     /**
      * We expect all properties to be set correctly on the method
-     * 
-     * @throws Exception
+     * @throws IOException 
+     * @throws  
      */
     @Test
-    public void testConstructWFSGetFeatureMethodAllParameters() throws Exception {
+    public void testConstructWFSGetFeatureMethodAllParameters() throws IOException {
         HttpPost method = (HttpPost) methodMaker.makePostMethod(SERVICE_URL, FEATURE_TYPE, FILTER_STRING, 0);
 
-        String expectedPost = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                +
-                "<wfs:GetFeature version=\"1.1.0\" xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd\" xmlns:er=\"urn:cgi:xmlns:GGIC:EarthResource:1.1\" maxFeatures=\"200\">\n"
-                +
-                "    <wfs:Query typeName=\"" + FEATURE_TYPE + "\">" +
-                FILTER_STRING +
-                "    </wfs:Query>" +
-                "</wfs:GetFeature>";
+//        String expectedPost = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+//                +
+//                "<wfs:GetFeature version=\"1.1.0\" xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd\" xmlns:er=\"urn:cgi:xmlns:GGIC:EarthResource:1.1\" maxFeatures=\"200\">\n"
+//                +
+//                "    <wfs:Query typeName=\"" + FEATURE_TYPE + "\">" +
+//                FILTER_STRING +
+//                "    </wfs:Query>" +
+//                "</wfs:GetFeature>";
 
         //Assert.assertEquals(expectedPost, thePost.toString());
         String out = IOUtils.toString(method.getEntity().getContent());

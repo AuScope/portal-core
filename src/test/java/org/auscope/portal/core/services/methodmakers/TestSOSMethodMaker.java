@@ -41,7 +41,7 @@ public class TestSOSMethodMaker extends PortalTestClass {
      * @throws IOException
      * @throws ParserConfigurationException
      */
-    private boolean testSOSParam(HttpRequestBase sosRequest, String paramName, String paramValue)
+    private static boolean testSOSParam(HttpRequestBase sosRequest, String paramName, String paramValue)
             throws ParserConfigurationException, IOException, SAXException {
         //Get methods involve finding the request parameter "version=X"
         if (sosRequest instanceof HttpGet) {
@@ -79,11 +79,9 @@ public class TestSOSMethodMaker extends PortalTestClass {
 
     /**
      * Ensure we are always specifying sos end point and request type
-     * 
-     * @throws Exception
      */
     @Test
-    public void testMandatoryParam() throws Exception {
+    public void testMandatoryParam() {
         String sosUrl = "";
         String request = "";
 
@@ -106,11 +104,12 @@ public class TestSOSMethodMaker extends PortalTestClass {
 
     /**
      * Ensure we are always specifying service="SOS"
-     * 
-     * @throws Exception
+     * @throws SAXException 
+     * @throws IOException 
+     * @throws ParserConfigurationException 
      */
     @Test
-    public void testServiceParam() throws Exception {
+    public void testServiceParam() throws ParserConfigurationException, IOException, SAXException {
         final String sosUrl = "http://example.url";
         final String request = "GetObservation";
 
@@ -121,11 +120,12 @@ public class TestSOSMethodMaker extends PortalTestClass {
 
     /**
      * Ensure we are always specifying version="2.0.0"
-     * 
-     * @throws Exception
+     * @throws SAXException 
+     * @throws IOException 
+     * @throws ParserConfigurationException 
      */
     @Test
-    public void testVersionParam() throws Exception {
+    public void testVersionParam() throws ParserConfigurationException, IOException, SAXException {
         final String expectedVersion = "2.0.0";
         final String sosUrl = "http://example.url";
         final String request = "GetObservation";
@@ -144,7 +144,7 @@ public class TestSOSMethodMaker extends PortalTestClass {
     }
 
     @Test
-    public void testOptionalParams() throws Exception {
+    public void testOptionalParams() throws ParserConfigurationException, IOException, SAXException {
         final String sosUrl = "http://example.url";
         final String request = "GetObservation";
         final String featureID = "testID";

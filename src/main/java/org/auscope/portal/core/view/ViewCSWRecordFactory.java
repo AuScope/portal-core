@@ -16,7 +16,7 @@ import org.springframework.ui.ModelMap;
 
 /**
  * A factory class for generating serializable CSWRecord objects that can be used to communicate with the view.
- * 
+ *
  * @author Josh Vote
  *
  */
@@ -24,7 +24,7 @@ public class ViewCSWRecordFactory {
 
     /**
      * Converts a CSWRecord to its simplified view equivalent
-     * 
+     *
      * @param record
      * @return
      */
@@ -38,7 +38,7 @@ public class ViewCSWRecordFactory {
         obj.put("description", record.getDataIdentificationAbstract());
         obj.put("noCache", record.getNoCache());
         obj.put("service", record.isService());
-        
+
         CSWResponsibleParty rp = record.getContact();
         String adminArea = null;
         String contactOrg = "Unknown";
@@ -51,7 +51,7 @@ public class ViewCSWRecordFactory {
         obj.put("adminArea", adminArea);
         obj.put("contactOrg", contactOrg);
 
-        List<Map<String, Object>> onlineResources = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> onlineResources = new ArrayList<>();
         if (record.getOnlineResources() != null) {
             for (AbstractCSWOnlineResource res : record.getOnlineResources()) {
                 if (res.getLinkage() != null) {
@@ -61,7 +61,7 @@ public class ViewCSWRecordFactory {
         }
         obj.put("onlineResources", onlineResources);
 
-        List<Map<String, Object>> geographicElements = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> geographicElements = new ArrayList<>();
         if (record.getCSWGeographicElements() != null) {
             for (CSWGeographicElement geo : record.getCSWGeographicElements()) {
                 geographicElements.add(this.toView(geo));
@@ -69,7 +69,7 @@ public class ViewCSWRecordFactory {
         }
         obj.put("geographicElements", geographicElements);
 
-        List<String> descriptiveKeywords = new ArrayList<String>();
+        List<String> descriptiveKeywords = new ArrayList<>();
         if (record.getDescriptiveKeywords() != null) {
             for (String s : record.getDescriptiveKeywords()) {
                 descriptiveKeywords.add(s);
@@ -77,15 +77,15 @@ public class ViewCSWRecordFactory {
         }
         obj.put("descriptiveKeywords", descriptiveKeywords);
 
-        List<String> datasetURIs = new ArrayList<String>();
+        List<String> datasetURIs = new ArrayList<>();
         if (record.getDataSetURIs() != null) {
             for (String s : record.getDataSetURIs()) {
                 datasetURIs.add(s);
             }
         }
         obj.put("datasetURIs", datasetURIs);
-        
-        List<String> constraints = new ArrayList<String>();
+
+        List<String> constraints = new ArrayList<>();
         if (record.getConstraints() != null) {
             for (String s : record.getConstraints()) {
                 constraints.add(s);
@@ -93,7 +93,7 @@ public class ViewCSWRecordFactory {
         }
         obj.put("constraints", constraints);
 
-        List<Map<String, Object>> childRecords = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> childRecords = new ArrayList<>();
         if (record.hasChildRecords()) {
             for (CSWRecord childRecord : record.getChildRecords()) {
                 childRecords.add(this.toView(childRecord));
@@ -114,7 +114,7 @@ public class ViewCSWRecordFactory {
 
     /**
      * Converts a CSWOnlineResource to its view equivalent
-     * 
+     *
      * @param res
      * @return
      */
@@ -133,7 +133,7 @@ public class ViewCSWRecordFactory {
     /**
      * Converts a CSWGeographicElement to its view equivalent. If el is not a supported implementation of CSWGeographicBoundingBox a IllegalArgumentException
      * will be thrown.
-     * 
+     *
      * @param el
      * @return
      */

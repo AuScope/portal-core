@@ -1,5 +1,6 @@
 package org.auscope.portal.core.xslt;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -14,7 +15,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.auscope.portal.core.util.FileIOUtil;
 
 /**
  * Class for performing XSLT Transformations
@@ -123,16 +123,17 @@ public class PortalXSLTTransformer {
      */
     public String convert(StreamSource xml, Properties stylesheetParams) {
         StringWriter sw = new StringWriter();
-        InputStream xslt = getClass().getResourceAsStream(xsltResourceName);
-        try {
-            Transformer transformer = createTransformer(xslt, stylesheetParams);
-            transformer.transform(xml, new StreamResult(sw));
-        } catch (TransformerConfigurationException tce) {
-            log.error(tce);
-        } catch (TransformerException e) {
-            log.error("Failed to transform xml: " + e);
-        } finally {
-            FileIOUtil.closeQuietly(xslt);
+        try (InputStream xslt = getClass().getResourceAsStream(xsltResourceName)) {
+            try {
+                Transformer transformer = createTransformer(xslt, stylesheetParams);
+                transformer.transform(xml, new StreamResult(sw));
+            } catch (TransformerConfigurationException tce) {
+                log.error(tce);
+            } catch (TransformerException e) {
+                log.error("Failed to transform xml: " + e);
+            } 
+        } catch (IOException e1) {
+            log.error("Failed to read xslt resource: " + e1.getMessage(), e1);
         }
         String kml = sw.toString();
         return kml;

@@ -12,6 +12,7 @@ public interface Job {
 
     public boolean run() throws PortalServiceException;
 
+    @Override
     public boolean equals(Object j);
 
 }

@@ -1,10 +1,11 @@
 package org.auscope.portal.core.services.methodmakers.sissvoc;
 
-import junit.framework.Assert;
+import java.net.URISyntaxException;
 
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.services.methodmakers.sissvoc.SISSVoc3MethodMaker.Format;
 import org.auscope.portal.core.test.PortalTestClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,11 +19,10 @@ public class TestSISSVoc3MethodMaker extends PortalTestClass {
 
     /**
      * Tests that the optional params for various methods don't generate exceptions
-     * 
-     * @throws Exception
+     * @throws URISyntaxException 
      */
     @Test
-    public void testOptionalParamErrors() throws Exception {
+    public void testOptionalParamErrors() throws URISyntaxException  {
         final String url = "http://example.org/vocab";
         final String repository = "repo";
 
@@ -35,11 +35,10 @@ public class TestSISSVoc3MethodMaker extends PortalTestClass {
 
     /**
      * Ensures getAllConcepts encodes the method correctly
-     * 
-     * @throws Exception
+     * @throws URISyntaxException 
      */
     @Test
-    public void testGetAllConcepts() throws Exception {
+    public void testGetAllConcepts() throws URISyntaxException  {
         final String url = "http://sissvoc.example.org./";
         final String repository = "repo";
         final Format format = Format.Html;
@@ -57,11 +56,10 @@ public class TestSISSVoc3MethodMaker extends PortalTestClass {
 
     /**
      * Ensures getAllConcepts encodes the method correctly
-     * 
-     * @throws Exception
+     * @throws URISyntaxException 
      */
     @Test
-    public void testGetConceptsWithLabel() throws Exception {
+    public void testGetConceptsWithLabel() throws URISyntaxException  {
         final String url = "http://sissvoc.example.org./";
         final String repository = "repo";
         final String label = "label";
@@ -81,11 +79,10 @@ public class TestSISSVoc3MethodMaker extends PortalTestClass {
 
     /**
      * Ensures getResourceByUri encodes the method correctly
-     * 
-     * @throws Exception
+     * @throws URISyntaxException 
      */
     @Test
-    public void testGetConceptsByUri() throws Exception {
+    public void testGetConceptsByUri() throws URISyntaxException {
         final String url = "http://sissvoc.example.org./";
         final String repository = "repo";
         final String uri = "uri";
@@ -101,11 +98,10 @@ public class TestSISSVoc3MethodMaker extends PortalTestClass {
 
     /**
      * Ensures getBroaderConcepts encodes the method correctly
-     * 
-     * @throws Exception
+     * @throws URISyntaxException 
      */
     @Test
-    public void testGetBroaderConcepts() throws Exception {
+    public void testGetBroaderConcepts() throws URISyntaxException {
         final String url = "http://sissvoc.example.org./";
         final String repository = "repo";
         final String baseUri = "base-uri";
@@ -125,11 +121,10 @@ public class TestSISSVoc3MethodMaker extends PortalTestClass {
 
     /**
      * Ensures testGetNarrowerConcepts encodes the method correctly
-     * 
-     * @throws Exception
+     * @throws URISyntaxException 
      */
     @Test
-    public void testGetNarrowerConcepts() throws Exception {
+    public void testGetNarrowerConcepts() throws URISyntaxException {
         final String url = "http://sissvoc.example.org./";
         final String repository = "repo";
         final String baseUri = "base-uri";

@@ -64,6 +64,7 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
      *
      * @return the west bound longitude
      */
+    @Override
     public double getWestBoundLongitude() {
         return westBoundLongitude;
     }
@@ -74,6 +75,7 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
      * @param westBoundLongitude
      *            the new west bound longitude
      */
+    @Override
     public void setWestBoundLongitude(double westBoundLongitude) {
         this.westBoundLongitude = Double.isNaN(westBoundLongitude) ? -180 : westBoundLongitude;
     }
@@ -83,6 +85,7 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
      *
      * @return the east bound longitude
      */
+    @Override
     public double getEastBoundLongitude() {
         return eastBoundLongitude;
     }
@@ -93,6 +96,7 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
      * @param eastBoundLongitude
      *            the new east bound longitude
      */
+    @Override
     public void setEastBoundLongitude(double eastBoundLongitude) {
         this.eastBoundLongitude = Double.isNaN(eastBoundLongitude) ? 180 : eastBoundLongitude;
     }
@@ -102,6 +106,7 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
      *
      * @return the south bound latitude
      */
+    @Override
     public double getSouthBoundLatitude() {
         return southBoundLatitude;
     }
@@ -112,6 +117,7 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
      * @param southBoundLatitude
      *            the new south bound latitude
      */
+    @Override
     public void setSouthBoundLatitude(double southBoundLatitude) {
         this.southBoundLatitude = Double.isNaN(southBoundLatitude) ? -90 : southBoundLatitude;
     }
@@ -121,6 +127,7 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
      *
      * @return the north bound latitude
      */
+    @Override
     public double getNorthBoundLatitude() {
         return northBoundLatitude;
     }
@@ -131,6 +138,7 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
      * @param northBoundLatitude
      *            the new north bound latitude
      */
+    @Override
     public void setNorthBoundLatitude(double northBoundLatitude) {
         this.northBoundLatitude = Double.isNaN(northBoundLatitude) ? 90 : northBoundLatitude;
     }
@@ -141,8 +149,6 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
      * @param node
      *            should represent a gmd:EX_GeographicBoundingBox node
      * @return the cSW geographic bounding box
-     * @throws Exception
-     *             the exception
      */
     public static CSWGeographicBoundingBox fromGeographicBoundingBoxNode(Node node) throws XPathExpressionException {
         CSWNamespaceContext nc = new CSWNamespaceContext();
@@ -166,7 +172,7 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
      * Returns true if the specified bounding box intersects this bounding box
      *
      * Algorithm sourced from - http://tekpool.wordpress.com/2006/10/11/rectangle-intersection-determine-if-two-given-rectangles-intersect-each-other-or-not/
-     * 
+     *
      * @param bbox
      * @return
      */
@@ -179,25 +185,25 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
      * Returns true if the specified bounding box intersects this bounding box
      *
      * Algorithm sourced from - http://tekpool.wordpress.com/2006/10/11/rectangle-intersection-determine-if-two-given-rectangles-intersect-each-other-or-not/
-     * 
+     *
      * @return
      */
-    public boolean intersects(double westBoundLongitude,
-            double eastBoundLongitude, double southBoundLatitude,
-            double northBoundLatitude) {
+    public boolean intersects(double westBoundLong,
+            double eastBoundLong, double southBoundLat,
+            double northBoundLat) {
 
         //If a bbox wraps the international date line such that east is in fact less than west
         //We should split the wrapping bbox at the dateline for an easier comparison
-        double bboxEast = eastBoundLongitude;
-        double bboxWest = westBoundLongitude;
+        double bboxEast = eastBoundLong;
+        double bboxWest = westBoundLong;
         double thisEast = this.eastBoundLongitude;
         double thisWest = this.westBoundLongitude;
 
         if (bboxEast < bboxWest) {
-            CSWGeographicBoundingBox left = new CSWGeographicBoundingBox(bboxWest, 180, southBoundLatitude,
-                    northBoundLatitude);
-            CSWGeographicBoundingBox right = new CSWGeographicBoundingBox(-180, bboxEast, southBoundLatitude,
-                    northBoundLatitude);
+            CSWGeographicBoundingBox left = new CSWGeographicBoundingBox(bboxWest, 180, southBoundLat,
+                    northBoundLat);
+            CSWGeographicBoundingBox right = new CSWGeographicBoundingBox(-180, bboxEast, southBoundLat,
+                    northBoundLat);
 
             return this.intersects(left) || this.intersects(right);
         }
@@ -207,14 +213,14 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
             CSWGeographicBoundingBox right = new CSWGeographicBoundingBox(-180, thisEast, this.southBoundLatitude,
                     this.northBoundLatitude);
 
-            return left.intersects(westBoundLongitude, eastBoundLongitude, southBoundLatitude, northBoundLatitude)
-                    || right.intersects(westBoundLongitude, eastBoundLongitude, southBoundLatitude, northBoundLatitude);
+            return left.intersects(westBoundLong, eastBoundLong, southBoundLat, northBoundLat)
+                    || right.intersects(westBoundLong, eastBoundLong, southBoundLat, northBoundLat);
         }
 
         return !(bboxWest > thisEast
                 || bboxEast < thisWest
-                || southBoundLatitude > this.northBoundLatitude
-                || northBoundLatitude < this.southBoundLatitude);
+                || southBoundLat > this.northBoundLatitude
+                || northBoundLat < this.southBoundLatitude);
 
     }
 }

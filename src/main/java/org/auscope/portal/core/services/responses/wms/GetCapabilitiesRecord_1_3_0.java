@@ -74,7 +74,7 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord {
      * @throws ParserConfigurationException
      */
     public GetCapabilitiesRecord_1_3_0(InputStream inXml) throws SAXException, IOException,
-            ParserConfigurationException {
+    ParserConfigurationException {
         try {
 
             Document doc = DOMUtil.buildDomFromStream(inXml, false);
@@ -117,6 +117,7 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord {
      *
      * @return true, if is wFS
      */
+    @Override
     public boolean isWFS() {
         return this.serviceType.equals("wfs");
     }
@@ -126,6 +127,7 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord {
      *
      * @return true, if is wMS
      */
+    @Override
     public boolean isWMS() {
         return this.serviceType.equals("wms");
     }
@@ -135,6 +137,7 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord {
      *
      * @return the service type
      */
+    @Override
     public String getServiceType() {
         return this.serviceType;
     }
@@ -144,6 +147,7 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord {
      *
      * @return the organisation
      */
+    @Override
     public String getOrganisation() {
         return this.organisation;
     }
@@ -153,6 +157,7 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord {
      *
      * @return the map url
      */
+    @Override
     public String getMapUrl() {
         return this.getMapUrl;
     }
@@ -162,6 +167,7 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord {
      *
      * @return the metadata url
      */
+    @Override
     public String getMetadataUrl() {
         return this.metadataUrl;
     }
@@ -171,6 +177,7 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord {
      *
      * @return the layers
      */
+    @Override
     public ArrayList<GetCapabilitiesWMSLayerRecord> getLayers() {
         return this.layers;
     }
@@ -180,15 +187,17 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord {
      *
      * @return the layer srs
      */
+    @Override
     public String[] getLayerSRS() {
         return this.layerSRS;
     }
 
     /**
      * Returns an array of MIME strings representing the valid format for the GetMap operation
-     * 
+     *
      * @return
      */
+    @Override
     public String[] getGetMapFormats() {
         return getMapFormats;
     }
@@ -275,18 +284,18 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord {
      * @return the map url String
      */
     private String getMetadataUrl(Document doc) {
-        String metadataUrl = "";
+        String metadataUrlStr = "";
         try {
             Element elem = (Element) DOMUtil.compileXPathExpr(METADATAURLREXPRESSION).evaluate(doc, XPathConstants.NODE);
             if (elem != null) {
-                metadataUrl = elem.getAttribute("xlink:href");
+                metadataUrlStr = elem.getAttribute("xlink:href");
             }
         } catch (XPathExpressionException e) {
             log.error("GetCapabilities MetadataURL xml parsing error: " + e.getMessage());
         }
-        return metadataUrl;
-    }    
-    
+        return metadataUrlStr;
+    }
+
     /**
      * Gets the wMS layers.
      *
@@ -297,7 +306,7 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord {
      * @return the wMS layers
      */
     private ArrayList<GetCapabilitiesWMSLayerRecord> getWMSLayers(Document doc) {
-        ArrayList<GetCapabilitiesWMSLayerRecord> mylayerList = new ArrayList<GetCapabilitiesWMSLayerRecord>();
+        ArrayList<GetCapabilitiesWMSLayerRecord> mylayerList = new ArrayList<>();
         try {
 
             NodeList nodes = (NodeList) DOMUtil.compileXPathExpr(EXTRACTLAYEREXPRESSION).evaluate(doc,

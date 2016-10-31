@@ -8,7 +8,6 @@ import java.io.OutputStream;
 import java.net.ConnectException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
@@ -31,7 +30,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class TestBasePortalController extends PortalTestClass {
 
     private class BasePortalControllerImpl extends BasePortalController {
-
+        // empty
     }
 
     private BasePortalControllerImpl basePortalController = new BasePortalControllerImpl();
@@ -42,7 +41,7 @@ public class TestBasePortalController extends PortalTestClass {
      * @param mav1
      * @param mav2
      */
-    private void assertModelAndViewConsistency(ModelAndView mav) {
+    private static void assertModelAndViewConsistency(ModelAndView mav) {
         ModelMap map = mav.getModelMap();
 
         List<String> validKeys = Arrays.asList("success", "data", "msg", "debugInfo", "totalResults");
@@ -80,11 +79,9 @@ public class TestBasePortalController extends PortalTestClass {
 
     /**
      * Tests that BasePortalController has consistent return types for the various options
-     * 
-     * @throws Exception
      */
     @Test
-    public void testConsistencyOfResponses() throws Exception {
+    public void testConsistencyOfResponses() {
         final String serviceUrl = "http://service/url";
         final ModelMap gmlKmlData = new ModelMap();
         final ModelMap debugInfo = new ModelMap();
@@ -126,11 +123,10 @@ public class TestBasePortalController extends PortalTestClass {
 
     /**
      * Tests the responses are correctly written to a zip output stream
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test
-    public void writeResponseToZip() throws Exception {
+    public void writeResponseToZip() throws IOException {
         DownloadResponse dr1 = new DownloadResponse("http://example.org");
         String dr1Response = "dr1-response-contents";
         dr1.setResponseStream(new ByteArrayInputStream(dr1Response.getBytes()));
@@ -152,12 +148,12 @@ public class TestBasePortalController extends PortalTestClass {
         byte[] zipBytes = outputStream.toByteArray();
         ZipInputStream zin = new ZipInputStream(new ByteArrayInputStream(zipBytes));
 
-        ZipEntry zEntry = zin.getNextEntry();
+        zin.getNextEntry();
         byte[] zData = new byte[dr1Response.getBytes().length];
         Assert.assertEquals(zData.length, zin.read(zData));
         Assert.assertArrayEquals(dr1Response.getBytes(), zData);
 
-        zEntry = zin.getNextEntry();
+        zin.getNextEntry();
         zData = new byte[dr2Response.getBytes().length];
         Assert.assertEquals(zData.length, zin.read(zData));
         Assert.assertArrayEquals(dr2Response.getBytes(), zData);
@@ -165,79 +161,87 @@ public class TestBasePortalController extends PortalTestClass {
 
     /**
      * Tests piping input->output works as expected
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test
-    public void testWriteInputToOutputStream() throws Exception {
-        final InputStream mockInput = context.mock(InputStream.class);
+    public void testWriteInputToOutputStream() throws IOException {
         final int bufferSize = 134;
-        final OutputStream outputStream = context.mock(OutputStream.class);
+        try (final InputStream mockInput = context.mock(InputStream.class);
+                final OutputStream outputStream = context.mock(OutputStream.class)) {
 
-        context.checking(new Expectations() {
-            {
-                oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
-                will(returnValue(bufferSize));
+            context.checking(new Expectations() {
+                {
+                    oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
+                    will(returnValue(bufferSize));
 
-                oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
-                will(returnValue(12));
+                    oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
+                    will(returnValue(12));
 
-                oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
-                will(returnValue(-1));
+                    oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
+                    will(returnValue(-1));
 
-                oneOf(outputStream).write(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
-                oneOf(outputStream).write(with(any(byte[].class)), with(equal(0)), with(equal(12)));
-            }
-        });
+                    allowing(mockInput).close();
+                    oneOf(outputStream).write(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
+                    oneOf(outputStream).write(with(any(byte[].class)), with(equal(0)), with(equal(12)));
+                    allowing(outputStream).close();
+                }
+            });
 
-        FileIOUtil.writeInputToOutputStream(mockInput, outputStream, bufferSize, false);
+            FileIOUtil.writeInputToOutputStream(mockInput, outputStream, bufferSize, false);
+        }
     }
 
     /**
      * Tests piping input->output correctly closes input streams (where appropriate)
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test
-    public void testWriteInputToOutputStreamClosing() throws Exception {
+    public void testWriteInputToOutputStreamClosing() throws IOException {
         //VT: I removed the IOException expectation because if given an array of inputstream and 1 fail,
         //we should return the rest and encapsulate the exception in the file to inform users.
-        final InputStream mockInput = context.mock(InputStream.class);
         final int bufferSize = 134;
-        final OutputStream outputStream = context.mock(OutputStream.class);
 
-        context.checking(new Expectations() {
-            {
-                oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
-                will(throwException(new IOException()));
-                oneOf(outputStream).write(with(any(byte[].class)));
-                oneOf(mockInput).close();
-            }
-        });
+        try (final InputStream mockInput = context.mock(InputStream.class);
+                final OutputStream outputStream = context.mock(OutputStream.class)) {
 
-        FileIOUtil.writeInputToOutputStream(mockInput, outputStream, bufferSize, true);
+            context.checking(new Expectations() {
+                {
+                    oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
+                    will(throwException(new IOException()));
+                    oneOf(outputStream).write(with(any(byte[].class)));
+                    allowing(mockInput).close();
+                    allowing(outputStream).close();
+                }
+            });
+
+            FileIOUtil.writeInputToOutputStream(mockInput, outputStream, bufferSize, true);
+        }
     }
 
     /**
      * Tests piping input->output correctly closes input streams (where appropriate)
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test
-    public void testWriteInputToOutputStreamClosing2() throws Exception {
-        final InputStream mockInput = context.mock(InputStream.class);
+    public void testWriteInputToOutputStreamClosing2() throws IOException {
         final int bufferSize = 134;
-        final OutputStream outputStream = context.mock(OutputStream.class);
-        //VT: I removed the IOException expectation because if given an array of inputstream and 1 fail,
-        //we should return the rest and encapsulate the exception in the file to inform users.
-        context.checking(new Expectations() {
-            {
-                oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
-                will(throwException(new IOException()));
-                oneOf(outputStream).write(with(any(byte[].class)));
-            }
-        });
+        try (final InputStream mockInput = context.mock(InputStream.class);
+                final OutputStream outputStream = context.mock(OutputStream.class)) {
+            // VT: I removed the IOException expectation because if given an
+            // array of inputstream and 1 fail,
+            // we should return the rest and encapsulate the exception in the
+            // file to inform users.
+            context.checking(new Expectations() {
+                {
+                    oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
+                    will(throwException(new IOException()));
+                    oneOf(outputStream).write(with(any(byte[].class)));
+                    allowing(outputStream).close();
+                    allowing(mockInput).close();
+                }
+            });
 
-        FileIOUtil.writeInputToOutputStream(mockInput, outputStream, bufferSize, false);
+            FileIOUtil.writeInputToOutputStream(mockInput, outputStream, bufferSize, false);
+        }
     }
 }

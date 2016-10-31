@@ -4,9 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import junit.framework.Assert;
-
 import org.apache.http.client.methods.HttpRequestBase;
+import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.OPeNDAPGetDataMethodMaker;
 import org.auscope.portal.core.services.methodmakers.OPeNDAPGetDataMethodMaker.OPeNDAPFormat;
@@ -15,11 +14,13 @@ import org.auscope.portal.core.services.responses.opendap.SimpleAxis;
 import org.auscope.portal.core.services.responses.opendap.SimpleBounds;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.jmock.Expectations;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
+import ucar.ma2.InvalidRangeException;
 import ucar.nc2.Dimension;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -34,15 +35,16 @@ public class TestOpendapService extends PortalTestClass {
      * OpendapService that uses an injected mock NetcdfDataset
      */
     private class TestableOpendapService extends OpendapService {
-        NetcdfDataset dataset;
+        // NetcdfDataset dataset;
 
         public TestableOpendapService(HttpServiceCaller serviceCaller,
                 OPeNDAPGetDataMethodMaker getDataMethodMaker,
                 NetcdfDataset dataset) {
             super(serviceCaller, getDataMethodMaker);
-            this.dataset = dataset;
+            // this.dataset = dataset;
         }
 
+        @Override
         protected NetcdfDataset fetchDataset(String serviceUrl) {
             return mockDataset;
         }
@@ -58,9 +60,12 @@ public class TestOpendapService extends PortalTestClass {
 
     /**
      * Tests simple axis parsing
+     * @throws PortalServiceException 
+     * @throws InvalidRangeException 
+     * @throws IOException 
      */
     @Test
-    public void testGetSimpleAxisVariables() throws Exception {
+    public void testGetSimpleAxisVariables() throws PortalServiceException, IOException, InvalidRangeException {
         final String serviceUrl = "http://example.org/opendap";
         final String variableName = "foo";
         final String variableUnits = "ms/s";
@@ -119,35 +124,39 @@ public class TestOpendapService extends PortalTestClass {
         Assert.assertEquals(0, variable.getDimensionBounds().getFrom(), 0.001);
         Assert.assertEquals(mockDimension1Data.length, variable.getDimensionBounds().getTo(), 0.001);
 
-        Assert.assertEquals(mockDimension1Data[0], variable.getValueBounds().getFrom());
-        Assert.assertEquals(mockDimension1Data[mockDimension1Data.length - 1], variable.getValueBounds().getTo());
+        Assert.assertEquals(mockDimension1Data[0], variable.getValueBounds().getFrom(), 0.001);
+        Assert.assertEquals(mockDimension1Data[mockDimension1Data.length - 1], variable.getValueBounds().getTo(), 0.001);
     }
 
     @Test
-    public void testGetData() throws Exception {
+    public void testGetData() throws IOException, PortalServiceException {
         final String serviceUrl = "http://example.org/opendap";
         final AbstractViewVariable[] constraints = new AbstractViewVariable[] {new SimpleAxis("foo", "DOUBLE", "ms/s",
                 null, new SimpleBounds(1.1, 1.3))};
         final OPeNDAPFormat format = OPeNDAPFormat.ASCII;
 
         final HttpRequestBase mockMethod = context.mock(HttpRequestBase.class);
-        final InputStream mockResponse = context.mock(InputStream.class);
 
-        context.checking(new Expectations() {
-            {
-                oneOf(mockMethodMaker).getMethod(serviceUrl, format, mockDataset, constraints);
-                will(returnValue(mockMethod));
-                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
-                will(returnValue(mockResponse));
+        try (final HttpClientInputStream mockResponse = context.mock(HttpClientInputStream.class)) {
+
+            context.checking(new Expectations() {
+                {
+                    oneOf(mockMethodMaker).getMethod(serviceUrl, format, mockDataset, constraints);
+                    will(returnValue(mockMethod));
+                    oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
+                    will(returnValue(mockResponse));
+                    allowing(mockResponse).close();
+                }
+            });
+
+            try (InputStream response = service.getData(serviceUrl, format, constraints)) {
+                Assert.assertSame(mockResponse, response);
             }
-        });
-
-        InputStream response = service.getData(serviceUrl, format, constraints);
-        Assert.assertSame(mockResponse, response);
+        }
     }
 
     @Test(expected = PortalServiceException.class)
-    public void testGetDataErrorRequest() throws Exception {
+    public void testGetDataErrorRequest() throws IOException, PortalServiceException {
         final String serviceUrl = "http://example.org/opendap";
         final AbstractViewVariable[] constraints = new AbstractViewVariable[] {new SimpleAxis("foo", "DOUBLE", "ms/s",
                 null, new SimpleBounds(1.1, 1.3))};

@@ -5,6 +5,8 @@
 Ext.define('portal.layer.LayerStore', {
     extend: 'Ext.data.Store',
     
+    addingLayer: false, // Set to true when adding a layer
+    
     /**
      * Creates an empty store - no configuration options
      */

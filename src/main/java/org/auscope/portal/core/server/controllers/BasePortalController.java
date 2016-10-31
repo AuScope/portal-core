@@ -26,7 +26,6 @@ import org.springframework.web.servlet.ModelAndView;
  *
  */
 public abstract class BasePortalController {
-
     protected final Log log = LogFactory.getLog(getClass());
 
     public static final String OPERATION_FAILED = "The operation performed did not complete successfully.";

@@ -1,59 +1,58 @@
 package org.auscope.portal.core.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-
-import junit.framework.Assert;
-import net.sf.saxon.xpath.XPathFactoryImpl;
 
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.test.ResourceUtil;
+import org.junit.Assert;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import net.sf.saxon.xpath.XPathFactoryImpl;
+
 /**
  * Unit tests for DOMUtil
- * 
+ *
  * @author Josh Vote
  *
  */
 public class TestDOMUtil extends PortalTestClass {
     /**
      * Simple test to ensure that the 2 DOM util methods are reversible
-     * 
-     * @throws Exception
+     * @throws SAXException 
+     * @throws IOException 
+     * @throws ParserConfigurationException 
+     * @throws TransformerException 
      */
     @Test
-    public void testReversibleTransformation() throws Exception {
-        String originalXmlString = ResourceUtil
+    public void testReversibleTransformation() throws ParserConfigurationException, IOException, SAXException, TransformerException {
+        final String originalXmlString = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/xml/TestXML_NoPrettyPrint.xml");
 
-        Document doc = DOMUtil.buildDomFromString(originalXmlString);
-        String newXmlString = DOMUtil.buildStringFromDom(doc, false);
+        final Document doc = DOMUtil.buildDomFromString(originalXmlString);
+        final String newXmlString = DOMUtil.buildStringFromDom(doc, false);
 
         Assert.assertEquals(originalXmlString, newXmlString);
     }
 
     /**
      * Namespace for use with src/test/resources/TestXML_NoPrettyPrint.xml
-     * 
+     *
      * @author vot002
      *
      */
@@ -62,18 +61,19 @@ public class TestDOMUtil extends PortalTestClass {
         private Map<String, String> map;
 
         public SimpleXMLNamespace() {
-            map = new HashMap<String, String>();
+            map = new HashMap<>();
             map.put("test", "http://test.namespace");
             map.put("test2", "http://test2.namespace");
-        };
+        }
 
         /**
          * This method returns the uri for all prefixes needed.
-         * 
+         *
          * @param prefix
          * @return uri
          */
-        public String getNamespaceURI(String prefix) {
+        @Override
+        public String getNamespaceURI(final String prefix) {
             if (prefix == null)
                 throw new IllegalArgumentException("No prefix provided!");
 
@@ -84,12 +84,14 @@ public class TestDOMUtil extends PortalTestClass {
 
         }
 
-        public String getPrefix(String namespaceURI) {
+        @Override
+        public String getPrefix(final String namespaceURI) {
             // Not needed in this context.
             return null;
         }
 
-        public Iterator<String> getPrefixes(String namespaceURI) {
+        @Override
+        public Iterator<String> getPrefixes(final String namespaceURI) {
             // Not needed in this context.
             return null;
         }
@@ -97,23 +99,25 @@ public class TestDOMUtil extends PortalTestClass {
 
     /**
      * Simple test to ensure that the DOM object is namespace aware
-     * 
-     * @throws Exception
+     * @throws XPathExpressionException 
+     * @throws IOException 
+     * @throws SAXException 
+     * @throws ParserConfigurationException 
      */
     @Test
-    public void testDOMObjectNamespace() throws Exception {
+    public void testDOMObjectNamespace() throws XPathExpressionException, IOException, ParserConfigurationException, SAXException {
         //Build our DOM
-        String originalXmlString = ResourceUtil
+        final String originalXmlString = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/xml/TestXML_NoPrettyPrint.xml");
-        Document doc = DOMUtil.buildDomFromString(originalXmlString);
+        final Document doc = DOMUtil.buildDomFromString(originalXmlString);
 
         //Build our queries (namespace aware)
-        XPathFactory factory = new XPathFactoryImpl();
-        XPath xPath = factory.newXPath();
+        final XPathFactory factory = new XPathFactoryImpl();
+        final XPath xPath = factory.newXPath();
         xPath.setNamespaceContext(new SimpleXMLNamespace());
-        XPathExpression getChild1Expr = xPath.compile("test:root/test2:child1");
-        XPathExpression getChild2Expr = xPath.compile("test:root/test2:child2");
-        XPathExpression failingExpr = xPath.compile("root/child1");
+        final XPathExpression getChild1Expr = xPath.compile("test:root/test2:child1");
+        final XPathExpression getChild2Expr = xPath.compile("test:root/test2:child2");
+        final XPathExpression failingExpr = xPath.compile("root/child1");
 
         Node testNode = (Node) getChild1Expr.evaluate(doc, XPathConstants.NODE);
         Assert.assertNotNull(testNode);

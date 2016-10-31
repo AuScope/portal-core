@@ -4,9 +4,8 @@ import java.util.Iterator;
 
 import javax.xml.XMLConstants;
 
-import junit.framework.Assert;
-
 import org.auscope.portal.core.test.PortalTestClass;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class TestIterableNamespace extends PortalTestClass {

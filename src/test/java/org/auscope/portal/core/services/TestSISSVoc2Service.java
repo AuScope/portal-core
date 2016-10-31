@@ -1,9 +1,10 @@
 package org.auscope.portal.core.services;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.URISyntaxException;
 
 import org.apache.http.client.methods.HttpRequestBase;
+import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.sissvoc.SISSVoc2MethodMaker;
 import org.auscope.portal.core.services.responses.vocab.Concept;
@@ -31,41 +32,44 @@ public class TestSISSVoc2Service extends PortalTestClass {
 
     /**
      * Tests the correct calls are made and the response is correctly parsed
-     * 
-     * @throws Exception
+     * @throws PortalServiceException 
+     * @throws IOException 
+     * @throws URISyntaxException 
      */
     @Test
-    public void testGetConceptByLabel() throws Exception {
+    public void testGetConceptByLabel() throws PortalServiceException, URISyntaxException, IOException {
         final String serviceUrl = "http://example.org/opendap";
         final String repository = "repository";
         final String label = "label";
 
-        final InputStream responseStream = ResourceUtil
-                .loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/SISSVocResponse.xml");
-        final Concept[] expectedResult = new Concept[] {context.mock(Concept.class)};
+        try (final HttpClientInputStream responseStream = new HttpClientInputStream(ResourceUtil
+                .loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/SISSVocResponse.xml"), null)) {
+            final Concept[] expectedResult = new Concept[] { context.mock(Concept.class) };
 
-        context.checking(new Expectations() {
-            {
-                oneOf(mockMethodMaker).getConceptByLabelMethod(serviceUrl, repository, label);
-                will(returnValue(mockMethod));
-                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
-                will(returnValue(responseStream));
-                oneOf(mockConceptFactory).parseFromRDF(with(any(Node.class)));
-                will(returnValue(expectedResult));
-                oneOf(mockMethod).releaseConnection();
-            }
-        });
+            context.checking(new Expectations() {
+                {
+                    oneOf(mockMethodMaker).getConceptByLabelMethod(serviceUrl, repository, label);
+                    will(returnValue(mockMethod));
+                    oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
+                    will(returnValue(responseStream));
+                    oneOf(mockConceptFactory).parseFromRDF(with(any(Node.class)));
+                    will(returnValue(expectedResult));
+                    oneOf(mockMethod).releaseConnection();
+                }
+            });
 
-        Assert.assertSame(expectedResult, service.getConceptByLabel(serviceUrl, repository, label));
+            Assert.assertSame(expectedResult, service.getConceptByLabel(serviceUrl, repository, label));
+        }
     }
 
     /**
      * Tests the correct calls are made and response errors are correctly parsed
-     * 
-     * @throws Exception
+     * @throws PortalServiceException 
+     * @throws IOException 
+     * @throws URISyntaxException 
      */
     @Test(expected = PortalServiceException.class)
-    public void testGetConceptByLabelException() throws Exception {
+    public void testGetConceptByLabelException() throws PortalServiceException, URISyntaxException, IOException {
         final String serviceUrl = "http://example.org/opendap";
         final String repository = "repository";
         final String label = "label";
@@ -85,47 +89,50 @@ public class TestSISSVoc2Service extends PortalTestClass {
 
     /**
      * Tests the correct calls are made and the response is correctly parsed
-     * 
-     * @throws Exception
+     * @throws PortalServiceException 
+     * @throws IOException 
+     * @throws URISyntaxException 
      */
     @Test
-    public void testGetCommodityConcepts() throws Exception {
+    public void testGetCommodityConcepts() throws PortalServiceException, IOException, URISyntaxException {
         final String serviceUrl = "http://example.org/opendap";
         final String repository = "repository";
         final String commodityParent = "parent";
 
-        final InputStream responseStream = ResourceUtil
-                .loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/sparqlCommoditiesResponse.xml");
+        try (final HttpClientInputStream responseStream = new HttpClientInputStream(ResourceUtil
+                .loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/sparqlCommoditiesResponse.xml"),null)) {
 
-        context.checking(new Expectations() {
-            {
-                oneOf(mockMethodMaker).getCommodityMethod(serviceUrl, repository, commodityParent);
-                will(returnValue(mockMethod));
-                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
-                will(returnValue(responseStream));
-                oneOf(mockMethod).releaseConnection();
-            }
-        });
+            context.checking(new Expectations() {
+                {
+                    oneOf(mockMethodMaker).getCommodityMethod(serviceUrl, repository, commodityParent);
+                    will(returnValue(mockMethod));
+                    oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
+                    will(returnValue(responseStream));
+                    oneOf(mockMethod).releaseConnection();
+                }
+            });
 
-        Concept[] result = service.getCommodityConcepts(serviceUrl, repository, commodityParent);
-        Assert.assertNotNull(result);
-        Assert.assertEquals(3, result.length);
+            Concept[] result = service.getCommodityConcepts(serviceUrl, repository, commodityParent);
+            Assert.assertNotNull(result);
+            Assert.assertEquals(3, result.length);
 
-        Assert.assertEquals("Silver", result[0].getLabel());
-        Assert.assertEquals("urn:cgi:classifier:GA:commodity:Ag", result[0].getUrn());
-        Assert.assertEquals("Agate", result[1].getLabel());
-        Assert.assertEquals("urn:cgi:classifier:GA:commodity:Aga", result[1].getUrn());
-        Assert.assertEquals("Moss agate", result[2].getLabel());
-        Assert.assertEquals("urn:cgi:classifier:GA:commodity:Agam", result[2].getUrn());
+            Assert.assertEquals("Silver", result[0].getLabel());
+            Assert.assertEquals("urn:cgi:classifier:GA:commodity:Ag", result[0].getUrn());
+            Assert.assertEquals("Agate", result[1].getLabel());
+            Assert.assertEquals("urn:cgi:classifier:GA:commodity:Aga", result[1].getUrn());
+            Assert.assertEquals("Moss agate", result[2].getLabel());
+            Assert.assertEquals("urn:cgi:classifier:GA:commodity:Agam", result[2].getUrn());
+        }
     }
 
     /**
      * Tests the correct calls are made and response errors are correctly parsed
-     * 
-     * @throws Exception
+     * @throws IOException 
+     * @throws URISyntaxException 
+     * @throws PortalServiceException 
      */
     @Test(expected = PortalServiceException.class)
-    public void testGetCommodityConceptsException() throws Exception {
+    public void testGetCommodityConceptsException() throws URISyntaxException, IOException, PortalServiceException {
         final String serviceUrl = "http://example.org/opendap";
         final String repository = "repository";
         final String parent = "paretn";

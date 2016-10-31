@@ -25,7 +25,7 @@ public class TestSOSService extends PortalTestClass {
     }
 
     @Test
-    public void testGetObserFOIRequest() throws Exception {
+    public void testGetObserFOIRequest() {
         final String sosUrl = "http://example.org/sos";
         final String request = "GetObservation";
         final String featureID = "testID";
@@ -42,7 +42,7 @@ public class TestSOSService extends PortalTestClass {
     }
 
     @Test
-    public void testGetObsTemporalFilterRequest() throws Exception {
+    public void testGetObsTemporalFilterRequest() {
         final String sosUrl = "http://example.org/sos";
         final String request = "GetObservation";
         final long oneDay = (long) 1000.0 * 60 * 60 * 24;
@@ -61,7 +61,7 @@ public class TestSOSService extends PortalTestClass {
     }
 
     @Test
-    public void testGetObsBBOXFilterRequest() throws Exception {
+    public void testGetObsBBOXFilterRequest() {
         final String sosUrl = "http://example.org/sos";
         final String request = "GetObservation";
         final String bboxFilter = "{\"crs\":\"EPSG:4326\",\"eastBoundLongitude\":154.1,\"westBoundLongitude\":112.8,\"southBoundLatitude\":-44.0,\"northBoundLatitude\":-8.9}";

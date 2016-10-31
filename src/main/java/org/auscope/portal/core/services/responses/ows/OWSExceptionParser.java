@@ -13,10 +13,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-// TODO: Auto-generated Javadoc
 /**
  * A utility class that provides convenience methods for detecting an ows:Exception response in an arbitrary ows response.
- * 
+ *
  * @author vot002
  *
  */
@@ -31,20 +30,22 @@ public class OWSExceptionParser {
      * @return the XPath object
      * @throws OWSException
      */
-    private static NamespaceContext createNamespaceContext() throws OWSException {
+    private static NamespaceContext createNamespaceContext() {
         // use our own bodgy namespace context that just recognizes
         // xmlns:ows
         return new NamespaceContext() {
 
-            @SuppressWarnings("rawtypes")
+            @Override
             public Iterator getPrefixes(String namespaceURI) {
                 return null; // not used
             }
 
+            @Override
             public String getPrefix(String namespaceURI) {
                 return null; // not used
             }
 
+            @Override
             public String getNamespaceURI(String prefix) {
                 if (prefix.equals("ows")) {
                     return "http://www.opengis.net/ows";

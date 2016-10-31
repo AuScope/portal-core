@@ -1,19 +1,16 @@
 package org.auscope.portal.core.services.methodmakers;
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.xml.sax.SAXException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -23,7 +20,7 @@ import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord;
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord_1_3_0;
 import org.auscope.portal.core.util.HttpUtil;
-import org.apache.commons.httpclient.HttpException;
+import org.xml.sax.SAXException;
 
 /**
  * A class for generating methods that can interact with a OGC Web Map Service
@@ -363,6 +360,7 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
     /**
      * Test whether wms 1.3.0 is accepted. Not sure if there is a better way of testing though.
      */
+    @SuppressWarnings("unused")
     @Override
     public boolean accepts(String wmsUrl, String version, StringBuilder errStr) {
         if (version != null) {
@@ -384,9 +382,8 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
             HttpGet method = new HttpGet();
             method.setURI(HttpUtil.parseURI(wmsUrl, existingParam));
 
-            InputStream response = serviceCaller.getMethodResponseAsStream(method);
-            try {
-                GetCapabilitiesRecord record = new GetCapabilitiesRecord_1_3_0(response);
+            try (InputStream response = serviceCaller.getMethodResponseAsStream(method)) {
+                new GetCapabilitiesRecord_1_3_0(response);
             } catch (IOException e) {
                 // IOException is equivalent to HTTPException
                 // So we have to catch IOException here, rather than below, in order to distinguish
@@ -398,30 +395,18 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
             }
             return true;
             
-        } catch (ClientProtocolException e) {
-            log.error("WMS_1_3_0_MethodMaker::Accepts(): ClientProtocolException: "+e.getMessage()+"| type: "+e.toString());
-            errStr.delete(0, errStr.length());
-            errStr.append("I cannot resolve your WMS URL");
-            return false;
-
         } catch (SAXException|ParserConfigurationException e) {
             log.error("WMS_1_3_0_MethodMaker::Accepts(): SAXException or ParserConfigurationException: "+e.getMessage()+"| type: "+e.toString());
             errStr.delete(0, errStr.length());
             errStr.append("I can resolve your WMS URL, but there was an XML format error");
             return false;
-       
-        } catch (HttpException e) {
-            log.error("WMSMethodMaker::Accepts(): HttpException: "+e.getMessage());
-            errStr.delete(0, errStr.length());
-            errStr.append("I cannot resolve your WMS URL, there was an HTTP error: "+e.getMessage());
-            return false;
-            
-        } catch (Exception e) {
-            log.error("WMS_1_3_0_MethodMaker::Accepts(): Exception: "+e.getMessage()+"| type: "+e.toString());
+                   
+        } catch (URISyntaxException e1) {
+            log.error("WMS_1_3_0_MethodMaker::Accepts(): URISyntaxException: "+e1.getMessage()+"| type: "+e1.toString());
             errStr.delete(0, errStr.length());
             errStr.append("Either I cannot resolve your WMS URL or cannot retrieve the web page");
             return false;
-        }
+        } 
     }
     
     /**
@@ -436,10 +421,12 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
     
 
     @Override
-    public GetCapabilitiesRecord getGetCapabilitiesRecord(HttpRequestBase method) throws Exception {
-        InputStream response = serviceCaller.getMethodResponseAsStream(method);
-
-        return new GetCapabilitiesRecord_1_3_0(response);
+    public GetCapabilitiesRecord getGetCapabilitiesRecord(HttpRequestBase method) throws IOException {
+        try (InputStream response = serviceCaller.getMethodResponseAsStream(method)) {
+            return new GetCapabilitiesRecord_1_3_0(response);
+        } catch (ParserConfigurationException | SAXException e) {
+            throw new IOException(e.getMessage(), e);
+        }
     }
 
     @Override

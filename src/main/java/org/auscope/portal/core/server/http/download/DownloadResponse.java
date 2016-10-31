@@ -7,7 +7,7 @@ import org.auscope.portal.core.util.FileIOUtil;
 
 public class DownloadResponse {
     private InputStream responseStream;
-    private Exception exception;
+    private Throwable exception;
     private String requestURL;
     private String contentType;
 
@@ -26,11 +26,11 @@ public class DownloadResponse {
         return FileIOUtil.convertExceptionToString(exception, getRequestURL());
     }
 
-    public void setException(Exception exception) {
+    public void setException(Throwable exception) {
         this.exception = exception;
     }
 
-    public Exception getException() {
+    public Throwable getException() {
         return exception;
     }
 
@@ -50,6 +50,7 @@ public class DownloadResponse {
         return requestURL;
     }
 
+    @Override
     public String toString() {
         try {
             return this.getResponseAsString() + this.getExceptionAsString();

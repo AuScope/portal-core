@@ -1,8 +1,14 @@
 package org.auscope.portal.core.services.methodmakers;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.List;
+
+import org.apache.http.Consts;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.auscope.portal.core.services.methodmakers.OPeNDAPGetDataMethodMaker.OPeNDAPFormat;
 import org.auscope.portal.core.services.responses.opendap.AbstractViewVariable;
 import org.auscope.portal.core.services.responses.opendap.SimpleAxis;
@@ -12,6 +18,7 @@ import org.auscope.portal.core.test.PortalTestClass;
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Test;
+
 import ucar.ma2.Array;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -32,11 +39,10 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
 
     /**
      * Tests the url for each download format
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test()
-    public void testExtension() throws Exception {
+    public void testExtension() throws IOException {
         final String opendapUrl = "http://fake.com/blah.nc";
         OPeNDAPGetDataMethodMaker methodMaker = new OPeNDAPGetDataMethodMaker();
 
@@ -49,13 +55,20 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
         Assert.assertEquals(opendapUrl + ".dods", method.getURI().toString());
     }
 
+    private static List <NameValuePair> parseQuery(final String query) {
+        if (query != null && query.length() > 0) {
+            return URLEncodedUtils.parse(query, Consts.UTF_8);
+        }
+        return null;
+    }
+
     /**
      * Tests a single constraint when it does NOT have to calculate the minimum bounding box
-     * 
-     * @throws Exception
+     * @throws IOException 
+     * @throws URISyntaxException 
      */
     @Test()
-    public void testSingleAxisConstraintNoBBox() throws Exception {
+    public void testSingleAxisConstraintNoBBox() throws IOException, URISyntaxException {
         final String opendapUrl = "http://fake.com/blah.nc";
         final OPeNDAPFormat format = OPeNDAPFormat.ASCII;
         final SimpleAxis a1 = new SimpleAxis("name1", "FLOAT", "km/h", new SimpleBounds(43, 56), null);
@@ -68,8 +81,8 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
         Assert.assertNotNull(method);
         Assert.assertTrue(method.getURI().toString().startsWith(opendapUrl));
         URIBuilder builder = new URIBuilder();
-        builder.setQuery(String.format("%1$s[%2$d:%3$d]", a1.getName(), (int) a1.getDimensionBounds().getFrom(),
-                (int) a1.getDimensionBounds().getTo()));
+        builder.setParameters(parseQuery(String.format("%1$s[%2$d:%3$d]", a1.getName(), (int) a1.getDimensionBounds().getFrom(),
+                (int) a1.getDimensionBounds().getTo())));
 
         Assert.assertEquals(builder.build().getQuery(),
                 method.getURI().getQuery());
@@ -83,19 +96,19 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
         Assert.assertTrue(method.getURI().toString().startsWith(opendapUrl));
 
         builder = new URIBuilder();
-        builder.setQuery(String.format("%1$s[%2$d:%3$d]", a2.getName(), (int) a2.getDimensionBounds().getFrom(),
-                (int) a2.getDimensionBounds().getTo()));
+        builder.setParameters(parseQuery(String.format("%1$s[%2$d:%3$d]", a2.getName(), (int) a2.getDimensionBounds().getFrom(),
+                (int) a2.getDimensionBounds().getTo())));
         Assert.assertEquals(builder.build().getQuery(),
                 method.getURI().getQuery());
     }
 
     /**
      * Tests a single constraint when it MUST calculate minimum bounding box
-     * 
-     * @throws Exception
+     * @throws IOException 
+     * @throws URISyntaxException 
      */
     @Test()
-    public void testSingleAxisConstraint() throws Exception {
+    public void testSingleAxisConstraint() throws IOException, URISyntaxException {
         OPeNDAPGetDataMethodMaker methodMaker = new OPeNDAPGetDataMethodMaker();
         final String opendapUrl = "http://fake.com/blah.nc";
         final OPeNDAPFormat format = OPeNDAPFormat.ASCII;
@@ -131,7 +144,7 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
         Assert.assertNotNull(method);
         Assert.assertTrue(method.getURI().toString().startsWith(opendapUrl));
         URIBuilder builder = new URIBuilder();
-        builder.setQuery(String.format("%1$s[1:2]", a1.getName()));
+        builder.setParameters(parseQuery(String.format("%1$s[1:2]", a1.getName())));
 
         Assert.assertEquals(builder.build().getQuery(),
                 method.getURI().getQuery());
@@ -165,7 +178,7 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
         Assert.assertNotNull(method);
         Assert.assertTrue(method.getURI().toString().startsWith(opendapUrl));
         builder = new URIBuilder();
-        builder.setQuery(String.format("%1$s[1:3]", a2.getName()));
+        builder.setParameters(parseQuery(String.format("%1$s[1:3]", a2.getName())));
 
         Assert.assertEquals(builder.build().getQuery(),
                 method.getURI().getQuery());
@@ -199,16 +212,18 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
         Assert.assertNotNull(method);
         Assert.assertTrue(method.getURI().toString().startsWith(opendapUrl));
         builder = new URIBuilder();
-        builder.setQuery(String.format("%1$s[0:3]", a3.getName()));
+        builder.setParameters(parseQuery(String.format("%1$s[0:3]", a3.getName())));
         Assert.assertEquals(builder.build().getQuery(),
                 method.getURI().getQuery());
     }
 
     /**
      * Tests a single grid constraint
+     * @throws IOException 
+     * @throws URISyntaxException 
      */
     @Test
-    public void testSingleGridConstraint() throws Exception {
+    public void testSingleGridConstraint() throws IOException, URISyntaxException {
         OPeNDAPGetDataMethodMaker methodMaker = new OPeNDAPGetDataMethodMaker();
         final String opendapUrl = "http://fake.com/blah.nc";
         final OPeNDAPFormat format = OPeNDAPFormat.ASCII;
@@ -262,7 +277,7 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
         Assert.assertNotNull(method);
         Assert.assertTrue(method.getURI().toString().startsWith(opendapUrl));
         URIBuilder builder = new URIBuilder();
-        builder.setQuery(String.format("%1$s[1:2][2:3]", g1.getName()));
+        builder.setParameters(parseQuery(String.format("%1$s[1:2][2:3]", g1.getName())));
 
         Assert.assertEquals(builder.build().getQuery(),
                 method.getURI().getQuery());
@@ -270,9 +285,11 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
 
     /**
      * Tests a multi constraint request
+     * @throws IOException 
+     * @throws URISyntaxException 
      */
     @Test
-    public void testMultiConstraint() throws Exception {
+    public void testMultiConstraint() throws IOException, URISyntaxException {
         OPeNDAPGetDataMethodMaker methodMaker = new OPeNDAPGetDataMethodMaker();
         final String opendapUrl = "http://fake.com/blah.nc";
         final OPeNDAPFormat format = OPeNDAPFormat.ASCII;
@@ -325,18 +342,17 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
         Assert.assertNotNull(method);
         Assert.assertTrue(method.getURI().toString().startsWith(opendapUrl));
         URIBuilder builder = new URIBuilder();
-        builder.setQuery(String.format("%1$s[1:2],%2$s[2:3]", a1.getName(), a2.getName()));
+        builder.setParameters(parseQuery(String.format("%1$s[1:2],%2$s[2:3]", a1.getName(), a2.getName())));
         Assert.assertEquals((builder.build()).getQuery(),
                 method.getURI().getQuery());
     }
 
     /**
      * Tests that a read error is NOT ignored
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test(expected = IOException.class)
-    public void testReadError() throws Exception {
+    public void testReadError() throws IOException {
         OPeNDAPGetDataMethodMaker methodMaker = new OPeNDAPGetDataMethodMaker();
         final String opendapUrl = "http://fake.com/blah.nc";
         final OPeNDAPFormat format = OPeNDAPFormat.ASCII;

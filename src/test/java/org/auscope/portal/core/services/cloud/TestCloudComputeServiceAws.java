@@ -4,13 +4,12 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.Assert;
-
 import org.auscope.portal.core.cloud.CloudJob;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.cloud.CloudComputeService.InstanceStatus;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.jmock.Expectations;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,7 +28,7 @@ import com.amazonaws.services.ec2.model.InstanceState;
 public class TestCloudComputeServiceAws extends PortalTestClass{
 
     private class TestableJob extends CloudJob {
-
+        // empty
     }
 
     private class TestableCCS extends CloudComputeServiceAws {
@@ -41,6 +40,7 @@ public class TestCloudComputeServiceAws extends PortalTestClass{
             testableClient = client;
         }
 
+        @Override
         protected AmazonEC2 getEc2Client(CloudJob job) throws PortalServiceException {
             return testableClient;
         }
@@ -59,7 +59,7 @@ public class TestCloudComputeServiceAws extends PortalTestClass{
     }
 
     @Test
-    public void testJobStatus_ParseRunning() throws Exception {
+    public void testJobStatus_ParseRunning() throws PortalServiceException {
         CloudJob job = new TestableJob();
 
         job.setComputeInstanceId("testable-id");
@@ -84,11 +84,11 @@ public class TestCloudComputeServiceAws extends PortalTestClass{
     }
 
     @Test
-    public void testJobStatus_ParsePending() throws Exception {
+    public void testJobStatus_ParsePending() throws PortalServiceException  {
         CloudJob job = new TestableJob();
 
-        Date now = new Date();
-        Date submitTime = new Date(now.getTime() - (CloudComputeServiceAws.STATUS_PENDING_SECONDS * 1000) - 1000);
+ //       Date now = new Date();
+ //       Date submitTime = new Date(now.getTime() - (CloudComputeServiceAws.STATUS_PENDING_SECONDS * 1000) - 1000);
 
         job.setComputeInstanceId("testable-id");
         job.setProperty(CloudJob.PROPERTY_STS_ARN, "sts-arn");
@@ -112,7 +112,7 @@ public class TestCloudComputeServiceAws extends PortalTestClass{
     }
 
     @Test
-    public void testJobStatus_ParseTerminated() throws Exception {
+    public void testJobStatus_ParseTerminated() throws PortalServiceException {
         CloudJob job = new TestableJob();
 
         job.setComputeInstanceId("testable-id");
@@ -137,7 +137,7 @@ public class TestCloudComputeServiceAws extends PortalTestClass{
     }
 
     @Test
-    public void testJobStatus_ParseMissingException() throws Exception {
+    public void testJobStatus_ParseMissingException() throws PortalServiceException {
         CloudJob job = new TestableJob();
 
         job.setComputeInstanceId("testable-id");
@@ -156,7 +156,7 @@ public class TestCloudComputeServiceAws extends PortalTestClass{
     }
 
     @Test
-    public void testJobStatus_NewJobPending() throws Exception {
+    public void testJobStatus_NewJobPending() throws PortalServiceException {
         CloudJob job = new TestableJob();
 
         Date now = new Date();
@@ -170,9 +170,7 @@ public class TestCloudComputeServiceAws extends PortalTestClass{
         final AmazonServiceException ex = new AmazonServiceException("Testing Exception");
         ex.setErrorCode("InvalidInstanceID.NotFound");
 
-        context.checking(new Expectations() {{
-
-        }});
+        context.checking(new Expectations());
 
         Assert.assertEquals(InstanceStatus.Pending, service.getJobStatus(job));
     }
@@ -183,11 +181,10 @@ public class TestCloudComputeServiceAws extends PortalTestClass{
      * In this case we expect it to return pending. If it's only a few seconds in the future then it's probably just a minor date/time
      * shifting error (or a daylight savings time shift). If it's a LONG time in the future, what can we expect? It's probably overengineering
      * the checks if we start accounting for the latter.
-     *
-     * @throws Exception
+     * @throws PortalServiceException 
      */
     @Test
-    public void testJobStatus_FutureJob() throws Exception {
+    public void testJobStatus_FutureJob() throws PortalServiceException  {
         CloudJob job = new TestableJob();
 
         Date now = new Date();
@@ -198,22 +195,20 @@ public class TestCloudComputeServiceAws extends PortalTestClass{
         job.setProperty(CloudJob.PROPERTY_CLIENT_SECRET, "client-secret");
         job.setSubmitDate(submitTime);
 
-        context.checking(new Expectations() {{
-
-        }});
+        context.checking(new Expectations());
 
         Assert.assertEquals(InstanceStatus.Pending, service.getJobStatus(job));
     }
 
     @Test(expected=PortalServiceException.class)
-    public void testStsRequired() throws Exception {
+    public void testStsRequired() throws PortalServiceException  {
         final TestableCCS stsService = new TestableCCS(mockClient);
         stsService.setRequireSts(true);
         stsService.getCredentials(null, null);
     }
 
     @Test(expected=PortalServiceException.class)
-    public void testJobStatus_BadResponse() throws Exception {
+    public void testJobStatus_BadResponse() throws PortalServiceException  {
         CloudJob job = new TestableJob();
 
         job.setComputeInstanceId("testable-id");
@@ -233,7 +228,7 @@ public class TestCloudComputeServiceAws extends PortalTestClass{
     }
 
     @Test
-    public void testContainsPersistentVolumes_HandleMultipleVolumes() throws Exception {
+    public void testContainsPersistentVolumes_HandleMultipleVolumes() throws PortalServiceException  {
         CloudJob job = new TestableJob();
 
         job.setComputeVmId("computeid");
@@ -273,7 +268,7 @@ public class TestCloudComputeServiceAws extends PortalTestClass{
     }
 
     @Test(expected=PortalServiceException.class)
-    public void testContainsPersistentVolumes_AwsError() throws Exception {
+    public void testContainsPersistentVolumes_AwsError() throws PortalServiceException {
         CloudJob job = new TestableJob();
 
         job.setComputeVmId("computeid");

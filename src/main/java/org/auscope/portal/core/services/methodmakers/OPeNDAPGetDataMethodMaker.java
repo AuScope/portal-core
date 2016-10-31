@@ -1,14 +1,19 @@
 package org.auscope.portal.core.services.methodmakers;
 
-import java.net.URI;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.Consts;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
-
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.auscope.portal.core.services.responses.opendap.AbstractViewVariable;
 import org.auscope.portal.core.services.responses.opendap.SimpleAxis;
 import org.auscope.portal.core.services.responses.opendap.SimpleBounds;
@@ -21,7 +26,7 @@ import ucar.nc2.dataset.NetcdfDataset;
 /**
  * An class for generating HttpMethods that will query an OPeNDAP Service for data in a given format which is constrained by a list of constraints (which are a
  * simplification of variables in ds).
- * 
+ *
  * @author JoshVote
  *
  */
@@ -36,12 +41,12 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
     /**
      * Given a ViewVariable, this function will populate the appropriate "SimpleBounds" field representing an index bounds IFF the value bounds is specified AND
      * the index bounds are unspecified
-     * 
+     *
      * @param ds
      * @param var
-     * @throws Exception
+     * @throws IOException 
      */
-    private void calculateIndexBounds(NetcdfDataset ds, AbstractViewVariable var) throws Exception {
+    private void calculateIndexBounds(NetcdfDataset ds, AbstractViewVariable var) throws IOException {
         if (var instanceof SimpleAxis) {
             calculateIndexBounds(ds, (SimpleAxis) var);
         } else if (var instanceof SimpleGrid) {
@@ -52,7 +57,7 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
         }
     }
 
-    private void calculateIndexBounds(NetcdfDataset ds, SimpleAxis axis) throws Exception {
+    private static void calculateIndexBounds(NetcdfDataset ds, SimpleAxis axis) throws IOException {
         //Only calculate dimension bounds if required (and possible)
         if (axis.getValueBounds() != null && axis.getDimensionBounds() == null) {
             String parentGroupName = "";
@@ -93,25 +98,25 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
         }
     }
 
-    private void calculateIndexBounds(NetcdfDataset ds, SimpleGrid grid) throws Exception {
+    private void calculateIndexBounds(NetcdfDataset ds, SimpleGrid grid) throws IOException {
         for (AbstractViewVariable var : grid.getAxes()) {
             calculateIndexBounds(ds, var);
         }
     }
 
-    private String simpleBoundsToQuery(SimpleBounds bounds) {
+    private static String simpleBoundsToQuery(SimpleBounds bounds) {
         return String.format("[%1$d:%2$d]", (int) bounds.getFrom(), (int) bounds.getTo());
     }
 
     /**
      * Given a variable, this function generates an OPeNDAP query string that will query according to the specified constraints (Each ViewVariable must have
      * their appropriate dimension bounds specified).
-     * 
+     *
      * @param vars
      *            The list of constraints
      * @return
      */
-    private String generateQueryForConstraints(AbstractViewVariable[] vars) {
+    private static String generateQueryForConstraints(AbstractViewVariable[] vars) {
         StringBuilder result = new StringBuilder();
 
         for (AbstractViewVariable var : vars) {
@@ -148,7 +153,7 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
     }
 
     public HttpRequestBase getMethod(String opendapUrl, OPeNDAPFormat format, NetcdfDataset ds,
-            AbstractViewVariable[] constraints) throws Exception {
+            AbstractViewVariable[] constraints) throws IOException {
 
         //Generate our base URL (which depends on the format)
         HttpRequestBase method = null;
@@ -171,12 +176,24 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
             }
 
             URIBuilder builder = new URIBuilder(method.getURI());
-            builder.setQuery(URLEncoder.encode((generateQueryForConstraints(constraints)), "UTF-8"));
-            method.setURI(builder.build());
+            builder.setParameters(parseQuery(URLEncoder.encode((generateQueryForConstraints(constraints)), "UTF-8"), Consts.UTF_8));
+            try {
+                method.setURI(builder.build());
+            } catch (URISyntaxException e) {
+                throw new IOException(e.getMessage(), e);
+            }
         }
 
         logger.debug(String.format("url='%1$s' query='%2$s'", opendapUrl, method.getURI()));
 
         return method;
     }
+    
+    private static List <NameValuePair> parseQuery(String query, Charset charset) {
+        if (query != null && query.length() > 0) {
+            return URLEncodedUtils.parse(query, charset);
+        }
+        return null;
+    }
+
 }

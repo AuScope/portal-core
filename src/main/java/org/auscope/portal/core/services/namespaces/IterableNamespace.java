@@ -22,7 +22,7 @@ public abstract class IterableNamespace implements NamespaceContext {
     /**
      * Map of namespaces keyed by their prefix
      */
-    protected Map<String, String> map = new HashMap<String, String>();
+    protected Map<String, String> map = new HashMap<>();
 
     /**
      * Looks up the namespace URI for a given prefix. Will return XMLConstants.NULL_NS_URI on failure

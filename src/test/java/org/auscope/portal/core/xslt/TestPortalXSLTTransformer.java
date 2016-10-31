@@ -1,12 +1,15 @@
 package org.auscope.portal.core.xslt;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.auscope.portal.core.test.PortalTestClass;
@@ -17,6 +20,7 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * Unit tests for PortalXSLTTransformer
@@ -29,17 +33,19 @@ public class TestPortalXSLTTransformer extends PortalTestClass {
     private PortalXSLTTransformer transformer;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         transformer = new PortalXSLTTransformer("/org/auscope/portal/core/xslt/wfsToKml.xsl");
     }
 
     /**
      * Unit test for testing the basic features of the transformer with the kml.xsl XSLT
-     * 
-     * @throws Exception
+     * @throws XPathExpressionException 
+     * @throws IOException 
+     * @throws ParserConfigurationException 
+     * @throws SAXException 
      */
     @Test
-    public void testGenericFeatureParser() throws Exception {
+    public void testGenericFeatureParser() throws XPathExpressionException, IOException, ParserConfigurationException, SAXException {
         final String testXml = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/responses/wfs/GetUndefinedFeatureSet.xml");
         final Properties properties = new Properties();
@@ -76,11 +82,13 @@ public class TestPortalXSLTTransformer extends PortalTestClass {
 
     /**
      * GPT-74 - Unit test a specific wfs for the Oil Pipeline thsat is failing the current XSLT transformation.
-     * 
-     * @throws Exception
+     * @throws XPathExpressionException 
+     * @throws IOException 
+     * @throws ParserConfigurationException 
+     * @throws SAXException 
      */
     @Test
-    public void testOilPipelineFeatureParser() throws Exception {
+    public void testOilPipelineFeatureParser() throws XPathExpressionException, IOException, ParserConfigurationException, SAXException {
         final String testXml = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/xslt/oilPipeline.xml");
         final Properties properties = new Properties();

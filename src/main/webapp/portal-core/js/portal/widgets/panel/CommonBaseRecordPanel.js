@@ -1,7 +1,7 @@
 /**
  * An abstract base class to be extended.
  *
- * Represents a grid panel for containing layers
+ * Represents a pseudo grid panel (see AUS-2685) for containing layers
  * that haven't yet been added to the map. Each row
  * will be grouped under a heading, contain links
  * to underlying data sources and have a spatial location
@@ -17,7 +17,7 @@
  *
  */
 Ext.define('portal.widgets.panel.CommonBaseRecordPanel', {
-    extend : 'Ext.grid.Panel',
+    extend : 'portal.widgets.panel.recordpanel.RecordPanel',
     alias: 'widget.commonbaserecordpanel',
     browseCatalogueDNSMessage : false, //VT: Flags the do not show message when browse catalogue is clicked.
     map : null,
@@ -115,7 +115,7 @@ Ext.define('portal.widgets.panel.CommonBaseRecordPanel', {
     /**
      * Renderer used in Column definitions that will be done on subclasses.  Useful to define here.
      * 
-     * Internal method, acts as an ExtJS 4 column renderer function for rendering
+     * Internal method, acts as a renderer function for rendering
      * the title of the record.
      *
      * http://docs.sencha.com/ext-js/4-0/#!/api/Ext.grid.column.Column-cfg-renderer
@@ -127,15 +127,14 @@ Ext.define('portal.widgets.panel.CommonBaseRecordPanel', {
     /**
      * Renderer used in Column definitions that will be done on subclasses.  Useful to define here.
      *
-     * Internal method, acts as an ExtJS 4 column renderer function for rendering
+     * Internal method, acts as a renderer function for rendering
      * the service information of the record.
      *
-     * http://docs.sencha.com/ext-js/4-0/#!/api/Ext.grid.column.Column-cfg-renderer
      */
-    _serviceInformationRenderer : function(value, metaData, record, row, col, store, gridView) {
+    _serviceInformationRenderer : function(value, record) {
         
         if(record.get('resourceProvider')=="kml"){
-            return this._generateHTMLIconMarkup('portal-core/img/kml.png');
+            return 'portal-core/img/kml.png';
         }
         
         var onlineResources = this.getOnlineResourcesForRecord(record);
@@ -159,7 +158,7 @@ Ext.define('portal.widgets.panel.CommonBaseRecordPanel', {
             }
         }
         
-        return this._generateHTMLIconMarkup(iconPath);
+        return iconPath;
     },
     
     /**
@@ -200,20 +199,18 @@ Ext.define('portal.widgets.panel.CommonBaseRecordPanel', {
     /**
      * Renderer used in Column definitions that will be done on subclasses.  Useful to define here.
      *
-     * Internal method, acts as an ExtJS 4 column renderer function for rendering
+     * Internal method, acts as an renderer function for rendering
      * the spatial bounds column of the record.
-     *
-     * http://docs.sencha.com/ext-js/4-0/#!/api/Ext.grid.column.Column-cfg-renderer
      */
-    _spatialBoundsRenderer : function(value, metaData, record, row, col, store, gridView) {
+    _spatialBoundsRenderer : function(value, record) {
         var spatialBounds = this.getSpatialBoundsForRecord(record);
 
         if (spatialBounds.length > 0 || record.internalId == 'portal-InSar-reports') {                                   
             var icon = null;
             if (this.mapExtentIcon) {
-                icon = this._generateHTMLIconMarkup(this.mapExtentIcon);
+                icon = this.mapExtentIcon;
             } else {
-                icon = this._generateHTMLIconMarkup('portal-core/img/magglass.gif');
+                icon = 'portal-core/img/magglass.gif';
             }
             return icon;
         }
@@ -226,7 +223,7 @@ Ext.define('portal.widgets.panel.CommonBaseRecordPanel', {
      *
      * Show a popup containing info about the services that 'power' this layer
      */
-    _serviceInformationClickHandler : function(column, record, rowIndex, colIndex) {
+    _serviceInformationClickHandler : function(value, record) {
         var cswRecords = this.getCSWRecordsForRecord(record);
         if (!cswRecords || cswRecords.length === 0) {
             return;
@@ -247,7 +244,7 @@ Ext.define('portal.widgets.panel.CommonBaseRecordPanel', {
      *
      * On single click, show a highlight of all BBoxes
      */
-    _spatialBoundsClickHandler : function(column, record, rowIndex, colIndex) {
+    _spatialBoundsClickHandler : function(value, record) {
         var spatialBoundsArray;
         if (record.internalId == 'portal-InSar-reports') {
             spatialBoundsArray = this.getWholeGlobeBounds();
@@ -298,7 +295,7 @@ Ext.define('portal.widgets.panel.CommonBaseRecordPanel', {
      *
      * On double click, move the map so that specified bounds are visible
      */
-    _spatialBoundsDoubleClickHandler : function(column, record, rowIndex, colIndex) {
+    _spatialBoundsDoubleClickHandler : function(value, record) {
         var spatialBoundsArray;
         if (record.internalId == 'portal-InSar-reports') {
             spatialBoundsArray = this.getWholeGlobeBounds();
@@ -321,7 +318,7 @@ Ext.define('portal.widgets.panel.CommonBaseRecordPanel', {
      * A renderer for generating the contents of the tooltip that shows when the
      * layer is loading
      */
-    _loadingTipRenderer : function(value, record, column, tip) {
+    _loadingTipRenderer : function(value, record, tip) {
         var layer = record.get('layer');
         if(!layer){//VT:The layer has yet to be created.
             return 'No status has been recorded';
@@ -340,7 +337,7 @@ Ext.define('portal.widgets.panel.CommonBaseRecordPanel', {
         return renderer.renderStatus.renderHtml();
     },
     
-    _loadingClickHandler : function(value, record, rowIdx, tip) {
+    _loadingClickHandler : function(value, record) {
         
         var layer = record.get('layer');
         
