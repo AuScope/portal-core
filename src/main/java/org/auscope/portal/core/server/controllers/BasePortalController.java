@@ -13,9 +13,9 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.entity.StringEntity;
 import org.auscope.portal.core.services.PortalServiceException;
-import org.auscope.portal.core.view.JSONView;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 /**
  * An abstract controller for providing portal 'standard' JSON response types in the form of a ModelAndView object.
@@ -166,7 +166,7 @@ public abstract class BasePortalController {
      */
     protected ModelAndView generateJSONResponseMAV(boolean success, Object data, String message,
             Integer matchedResults, Object debugInfo) {
-        JSONView view = new JSONView();
+        MappingJackson2JsonView view = new MappingJackson2JsonView();
         ModelMap model = generateResponseModel(success, data, matchedResults, message, debugInfo);
 
         return new ModelAndView(view, model);
@@ -203,7 +203,7 @@ public abstract class BasePortalController {
      * @return
      */
     protected ModelAndView generateHTMLResponseMAV(boolean success, Object data, String message, Object debugInfo) {
-        JSONView view = new JSONView();
+        MappingJackson2JsonView view = new MappingJackson2JsonView();
         view.setContentType("text/html");
         ModelMap model = generateResponseModel(success, data, null, message, debugInfo);
 
