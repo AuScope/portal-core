@@ -21,12 +21,20 @@
         <developerConnection>scm:git:https://github.com/AuScope/portal-core.git</developerConnection>
         <url>https://github.com/AuScope/portal-core</url>
     </scm>
+<!--
     <distributionManagement>
         <repository>
             <id>deployment</id>
             <name>Internal nexus</name>
             <url>https://cgsrv8.arrc.csiro.au/nexus/content/repositories/PortalRelease/</url>
         </repository>
+    </distributionManagement>
+-->
+    <distributionManagement>
+        <snapshotRepository>
+          <id>nexus.gadevs</id>
+	  <url>https://nexus.gadevs.ga/repository/maven-snapshots</url>
+        </snapshotRepository>
     </distributionManagement>
 
     <dependencyManagement>
