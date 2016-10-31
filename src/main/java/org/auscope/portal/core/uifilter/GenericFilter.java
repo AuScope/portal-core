@@ -1,7 +1,6 @@
 package org.auscope.portal.core.uifilter;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import net.sf.json.JSONArray;
@@ -94,7 +93,7 @@ public abstract class GenericFilter extends AbstractFilter {
                     JSONObject jobj=(JSONObject)jArray.get(i);
                     if(jobj.getString("type").equals("OPTIONAL.DATE")){
                         results.add(parseDateType(jobj));
-                    }else if(jobj.getString("type").equals("OPTIONAL.TEXT") || jobj.getString("type").equals("OPTIONAL.DROPDOWNSELECTLIST")){
+                    }else if(jobj.getString("type").contains("OPTIONAL") && !jobj.getString("type").equals("OPTIONAL.PROVIDER")){
                         results.add(parseTextType(jobj));
                     }
                 }
