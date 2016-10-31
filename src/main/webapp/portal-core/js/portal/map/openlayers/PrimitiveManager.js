@@ -5,35 +5,45 @@ Ext.define('portal.map.openlayers.PrimitiveManager', {
     extend: 'portal.map.BasePrimitiveManager',
 
     vectorLayer : null,
-
+    vectorLayerGenerator : null,
     layers : null,
     vectors : null,
 
     /**
      * {
      *  baseMap : portal.map.BaseMap - The map instance that created this primitive manager,
-     *  vectorLayer : OpenLayers.Layer.Vector - where vectors will be added
+     *  vectorLayerGenerator : function(this) - Called once on demand, should return a OpenLayers.Layer.Vector where vectors will be added by this class
+     *  noLazyGeneration: Boolean - If true, this will force the vectorLayerGenerator to be fired immediately
      * }
      */
     constructor : function(config) {
         this.callParent(arguments);
 
-        this.vectorLayer = config.vectorLayer;
+        this.vectorLayer = null;
+        this.vectorLayerGenerator = config.vectorLayerGenerator;
 
         this.layers = [];
         this.vectors = [];
-    },
-    
-    setVisibility : function(visibility){                
         
-        if(this.vectorLayer){
-            this.vectorLayer.setVisibility(visibility);
+        if (config.noLazyGeneration) {
+            this.getVectorLayer();
         }
+    },
+
+    getVectorLayer: function() {
+        if (this.vectorLayer) {
+            return this.vectorLayer;
+        } else {
+            return this.vectorLayer = this.vectorLayerGenerator(this);
+        }
+    },
+
+    setVisibility : function(visibility){
+        this.getVectorLayer().setVisibility(visibility);
         
         for (var i = 0; i < this.layers.length; i++) {
             this.layers[i].setVisibility(visibility);
         }
-        
     },
 
     /**
@@ -45,7 +55,7 @@ Ext.define('portal.map.openlayers.PrimitiveManager', {
         }
         this.layers = [];
 
-        this.vectorLayer.removeFeatures(this.vectors);
+        this.getVectorLayer().removeFeatures(this.vectors);
         for (var i = 0; i < this.vectors.length; i++) {
             this.vectors[i].destroy();
         }
@@ -92,7 +102,7 @@ Ext.define('portal.map.openlayers.PrimitiveManager', {
         }
 
         if (vectors.length > 0) {
-            this.vectorLayer.addFeatures(vectors);
+            this.getVectorLayer().addFeatures(vectors);
             for (var i = 0; i < vectors.length; i++) {
                 this.vectors.push(vectors[i]);
             }

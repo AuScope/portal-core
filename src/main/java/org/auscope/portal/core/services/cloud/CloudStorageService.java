@@ -41,9 +41,14 @@ public abstract class CloudStorageService {
     /**
      * @return the regionName
      */
+
     public String getRegionName() {
         return regionName;
     }
+
+    private String defaultBucket = DEFAULT_BUCKET;
+
+    private String adminEmail = "cg-admin@csiro.au";
 
     /**
      * @param regionName the regionName to set
@@ -72,7 +77,7 @@ public abstract class CloudStorageService {
     public String getSecretKey() {
         return secretKey;
     }
-
+    
     /**
      * @param secretKey the secretKey to set
      */
@@ -129,13 +134,6 @@ public abstract class CloudStorageService {
     /** The URL endpoint for the cloud storage service */
     private String endpoint;
 
-    /**
-     * The bucket that this service will access - defaults to DEFAULT_BUCKET
-     */
-    private String defaultBucket = DEFAULT_BUCKET;
-
-    private String adminEmail = "cg-admin@csiro.au";
-
     public CloudStorageService(String endpoint, String provider, String regionName) {
         this.endpoint = endpoint;
         this.provider = provider;
@@ -148,6 +146,8 @@ public abstract class CloudStorageService {
             log.error("Unable to lookup hostname. Defaulting prefix to " + this.jobPrefix, e);
         }
     }
+
+
 
     /**
      * @return the adminEmail
@@ -344,5 +344,4 @@ public abstract class CloudStorageService {
 
         return job.getStorageBaseKey();
     }
-
 }

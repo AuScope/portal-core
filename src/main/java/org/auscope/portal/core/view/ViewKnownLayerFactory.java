@@ -25,6 +25,7 @@ public class ViewKnownLayerFactory {
         obj.put("description", k.getDescription());
         obj.put("id", k.getId());
         obj.put("proxyUrl", k.getProxyUrl());
+        obj.put("proxyGetFeatureInfoUrl", k.getProxyGetFeatureInfoUrl());
         obj.put("proxyCountUrl", k.getProxyCountUrl());
         obj.put("proxyStyleUrl", k.getProxyStyleUrl());
         obj.put("proxyDownloadUrl", k.getProxyDownloadUrl());
@@ -48,7 +49,6 @@ public class ViewKnownLayerFactory {
         obj.put("feature_count", k.getFeature_count());
         obj.put("order", k.getOrder());
         obj.put("singleTile", k.getSingleTile());
-        obj.put("forceWMSGet", k.getForceWMSGet());
         obj.put("staticLegendUrl", k.getStaticLegendUrl());
         
         String group = "Others";

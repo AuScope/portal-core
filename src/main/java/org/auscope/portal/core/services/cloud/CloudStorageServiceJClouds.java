@@ -27,6 +27,7 @@ import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.io.ContentMetadata;
+import org.jclouds.openstack.swift.v1.blobstore.RegionScopedBlobStoreContext;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.sts.STSApi;
 import org.jclouds.sts.domain.UserAndSessionCredentials;
@@ -49,23 +50,23 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
 
     private boolean stripExpectHeader;
 
-    private boolean requireSts=false;
+    private STSRequirement stsRequirement=STSRequirement.Permissable;
 
-    /**
-     * Returns whether AWS cross account authorization is mandatory.
-     * @return whether AWS cross account authorization is mandatory.
-     */
-    public boolean isRequireSts() {
-        return requireSts;
-    }
+   /**
+    * Returns whether AWS cross account authorization is mandatory, optional or forced off
+    * @return
+    */
+   public STSRequirement getStsRequirement() {
+       return stsRequirement;
+   }
 
-    /**
-     * Sets whether AWS cross account authorization is mandatory.
-     * @param requireSts if true, AWS cross account authorization will be mandatory.
-     */
-    public void setRequireSts(boolean requireSts) {
-        this.requireSts = requireSts;
-    }
+   /**
+    * Sets whether AWS cross account authorization is mandatory, optional or forced off
+    * @param stsRequirement
+    */
+   public void setStsRequirement(STSRequirement stsRequirement) {
+       this.stsRequirement = stsRequirement;
+   }
 
     /**
      * Creates a new instance for connecting to the specified parameters
@@ -183,13 +184,33 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
         this.stripExpectHeader=stripExpectHeader;
     }
 
+    private BlobStore getBlobStore(String arn, String clientSecret) throws PortalServiceException {
+        try (BlobStoreContext ctx = getBlobStoreContext(arn, clientSecret)) {
+            if (getRegionName() != null && ctx instanceof RegionScopedBlobStoreContext) {
+                return ((RegionScopedBlobStoreContext) ctx).getBlobStore(getRegionName());
+            } else {
+                return ctx.getBlobStore();
+            }
+        }
+    }
+
     public BlobStoreContext getBlobStoreContext(String arn, String clientSecret) throws PortalServiceException {
+        if (stsRequirement == STSRequirement.ForceNone) {
+            arn = null;
+            clientSecret = null;
+        }
+
         Properties properties = new Properties();
         properties.setProperty("jclouds.relax-hostname", relaxHostName ? "true" : "false");
         properties.setProperty("jclouds.strip-expect-header", stripExpectHeader ? "true" : "false");
 
+        Class<? extends BlobStoreContext> targetClass = BlobStoreContext.class;
         if (getRegionName() != null) {
-            properties.setProperty("jclouds.region", getRegionName());
+            if (getProvider().contains("openstack") || getProvider().contains("swift")) {
+                targetClass = RegionScopedBlobStoreContext.class;
+            } else {
+                properties.setProperty("jclouds.region", getRegionName());
+            }
         }
 
         if(! TextUtil.isNullOrEmpty(arn)) {
@@ -212,28 +233,29 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
                 ContextBuilder builder2 = ContextBuilder.newBuilder("aws-s3").overrides(properties)
                         .credentialsSupplier(credentialsSupplier);
 
-                if (getEndpoint() != null) {
-                    builder2.endpoint(getEndpoint());
+                if (this.getEndpoint() != null) {
+                    builder2.endpoint(this.getEndpoint());
                 }
 
-                return builder2.buildView(BlobStoreContext.class);
+                return builder2.buildView(targetClass);
             } catch (IOException e) {
                 throw new PortalServiceException(e.getMessage(), e);
             }
         } else {
-            if(isRequireSts())
+            if (stsRequirement == STSRequirement.Mandatory) {
                 throw new PortalServiceException("AWS cross account access is required, but not configured");
+            }
 
             ContextBuilder builder = ContextBuilder.newBuilder(getProvider()).overrides(properties);
 
             if (getAccessKey() != null && getSecretKey() != null)
                 builder.credentials(getAccessKey(), getSecretKey());
 
-            if (getEndpoint() != null) {
-                builder.endpoint(getEndpoint());
+            if (this.getEndpoint() != null) {
+                builder.endpoint(this.getEndpoint());
             }
 
-            return builder.build(BlobStoreContext.class);
+            return builder.build(targetClass);
         }
     }
 
@@ -256,6 +278,7 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
         }
     }
 
+
     /**
      * Gets the input stream for a job file identified by key.
      *
@@ -268,14 +291,13 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
      * @return
      * @throws PortalServiceException
      */
-
     @Override
     public InputStream getJobFile(CloudFileOwner job, String myKey) throws PortalServiceException {
         String arn = job.getProperty(CloudJob.PROPERTY_STS_ARN);
         String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
 
         try {
-            BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
+            BlobStore bs = getBlobStore(arn, clientSecret);
             Blob blob = bs.getBlob(getBucket(job), keyForJobFile(job, myKey));
             return blob.getPayload().openStream();
         } catch (Exception ex) {
@@ -325,7 +347,7 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
         String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
 
         try {
-            BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
+            BlobStore bs = getBlobStore(arn, clientSecret);
             StorageMetadata md = bs.blobMetadata(getBucket(job), keyForJobFile(job, myKey));
             return metadataToCloudFile(md);
         } catch (Exception ex) {
@@ -333,6 +355,7 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
             log.debug("error:", ex);
             throw new PortalServiceException("Error retriving output file details", ex);
         }
+    
     }
 
     /**
@@ -349,7 +372,7 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
         String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
 
         try {
-            BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
+            BlobStore bs = getBlobStore(arn, clientSecret);
             String baseKey = generateBaseKey(job);
 
             String bucketName = getBucket(job);
@@ -399,7 +422,7 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
         String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
 
         try {
-            BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
+            BlobStore bs = getBlobStore(arn, clientSecret);
 
             String bucketName = getBucket(job);
             bs.createContainerInLocation(null, bucketName);
@@ -440,7 +463,7 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
         String arn = job.getProperty(CloudJob.PROPERTY_STS_ARN);
         String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
         try {
-            BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
+            BlobStore bs = getBlobStore(arn, clientSecret);
             bs.deleteDirectory(getBucket(job), jobToBaseKey(job));
         } catch (Exception ex) {
             log.error("Error in removing job files or storage key.", ex);

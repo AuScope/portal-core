@@ -413,7 +413,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         
         // Creation and rendering of LayerSwitcher moved to renderBaseMap()
 
-        this.highlightPrimitiveManager = this.makePrimitiveManager();
+        this.highlightPrimitiveManager = this.makePrimitiveManager(true);
         this.container = container;
         this.rendered = true;
         
@@ -646,9 +646,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
      *
      * function()
      */
-    makePrimitiveManager : function() {
-        var newVectorLayer = this._getNewVectorLayer();
-        this.vectorLayers.push(newVectorLayer);                
+    makePrimitiveManager : function(noLazyGeneration) {
        
         var clickableLayers = this.vectorLayers
         var clickControl = new portal.map.openlayers.ClickControl(clickableLayers, {
@@ -668,14 +666,21 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                                      
         return Ext.create('portal.map.openlayers.PrimitiveManager', {
             baseMap : this,
-            vectorLayer : newVectorLayer,
+            vectorLayerGenerator: Ext.bind(function() {
+                var newVectorLayer = this._getNewVectorLayer();
+                this.vectorLayers.push(newVectorLayer);
+                return newVectorLayer;
+            }, this),
+            noLazyGeneration: noLazyGeneration,
             listeners: {
                 //See ANVGL-106 for why we need to forcibly reorder thse
                 addprimitives : Ext.bind(function() {
                     //Move highlight layer to top
-                    var highlightLayer = this.highlightPrimitiveManager.vectorLayer;
-                    this.map.setLayerIndex(highlightLayer, this.map.layers.length);
                     
+                    var highlightLayer = this.highlightPrimitiveManager.vectorLayer;
+                    if (highlightLayer) {
+                        this.map.setLayerIndex(highlightLayer, this.map.layers.length);
+                    }
                     //Move drawing layer to top
                     var ctrls = this.map.getControlsByClass('OpenLayers.Control.DrawFeature');
                     if (!Ext.isEmpty(ctrls)) {

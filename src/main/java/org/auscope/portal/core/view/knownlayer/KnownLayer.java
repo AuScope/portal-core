@@ -35,6 +35,9 @@ public class KnownLayer implements Serializable {
     /** URL to proxy data requests through */
     private String proxyUrl;
 
+    /** URL to proxy WMS Get Feature Info requests through */
+    private String proxyGetFeatureInfoUrl;
+    
     /** URL to proxy data count requests through */
     private String proxyCountUrl;
 
@@ -68,12 +71,6 @@ public class KnownLayer implements Serializable {
      * (many is the default).
      */
     private Boolean singleTile = Boolean.FALSE;
-    
-    /** For cases where POSTing an SLD to a WMS service is not possible (eg ArcGIS) 
-     *  (default is not to force and let the JS framework decide based on URL length
-     *  which usually results in a POST)   
-     */
-    private Boolean forceWMSGet = Boolean.FALSE;
 
     /** A URL to use to grab a canned legend graphic for the layer (optional). */
     private String staticLegendUrl;
@@ -204,6 +201,14 @@ public class KnownLayer implements Serializable {
     public void setProxyUrl(String proxyUrl) {
         this.proxyUrl = proxyUrl;
     }
+    
+    public String getProxyGetFeatureInfoUrl() {
+		return proxyGetFeatureInfoUrl;
+	}
+
+	public void setProxyGetFeatureInfoUrl(String proxyGetFeatureInfoUrl) {
+		this.proxyGetFeatureInfoUrl = proxyGetFeatureInfoUrl;
+	}
 
     /**
      * Gets the URL to proxy data count requests through
@@ -372,14 +377,6 @@ public class KnownLayer implements Serializable {
     public void setSingleTile(Boolean singleTile) {
         this.singleTile = singleTile;
     }
-
-	public Boolean getForceWMSGet() {
-		return forceWMSGet;
-	}
-
-	public void setForceWMSGet(Boolean forceWMSGet) {
-		this.forceWMSGet = forceWMSGet;
-	}
 
     public String getStaticLegendUrl() {
         return staticLegendUrl;
