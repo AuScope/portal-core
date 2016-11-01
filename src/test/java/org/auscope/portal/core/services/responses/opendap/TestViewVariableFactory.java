@@ -1,22 +1,23 @@
 package org.auscope.portal.core.services.responses.opendap;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.auscope.portal.core.test.PortalTestClass;
-import org.auscope.portal.core.view.JSONModelAndView;
-import org.jmock.Expectations;
-import org.junit.Assert;
-import org.junit.Test;
-import org.springframework.web.servlet.view.AbstractView;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+
+import org.auscope.portal.core.test.ByteBufferedServletOutputStream;
+import org.auscope.portal.core.test.PortalTestClass;
+import org.jmock.Expectations;
+import org.junit.Assert;
+import org.junit.Test;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
 import ucar.ma2.InvalidRangeException;
@@ -27,13 +28,14 @@ import ucar.nc2.dataset.NetcdfDataset;
 
 /**
  * Unit tests for ViewVariableFactory (and various ViewVariable implementations)
- * 
+ *
  * @author vot002
  *
  */
 public class TestViewVariableFactory extends PortalTestClass {
 
     private HttpServletResponse mockHttpResponse = context.mock(HttpServletResponse.class);
+    private HttpServletRequest mockHttpRequest = context.mock(HttpServletRequest.class);
 
     private NetcdfDataset mockNetCdfDataset = context.mock(NetcdfDataset.class);
     private Variable mockVariable1 = context.mock(Variable.class, "Variable1");
@@ -115,22 +117,27 @@ public class TestViewVariableFactory extends PortalTestClass {
 
     private void testJSONEquality(AbstractViewVariable... vars) throws Exception {
         //This is required as its the only way to get the spring framework to correctly "render" our objects into JSON
-        final StringWriter actualJSONResponse = new StringWriter();
+        final ByteBufferedServletOutputStream rawResponse = new ByteBufferedServletOutputStream(1024 * 200);
         context.checking(new Expectations() {
             {
-                allowing(mockHttpResponse).getWriter();
-                will(returnValue(new PrintWriter(actualJSONResponse)));
                 allowing(mockHttpResponse).setContentType(with(any(String.class)));
+                allowing(mockHttpResponse).setCharacterEncoding(with(any(String.class)));
+                allowing(mockHttpResponse).addHeader(with(any(String.class)), with(any(String.class)));
+                allowing(mockHttpResponse).getOutputStream();will(returnValue(rawResponse));
+
+                allowing(mockHttpRequest).getParameter(with(any(String.class)));will(returnValue(null));
+                allowing(mockHttpRequest).getAttribute(with(any(String.class)));will(returnValue(null));
             }
         });
 
-        JSONModelAndView mav = new JSONModelAndView(JSONArray.fromObject(vars));
-        ((AbstractView) mav.getView()).setExposePathVariables(false);
-        mav.getView().render(mav.getModel(), null, mockHttpResponse);
+        ModelMap map = new ModelMap();
+        map.put("vars", vars);
 
-        String jsonText = String.format("{\"vars\":%1$s}", actualJSONResponse.toString());
-        AbstractViewVariable[] result = ViewVariableFactory.fromJSONArray(JSONObject.fromObject(jsonText).getJSONArray(
-                "vars"));
+        MappingJackson2JsonView view = new MappingJackson2JsonView();
+        view.render(map, mockHttpRequest, mockHttpResponse);
+
+        String jsonText = rawResponse.getStream().toString("UTF-8");
+        AbstractViewVariable[] result = ViewVariableFactory.fromJSONArray(JSONObject.fromObject(jsonText).getJSONArray("vars"));
         assertViewVariableEquals(result, vars);
     }
 
@@ -138,7 +145,7 @@ public class TestViewVariableFactory extends PortalTestClass {
      * Create a number of ViewVariables, convert to JSONText, parse JSONText and then test equality
      *
      * Assumption - The net.sf JSON libraries can parse/write JSON text
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testParseJSONFull() throws Exception {
@@ -194,8 +201,8 @@ public class TestViewVariableFactory extends PortalTestClass {
 
     /**
      * A test of reading a mock NetCDF dataset - reading a non gridded variable with a single axis
-     * @throws InvalidRangeException 
-     * @throws IOException 
+     * @throws InvalidRangeException
+     * @throws IOException
      */
     @Test
     public void testParseNetCDFNonGridded() throws IOException, InvalidRangeException {
@@ -249,8 +256,8 @@ public class TestViewVariableFactory extends PortalTestClass {
 
     /**
      * A test of reading a mock NetCDF dataset - reading a gridded variable with a two axes
-     * @throws InvalidRangeException 
-     * @throws IOException 
+     * @throws InvalidRangeException
+     * @throws IOException
      */
     @Test
     public void testParseNetCDFGridded() throws IOException, InvalidRangeException  {
@@ -353,8 +360,8 @@ public class TestViewVariableFactory extends PortalTestClass {
 
     /**
      * A test of reading a mock NetCDF dataset that fails when requesting the variable range
-     * @throws InvalidRangeException 
-     * @throws IOException 
+     * @throws InvalidRangeException
+     * @throws IOException
      */
     @Test(expected = IOException.class)
     public void testParseNetCDFGriddedWithError() throws IOException, InvalidRangeException  {
@@ -400,8 +407,8 @@ public class TestViewVariableFactory extends PortalTestClass {
 
     /**
      * A test of reading a mock NetCDF dataset - reading a gridded variable with a single axis One of the dimensions parsed will NOT map to an existing variable
-     * @throws InvalidRangeException 
-     * @throws IOException 
+     * @throws InvalidRangeException
+     * @throws IOException
      */
     @Test
     public void testParseNetCDFGridded_UnmappedDimension() throws IOException, InvalidRangeException {
@@ -486,8 +493,8 @@ public class TestViewVariableFactory extends PortalTestClass {
 
     /**
      * A test of reading a mock NetCDF dataset - reading a non gridded variable with a single axis
-     * @throws InvalidRangeException 
-     * @throws IOException 
+     * @throws InvalidRangeException
+     * @throws IOException
      */
     @Test
     public void testParseVariableFilter() throws IOException, InvalidRangeException {
