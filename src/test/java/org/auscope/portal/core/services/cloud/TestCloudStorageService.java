@@ -61,6 +61,7 @@ public class TestCloudStorageService extends PortalTestClass {
                 final InputStream mockReturnedInputStream = context.mock(InputStream.class)) {
             context.checking(new Expectations() {
                 {
+                    oneOf(mockBlobStoreContext).close();
                     oneOf(mockBlobStoreContext).getBlobStore();
                     will(returnValue(mockBlobStore));
 
@@ -96,6 +97,7 @@ public class TestCloudStorageService extends PortalTestClass {
 
         context.checking(new Expectations() {
             {
+                oneOf(mockBlobStoreContext).close();
                 oneOf(mockBlobStoreContext).getBlobStore();
                 will(returnValue(mockBlobStore));
 
@@ -142,6 +144,7 @@ public class TestCloudStorageService extends PortalTestClass {
 
         context.checking(new Expectations() {
             {
+                oneOf(mockBlobStoreContext).close();
                 oneOf(mockBlobStoreContext).getBlobStore();
                 will(returnValue(mockBlobStore));
 
@@ -255,6 +258,7 @@ public class TestCloudStorageService extends PortalTestClass {
 
                 oneOf(mockBlobStore).putBlob(bucket, mockBlob1);
                 oneOf(mockBlobStore).putBlob(bucket, mockBlob2);
+                oneOf(mockBlobStoreContext).close();
             }
         });
 
@@ -274,6 +278,7 @@ public class TestCloudStorageService extends PortalTestClass {
                 allowing(mockBlobStoreContext).getBlobStore();
                 will(returnValue(mockBlobStore));
                 oneOf(mockBlobStore).deleteDirectory(bucket, jobStorageBaseKey);
+                oneOf(mockBlobStoreContext).close();
             }
         });
 
@@ -331,7 +336,7 @@ public class TestCloudStorageService extends PortalTestClass {
 
     @Test(expected=PortalServiceException.class)
     public void testStsRequired() throws PortalServiceException {
-        CloudStorageService stsService = new CloudStorageService("dummy1", "dummy2", "dummy3");
+        CloudStorageServiceJClouds stsService = new CloudStorageServiceJClouds("dummy1", "dummy2", "dummy3");
         stsService.setStsRequirement(STSRequirement.Mandatory);
         stsService.getBlobStoreContext(null, null);
     }
