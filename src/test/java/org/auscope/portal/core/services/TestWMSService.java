@@ -138,7 +138,7 @@ public class TestWMSService extends PortalTestClass {
         final String serviceUrl = "http://service/wms";
         context.checking(new Expectations() {
             {
-                oneOf(mockMethodMaker).accepts(with(any(String.class)), with(any(String.class)), with(any(StringBuilder.class)));
+                oneOf(mockMethodMaker).accepts(with(any(String.class)), with(aNull(String.class)), with(any(StringBuilder.class)));
                 will(returnValue(true));
 
                 oneOf(mockMethodMaker).getCapabilitiesMethod(serviceUrl);
