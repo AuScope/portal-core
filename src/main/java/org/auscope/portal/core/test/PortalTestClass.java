@@ -24,11 +24,11 @@ import org.auscope.portal.core.test.jmock.PropertiesMatcher;
 import org.auscope.portal.core.util.DOMUtil;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.jmock.Mockery;
 import org.jmock.api.Action;
 import org.jmock.api.ExpectationError;
 //import org.jmock.integration.junit4.JMock;
 import org.jmock.integration.junit4.JUnitRuleMockery;
+import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.Assert;
@@ -90,6 +90,7 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
     @Rule public JUnitRuleMockery context = new JUnitRuleMockery() {
         {
             setImposteriser(ClassImposteriser.INSTANCE);
+            setThreadingPolicy(new Synchroniser());
         }
     };
 
