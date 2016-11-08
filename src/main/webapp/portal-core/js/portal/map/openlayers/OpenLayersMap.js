@@ -377,7 +377,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
             layers: [
                      new OpenLayers.Layer.WMS (
                          "World Political Boundaries",
-                         "http://www.ga.gov.au/gis/services/topography/World_Political_Boundaries_WM/MapServer/WMSServer",
+                         "http://services.ga.gov.au/site_1/services/World_Political_Boundaries_WM/MapServer/WMSServer",
                          {layers: 'Countries'}
                      ),
                      new OpenLayers.Layer.Google(
