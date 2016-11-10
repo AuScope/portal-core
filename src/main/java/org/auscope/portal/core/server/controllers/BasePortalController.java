@@ -5,6 +5,8 @@ import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
+import org.apache.commons.io.Charsets;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;
@@ -13,9 +15,9 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.entity.StringEntity;
 import org.auscope.portal.core.services.PortalServiceException;
-import org.auscope.portal.core.view.JSONView;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 /**
  * An abstract controller for providing portal 'standard' JSON response types in the form of a ModelAndView object.
@@ -166,7 +168,7 @@ public abstract class BasePortalController {
      */
     protected ModelAndView generateJSONResponseMAV(boolean success, Object data, String message,
             Integer matchedResults, Object debugInfo) {
-        JSONView view = new JSONView();
+        MappingJackson2JsonView view = new MappingJackson2JsonView();
         ModelMap model = generateResponseModel(success, data, matchedResults, message, debugInfo);
 
         return new ModelAndView(view, model);
@@ -203,7 +205,7 @@ public abstract class BasePortalController {
      * @return
      */
     protected ModelAndView generateHTMLResponseMAV(boolean success, Object data, String message, Object debugInfo) {
-        JSONView view = new JSONView();
+        MappingJackson2JsonView view = new MappingJackson2JsonView();
         view.setContentType("text/html");
         ModelMap model = generateResponseModel(success, data, null, message, debugInfo);
 
@@ -233,7 +235,7 @@ public abstract class BasePortalController {
             HttpEntity entity = ((HttpPost) request).getEntity();
             if (entity instanceof StringEntity) {
                 try {
-                    debugInfo.put("info", ((StringEntity) entity).getContent());
+                    debugInfo.put("info", IOUtils.toString(((StringEntity) entity).getContent(), Charsets.UTF_8));
                 } catch (IOException e) {
                     log.error(e.toString());
                 }

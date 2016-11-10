@@ -18,6 +18,7 @@ Ext.define('portal.knownlayer.KnownLayer', {
         { name: 'description', type: 'string' }, //A human readable description of this KnownLayer
         { name: 'group', type: 'string' }, //A term in which like KnownLayers can be grouped under
         { name: 'proxyUrl', type: 'string' }, //A URL of a backend controller method for fetching available data with a filter specific for this KnonwLayer
+        { name: 'proxyGetFeatureInfoUrl', type: 'string' }, // A URL of a backend controller method for processing the WMS Get Feature Info response
         { name: 'proxyCountUrl', type: 'string' }, //A URL of a backend controller method for fetching the count of data available (eg for WFS a URL that will set featureType=hits)
         { name: 'proxyStyleUrl', type: 'string' }, // A URL of a backend controller method for fetching style
         { name: 'proxyDownloadUrl', type: 'string' }, // A URL of a backend controller method for download request
@@ -33,7 +34,6 @@ Ext.define('portal.knownlayer.KnownLayer', {
         { name: 'feature_count', type: 'string'}, //GetFeatureInfo feature_count attribute, 0 would be to default to whatever is set on the server.
         { name: 'order', type: 'string'},	// Order of the layers within a group
         { name: 'singleTile', type: 'boolean'},    // Whether the layer should be requested as a single image (ie not tiled)
-        { name: 'forceWMSGet', type: 'boolean'},    // Whether the layer should always use a GET request for WMS
         { name: 'staticLegendUrl', type: 'string'}    // A URL to use to grab a canned legend graphic for the layer, optional.
     ],
 

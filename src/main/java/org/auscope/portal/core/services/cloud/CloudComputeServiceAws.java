@@ -70,23 +70,7 @@ public class CloudComputeServiceAws extends CloudComputeService {
 
     private String devSecretKey;
 
-    private boolean requireSts=false;
-
-    /**
-     * Returns whether AWS cross account authorization is mandatory.
-     * @return whether AWS cross account authorization is mandatory.
-     */
-    public boolean isRequireSts() {
-      return requireSts;
-    }
-
-    /**
-     * Sets whether AWS cross account authorization is mandatory.
-     * @param requireSts if true, AWS cross account authorization will be mandatory.
-     */
-    public void setRequireSts(boolean requireSts) {
-      this.requireSts = requireSts;
-    }
+    private STSRequirement stsRequirement  = STSRequirement.Permissable;
 
     /**
      * Creates a new instance with the specified credentials (no endpoint
@@ -133,7 +117,28 @@ public class CloudComputeServiceAws extends CloudComputeService {
 
     }
 
+    /**
+     * Returns whether AWS cross account authorization is mandatory, optional or forced off
+     * @return
+     */
+    public STSRequirement getStsRequirement() {
+        return stsRequirement;
+    }
+
+    /**
+     * Sets whether AWS cross account authorization is mandatory, optional or forced off
+     * @param stsRequirement
+     */
+    public void setStsRequirement(STSRequirement stsRequirement) {
+        this.stsRequirement = stsRequirement;
+    }
+
     protected AWSCredentials getCredentials(String arn, String clientSecret) throws PortalServiceException {
+        if (stsRequirement == STSRequirement.ForceNone) {
+            arn = null;
+            clientSecret = null;
+        }
+
         if (!TextUtil.isNullOrEmpty(arn)) {
             if (TextUtil.isNullOrEmpty(clientSecret))
                 throw new PortalServiceException("Job ARN set, but no client secret");
@@ -158,7 +163,7 @@ public class CloudComputeServiceAws extends CloudComputeService {
             return new BasicSessionCredentials(assumeResult.getCredentials().getAccessKeyId(),
                     assumeResult.getCredentials().getSecretAccessKey(),
                     assumeResult.getCredentials().getSessionToken());
-        } else if (isRequireSts()) {
+        } else if (stsRequirement == STSRequirement.Mandatory) {
             throw new PortalServiceException("AWS cross account authorization required, but not configured");
         } else if (!TextUtil.isAnyNullOrEmpty(devAccessKey, devSecretKey)) {
             return new BasicAWSCredentials(devAccessKey, devSecretKey);
@@ -310,16 +315,16 @@ public class CloudComputeServiceAws extends CloudComputeService {
             new ComputeType("m4.xlarge", 4, 16000),
             new ComputeType("m4.large", 2, 8000)
     };
-    
+
     /**
      * An array of compute types that are available through this compute service
      */
     @Override
     public ComputeType[] getAvailableComputeTypes(Integer minimumVCPUs, Integer minimumRamMB,
             Integer minimumRootDiskGB) {
-        
+
         ArrayList<ComputeType> result = new ArrayList<>();
-        
+
         for (ComputeType type : COMPUTE_TYPES) {
             if(    (minimumVCPUs == null || type.getVcpus()>= minimumVCPUs) && (minimumRamMB == null || type.getRamMB()>= minimumRamMB)) {
                 result.add(type);
