@@ -1,5 +1,8 @@
 language: java
 script: "[ ${TRAVIS_PULL_REQUEST} = 'false' ] && mvn clean deploy --settings travis/settings.xml || mvn clean verify --settings travis/settings.xml"
+cache:
+  directories:
+    - $HOME/.m2
 branches:
         only:              
                 - master-ga2
