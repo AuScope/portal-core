@@ -96,6 +96,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 },
                 iconRenderer: Ext.bind(me._spatialBoundsRenderer, me)
             }],
+            lazyLoadChildPanel: true,
             childPanelGenerator: function(record) {                  
                 //For every filter panel we generate, also generate a portal.layer.Layer and 
                 //attach it to the CSWRecord/KnownLayer

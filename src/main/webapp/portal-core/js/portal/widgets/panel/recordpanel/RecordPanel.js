@@ -8,13 +8,18 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
     extend : 'Ext.panel.Panel',
     xtype : 'recordpanel',
 
+    statics: {
+        LAZY_LOAD_ID: 'lazy-load'
+    },
+    
     config: {
         allowReordering: false,
         store: null,
         titleField: 'name',
         titleIndex: 0,
         tools: null,
-        childPanelGenerator: Ext.emptyFn
+        childPanelGenerator: Ext.emptyFn,
+        lazyLoadChildPanel: false
     },
 
 
@@ -40,6 +45,7 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
      *             tipRenderer - function(value, record, tip) - Called whenever a tooltip is generated. Return HTML content to display in tip
      *             iconRenderer - function(value, record) - Called whenever the underlying field updates. Return String URL to icon that will be displayed in tip.
      *  childPanelGenerator: function(record) - Called when records are added to the store. Return a generated Ext.Container for display in the specified row's expander
+     *  lazyLoadChildPanel: Boolean - If true. the childPanelGenerator won't be fired until the row is expanded (default - false)
      * }
      * 
      * And the following events:
@@ -376,7 +382,13 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
         var newItemId = Ext.id(null, 'record-row-');
         this.recordRowMap[recordId] = newItemId; 
         
-        var childPanel = this.childPanelGenerator ? this.childPanelGenerator(record) : null;
+        
+        var childPanel = null;
+        if (this.lazyLoadChildPanel) {
+            childPanel = {xtype: 'container', itemId: portal.widgets.panel.recordpanel.RecordPanel.LAZY_LOAD_ID};
+        } else {
+            childPanel = this.childPanelGenerator ? this.childPanelGenerator(record) : null;
+        }
         
         return {
             xtype: 'recordrowpanel',
@@ -386,10 +398,26 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
             titleIndex: this.titleIndex,
             groupMode: groupMode,
             tools: tools,
+            record: record,
             items: childPanel ? [childPanel] : null,
             listeners: {
                 scope: this,
-                afterrender: this._installToolTips
+                afterrender: this._installToolTips,
+                beforeexpand: function(rp) {
+                    if (!this.lazyLoadChildPanel) {
+                        return;
+                    }
+                    
+                    var placeHolder = rp.down('#' + portal.widgets.panel.recordpanel.RecordPanel.LAZY_LOAD_ID);
+                    if (!placeHolder) {
+                        return;
+                    }
+                    
+                    rp.remove(placeHolder);
+                    if (this.childPanelGenerator) {
+                        rp.add(this.childPanelGenerator(rp.record));
+                    }
+                }
             }
         };
     },

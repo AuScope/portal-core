@@ -182,6 +182,9 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
 
         this.relaxHostName=relaxHostName;
         this.stripExpectHeader=stripExpectHeader;
+
+        this.setAccessKey(accessKey);
+        this.setSecretKey(secretKey);
     }
 
     private BlobStore getBlobStore(String arn, String clientSecret) throws PortalServiceException {
@@ -355,7 +358,7 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
             log.debug("error:", ex);
             throw new PortalServiceException("Error retriving output file details", ex);
         }
-    
+
     }
 
     /**
