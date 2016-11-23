@@ -49,7 +49,7 @@
     <!-- Project properties -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jclouds.version>2.0.0-SNAPSHOT</jclouds.version>
+        <jclouds.version>2.0.0</jclouds.version>
     </properties>
     <build>
         <finalName>${project.artifactId}-${project.version}</finalName>
