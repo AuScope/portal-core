@@ -15,4 +15,4 @@ env:
 notifications:
         slack:
                 rooms:
-                        - secure: "ubhiYEPFFJ6MivqNIPzRRgERU2Io+JMcmlBpFqD2Ha/aJh4kIc2ag3X6XnPg3Xm1vIr7jR4A8m9z+Fgd3mUXrZNwQbQA8jU36zzUxyxxU0wx5ingBUB8d6A+029KFc74DmgNPLcBNWgaAbZJWHLOAIAx1VPIEGABe1iE7fkCUAA="
+                        secure: "pLqB+3uMHDEOIvMNKRArNgD/Vwamz3rNnAVg/VtHtdgtQ6b8tylNQs5DNn0uJ8XIC9qUjYg/s8hr+8/ruIqLsG8o+qIeV8jX9A+cjwKNjysmUvFs3rSXjvr9RV3X1BmRpgnvFuyYhf2stBoCATF2ScVimsw5coBC3X28K6GLH6Y="
