@@ -32,12 +32,12 @@ public abstract class GenericFilter extends AbstractFilter {
 
     /** Log object for this class. */
     protected final Log logger = LogFactory.getLog(getClass());
-    protected String xPathFilters = "";
+    private String xPathFilters = "";
 
     // ----------------------------------------------------------- Constructors
 
     public GenericFilter(String xPathFilters) {
-        this.xPathFilters = xPathFilters;
+        this.setxPathFilters(xPathFilters);
     }
 
     public GenericFilter() {
@@ -77,11 +77,11 @@ public abstract class GenericFilter extends AbstractFilter {
         List<String> results=new ArrayList<String>();
         final String unInitializedXPathFiltersMessage = "xPathFilters has not been properly initialized. Make sure you have initialized via the constructor.";
 
-        if(this.xPathFilters==null){
+        if(this.getxPathFilters()==null){
             throw new IllegalStateException(unInitializedXPathFiltersMessage);
         }
 
-        JSONArray jArray = (JSONArray) JSONSerializer.toJSON("["+this.xPathFilters+"]");
+        JSONArray jArray = (JSONArray) JSONSerializer.toJSON("["+this.getxPathFilters()+"]");
 
         if(jArray.isEmpty()){
             throw new IllegalStateException(unInitializedXPathFiltersMessage);
@@ -121,5 +121,19 @@ public abstract class GenericFilter extends AbstractFilter {
         return this.generateAndComparisonFragment(this
                 .generateAndComparisonFragment(parameterFragments
                         .toArray(new String[parameterFragments.size()])));
+    }
+
+    /**
+     * @return the xPathFilters
+     */
+    protected String getxPathFilters() {
+        return xPathFilters;
+    }
+
+    /**
+     * @param xPathFilters the xPathFilters to set
+     */
+    protected void setxPathFilters(String xPathFilters) {
+        this.xPathFilters = xPathFilters;
     }
 }
