@@ -77,6 +77,7 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
             for (var idx=0; idx < onlineResources.length; idx++) {
                 if (onlineResources[idx].get('type')=='WFS') {
                     featureUrl = onlineResources[idx].get('url');
+                    break;
                 }
             }
         } else if (queryTarget.get('layer').get('renderer').sld_body){
