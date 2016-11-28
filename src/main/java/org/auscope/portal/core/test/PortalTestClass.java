@@ -20,15 +20,14 @@ import org.auscope.portal.core.test.jmock.FileWithNameMatcher;
 import org.auscope.portal.core.test.jmock.HttpMethodBaseMatcher;
 import org.auscope.portal.core.test.jmock.HttpMethodBaseMatcher.HttpMethodType;
 import org.auscope.portal.core.test.jmock.MapMatcher;
+import org.auscope.portal.core.test.jmock.PortalRuleMockery;
+import org.auscope.portal.core.test.jmock.PortalSynchroniser;
 import org.auscope.portal.core.test.jmock.PropertiesMatcher;
 import org.auscope.portal.core.util.DOMUtil;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.jmock.api.Action;
 import org.jmock.api.ExpectationError;
-//import org.jmock.integration.junit4.JMock;
-import org.jmock.integration.junit4.JUnitRuleMockery;
-import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.Assert;
@@ -87,10 +86,10 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
     /**
      * used for generating/testing mock objects and their expectations
      */
-    @Rule public JUnitRuleMockery context = new JUnitRuleMockery() {
+    @Rule public PortalRuleMockery context = new PortalRuleMockery() {
         {
             setImposteriser(ClassImposteriser.INSTANCE);
-            setThreadingPolicy(new Synchroniser());
+            setThreadingPolicy(new PortalSynchroniser());
         }
     };
 
@@ -106,7 +105,7 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
      * @return
      */
     protected Action delayReturnValue(long msDelay, Object returnValue) {
-        return new DelayedReturnValueAction(msDelay, returnValue);
+        return new DelayedReturnValueAction(msDelay, returnValue, context);
     }
 
     /**
