@@ -11,7 +11,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.hamcrest.Description;
 import org.junit.Assert;
-import org.junit.matchers.TypeSafeMatcher;
+import org.hamcrest.TypeSafeMatcher;
 
 /**
  * A JUnit matcher for matching HttpMethodBase objects based on a few simplified terms

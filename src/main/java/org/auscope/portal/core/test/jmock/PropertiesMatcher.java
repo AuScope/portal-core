@@ -4,7 +4,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.hamcrest.Description;
-import org.junit.matchers.TypeSafeMatcher;
+import org.hamcrest.TypeSafeMatcher;
 
 /**
  * A matcher for comparing the contents of 2 java.util.Properties objects
