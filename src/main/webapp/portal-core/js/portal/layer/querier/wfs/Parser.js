@@ -37,7 +37,7 @@ Ext.define('portal.layer.querier.wfs.Parser', {
      * @param wfsUrl The original WFS URL where domNode was sourced from
      * @param rootCfg [Optional] An Object whose properties will be applied to the top level component parsed (a GenericParser.BaseComponent instance)
      */
-    parseNode : function(domNode, wfsUrl) {
+    parseNode : function(domNode, wfsUrl, applicationProfile) {
         //In the event of an empty node, return an empty component
         if (!domNode) {
             return Ext.create('portal.layer.querier.BaseComponent', {});
@@ -45,7 +45,7 @@ Ext.define('portal.layer.querier.wfs.Parser', {
 
         for (var i = 0; i < this.factoryList.length; i++) {
             if (this.factoryList[i].supportsNode(domNode)) {
-                return this.factoryList[i].parseNode(domNode, wfsUrl);
+                return this.factoryList[i].parseNode(domNode, wfsUrl, applicationProfile);
             }
         }
 

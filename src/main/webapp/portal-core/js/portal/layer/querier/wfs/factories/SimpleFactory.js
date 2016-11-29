@@ -25,7 +25,7 @@ Ext.define('portal.layer.querier.wfs.factories.SimpleFactory', {
     /**
      * Generates a simple tree panel that represents the specified node
      */
-    parseNode : function(domNode, wfsUrl, rootCfg) {
+    parseNode : function(domNode, wfsUrl) {
         // Turn our DOM Node in an ExtJS Tree
         var rootNode = this._createTreeNode(domNode);
         var gmlId = portal.util.xml.SimpleXPath.evaluateXPathString(domNode, '@gml:id');
@@ -71,7 +71,7 @@ Ext.define('portal.layer.querier.wfs.factories.SimpleFactory', {
             }]
         };
 
-        return Ext.create('portal.layer.querier.BaseComponent', Ext.apply(panelConfig, rootCfg));
+        return Ext.create('portal.layer.querier.BaseComponent', panelConfig);
     },
 
     /**

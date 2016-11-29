@@ -74,7 +74,10 @@ Ext.define('portal.map.openlayers.primitives.WMSOverlay', {
             additionalOptions
         );
         
-        wmsLayer.setOpacity(this.getOpacity());
+        if (this.getOpacity()) {
+            wmsLayer.setOpacity(this.getOpacity());
+        }
+        
         wmsLayer._portalBasePrimitive = this;
 
         this.setWmsLayer(wmsLayer);
