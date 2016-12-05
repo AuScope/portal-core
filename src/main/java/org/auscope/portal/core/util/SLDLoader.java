@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
@@ -12,7 +13,7 @@ import org.auscope.portal.core.test.ResourceUtil;
 
 public class SLDLoader {
 
-    public static String loadSLD(String filename, Hashtable<String,String> valueMap, boolean preserveformat) throws IOException{
+    public static String loadSLD(String filename, Map<String,String> valueMap, boolean preserveformat) throws IOException{
         InputStream inputStream = null;
 
         try{
