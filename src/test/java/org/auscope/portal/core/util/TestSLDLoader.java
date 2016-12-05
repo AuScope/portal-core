@@ -18,7 +18,7 @@ public class TestSLDLoader{
         map.put("strokeWidth", "1234");
 
 
-        String s = SLDLoader.loadSLD("org/auscope/portal/core/slds/MineralTenementTest.sld", map);
+        String s = SLDLoader.loadSLD("org/auscope/portal/core/slds/MineralTenementTest.sld", map,true);
 
         Assert.assertTrue(s.contains("<Name>testName</Name>"));
         Assert.assertTrue(s.contains("<CssParameter name=\"fill\">testfillColor</CssParameter>"));

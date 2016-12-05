@@ -15,6 +15,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord;
@@ -362,7 +363,6 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
         HttpGet getSld = new HttpGet(sldUrl);
         String sldBody =  serviceCaller.getMethodResponseAsString(getSld);
 
-
         List<NameValuePair> existingParam = this.extractQueryParams(url); //preserve any existing query params
 
         existingParam.add(new BasicNameValuePair("service", "WMS"));
@@ -380,12 +380,12 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
         existingParam.add(new BasicNameValuePair("BBOX", bbox));
         existingParam.add(new BasicNameValuePair("WIDTH", "256"));
         existingParam.add(new BasicNameValuePair("HEIGHT", "256"));
-
-        existingParam.add(new BasicNameValuePair("layer", layer));
+        existingParam.add(new BasicNameValuePair("STYLES", ""));
 
         HttpPost method = new HttpPost(url);
         UrlEncodedFormEntity entity;
         try {
+            //VT: this encodes white spaces to "+" and argis doesn't seem to accept "+" instead requiring it to be %20.
             entity = new UrlEncodedFormEntity(existingParam, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             throw new URISyntaxException(e.getMessage(), "Error parsing UrlEncodedFormEntity");

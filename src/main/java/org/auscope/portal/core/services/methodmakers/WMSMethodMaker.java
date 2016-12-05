@@ -363,8 +363,7 @@ public class WMSMethodMaker extends AbstractMethodMaker implements WMSMethodMake
         existingParam.add(new BasicNameValuePair("BBOX", bbox));
         existingParam.add(new BasicNameValuePair("WIDTH", "256"));
         existingParam.add(new BasicNameValuePair("HEIGHT", "256"));
-
-        existingParam.add(new BasicNameValuePair("layer", layer));
+        existingParam.add(new BasicNameValuePair("STYLES", ""));
 
         HttpPost method = new HttpPost(url);
         UrlEncodedFormEntity entity;
