@@ -1,5 +1,7 @@
 package org.auscope.portal.core.services;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import javax.naming.OperationNotSupportedException;
@@ -7,6 +9,7 @@ import javax.naming.OperationNotSupportedException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WMSMethodMakerInterface;
 import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
@@ -171,5 +174,15 @@ public class WMSService {
 
         }
         return "";
+    }
+
+    public HttpClientInputStream getMap(String url,String layer,String bbox,String sldUrl, String version) throws OperationNotSupportedException, URISyntaxException, IOException{
+
+        WMSMethodMakerInterface methodMaker;
+        methodMaker = getSupportedMethodMaker(url, version);
+        HttpRequestBase method = methodMaker.getMap(url,layer,bbox, sldUrl);
+        HttpClientInputStream  response = serviceCaller.getMethodResponseAsStream(method);
+        return response;
+
     }
 }

@@ -24,7 +24,7 @@ import org.xml.sax.SAXException;
 
 /**
  * A class for generating methods that can interact with a OGC Web Map Service
- * 
+ *
  * @author Josh Vote
  *
  */
@@ -40,7 +40,7 @@ public class WMSMethodMaker extends AbstractMethodMaker implements WMSMethodMake
 
     /**
      * Generates a WMS method for making a GetCapabilities request
-     * 
+     *
      * @param wmsUrl
      *            The WMS endpoint (will have any existing query parameters preserved)
      * @return
@@ -63,7 +63,7 @@ public class WMSMethodMaker extends AbstractMethodMaker implements WMSMethodMake
 
     /**
      * Generates a WMS request for downloading part of a map layer as an image
-     * 
+     *
      * @param wmsUrl
      *            The WMS endpoint (will have any existing query parameters preserved)
      * @param layer
@@ -125,7 +125,7 @@ public class WMSMethodMaker extends AbstractMethodMaker implements WMSMethodMake
 
     /**
      * Returns a method for requesting a legend/key image for a particular layer
-     * 
+     *
      * @param wmsUrl
      *            The WMS endpoint (will have any existing query parameters preserved)
      * @param layerName
@@ -169,7 +169,7 @@ public class WMSMethodMaker extends AbstractMethodMaker implements WMSMethodMake
 
     /**
      * Generates a WMS request for downloading information about a user click on a particular GetMap request.
-     * 
+     *
      * @param wmsUrl
      *            The WMS endpoint (will have any existing query parameters preserved)
      * @param format
@@ -252,7 +252,7 @@ public class WMSMethodMaker extends AbstractMethodMaker implements WMSMethodMake
 
     /**
      * Generates a WMS request for downloading information about a user click on a particular * GetMap request via the post method.
-     * 
+     *
      * @param wmsUrl
      *            The WMS endpoint (will have any existing query parameters preserved)
      * @param format
@@ -339,6 +339,44 @@ public class WMSMethodMaker extends AbstractMethodMaker implements WMSMethodMake
         return method;
     }
 
+    @Override
+    public HttpRequestBase getMap(String url,String layer,String bbox, String sldUrl) throws URISyntaxException, IOException {
+
+        HttpGet getSld = new HttpGet(sldUrl);
+        String sldBody =  serviceCaller.getMethodResponseAsString(getSld);
+
+
+        List<NameValuePair> existingParam = this.extractQueryParams(url); //preserve any existing query params
+
+        existingParam.add(new BasicNameValuePair("service", "WMS"));
+        existingParam.add(new BasicNameValuePair("request", "GetMap"));
+        existingParam.add(new BasicNameValuePair("version", "1.1.1"));
+        if (sldBody != null && sldBody.trim().length() > 0) {
+            existingParam.add(new BasicNameValuePair("SLD_BODY", sldBody));
+        }
+        existingParam.add(new BasicNameValuePair("DISPLAYOUTSIDEMAXEXTENT", "TRUE"));
+        existingParam.add(new BasicNameValuePair("EXCEPTIONS", "BLANK"));
+        existingParam.add(new BasicNameValuePair("LAYERS", layer));
+        existingParam.add(new BasicNameValuePair("FORMAT", "image/png"));
+        existingParam.add(new BasicNameValuePair("TRANSPARENT", "TRUE"));
+        existingParam.add(new BasicNameValuePair("SRS", "EPSG:4326"));
+        existingParam.add(new BasicNameValuePair("BBOX", bbox));
+        existingParam.add(new BasicNameValuePair("WIDTH", "256"));
+        existingParam.add(new BasicNameValuePair("HEIGHT", "256"));
+        existingParam.add(new BasicNameValuePair("STYLES", ""));
+
+        HttpPost method = new HttpPost(url);
+        UrlEncodedFormEntity entity;
+        try {
+            entity = new UrlEncodedFormEntity(existingParam, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new URISyntaxException(e.getMessage(), "Error parsing UrlEncodedFormEntity");
+        }
+        method.setEntity(entity);
+
+        return method;
+    }
+
     /**
      * Test whether wms 1.3.0 is accepted. Not sure if there is a better way of testing though.
      */
@@ -378,13 +416,13 @@ public class WMSMethodMaker extends AbstractMethodMaker implements WMSMethodMake
                 return false;
             }
             return true;
-            
+
         } catch (SAXException|ParserConfigurationException e) {
             log.error("WMSMethodMaker::Accepts(): SAXException or ParserConfigurationException: "+e.getMessage()+"| type: "+e.toString());
             errStr.delete(0, errStr.length());
             errStr.append("I can resolve your WMS URL, but there was an XML format error");
             return false;
-                        
+
         }
         catch (URISyntaxException e1) {
             log.error("WMSMethodMaker::Accepts(): URISyntaxException: "+e1.getMessage()+"| type: "+e1.toString());
@@ -393,9 +431,9 @@ public class WMSMethodMaker extends AbstractMethodMaker implements WMSMethodMake
             return false;
         }
     }
-    
+
     /**
-     * 
+     *
      * Same as accepts() above, but included for backward compatibility
      */
     @Override
@@ -403,7 +441,7 @@ public class WMSMethodMaker extends AbstractMethodMaker implements WMSMethodMake
         StringBuilder errStr = new StringBuilder();
         return accepts(wmsUrl,version,errStr);
     }
-    
+
 
     @Override
     public GetCapabilitiesRecord getGetCapabilitiesRecord(HttpRequestBase method) throws IOException  {
