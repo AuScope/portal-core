@@ -75,7 +75,7 @@ public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
      * Call this method before using any iterator methods.
      *
      * This method will ensure that all underlying http service calls are enqueued as per the specified executor.
-     * 
+     *
      * @param executor
      */
     public synchronized void beginCallingServices(Executor executor) {
@@ -185,7 +185,7 @@ public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
         private HttpServiceCaller serviceCaller;
         private DistributedHTTPServiceCaller parent;
         private InputStream resultingData;
-        private Exception resultingError;
+        private Throwable resultingError;
         private volatile boolean running;
         private volatile boolean iterated;
         private volatile boolean abortStart;
@@ -210,7 +210,7 @@ public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
 
         /**
          * Returns whether this thread is running
-         * 
+         *
          * @return
          */
         public synchronized boolean isRunning() {
@@ -227,7 +227,7 @@ public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
 
         /**
          * Gets the data stream that resulted from a succesful call (null if an error has occured) This function will block if this thread is running
-         * 
+         *
          * @return
          */
         public InputStream getResultingData() {
@@ -236,14 +236,13 @@ public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
 
         /**
          * Gets the underlying exception that resulted from a failed call (null if the call was successful) This function will block if this thread is running
-         * 
+         *
          * @return
          */
-        public Exception getResultingError() {
+        public Throwable getResultingError() {
             return resultingError;
         }
 
-        @SuppressWarnings("resource")
         @Override
         public void run() {
             //If this thread has been interrupted before it started running - don't start processing.
@@ -254,11 +253,11 @@ public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
             this.setRunning(true);
 
             InputStream data = null;
-            Exception error = null;
+            Throwable error = null;
 
             try {
                 data = serviceCaller.getMethodResponseAsStream(method);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 error = e;
             } finally {
                 //Acquire the lock on our parent object

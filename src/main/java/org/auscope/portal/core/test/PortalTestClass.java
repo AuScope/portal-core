@@ -20,19 +20,20 @@ import org.auscope.portal.core.test.jmock.FileWithNameMatcher;
 import org.auscope.portal.core.test.jmock.HttpMethodBaseMatcher;
 import org.auscope.portal.core.test.jmock.HttpMethodBaseMatcher.HttpMethodType;
 import org.auscope.portal.core.test.jmock.MapMatcher;
+import org.auscope.portal.core.test.jmock.PortalRuleMockery;
+import org.auscope.portal.core.test.jmock.PortalSynchroniser;
 import org.auscope.portal.core.test.jmock.PropertiesMatcher;
 import org.auscope.portal.core.util.DOMUtil;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.jmock.Mockery;
 import org.jmock.api.Action;
 import org.jmock.api.ExpectationError;
-import org.jmock.integration.junit4.JMock;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.Rule;
+//import org.junit.runner.RunWith;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -44,7 +45,7 @@ import org.xml.sax.SAXException;
  * @author Josh Vote
  *
  */
-@RunWith(JMock.class)
+//@RunWith(JMock.class)
 public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler {
 
     /** A list of errors arising through the thread uncaught exception handler */
@@ -85,9 +86,10 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
     /**
      * used for generating/testing mock objects and their expectations
      */
-    protected Mockery context = new Mockery() {
+    @Rule public PortalRuleMockery context = new PortalRuleMockery() {
         {
             setImposteriser(ClassImposteriser.INSTANCE);
+            setThreadingPolicy(new PortalSynchroniser());
         }
     };
 
@@ -103,7 +105,7 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
      * @return
      */
     protected Action delayReturnValue(long msDelay, Object returnValue) {
-        return new DelayedReturnValueAction(msDelay, returnValue);
+        return new DelayedReturnValueAction(msDelay, returnValue, context);
     }
 
     /**

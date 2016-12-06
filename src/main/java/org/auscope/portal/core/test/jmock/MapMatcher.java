@@ -3,7 +3,7 @@ package org.auscope.portal.core.test.jmock;
 import java.util.Map;
 
 import org.hamcrest.Description;
-import org.junit.matchers.TypeSafeMatcher;
+import org.hamcrest.TypeSafeMatcher;
 
 /**
  * Matcher for matching the values of a map based on EVERY value in the map being present in the match

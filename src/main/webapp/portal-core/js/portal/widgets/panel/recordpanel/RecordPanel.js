@@ -87,6 +87,7 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
             update: this.onStoreUpdate,
             clear: this.onStoreClear,
             load: this.onStoreLoad,
+            clear: this.onStoreLoad, //The load handler will perform a full clear for us
             beforeload: this.onStoreBeforeLoad,
             filterchange: this.onStoreFilterChange,
             add: this.onStoreAdd,
@@ -620,9 +621,10 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
     },
 
     /**
-     * When we receive a new set of records, update all items in the display
+     * When we receive a new set of records, update all items in the display from the
+     * specified store. Any existing displaying records will be cleared first.
      */
-    onStoreLoad: function(store, records, successful) {
+    onStoreLoad: function(store) {
         if (this.loadMask) {
             this.loadMask.hide();
         }

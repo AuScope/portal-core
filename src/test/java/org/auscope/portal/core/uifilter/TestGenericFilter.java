@@ -19,7 +19,7 @@ public class TestGenericFilter extends GenericFilter{
     @Test
     public void testFragementGeneration(){
         //VT: should ignore provider filter
-        this.xPathFilters="{\"label\":\"Name\",\"predicate\":\"ISLIKE\",\"type\":\"OPTIONAL.TEXT\",\"value\":\"er\",\"xpath\":\"mt:name\"},{\"label\":\"Tenement Type\",\"options\":[],\"predicate\":\"ISLIKE\",\"type\":\"OPTIONAL.DROPDOWNSELECTLIST\",\"value\":\"prospecting\",\"xpath\":\"mt:tenementType\"},{\"label\":\"Provider\",\"type\":\"OPTIONAL.PROVIDER\",\"value\":{\"auscope.dpi.nsw.gov.au\":true,\"geology.data.nt.gov.au\":true}}";
+        this.setxPathFilters("{\"label\":\"Name\",\"predicate\":\"ISLIKE\",\"type\":\"OPTIONAL.TEXT\",\"value\":\"er\",\"xpath\":\"mt:name\"},{\"label\":\"Tenement Type\",\"options\":[],\"predicate\":\"ISLIKE\",\"type\":\"OPTIONAL.DROPDOWNSELECTLIST\",\"value\":\"prospecting\",\"xpath\":\"mt:tenementType\"},{\"label\":\"Provider\",\"type\":\"OPTIONAL.PROVIDER\",\"value\":{\"auscope.dpi.nsw.gov.au\":true,\"geology.data.nt.gov.au\":true}}");
         List<String> result = generateParameterFragments();
 
         Assert.assertEquals(2, result.size());

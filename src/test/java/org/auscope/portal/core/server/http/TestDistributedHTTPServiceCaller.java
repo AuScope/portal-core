@@ -13,6 +13,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.jmock.Expectations;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,6 +38,12 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
         threadPool = Executors.newFixedThreadPool(5); //don't adjust this, most of the tests are built on the assumption of 5 threads
     }
 
+    @After
+    public void teardDown() throws InterruptedException {
+        threadPool.shutdownNow();
+        threadPool.awaitTermination(5000L, TimeUnit.MILLISECONDS);
+    }
+
     /**
      * Asserts that value lies within an specified (inclusive) range of values
      *
@@ -54,7 +61,7 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
 
     /**
      * Tests that exceptions in the HTTP call will result in exceptions in the next
-     * @throws IOException 
+     * @throws IOException
      */
     @Test
     public void testReturnException() throws IOException  {
@@ -83,7 +90,7 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
 
     /**
      * Tests that calls to next will block
-     * @throws IOException 
+     * @throws IOException
      */
     @Test
     public void testBlockingNext() throws IOException {
@@ -135,7 +142,7 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
 
     /**
      * Tests that calls to next will return the NEXT item to complete
-     * @throws IOException 
+     * @throws IOException
      */
     @Test
     public void testFastestOrdering() throws IOException {
@@ -184,7 +191,7 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
 
     /**
      * Tests that calls to abort actually work...
-     * @throws IOException 
+     * @throws IOException
      */
     @Test
     public void testAbort() throws IOException {

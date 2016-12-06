@@ -1,7 +1,7 @@
 package org.auscope.portal.core.test.jmock;
 
 import org.hamcrest.Description;
-import org.junit.matchers.TypeSafeMatcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.springframework.mail.SimpleMailMessage;
 
 /**

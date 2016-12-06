@@ -56,7 +56,7 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
 
 
     _handleWMSQuery : function(queryTarget,callback,scope){
-      //VT:app-schema wms requires the gml version to be declared in the info_format
+        //VT:app-schema wms requires the gml version to be declared in the info_format
         var methodPost = false;
         var applicationProfile = queryTarget.get('onlineResource').get('applicationProfile');
 
@@ -65,8 +65,21 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
         }
 
         var sld_body;
+        
+        var wmsOnlineResource = queryTarget.get('onlineResource');
+        var typeName = wmsOnlineResource.get('name');
+        var serviceUrl = wmsOnlineResource.get('url');
+        var featureUrl=serviceUrl;
         if (applicationProfile && applicationProfile.indexOf("Esri:ArcGIS Server") > -1) {
             sld_body = null;
+            // ArcGIS does not permit a WMS query with feature ids with, so must use a WFS url
+            var onlineResources = queryTarget.get('cswRecord').get('onlineResources');
+            for (var idx=0; idx < onlineResources.length; idx++) {
+                if (onlineResources[idx].get('type')=='WFS') {
+                    featureUrl = onlineResources[idx].get('url');
+                    break;
+                }
+            }
         } else if (queryTarget.get('layer').get('renderer').sld_body){
             sld_body=queryTarget.get('layer').get('renderer').sld_body;
             if (!methodPost && sld_body.length > 1200){//VT; if the length of the sld is too long we HAVE to use post
@@ -74,18 +87,13 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
             }
         }
 
-
         var point = Ext.create('portal.map.Point', {latitude : queryTarget.get('lat'), longitude : queryTarget.get('lng')});
         var lonLat = new OpenLayers.LonLat(point.getLongitude(), point.getLatitude());
         lonLat = lonLat.transform('EPSG:4326','EPSG:3857');
 
         var tileInfo = this.map.getTileInformationForPoint(point);
         var layer = queryTarget.get('layer');
-        var wmsOnlineResource = queryTarget.get('onlineResource');
-
-        var typeName = wmsOnlineResource.get('name');
-        var serviceUrl = wmsOnlineResource.get('url');
-
+        
         var bbox = tileInfo.getTileBounds();
         var bboxString = Ext.util.Format.format('{0},{1},{2},{3}',
                 bbox.eastBoundLongitude,
@@ -147,29 +155,27 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
                 var featureTypeRoots = featureMemberNodes[0].childNodes;
                 var allComponents = [];
                 
+                var layer = queryTarget.get('layer');      
+                // We need to get a reference to the parent known layer (if it is a known layer)
+                var knownLayer = null;
+                if (layer.get('sourceType') === portal.layer.Layer.KNOWN_LAYER) {
+                    knownLayer = layer.get('source');
+                } 
+                
                 for(var i=0; i < featureTypeRoots.length; i++){
                     var featureTypeRoot = featureTypeRoots[i];
     
                     //Extract the line ID of what we clicked
                     var id = portal.util.xml.SimpleXPath.evaluateXPathString(featureTypeRoot, '@gml:id');                         
-    
-                    var layer = queryTarget.get('layer');
-                    var onlineResource = queryTarget.get('onlineResource');
-                    var typeName = onlineResource.get('name');
-                    var wfsUrl = onlineResource.get('url');        
-                    //we need to get a reference to the parent known layer (if it is a known layer)
-                    var knownLayer = null;
-                    if (layer.get('sourceType') === portal.layer.Layer.KNOWN_LAYER) {
-                        knownLayer = layer.get('source');
-                    }    
+
                     var me = this;                                       
                     if (!featureTypeRoot) {
                         callback(me, [me._generateErrorComponent(Ext.util.Format.format('There was a problem when looking up the feature with id \"{0}\"', id))], queryTarget);
                         return;
                     }                                                            
-                    var base = me.parser.parseNode(featureTypeRoot, onlineResource.get('url'));                    
-                    if (knownLayer && me.knownLayerParser.canParseKnownLayerFeature(id, knownLayer, onlineResource, layer)) {
-                        var knownLayerFeature = me.knownLayerParser.parseKnownLayerFeature(id, knownLayer, onlineResource, layer);
+                    var base = me.parser.parseNode(featureTypeRoot, featureUrl, applicationProfile);                    
+                    if (knownLayer && me.knownLayerParser.canParseKnownLayerFeature(id, knownLayer, wmsOnlineResource, layer)) {
+                        var knownLayerFeature = me.knownLayerParser.parseKnownLayerFeature(id, knownLayer, wmsOnlineResource, layer);
                         if(knownLayerFeature){                            
                             var tabTitle = id;
                             if(base.tabTitle){
@@ -204,6 +210,7 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
         var layer = queryTarget.get('layer');
         var typeName = onlineResource.get('name');
         var wfsUrl = onlineResource.get('url');
+        var applicationProfile = queryTarget.get('onlineResource').get('applicationProfile');
 
         //we need to get a reference to the parent known layer (if it is a known layer)
         var knownLayer = null;
@@ -221,7 +228,7 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
 
             //Parse our response into a number of GUI components, pass those along to the callback
             var allComponents = [];
-            allComponents.push(me.parser.parseNode(wfsResponseRoot, onlineResource.get('url')));
+            allComponents.push(me.parser.parseNode(wfsResponseRoot, onlineResource.get('url'), applicationProfile));
             if (knownLayer && me.knownLayerParser.canParseKnownLayerFeature(queryTarget.get('id'), knownLayer, onlineResource, layer)) {
                 allComponents.push(me.knownLayerParser.parseKnownLayerFeature(queryTarget.get('id'), knownLayer, onlineResource, layer));
             }
