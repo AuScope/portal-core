@@ -32,7 +32,7 @@ Ext.define('portal.util.help.InstructionManager',{
     _showInstruction : function(index, instructions) {
         
         if(index < instructions.length && index >= 0){
-            portal.util.PiwikAnalytic.trackevent('HelpHandlerClick', 'Step:' + index,'HelpTitle:' + instructions[index].get('title'));
+            portal.util.GoogleAnalytic.trackevent('HelpHandlerClick', 'Step:' + index,'HelpTitle:' + instructions[index].get('title'));
         }
         
         //Move the spotlight
