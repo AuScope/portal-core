@@ -367,6 +367,10 @@ public class CloudComputeServiceNectar extends CloudComputeService {
 
         try {
             NodeMetadata md = computeService.getNodeMetadata(job.getComputeInstanceId());
+            if (md == null) {
+                return InstanceStatus.Missing;
+            }
+
             Status status = md.getStatus();
             switch (status) {
             case PENDING:
