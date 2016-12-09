@@ -85,7 +85,6 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
 
         this.store.on({
             update: this.onStoreUpdate,
-            clear: this.onStoreClear,
             load: this.onStoreLoad,
             clear: this.onStoreLoad, //The load handler will perform a full clear for us
             beforeload: this.onStoreBeforeLoad,
@@ -533,7 +532,7 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
         
         this.down('#emptytext').setHidden(visibleItems !== 0);
     },
-    
+
     /**
      * Handle updating renderers/tips for the modified fields
      */
@@ -704,40 +703,6 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
         }, this);
         
         Ext.resumeLayouts();
-        this.getLayout().resumeAnimations();
-        this.doLayout();
-        
-        this._updateEmptyText();
-    },
-    
-    /**
-     * Fired when we clear the map of all layers
-     */    
-    onStoreClear: function (store) {
-    	this.getLayout().suspendAnimations();
-        Ext.suspendLayouts();
-    	Ext.iterate(this.recordRowMap, function(recordId, rowId) {
-    		var rowCmp = this.queryById(rowId);
-    		
-    		if (store.isGrouped()) {
-    			 var groupCmp = rowCmp.ownerCt;
-                 var groupId = groupCmp.getItemId();
-                 
-                 delete this.recordRowMap[recordId];
-                 groupCmp.remove(rowCmp);
-                 if (groupCmp.items.getCount() <= 1) {
-                     delete this.recordGroupMap[groupCmp.groupKey];
-                     this.remove(groupCmp);
-                 } else {
-                     groupCmp.refreshTitleCount();
-                 }
-    		} else {
-    			delete this.recordRowMap[recordId];
-    			this.remove(rowCmp);
-    		}
-    	}, this);
-
-    	Ext.resumeLayouts();
         this.getLayout().resumeAnimations();
         this.doLayout();
         
