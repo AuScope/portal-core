@@ -54,7 +54,7 @@ public class TestCloudStorageService extends PortalTestClass {
 
     @Test
     public void testGetJobFileData() throws IOException, PortalServiceException  {
-        final String myKey = "my/key";
+        final String myKey = "my.key";
         final BlobStore mockBlobStore = context.mock(BlobStore.class);
         final Blob mockBlob = context.mock(Blob.class);
         try (final Payload mockPayload = context.mock(Payload.class);
@@ -87,7 +87,7 @@ public class TestCloudStorageService extends PortalTestClass {
 
     @Test
     public void testGetJobFileMetaData() throws URISyntaxException, PortalServiceException  {
-        final String myKey = "my/key";
+        final String myKey = "my.key";
         final BlobStore mockBlobStore = context.mock(BlobStore.class);
 
         final Map<String, String> userMetadata = new HashMap<>();
@@ -263,6 +263,47 @@ public class TestCloudStorageService extends PortalTestClass {
         });
 
         service.uploadJobFiles(job, mockFiles);
+    }
+
+    /**
+     * Tests that requests for uploading single files successfully call all dependencies
+     * @throws PortalServiceException
+     */
+    @Test
+    public void testUploadSingleJobFile() throws PortalServiceException {
+        final BlobStore mockBlobStore = context.mock(BlobStore.class);
+
+        final Blob mockBlob1 = context.mock(Blob.class, "mockBlob1");
+
+        final PayloadBlobBuilder mockBuilder1 = context.mock(PayloadBlobBuilder.class, "mockBuilder1");
+
+        final InputStream mockInputStream = context.mock(InputStream.class);
+        final String fileName = "file.name";
+
+        context.checking(new Expectations() {
+            {
+                oneOf(mockBlobStoreContext).getBlobStore();
+                will(returnValue(mockBlobStore));
+
+                oneOf(mockBlobStore).createContainerInLocation(null, bucket);
+                will(returnValue(true));
+
+                oneOf(mockBlobStore).blobBuilder(jobStorageBaseKey + "/" + fileName);
+                will(returnValue(mockBuilder1));
+
+                allowing(mockBuilder1).contentLength(1L);
+                will(returnValue(mockBuilder1));
+                allowing(mockBuilder1).payload(with(mockInputStream));
+                will(returnValue(mockBuilder1));
+                oneOf(mockBuilder1).build();
+                will(returnValue(mockBlob1));
+
+                oneOf(mockBlobStore).putBlob(bucket, mockBlob1);
+                oneOf(mockBlobStoreContext).close();
+            }
+        });
+
+        service.uploadJobFile(job, fileName, mockInputStream);
     }
 
     /**
