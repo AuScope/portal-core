@@ -113,6 +113,37 @@ public class TestCloudStorageService extends PortalTestClass {
         Assert.assertEquals(24L, result.getSize());
     }
 
+    @Test
+    public void testGetJobFileSanitation() throws URISyntaxException, PortalServiceException  {
+        final String myKey = "my.key"; //will have . preserved
+        final BlobStore mockBlobStore = context.mock(BlobStore.class);
+
+        final Map<String, String> userMetadata = new HashMap<>();
+        final BaseImmutableContentMetadata contentMetadata = new BaseImmutableContentMetadata("mime/type", 24L, null, null, null, null, null);
+        final StorageMetadata metadata = new BlobMetadataImpl("id", "name", null, new URI("http://example.cloud/file"), "asdsadsasd", new Date(), new Date(), userMetadata, new URI("http://example.cloud/publicfile"), null, contentMetadata);
+
+        job.setStorageBaseKey(null);
+        job.setUser("user");
+        service.setJobPrefix("prefix.san-"); //will get the . removed
+
+        context.checking(new Expectations() {
+            {
+                oneOf(mockBlobStoreContext).close();
+                oneOf(mockBlobStoreContext).getBlobStore();
+                will(returnValue(mockBlobStore));
+
+                oneOf(mockBlobStore).blobMetadata(bucket, "prefix_san-user-0000000013/my.key");
+                will(returnValue(metadata));
+            }
+        });
+
+        CloudFileInformation result = service.getJobFileMetadata(job, myKey);
+
+        Assert.assertEquals("asdsadsasd", result.getFileHash());
+        Assert.assertEquals("name", result.getName());
+        Assert.assertEquals(24L, result.getSize());
+    }
+
     /**
      * Tests that requests for listing files successfully call all dependencies
      * @throws URISyntaxException

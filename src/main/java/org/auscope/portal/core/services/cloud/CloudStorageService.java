@@ -302,8 +302,13 @@ public abstract class CloudStorageService {
      * @param s
      * @return
      */
-    private static String sanitise(String s) {
-        return s.replaceAll("[^a-zA-Z0-9_\\-\\.]", "_");
+    private static String sanitise(String s, boolean allowDot) {
+        if (allowDot) {
+            return s.replaceAll("[^a-zA-Z0-9_\\-\\.]", "_");
+        } else {
+            return s.replaceAll("[^a-zA-Z0-9_\\-]", "_");
+        }
+
     }
 
     /**
@@ -315,7 +320,7 @@ public abstract class CloudStorageService {
      */
     public String generateBaseKey(CloudFileOwner job) {
         String baseKey = String.format("%1$s%2$s-%3$010d", jobPrefix, job.getUser(), job.getId());
-        return sanitise(baseKey);
+        return sanitise(baseKey, false);
     }
 
     /**
@@ -328,7 +333,7 @@ public abstract class CloudStorageService {
      * @return
      */
     public String keyForJobFile(CloudFileOwner job, String key) {
-        return String.format("%1$s/%2$s", jobToBaseKey(job), sanitise(key));
+        return String.format("%1$s/%2$s", jobToBaseKey(job), sanitise(key, true));
     }
 
     /**
