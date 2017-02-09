@@ -158,6 +158,7 @@
 <script src="portal-core/js/portal/widgets/panel/OnlineResourcesPanel.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/widgets/plugins/ClickableImage.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/widgets/plugins/CollapsedAccordianLayout.js?v=${buildTimestamp}" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/plugins/HeaderIcons.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/widgets/tab/ActivePreRenderTabPanel.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/widgets/window/CSWRecordConstraintsWindow.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/widgets/window/CSWSelectionWindow.js?v=${buildTimestamp}" type="text/javascript"></script>
