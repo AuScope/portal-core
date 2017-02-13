@@ -153,7 +153,7 @@ public class CloudComputeServiceAws extends CloudComputeService {
             }
 
             AssumeRoleRequest assumeRequest = new AssumeRoleRequest().withRoleArn(arn).withDurationSeconds(3600)
-                    .withExternalId(clientSecret).withRoleSessionName("anvgl");
+                    .withExternalId(clientSecret).withRoleSessionName("vgl");
 
             AssumeRoleResult assumeResult = stsClient.assumeRole(assumeRequest);
 
@@ -280,7 +280,7 @@ public class CloudComputeServiceAws extends CloudComputeService {
         Instance instance = instances.get(0);
         CreateTagsRequest createTagsRequest = new CreateTagsRequest();
         createTagsRequest.withResources(instance.getInstanceId()) //
-                .withTags(new Tag("Name", "ANVGL - Job: " + job.getId()));
+                .withTags(new Tag("Name", "VGL - Job: " + job.getId()));
         ec2.createTags(createTagsRequest);
 
         return instance.getInstanceId();
