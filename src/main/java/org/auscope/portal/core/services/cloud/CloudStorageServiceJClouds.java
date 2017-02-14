@@ -224,7 +224,7 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
             try (STSApi api = builder.buildApi(STSApi.class)) {
                 AssumeRoleOptions assumeRoleOptions = new AssumeRoleOptions().durationSeconds(3600)
                         .externalId(clientSecret);
-                final UserAndSessionCredentials credentials = api.assumeRole(arn, "anvgl", assumeRoleOptions);
+                final UserAndSessionCredentials credentials = api.assumeRole(arn, "vgl", assumeRoleOptions);
 
                 Supplier<Credentials> credentialsSupplier = new Supplier<Credentials>() {
                     @Override
