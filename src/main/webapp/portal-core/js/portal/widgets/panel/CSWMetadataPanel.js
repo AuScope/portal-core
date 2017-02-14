@@ -83,6 +83,15 @@ Ext.define('portal.widgets.panel.CSWMetadataPanel', {
         anchor : '100%',
         value : this.cswRecord.get('contactOrg')
       }];
+      if (this.cswRecord.get('constraints') != null && this.cswRecord.get('constraints').length > 0) {
+    	  items.push({
+    		  xtype : 'textarea',
+    		  fieldLabel : 'Constraints',
+    		  anchor : '100%',
+    		  value : this.cswRecord.get('constraints'),
+    		  readOnly : true
+    	  });
+      }
       items = items.concat(this.extraItems);
       if (this.cswRecord!=null) {
           items = items.concat({
