@@ -12,6 +12,7 @@
 <!-- patches -->
 <!-- script type="text/javascript" src="portal-core/js/extjs-patches/5.1.0/ExtPatch.js?v=${buildTimestamp}"></script-->
 <script type="text/javascript" src="portal-core/js/openlayers-patches/2.13.1/OpenLayers_patch.js?v=${buildTimestamp}"></script>
+<script src="portal-core/js/extjs-patches/5.1.1/ExtPatch.js?v=${buildTimestamp}" type="text/javascript"></script>
 
 <link rel="stylesheet" href="portal-core/js/extjs-ux-externals/form/plugin/FieldHelpText.css">
 <script src="portal-core/js/extjs-ux-externals/form/plugin/FieldHelpText.js?v=${buildTimestamp}" type="text/javascript"></script>
