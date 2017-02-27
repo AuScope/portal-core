@@ -21,6 +21,8 @@ public class MachineImage implements Serializable {
     private String[] keywords;
     /** The minimum root disk size (in GB) that this image can be run on. Null if this is N/A */
     private Integer minimumDiskGB;
+    /** The (possibly null) run command that should be used to execute python scripts. If null, most providers will default to 'python'*/
+    private String runCommand;
 
     /**
      * Creates a new VglMachineImage object
@@ -41,6 +43,22 @@ public class MachineImage implements Serializable {
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * The (possibly null) run command that should be used to execute python scripts. If null, most providers will default to 'python'
+     * @return
+     */
+    public String getRunCommand() {
+        return runCommand;
+    }
+
+    /**
+     * The (possibly null) run command that should be used to execute python scripts. If null, most providers will default to 'python'
+     * @param runCommand
+     */
+    public void setRunCommand(String runCommand) {
+        this.runCommand = runCommand;
     }
 
     /**
