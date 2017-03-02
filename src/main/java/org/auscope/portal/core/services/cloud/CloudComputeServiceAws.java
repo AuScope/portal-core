@@ -425,4 +425,11 @@ public class CloudComputeServiceAws extends CloudComputeService {
             throw new PortalServiceException("Unable to lookup status code for :" + job.getComputeInstanceId(), ex);
         }
     }
+
+    @Override
+    public ComputeType[] getAvailableComputeTypes(String machineImageId) throws PortalServiceException {
+        // Carsten: As far as I know AWS images have no specific limitation on what ComputeType can run them. To be implemented properly if this
+        //          turns out to be wrong
+        return getAvailableComputeTypes();
+    }
 }

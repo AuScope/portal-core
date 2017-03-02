@@ -32,6 +32,8 @@ import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.compute.options.NovaTemplateOptions;
+import org.jclouds.openstack.nova.v2_0.domain.Image;
+import org.jclouds.openstack.nova.v2_0.features.ImageApi;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.openstack.OSFactory;
 
@@ -66,6 +68,8 @@ public class CloudComputeServiceNectar extends CloudComputeService {
     private String zone; //can be null
 
     private String adminEmail = "cg-admin@csiro.au";
+
+    private ImageApi imageApi;
 
     /**
      * @return the adminEmail
@@ -167,6 +171,13 @@ public class CloudComputeServiceNectar extends CloudComputeService {
 
         this.novaApi = builder.buildApi(NovaApi.class);
 
+        Set<String> regions = novaApi.getConfiguredRegions();
+        String region = null;
+        if(! regions.isEmpty())
+            region = regions.iterator().next();
+        
+        this.imageApi = novaApi.getImageApi(region);
+        
         this.context = builder.buildView(ComputeServiceContext.class);
         this.computeService = this.context.getComputeService();
         this.terminateFilter = Predicates.and(not(TERMINATED), not(RUNNING), inGroup(getGroupName()));
@@ -247,6 +258,15 @@ public class CloudComputeServiceNectar extends CloudComputeService {
     @Override
     public void terminateJob(CloudJob job) {
         computeService.destroyNode(job.getComputeInstanceId());
+    }
+
+    @Override
+    public ComputeType[] getAvailableComputeTypes(String machineImageId) throws PortalServiceException {
+        String imageId = machineImageId.split("/")[1];
+        
+        Image image = imageApi.get(imageId);
+
+        return getAvailableComputeTypes(null, image.getMinRam(), image.getMinDisk());
     }
 
     /**
