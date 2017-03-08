@@ -163,17 +163,20 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
             methodPost = queryTarget.get('layer').get('filterer').getParameters().postMethod;
         }
 
-        var point = Ext.create('portal.map.Point', {latitude : queryTarget.get('lat'), longitude : queryTarget.get('lng')});
-        var tileInfo = this.map.getTileInformationForPoint(point);        
-        var bbox = tileInfo.getTileBounds();
-        bbox.crs = "EPSG:3857";
-
+        //TODO: RA: this doesn't work properly at the lowest zoom level.
+        // We need to factor in the zoom level when creating the bbox but I don't know how to        
+//        var zoomLevel = this.map.getZoom();
+        var bbox = Ext.create('portal.util.BBox',{
+            eastBoundLongitude : queryTarget.get('lng') - 0.1,
+            westBoundLongitude : queryTarget.get('lng') + 0.1,
+            northBoundLatitude : queryTarget.get('lat') + 0.1,
+            southBoundLatitude : queryTarget.get('lat') - 0.1
+        }); 
         var queryParams = Ext.Object.merge({
             serviceUrl : serviceUrl,
             typeName : typeName,
-            bbox : Ext.JSON.encode(bbox),    
-         // It only returns 1 feature anyway 
-            maxFeatures : 1
+            bbox : Ext.JSON.encode(bbox),  
+            maxFeatures : 50
         });
         var proxyUrl="getAllGml32Features.do";
         
