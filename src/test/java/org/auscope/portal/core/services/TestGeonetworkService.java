@@ -4,8 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
 
-import junit.framework.Assert;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.message.BasicHeader;
@@ -22,7 +20,8 @@ import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
 
-@SuppressWarnings("deprecation")
+import junit.framework.Assert;
+
 public class TestGeonetworkService extends PortalTestClass {
 
     private HttpServiceCaller serviceCaller;

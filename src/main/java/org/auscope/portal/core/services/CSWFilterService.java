@@ -1,10 +1,15 @@
 package org.auscope.portal.core.services;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executor;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,6 +29,7 @@ import org.auscope.portal.core.services.responses.csw.CSWGetRecordResponse;
 import org.auscope.portal.core.services.responses.csw.CSWRecordTransformerFactory;
 import org.auscope.portal.core.util.DOMUtil;
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 /**
  * Provides methods for accessing filtered data from multiple CSW services
@@ -48,7 +54,6 @@ public class CSWFilterService {
      *            Will be involved in actually making a HTTP request
      * @param cswServiceList
      *            Must be an untyped array of CSWServiceItem objects (for bean autowiring) representing CSW URL endpoints
-     * @throws Exception
      */
     public CSWFilterService(Executor executor,
             HttpServiceCaller serviceCaller,
@@ -65,7 +70,6 @@ public class CSWFilterService {
      *            Will be involved in actually making a HTTP request
      * @param cswServiceList
      *            Must be an untyped array of CSWServiceItem objects (for bean autowiring) representing CSW URL endpoints
-     * @throws Exception
      */
     public CSWFilterService(Executor executor,
             HttpServiceCaller serviceCaller,
@@ -94,7 +98,6 @@ public class CSWFilterService {
      * @param startIndex
      *            The first record index to start filtering from (for pagination). Set to 1 for the first record
      * @return
-     * @throws Exception
      */
     private CSWGetRecordResponse callSingleService(CSWServiceItem serviceItem, CSWGetDataRecordsFilter filter,
             int maxRecords, int startIndex, ResultType resultType) throws PortalServiceException {
@@ -203,9 +206,10 @@ public class CSWFilterService {
      * @param startPosition
      *            1 based index to begin searching from
      * @return
+     * @throws PortalServiceException 
      */
     public CSWGetRecordResponse getFilteredRecords(String serviceId, CSWGetDataRecordsFilter filter, int maxRecords,
-            int startPosition) throws Exception {
+            int startPosition) throws PortalServiceException {
         //Lookup the service to call
         CSWServiceItem cswServiceItem = null;
         for (CSWServiceItem serviceItem : cswServiceList) {
@@ -232,9 +236,10 @@ public class CSWFilterService {
      * @param startPosition
      *            1 based index to begin searching from
      * @return
+     * @throws PortalServiceException 
      */
     public CSWGetRecordResponse getFilteredRecords(CustomRegistryInt registry, CSWGetDataRecordsFilter filter,
-            int maxRecords, int startPosition) throws Exception {
+            int maxRecords, int startPosition) throws PortalServiceException {
         if (registry == null) {
             throw new IllegalArgumentException(String.format("CustomRegistry required"));
         }
@@ -260,8 +265,9 @@ public class CSWFilterService {
      * @throws DistributedHTTPServiceCallerException
      *             If an underlying service call returns an exception
      * @return
+     * @throws IOException 
      */
-    public int getFilteredRecordsCount(CSWGetDataRecordsFilter filter, int maxRecords) throws Exception {
+    public int getFilteredRecordsCount(CSWGetDataRecordsFilter filter, int maxRecords) throws DistributedHTTPServiceCallerException, IOException {
         int count = 0;
 
         //Call our services and start iterating the responses
@@ -272,6 +278,8 @@ public class CSWFilterService {
                 Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
                 CSWGetRecordResponse response = new CSWGetRecordResponse(origin, responseDoc, transformerFactory);
                 count += response.getRecordsMatched();
+            } catch (ParserConfigurationException | SAXException | XPathExpressionException e) {
+                throw new IOException(e.getMessage(), e);
             }
         }
 
@@ -288,9 +296,9 @@ public class CSWFilterService {
      * @param maxRecords
      *            The max records PER SERVICE that will be requested
      * @return
+     * @throws PortalServiceException 
      */
-    public int getFilteredRecordsCount(String serviceId, CSWGetDataRecordsFilter filter, int maxRecords)
-            throws Exception {
+    public int getFilteredRecordsCount(String serviceId, CSWGetDataRecordsFilter filter, int maxRecords) throws PortalServiceException {
         //Lookup the service to call
         CSWServiceItem cswServiceItem = null;
         for (CSWServiceItem serviceItem : cswServiceList) {
@@ -306,22 +314,18 @@ public class CSWFilterService {
         return response.getRecordsMatched();
     }
 
-    public CSWGetCapabilities getCapabilities(String cswServiceUrl) throws Exception {
+    public CSWGetCapabilities getCapabilities(String cswServiceUrl) throws URISyntaxException, IOException {
         CSWGetCapabilities getCap = null;
-        try {
-            HttpGet method = new HttpGet(cswServiceUrl);
-            URIBuilder builder = new URIBuilder(cswServiceUrl);
-            // test request=GetCapabilities&service=CSW&acceptVersions=2.0.2&acceptFormats=application%2Fxml
-            builder.addParameter("request", "GetCapabilities");
-            builder.addParameter("service", "CSW");
-            builder.addParameter("acceptVersions", "2.0.2");
-            builder.addParameter("acceptFormats", "application/xml");
-            method.setURI(builder.build());
-            getCap = new CSWGetCapabilities(this.serviceCaller.getMethodResponseAsStream(method));
-            return getCap;
-        } catch (Exception e) {
-            throw e;
-        }
-
+        HttpGet method = new HttpGet(cswServiceUrl);
+        URIBuilder builder = new URIBuilder(cswServiceUrl);
+        // test
+        // request=GetCapabilities&service=CSW&acceptVersions=2.0.2&acceptFormats=application%2Fxml
+        builder.addParameter("request", "GetCapabilities");
+        builder.addParameter("service", "CSW");
+        builder.addParameter("acceptVersions", "2.0.2");
+        builder.addParameter("acceptFormats", "application/xml");
+        method.setURI(builder.build());
+        getCap = new CSWGetCapabilities(this.serviceCaller.getMethodResponseAsStream(method));
+        return getCap;
     }
 }

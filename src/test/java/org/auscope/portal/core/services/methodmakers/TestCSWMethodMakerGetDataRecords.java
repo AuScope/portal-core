@@ -1,5 +1,10 @@
 package org.auscope.portal.core.services.methodmakers;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -12,6 +17,7 @@ import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.xml.sax.SAXException;
 
 /**
  * Unit tests for CSWMethodMakerGetDataRecords
@@ -37,9 +43,13 @@ public class TestCSWMethodMakerGetDataRecords extends PortalTestClass {
 
     /**
      * Simple test to ensure that makeMethod includes all appropriate fields
+     * @throws IOException 
+     * @throws IllegalStateException 
+     * @throws SAXException 
+     * @throws ParserConfigurationException 
      */
     @Test
-    public void testMakeMethodFilter() throws Exception {
+    public void testMakeMethodFilter() throws IOException, ParserConfigurationException, SAXException {
         final int maxRecords = 1234;
         final String filterStr = "<filter/>";
 
@@ -65,10 +75,14 @@ public class TestCSWMethodMakerGetDataRecords extends PortalTestClass {
     }
 
     /**
+     * @throws SAXException 
+     * @throws ParserConfigurationException 
      * Simple test to ensure that makeMethod includes all appropriate fields
+     * @throws IOException 
+     * @throws  
      */
     @Test
-    public void testMakeMethodNoFilter() throws Exception {
+    public void testMakeMethodNoFilter() throws IOException, ParserConfigurationException, SAXException {
         final int maxRecords = 14;
 
         context.checking(new Expectations());
@@ -88,10 +102,13 @@ public class TestCSWMethodMakerGetDataRecords extends PortalTestClass {
     }
 
     /**
+     * @throws URISyntaxException 
      * Simple test to ensure that some of the 'mandatory' parameters are set correctly
+     * @throws IOException 
+     * @throws  
      */
     @Test
-    public void testKeyParameters() throws Exception {
+    public void testKeyParameters() throws  IOException, URISyntaxException {
         final int maxRecords = 1234;
         final String filterStr = "<filter/>";
 

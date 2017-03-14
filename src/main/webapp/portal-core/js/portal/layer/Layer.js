@@ -14,6 +14,8 @@ Ext.define('portal.layer.Layer', {
         KML_RECORD : 'KMLRecord'
     },
 
+    
+    // TODO: Deprecate?
     visible : true,
 
     fields: [
@@ -27,7 +29,9 @@ Ext.define('portal.layer.Layer', {
         { name: 'downloader', type: 'auto' }, //A concrete implementation of a portal.layer.downloader.Downloader
         { name: 'querier', type: 'auto' }, //A concrete implementation of a portal.layer.querier.Querier
         { name: 'cswRecords', type: 'auto'}, //The source of all underlying data is an array of portal.csw.CSWRecord objects
-        //{ name: 'loading', type: 'boolean', defaultValue: false }, //Whether this layer is currently loading data or not
+        { name: 'loading', type: 'boolean', defaultValue: false },//Whether this layer is currently loading data or not
+        { name: 'active', type: 'boolean', defaultValue: false },//Whether this layer is current active on the map.
+        { name: 'visible', type: 'boolean', defaultValue: true }, // Whether this layer is visible
         { name: 'filterForm', type: 'auto'}, //The portal.layer.filterer.BaseFilterForm that houses the GUI for editing this layer's filterer
         { name: 'renderOnAdd', type: 'boolean', defaultValue: false }, //If true then this layer should be rendered the moment it is added as a layer. Currently used by KML
         { name: 'deserialized', type: 'boolean', defaultValue: false }, //If true then this layer has been deserialized from a permanent link
@@ -52,11 +56,14 @@ Ext.define('portal.layer.Layer', {
     
     setLayerVisibility : function(visibility){
         this.get('renderer').setVisibility(visibility);
-        this.visible = visibility;
+        // TODO: Deprecate?
+        this.visible=visibility;
+        this.set('visible',visibility);
     },                
 
     onRenderStarted : function(renderer, onlineResources, filterer) {
-        //this.set('loading', true);
+        this.set('loading', true);
+        this.set('active', true);
         this.get('source').set('loading', true);
         this.get('source').set('active', true);
     },
@@ -70,6 +77,7 @@ Ext.define('portal.layer.Layer', {
     onRenderFinished : function(renderer) {
         //this.set('loading', false);
         this.get('source').set('loading', false);
+        this.set('loading', false);
 
         var map = renderer.map;
         var layerStore = map.layerStore;

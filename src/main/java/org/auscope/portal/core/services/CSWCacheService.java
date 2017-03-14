@@ -60,6 +60,8 @@ public class CSWCacheService {
 
     /** A map of the records keyed by their keywords. For the full (non duplicate) set of CSWRecords see recordCache */
     protected Map<String, Set<CSWRecord>> keywordCache;
+
+    protected Map<String, Set<String>> keywordsByRegistry;
     /** A list of records representing the most recent snapshot of all CSW's */
     protected List<CSWRecord> recordCache;
     protected HttpServiceCaller serviceCaller;
@@ -85,7 +87,6 @@ public class CSWCacheService {
      *            Will be involved in actually making a HTTP request
      * @param cswServiceList
      *            Must be an untyped array of CSWServiceItem objects (for bean autowiring) representing CSW URL endpoints
-     * @throws Exception
      */
     public CSWCacheService(Executor executor,
             HttpServiceCaller serviceCaller,
@@ -102,7 +103,6 @@ public class CSWCacheService {
      *            Will be involved in actually making a HTTP request
      * @param cswServiceList
      *            Must be an untyped array of CSWServiceItem objects (for bean autowiring) representing CSW URL endpoints
-     * @throws Exception
      */
     public CSWCacheService(Executor executor,
             HttpServiceCaller serviceCaller,
@@ -112,6 +112,7 @@ public class CSWCacheService {
         this.executor = executor;
         this.serviceCaller = serviceCaller;
         this.keywordCache = new HashMap<>();
+        this.keywordsByRegistry = new HashMap<String, Set<String>>();
         this.recordCache = new ArrayList<>();
         this.transformerFactory = transformerFactory;
         this.cswServiceList = new CSWServiceItem[cswServiceList.size()];
@@ -122,7 +123,7 @@ public class CSWCacheService {
 
     /**
      * Does this cache service force the usage of HTTP Get Methods
-     * 
+     *
      * @return
      */
     public boolean isForceGetMethods() {
@@ -131,7 +132,7 @@ public class CSWCacheService {
 
     /**
      * Sets whether this cache service force the usage of HTTP Get Methods
-     * 
+     *
      * @param forceGetMethods
      */
     public void setForceGetMethods(boolean forceGetMethods) {
@@ -142,7 +143,7 @@ public class CSWCacheService {
      * Gets whether the currently running thread is OK to start a cache update
      *
      * If true is returned, ensure that the calling thread makes a call to updateFinished
-     * 
+     *
      * @return
      */
     private synchronized boolean okToUpdate() {
@@ -159,13 +160,16 @@ public class CSWCacheService {
      *
      * if newKeywordCache is NOT null it will update the internal cache. if newRecordCache is NOT null it will update the internal cache.
      */
-    private synchronized void updateFinished(Map<String, Set<CSWRecord>> newKeywordCache, List<CSWRecord> newRecordCache) {
+    private synchronized void updateFinished(Map<String, Set<CSWRecord>> newKeywordCache, List<CSWRecord> newRecordCache, Map<String, Set<String>> newKeywordByEndpointCache) {
         this.updateRunning = false;
         if (newKeywordCache != null) {
             this.keywordCache = newKeywordCache;
         }
         if (newRecordCache != null) {
             this.recordCache = newRecordCache;
+        }
+        if (newKeywordByEndpointCache != null) {
+            this.keywordsByRegistry = newKeywordByEndpointCache;
         }
 
         this.lastCacheUpdate = new Date();
@@ -189,7 +193,7 @@ public class CSWCacheService {
      * Returns an unmodifiable Map of keyword names to matching CSWRecords
      *
      * This function may trigger a cache update to begin on a seperate thread.
-     * 
+     *
      * @return
      */
     public synchronized Map<String, Set<CSWRecord>> getKeywordCache() {
@@ -199,8 +203,21 @@ public class CSWCacheService {
     }
 
     /**
+     * Gets the set of keywords cached from a particular endpoint.
+     * @param endpointId The CSWServiceItem ID of the endpoint to check
+     * @return An unmodifiable set on success or NULL otherwise
+     */
+    public synchronized Set<String> getKeywordsForEndpoint(String endpointId) {
+        Set<String> keywords = this.keywordsByRegistry.get(endpointId);
+        if (keywords == null) {
+            return null;
+        }
+        return Collections.unmodifiableSet(keywords);
+    }
+
+    /**
      * Returns an unmodifiable List of CSWRecords
-     * 
+     *
      * @return
      */
     public synchronized List<CSWRecord> getRecordCache() {
@@ -242,13 +259,14 @@ public class CSWCacheService {
 
         //This will be our new cache
         Map<String, Set<CSWRecord>> newKeywordCache = new HashMap<>();
+        Map<String, Set<String>> newKeywordByEndpointCache = new HashMap<>();
         List<CSWRecord> newRecordCache = new ArrayList<>();
 
         //Create our worker threads (ensure they are all aware of each other)
         CSWCacheUpdateThread[] updateThreads = new CSWCacheUpdateThread[cswServiceList.length];
         for (int i = 0; i < updateThreads.length; i++) {
             updateThreads[i] = new CSWCacheUpdateThread(this, updateThreads, cswServiceList[i],
-                    newKeywordCache, newRecordCache, serviceCaller, connectionAttempts,
+                    newKeywordCache, newKeywordByEndpointCache, newRecordCache, serviceCaller, connectionAttempts,
                     timeBtwConnectionAttempts);
         }
 
@@ -263,9 +281,8 @@ public class CSWCacheService {
 
     /**
      * Returns on WMS data records
-     * 
+     *
      * @return
-     * @throws Exception
      */
     public List<CSWRecord> getWMSRecords() {
         return getFilteredRecords(OnlineResourceType.WMS);
@@ -273,9 +290,8 @@ public class CSWCacheService {
 
     /**
      * Returns only WCS data records
-     * 
+     *
      * @return
-     * @throws Exception
      */
     public List<CSWRecord> getWCSRecords() {
         return getFilteredRecords(OnlineResourceType.WCS);
@@ -283,9 +299,8 @@ public class CSWCacheService {
 
     /**
      * Returns only WFS data records
-     * 
+     *
      * @return
-     * @throws Exception
      */
     public List<CSWRecord> getWFSRecords() {
         return getFilteredRecords(OnlineResourceType.WFS);
@@ -293,10 +308,9 @@ public class CSWCacheService {
 
     /**
      * Returns a filtered list of records from this cache
-     * 
+     *
      * @param types
      * @return
-     * @throws Exception
      */
     private synchronized List<CSWRecord> getFilteredRecords(
             AbstractCSWOnlineResource.OnlineResourceType... types) {
@@ -323,6 +337,7 @@ public class CSWCacheService {
         private CSWCacheUpdateThread[] siblings; //this is also used as a shared locking object
         private CSWServiceItem endpoint;
         private Map<String, Set<CSWRecord>> newKeywordCache;
+        private Map<String, Set<String>> newKeywordByEndpointCache;
         private List<CSWRecord> newRecordCache;
         private boolean finishedExecution;
         private CSWService cswService;
@@ -331,13 +346,14 @@ public class CSWCacheService {
 
         public CSWCacheUpdateThread(CSWCacheService parent,
                 CSWCacheUpdateThread[] siblings, CSWServiceItem endpoint,
-                Map<String, Set<CSWRecord>> newKeywordCache, List<CSWRecord> newRecordCache,
+                Map<String, Set<CSWRecord>> newKeywordCache, Map<String, Set<String>> newKeywordByEndpointCache, List<CSWRecord> newRecordCache,
                 HttpServiceCaller serviceCaller, int connectionAttempts, long timeBtwConnectionAttempts) {
             super();
             this.parent = parent;
             this.siblings = siblings;
             this.endpoint = endpoint;
             this.newKeywordCache = newKeywordCache;
+            this.newKeywordByEndpointCache = newKeywordByEndpointCache;
             this.newRecordCache = newRecordCache;
             this.finishedExecution = false;
             this.connectionAttempts = connectionAttempts;
@@ -348,7 +364,7 @@ public class CSWCacheService {
 
         /**
          * This is synchronized on the siblings object
-         * 
+         *
          * @return
          */
         private boolean isFinishedExecution() {
@@ -359,7 +375,7 @@ public class CSWCacheService {
 
         /**
          * This is synchronized on the siblings object
-         * 
+         *
          * @param finishedExecution
          */
         private void setFinishedExecution(boolean finishedExecution) {
@@ -390,18 +406,18 @@ public class CSWCacheService {
 
                 //Last thread to finish tells our parent we've terminated
                 if (cleanupRequired) {
-                    parent.updateFinished(newKeywordCache, newRecordCache);
+                    parent.updateFinished(newKeywordCache, newRecordCache, newKeywordByEndpointCache);
                 }
             }
         }
 
         /**
          * adds record to keyword cache if it DNE
-         * 
+         *
          * @param keyword
          * @param record
          */
-        private void addToKeywordCache(String keyword, CSWRecord record, Map<String, Set<CSWRecord>> cache) {
+        private void addToKeywordCache(CSWServiceItem endpoint, String keyword, CSWRecord record, Map<String, Set<CSWRecord>> cache, Map<String, Set<String>> cacheByEndpoints) {
             if (keyword == null || keyword.isEmpty()) {
                 return;
             }
@@ -413,11 +429,18 @@ public class CSWCacheService {
             }
 
             existingRecsWithKeyword.add(record);
+
+            Set<String> keywordsForEndpoint = cacheByEndpoints.get(endpoint.getId());
+            if (keywordsForEndpoint == null) {
+                keywordsForEndpoint = new HashSet<String>();
+                cacheByEndpoints.put(endpoint.getId(), keywordsForEndpoint);
+            }
+            keywordsForEndpoint.add(keyword);
         }
 
         /**
          * Merges the contents of source into destination
-         * 
+         *
          * @param destination
          *            Will received source's contents
          * @param source
@@ -425,7 +448,7 @@ public class CSWCacheService {
          * @param cache
          *            will be updated with destination referenced by source's keywords
          */
-        private void mergeRecords(CSWRecord destination, CSWRecord source, Map<String, Set<CSWRecord>> cache) {
+        private void mergeRecords(CSWServiceItem endpoint, CSWRecord destination, CSWRecord source, Map<String, Set<CSWRecord>> cache, Map<String, Set<String>> cacheByEndpoints) {
             //Merge onlineresources
             AbstractCSWOnlineResource[] merged = (AbstractCSWOnlineResource[]) ArrayUtils.addAll(
                     destination.getOnlineResources(), source.getOnlineResources());
@@ -438,7 +461,7 @@ public class CSWCacheService {
             destination.setDescriptiveKeywords(keywordSet.toArray(new String[keywordSet.size()]));
 
             for (String sourceKeyword : source.getDescriptiveKeywords()) {
-                addToKeywordCache(sourceKeyword, destination, cache);
+                addToKeywordCache(endpoint, sourceKeyword, destination, cache, cacheByEndpoints);
             }
         }
 
@@ -535,7 +558,7 @@ public class CSWCacheService {
                                     if (keyword.startsWith(KEYWORD_MERGE_PREFIX)) {
                                         Set<CSWRecord> existingRecs = newKeywordCache.get(keyword);
                                         if (existingRecs != null && !existingRecs.isEmpty()) {
-                                            mergeRecords(existingRecs.iterator().next(), record, newKeywordCache);
+                                            mergeRecords(endpoint, existingRecs.iterator().next(), record, newKeywordCache, newKeywordByEndpointCache);
                                             recordMerged = true;
                                         }
                                     }
@@ -545,7 +568,7 @@ public class CSWCacheService {
                                 if (!recordMerged) {
                                     //Update the keyword cache
                                     for (String keyword : record.getDescriptiveKeywords()) {
-                                        addToKeywordCache(keyword, record, newKeywordCache);
+                                        addToKeywordCache(endpoint, keyword, record, newKeywordCache, newKeywordByEndpointCache);
                                     }
 
                                     //Add record to record list

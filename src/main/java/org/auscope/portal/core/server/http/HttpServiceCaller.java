@@ -6,6 +6,7 @@ import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 
+import org.apache.commons.httpclient.ConnectTimeoutException;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.io.Charsets;
@@ -19,7 +20,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -86,10 +86,10 @@ public class HttpServiceCaller {
      * @throws ConnectException
      * @throws UnknownHostException
      * @throws ConnectTimeoutException
-     * @throws Exception
+     * @throws IOException
      */
     public String getMethodResponseAsString(HttpRequestBase method) throws ConnectException, UnknownHostException,
-        ConnectTimeoutException, Exception {
+        ConnectTimeoutException, IOException {
         return getMethodResponseAsString(method, (CredentialsProvider) null);
     }
 
@@ -102,10 +102,10 @@ public class HttpServiceCaller {
      * @throws ConnectException
      * @throws UnknownHostException
      * @throws ConnectTimeoutException
-     * @throws Exception
+     * @throws IOException
      */
     public String getMethodResponseAsString(HttpRequestBase method, CredentialsProvider credentialsProvider) throws ConnectException, UnknownHostException,
-            ConnectTimeoutException, Exception {
+            ConnectTimeoutException, IOException {
         try (CloseableHttpClient httpClient = generateClient(credentialsProvider)) {
             return getMethodResponseAsString(method, httpClient);
         }
@@ -119,10 +119,9 @@ public class HttpServiceCaller {
      * @param httpClient
      *            The client that will be used
      * @return
-     * @throws Exception
+     * @throws IOException
      */
-    public String getMethodResponseAsString(HttpRequestBase method, HttpClient client) throws ConnectException,
-            UnknownHostException, ConnectTimeoutException, Exception {
+    public String getMethodResponseAsString(HttpRequestBase method, HttpClient client) throws IOException {
         //invoke the method
         HttpResponse httpResponse = this.invokeTheMethod(method, client);
 
@@ -151,8 +150,9 @@ public class HttpServiceCaller {
      * @param method The method to be executed
      * @param credentialsProvider Credentials provider for performing authentication (if required)
      * @return
+     * @throws IOException
      */
-    public HttpClientInputStream getMethodResponseAsStream(HttpRequestBase method) throws Exception {
+    public HttpClientInputStream getMethodResponseAsStream(HttpRequestBase method) throws IOException {
         return getMethodResponseAsStream(method, (CredentialsProvider) null);
     }
 
@@ -164,8 +164,9 @@ public class HttpServiceCaller {
      * @param method The method to be executed
      * @param credentialsProvider Credentials provider for performing authentication (if required)
      * @return
+     * @throws IOException
      */
-    public HttpClientInputStream getMethodResponseAsStream(HttpRequestBase method, CredentialsProvider credentialsProvider) throws Exception {
+    public HttpClientInputStream getMethodResponseAsStream(HttpRequestBase method, CredentialsProvider credentialsProvider) throws IOException {
         CloseableHttpClient httpClient = generateClient(credentialsProvider);
         return new HttpClientInputStream(this.getMethodResponseAsStream(method, httpClient), httpClient);
     }
@@ -180,8 +181,10 @@ public class HttpServiceCaller {
      * @param httpClient
      *            The client that will be used
      * @return
+     * @throws IOException
+     * @throws
      */
-    public InputStream getMethodResponseAsStream(HttpRequestBase method, HttpClient client) throws Exception {
+    public InputStream getMethodResponseAsStream(HttpRequestBase method, HttpClient client) throws IOException {
         //invoke the method
         HttpResponse httpResponse = this.invokeTheMethod(method, client);
         return httpResponse.getEntity().getContent();
@@ -193,8 +196,10 @@ public class HttpServiceCaller {
      * @param method The method to be executed
      * @param credentialsProvider Credentials provider for performing authentication (if required)
      * @return
+     * @throws IOException
+     * @throws
      */
-    public byte[] getMethodResponseAsBytes(HttpRequestBase method) throws Exception {
+    public byte[] getMethodResponseAsBytes(HttpRequestBase method) throws IOException {
         return getMethodResponseAsBytes(method, (CredentialsProvider) null);
     }
 
@@ -205,7 +210,7 @@ public class HttpServiceCaller {
      * @param credentialsProvider Credentials provider for performing authentication (if required)
      * @return
      */
-    public byte[] getMethodResponseAsBytes(HttpRequestBase method, CredentialsProvider credentialsProvider) throws Exception {
+    public byte[] getMethodResponseAsBytes(HttpRequestBase method, CredentialsProvider credentialsProvider) throws IOException {
         try (CloseableHttpClient httpClient = generateClient(credentialsProvider)) {
             return getMethodResponseAsBytes(method, httpClient);
         }
@@ -220,7 +225,7 @@ public class HttpServiceCaller {
      * @throws IOException
      * @throws IllegalStateException
      */
-    public byte[] getMethodResponseAsBytes(HttpRequestBase method, HttpClient client) throws IllegalStateException, IOException {
+    public byte[] getMethodResponseAsBytes(HttpRequestBase method, HttpClient client) throws IOException {
         //invoke the method
         HttpResponse httpResponse = this.invokeTheMethod(method, client);
 
@@ -243,7 +248,8 @@ public class HttpServiceCaller {
      * @throws IOException
      */
     public HttpClientResponse getMethodResponseAsHttpResponse(HttpRequestBase method) throws IllegalStateException, IOException {
-        return getMethodResponseAsHttpResponse(method, null);
+        CloseableHttpClient httpClient = generateClient(null);
+        return new HttpClientResponse(this.invokeTheMethod(method, httpClient), httpClient);
     }
 
     /**
@@ -267,7 +273,7 @@ public class HttpServiceCaller {
      * @throws IOException
      * @throws IllegalStateException
      */
-    private HttpResponse invokeTheMethod(HttpRequestBase method, HttpClient client) throws IllegalStateException, IOException {
+    private HttpResponse invokeTheMethod(HttpRequestBase method, HttpClient client) throws IOException {
         if(client==null) throw new IllegalArgumentException("HttpClient must not be null");
 
         log.debug("method=" + method.getURI());

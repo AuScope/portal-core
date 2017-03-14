@@ -149,8 +149,6 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
      * @param node
      *            should represent a gmd:EX_GeographicBoundingBox node
      * @return the cSW geographic bounding box
-     * @throws Exception
-     *             the exception
      */
     public static CSWGeographicBoundingBox fromGeographicBoundingBoxNode(Node node) throws XPathExpressionException {
         CSWNamespaceContext nc = new CSWNamespaceContext();

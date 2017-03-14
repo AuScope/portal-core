@@ -3,7 +3,7 @@ package org.auscope.portal.core.test.jmock;
 import java.io.File;
 
 import org.hamcrest.Description;
-import org.junit.matchers.TypeSafeMatcher;
+import org.hamcrest.TypeSafeMatcher;
 
 /**
  * A custom JMock matcher for ensuring a file with a specific name (not including path) is matched.

@@ -74,6 +74,10 @@ Ext.define('portal.layer.renderer.wms.LayerRenderer', {
     },
     
     _getRenderLayer : function(response,opts,wmsResource, wmsUrl, wmsLayer, wmsOpacity,filterer){
+    	
+    	if(wmsOpacity === undefined){
+             wmsOpacity = filterer.parameters.opacity;
+        }
         var sld_body = "";
         if (response !== null) {
             var sld_body = response.responseText;

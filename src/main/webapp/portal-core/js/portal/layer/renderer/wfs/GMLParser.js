@@ -150,19 +150,22 @@ Ext.define('portal.layer.renderer.wfs.GMLParser', {
     makePrimitives : function(icon, onlineResource, layer) {
         var primitives = [];
         var wfsFeatureCollection = portal.util.xml.SimpleDOM.getMatchingChildNodes(this.rootNode, null, "FeatureCollection");
-
+        
         //Read through our wfs:FeatureCollection and gml:featureMember(s) elements
         if (Ext.isEmpty(wfsFeatureCollection)) {
             return primitives;
         }
         var featureMembers = portal.util.xml.SimpleDOM.getMatchingChildNodes(wfsFeatureCollection[0], null, "featureMembers");
+        var features = [];
+        
         if (Ext.isEmpty(featureMembers)) {
             featureMembers = portal.util.xml.SimpleDOM.getMatchingChildNodes(wfsFeatureCollection[0], null, "featureMember");
+            for (var i = 0; i < featureMembers.length; i++) {
+                features.push(featureMembers[i].firstElementChild);
+            }
+        }else{
+            features = featureMembers[0].childNodes;
         }
-        if (Ext.isEmpty(featureMembers)) {
-            return primitives;
-        }
-        var features = featureMembers[0].childNodes;
         
         for(var i = 0; i < features.length; i++) {
             //Pull out some general stuff that we expect all features to have

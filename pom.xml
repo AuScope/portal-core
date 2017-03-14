@@ -4,7 +4,7 @@
     <groupId>org.auscope.portal</groupId>
     <artifactId>portal-core</artifactId>
     <packaging>jar</packaging>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.7.0-SNAPSHOT</version>
     <name>Portal-Core</name>
     <description>Core functionality common to various AuScope portals.</description>
     <url>http://portal.auscope.org</url>
@@ -34,7 +34,7 @@
             <dependency>
                 <groupId>io.spring.platform</groupId>
                 <artifactId>platform-bom</artifactId>
-                <version>1.1.5.RELEASE</version>
+                <version>2.0.8.RELEASE</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -49,7 +49,6 @@
     <!-- Project properties -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jclouds.version>1.8.1</jclouds.version>
     </properties>
     <build>
         <finalName>${project.artifactId}-${project.version}</finalName>
@@ -78,9 +77,9 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.2</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                    <compilerVersion>1.7</compilerVersion>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <compilerVersion>1.8</compilerVersion>
                 </configuration>
             </plugin>
             <plugin>
@@ -323,7 +322,7 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
-            <version>2.3</version>
+            <version>2.5</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -376,6 +375,12 @@
           <groupId>com.racquettrack</groupId>
           <artifactId>spring-security-oauth2-client</artifactId>
           <version>1.3-AUSCOPE-SNAPSHOT</version>
+          <exclusions>
+                <exclusion>
+                    <groupId>asm</groupId>
+                    <artifactId>asm</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>net.sf.json-lib</groupId>
@@ -424,12 +429,12 @@
         <dependency>
             <groupId>org.jmock</groupId>
             <artifactId>jmock-junit4</artifactId>
-            <version>2.5.1</version>
+            <version>2.8.2</version>
         </dependency>
         <dependency>
             <groupId>org.jmock</groupId>
             <artifactId>jmock-legacy</artifactId>
-            <version>2.5.1</version>
+            <version>2.8.2</version>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
@@ -438,11 +443,6 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib-nodep</artifactId>
-            <version>2.2.2</version>
         </dependency>
         <dependency>
             <groupId>org.objenesis</groupId>
@@ -493,7 +493,7 @@
         <dependency>
             <groupId>org.apache.jclouds</groupId>
             <artifactId>jclouds-all</artifactId>
-            <version>${jclouds.version}</version>
+            <version>2.0.0</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>

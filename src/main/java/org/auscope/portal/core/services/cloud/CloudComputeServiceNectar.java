@@ -32,12 +32,11 @@ import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.compute.options.NovaTemplateOptions;
-import org.jclouds.openstack.nova.v2_0.domain.zonescoped.AvailabilityZone;
-import org.jclouds.openstack.nova.v2_0.extensions.AvailabilityZoneApi;
+import org.jclouds.openstack.nova.v2_0.domain.Image;
+import org.jclouds.openstack.nova.v2_0.features.ImageApi;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.openstack.OSFactory;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
@@ -57,8 +56,6 @@ public class CloudComputeServiceNectar extends CloudComputeService {
 
     private Predicate<NodeMetadata> terminateFilter;
 
-    private String itActuallyLaunchedHere;
-
     /** Name of accessKey for authentication */
     private String accessKey;
     /** Name of secretKey for authentication */
@@ -71,6 +68,8 @@ public class CloudComputeServiceNectar extends CloudComputeService {
     private String zone; //can be null
 
     private String adminEmail = "cg-admin@csiro.au";
+
+    private ImageApi imageApi;
 
     /**
      * @return the adminEmail
@@ -147,20 +146,17 @@ public class CloudComputeServiceNectar extends CloudComputeService {
      * @param apiVersion
      *            The API version
      */
+    @SuppressWarnings("unchecked")
     public CloudComputeServiceNectar(String endpoint, String accessKey, String secretKey, String apiVersion) {
         super(ProviderType.NovaKeystone, endpoint, apiVersion);
         this.accessKey = accessKey;
         this.secretKey = secretKey;
-    }
 
-    @SuppressWarnings("unchecked")
-    public void init() {
         Properties overrides = new Properties();
 
         String typeString = "openstack-nova";
 
-        builder = ContextBuilder.newBuilder(typeString)
-                .overrides(overrides);
+        builder = ContextBuilder.newBuilder(typeString).overrides(overrides);
 
         if(accessKey!=null && secretKey!=null)
             builder.credentials(accessKey, secretKey);
@@ -175,6 +171,13 @@ public class CloudComputeServiceNectar extends CloudComputeService {
 
         this.novaApi = builder.buildApi(NovaApi.class);
 
+        Set<String> regions = novaApi.getConfiguredRegions();
+        String region = null;
+        if(! regions.isEmpty())
+            region = regions.iterator().next();
+        
+        this.imageApi = novaApi.getImageApi(region);
+        
         this.context = builder.buildView(ComputeServiceContext.class);
         this.computeService = this.context.getComputeService();
         this.terminateFilter = Predicates.and(not(TERMINATED), not(RUNNING), inGroup(getGroupName()));
@@ -206,56 +209,33 @@ public class CloudComputeServiceNectar extends CloudComputeService {
         // We have different template options depending on provider
         NodeMetadata result;
         Set<? extends NodeMetadata> results = Collections.emptySet();
-        TemplateOptions options = null;
-        // Iterate all regions
-        for (String location : novaApi.getConfiguredZones()) {
-            Optional<? extends AvailabilityZoneApi> serverApi = novaApi.getAvailabilityZoneApi(location);
-            Iterable<? extends AvailabilityZone> zones = serverApi.get().list();
+        TemplateOptions options = ((NovaTemplateOptions) computeService.templateOptions())
+                .keyPairName(getKeypair())
+                .userData(userDataString.getBytes(Charset.forName("UTF-8")));
 
-            for (AvailabilityZone currentZone : zones) {
-                if (skippedZones.contains(currentZone.getName())) {
-                    logger.info(String.format("skipping: '%1$s' - configured as a skipped zone", currentZone.getName()));
-                    continue;
-                }
+        Template template = computeService.templateBuilder().imageId(job.getComputeVmId())
+                .hardwareId(job.getComputeInstanceType()).options(options).build();
 
-                if (!currentZone.getState().available()) {
-                    logger.info(String.format("skipping: '%1$s' - not available", currentZone.getName()));
-                    continue;
-                }
-
-                logger.info(String.format("Trying '%1$s'", currentZone.getName()));
-                options = ((NovaTemplateOptions) computeService.templateOptions()).keyPairName(getKeypair())
-                        .availabilityZone(currentZone.getName()).userData(userDataString.getBytes(Charset.forName("UTF-8")));
-
-                Template template = computeService.templateBuilder().imageId(job.getComputeVmId())
-                        .hardwareId(job.getComputeInstanceType()).options(options).build();
-
-                try {
-                    results = computeService.createNodesInGroup(getGroupName(), 1, template);
-                    this.itActuallyLaunchedHere = currentZone.getName();
-                    break;
-                } catch (RunNodesException e) {
-                    logger.error(String.format("launch failed at '%1$s', '%2$s'", location, currentZone.getName()));
-                    logger.debug(e.getMessage());
-                    try {
-                        // FIXME:
-                        // I think this could possibly delete EVERY NODE RUN
-                        // from PORTAL-CORE...
-                        // JClouds is not very clever here -
-                        // issue: how do you delete thing you didnt name and
-                        // dont have an ID for??
-                        Set<? extends NodeMetadata> destroyedNodes = computeService.destroyNodesMatching(this.terminateFilter);
-                        logger.warn(String.format("cleaned up %1$s nodes: %2$s", destroyedNodes.size(), destroyedNodes));
-                    } catch (Exception z) {
-                        logger.warn("couldnt clean it up");
-                    }
-                    continue;
-                }
+        try {
+            results = computeService.createNodesInGroup(getGroupName(), 1, template);
+        } catch (RunNodesException e) {
+            logger.error(String.format("Launch failure from service '%4$s' for job %3$s image '%1$s' type '%2$s'", job.getComputeVmId(), job.getComputeInstanceType(), job.getId(), this.getId()));
+            logger.debug(e.getMessage());
+            try {
+                // FIXME:
+                // I think this could possibly delete EVERY NODE RUN
+                // from PORTAL-CORE...
+                // JClouds is not very clever here -
+                // issue: how do you delete thing you didnt name and
+                // dont have an ID for??
+                Set<? extends NodeMetadata> destroyedNodes = computeService.destroyNodesMatching(this.terminateFilter);
+                logger.warn(String.format("cleaned up %1$s nodes: %2$s", destroyedNodes.size(), destroyedNodes));
+            } catch (Exception z) {
+                logger.error("couldnt clean it up");
             }
         }
+
         if (results.isEmpty()) {
-            // Now we have tried everything....
-            logger.error("run out of places to try...");
             throw new PortalServiceException(
                     "An unexpected error has occured while executing your job. Most likely this is from the lack of available resources. Please try using"
                             + "a smaller virtual machine",
@@ -264,7 +244,7 @@ public class CloudComputeServiceNectar extends CloudComputeService {
             result = results.iterator().next();
         }
 
-        logger.info(String.format("We have a successful launch @ '%1$s'", this.itActuallyLaunchedHere));
+        logger.trace(String.format("Successful launch from service '%4$s' for job %3$s image '%1$s' type '%2$s'", job.getComputeVmId(), job.getComputeInstanceType(), job.getId(), this.getId()));
 
         return result.getId();
     }
@@ -278,6 +258,15 @@ public class CloudComputeServiceNectar extends CloudComputeService {
     @Override
     public void terminateJob(CloudJob job) {
         computeService.destroyNode(job.getComputeInstanceId());
+    }
+
+    @Override
+    public ComputeType[] getAvailableComputeTypes(String machineImageId) throws PortalServiceException {
+        String imageId = machineImageId.split("/")[1];
+        
+        Image image = imageApi.get(imageId);
+
+        return getAvailableComputeTypes(null, image.getMinRam(), image.getMinDisk());
     }
 
     /**
@@ -398,6 +387,10 @@ public class CloudComputeServiceNectar extends CloudComputeService {
 
         try {
             NodeMetadata md = computeService.getNodeMetadata(job.getComputeInstanceId());
+            if (md == null) {
+                return InstanceStatus.Missing;
+            }
+
             Status status = md.getStatus();
             switch (status) {
             case PENDING:

@@ -51,14 +51,14 @@ Ext.define('portal.layer.downloader.coverage.WCSDownloader', {
                 for (var i = 0; i < rec.temporalDomain.length; i++) {
                     if (rec.temporalDomain[i].type === 'timePosition') {
                         if (rec.temporalDomain[i].timePosition.time) {
-                            rec.temporalDomain[i].timePosition = new Date(rec.temporalDomain[i].timePosition.time);
+                            rec.temporalDomain[i].timePosition = new Date(rec.temporalDomain[i].timePosition);
                         }
                     } else if (rec.temporalDomain[i].type === 'timePeriod') {
                         if (rec.temporalDomain[i].beginPosition.time) {
-                            rec.temporalDomain[i].beginPosition = new Date(rec.temporalDomain[i].beginPosition.time);
+                            rec.temporalDomain[i].beginPosition = new Date(rec.temporalDomain[i].beginPosition);
                         }
                         if (rec.temporalDomain[i].endPosition.time) {
-                            rec.temporalDomain[i].endPosition = new Date(rec.temporalDomain[i].endPosition.time);
+                            rec.temporalDomain[i].endPosition = new Date(rec.temporalDomain[i].endPosition);
                         }
                     }
                 }

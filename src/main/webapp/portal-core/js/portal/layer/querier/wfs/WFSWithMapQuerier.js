@@ -46,33 +46,66 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
         var onlineResource = queryTarget.get('onlineResource');
 
         if(onlineResource.get('type')==='WMS'){
-             this._handleWMSQuery(queryTarget,callback,this);
+             this._checkGml32(queryTarget,callback,this);
         }else if(onlineResource.get('type')=='WFS'){
             this._handleWFSQuery(queryTarget, callback);
         }
 
     },
 
-
-
+    _checkGml32 : function(queryTarget,callback,scope){
+        var wmsOnlineResource = queryTarget.get('onlineResource');
+        var serviceUrl = wmsOnlineResource.get('url');        
+        
+        Ext.Ajax.request({
+            url : "checkGml32.do",
+            timeout : 180000,
+            scope : this,
+            params :  {
+                "serviceUrl" : serviceUrl
+            },
+            callback : function(options, success, response) {
+                if (success && (response.responseText=='true')) {
+                    // RA: GML 3.2 is not supported by GetFeatureInfo, so we have to use GetFeature
+                    this._handleWFSQueryWithBbox(queryTarget,callback,scope);  
+                } else {
+                    this._handleWMSQuery(queryTarget,callback,scope);
+                } 
+            }
+        });
+    },
+    
     _handleWMSQuery : function(queryTarget,callback,scope){
-      //VT:app-schema wms requires the gml version to be declared in the info_format
+        //VT:app-schema wms requires the gml version to be declared in the info_format
         var methodPost = false;
+        var applicationProfile = queryTarget.get('onlineResource').get('applicationProfile');
 
         if(queryTarget.get('layer').get('filterer').getParameters().postMethod){
             methodPost = queryTarget.get('layer').get('filterer').getParameters().postMethod;
         }
 
-        var sld_body=null;
-        // GPT-MS: Check whether service is ArcGIS, if so, don't set sld_body in GetFeatureInfo
-        // TODO Refactor task GPT-230
-        if(queryTarget.get('layer').get('renderer').sld_body || wmsOnlineResource.get('url').toUpperCase().indexOf("MAPSERVER/WMSSERVER") < 0){
+        var sld_body;
+        
+        var wmsOnlineResource = queryTarget.get('onlineResource');
+        var typeName = wmsOnlineResource.get('name');
+        var serviceUrl = wmsOnlineResource.get('url');
+        var featureUrl=serviceUrl;
+        if (applicationProfile && applicationProfile.indexOf("Esri:ArcGIS Server") > -1) {
+            sld_body = null;
+            // ArcGIS does not permit a WMS query with feature ids with, so must use a WFS url
+            var onlineResources = queryTarget.get('cswRecord').get('onlineResources');
+            for (var idx=0; idx < onlineResources.length; idx++) {
+                if (onlineResources[idx].get('type')=='WFS') {
+                    featureUrl = onlineResources[idx].get('url');
+                    break;
+                }
+            }
+        } else if (queryTarget.get('layer').get('renderer').sld_body){
             sld_body=queryTarget.get('layer').get('renderer').sld_body;
-            if(!methodPost && sld_body.length > 1200){//VT; if the length of the sld is too long we HAVE to use post
+            if (!methodPost && sld_body.length > 1200){//VT; if the length of the sld is too long we HAVE to use post
                 methodPost = true
             }
         }
-
 
         var point = Ext.create('portal.map.Point', {latitude : queryTarget.get('lat'), longitude : queryTarget.get('lng')});
         var lonLat = new OpenLayers.LonLat(point.getLongitude(), point.getLatitude());
@@ -80,11 +113,7 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
 
         var tileInfo = this.map.getTileInformationForPoint(point);
         var layer = queryTarget.get('layer');
-        var wmsOnlineResource = queryTarget.get('onlineResource');
-
-        var typeName = wmsOnlineResource.get('name');
-        var serviceUrl = wmsOnlineResource.get('url');
-
+        
         var bbox = tileInfo.getTileBounds();
         var bboxString = Ext.util.Format.format('{0},{1},{2},{3}',
                 bbox.eastBoundLongitude,
@@ -92,28 +121,76 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
                 bbox.westBoundLongitude,
                 bbox.southBoundLatitude);
 
+        var queryParams = Ext.Object.merge({
+            WMS_URL : serviceUrl,
+            lat : lonLat.lat,
+            lng : lonLat.lon,
+            QUERY_LAYERS : typeName,
+            x : tileInfo.getOffset().x,
+            y : tileInfo.getOffset().y,
+            BBOX : bboxString,
+            WIDTH : tileInfo.getWidth(),
+            HEIGHT : tileInfo.getHeight(),
+            INFO_FORMAT : 'application/vnd.ogc.gml/3.1.1',
+            SLD_BODY : sld_body,
+            postMethod : methodPost,
+            version : wmsOnlineResource.get('version')                
+            }, this.generateSLDParams(queryTarget, null));
+        
+        var proxyGetFeatureInfoUrl ="wmsMarkerPopup.do";
+        if (queryTarget.get('layer').get('source').get('proxyGetFeatureInfoUrl')) {
+            proxyGetFeatureInfoUrl = queryTarget.get('layer').get('source').get('proxyGetFeatureInfoUrl');
+        }
+        
+        this._displayWMSPopup(proxyGetFeatureInfoUrl, queryParams, queryTarget, applicationProfile, featureUrl, callback, false);
+    },
 
-        //Start off by making a request for the GML at the specified location
+    _handleWFSQueryWithBbox : function(queryTarget,callback,scope){
+        var wmsOnlineResource = queryTarget.get('onlineResource');
+        var typeName = wmsOnlineResource.get('name');      
+        var methodPost = false;
+        var applicationProfile = wmsOnlineResource.get('applicationProfile');
+        var serviceUrl;
+        var onlineResources = queryTarget.get('cswRecord').get('onlineResources');
+        for (var idx=0; idx < onlineResources.length; idx++) {
+            if (onlineResources[idx].get('type')=='WFS') {
+                serviceUrl = onlineResources[idx].get('url');
+                break;
+            }
+        }        
+
+        if(queryTarget.get('layer').get('filterer').getParameters().postMethod){
+            methodPost = queryTarget.get('layer').get('filterer').getParameters().postMethod;
+        }
+
+        //TODO: RA: this doesn't work properly at the lowest zoom level.
+        // We need to factor in the zoom level when creating the bbox but I don't know how to        
+//        var zoomLevel = this.map.getZoom();
+        var bbox = Ext.create('portal.util.BBox',{
+            eastBoundLongitude : queryTarget.get('lng') - 0.1,
+            westBoundLongitude : queryTarget.get('lng') + 0.1,
+            northBoundLatitude : queryTarget.get('lat') + 0.1,
+            southBoundLatitude : queryTarget.get('lat') - 0.1
+        }); 
+        var queryParams = Ext.Object.merge({
+            serviceUrl : serviceUrl,
+            typeName : typeName,
+            bbox : Ext.JSON.encode(bbox),  
+            maxFeatures : 50
+        });
+        var proxyUrl="getAllGml32Features.do";
+        
+        this._displayWMSPopup(proxyUrl, queryParams, queryTarget, applicationProfile, serviceUrl, callback, true);
+    },
+    
+    _displayWMSPopup : function(requestUrl, queryParams, queryTarget, applicationProfile, featureUrl, callback, isGml32) {
+      //Start off by making a request for the GML at the specified location
         //We need to extract the survey line ID of the place we clicked
         Ext.Ajax.request({
-            url : 'wmsMarkerPopup.do',
+            url : requestUrl,
             timeout : 180000,
             scope : this,
-            params : {
-                WMS_URL : serviceUrl,
-                lat : lonLat.lat,
-                lng : lonLat.lon,
-                QUERY_LAYERS : typeName,
-                x : tileInfo.getOffset().x,
-                y : tileInfo.getOffset().y,
-                BBOX : bboxString,
-                WIDTH : tileInfo.getWidth(),
-                HEIGHT : tileInfo.getHeight(),
-                INFO_FORMAT : 'application/vnd.ogc.gml/3.1.1',
-                SLD_BODY : sld_body,
-                postMethod : methodPost,
-                version : wmsOnlineResource.get('version')                
-            },
+            params : queryParams,
             method : 'POST',//VT: potentially long sld_body forces us to use "POST" instead of "GET"
             callback : function(options, success, response) {
                 if (!success) {
@@ -127,9 +204,15 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
 
                 //TODO: There is a convergence here between this and the WFSQuerier (parsing a wfs:FeatureCollection)
                 var domDoc = portal.util.xml.SimpleDOM.parseStringToDOM(response.responseText);
-                var featureMemberNodes = portal.util.xml.SimpleDOM.getMatchingChildNodes(domDoc.documentElement, 'http://www.opengis.net/gml', 'featureMember');
-                if (featureMemberNodes.length === 0) {
-                    featureMemberNodes = portal.util.xml.SimpleDOM.getMatchingChildNodes(domDoc.documentElement, 'http://www.opengis.net/gml', 'featureMembers');
+                var featureMemberNodes;
+                if (isGml32) {
+                    // gml 3.2 specific
+                    featureMemberNodes = portal.util.xml.SimpleDOM.getMatchingChildNodes(domDoc.documentElement, 'http://www.opengis.net/wfs/2.0', 'member');
+                } else {
+                    featureMemberNodes = portal.util.xml.SimpleDOM.getMatchingChildNodes(domDoc.documentElement, 'http://www.opengis.net/gml', 'featureMember');
+                    if (featureMemberNodes.length === 0) {
+                        featureMemberNodes = portal.util.xml.SimpleDOM.getMatchingChildNodes(domDoc.documentElement, 'http://www.opengis.net/gml', 'featureMembers');
+                    }
                 }
                 if (featureMemberNodes.length === 0 || featureMemberNodes[0].childNodes.length === 0) {
                     //we got an empty response - likely because the feature ID DNE.
@@ -140,29 +223,28 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
                 var featureTypeRoots = featureMemberNodes[0].childNodes;
                 var allComponents = [];
                 
+                var layer = queryTarget.get('layer');      
+                // We need to get a reference to the parent known layer (if it is a known layer)
+                var knownLayer = null;
+                if (layer.get('sourceType') === portal.layer.Layer.KNOWN_LAYER) {
+                    knownLayer = layer.get('source');
+                } 
+                
                 for(var i=0; i < featureTypeRoots.length; i++){
                     var featureTypeRoot = featureTypeRoots[i];
     
                     //Extract the line ID of what we clicked
                     var id = portal.util.xml.SimpleXPath.evaluateXPathString(featureTypeRoot, '@gml:id');                         
-    
-                    var layer = queryTarget.get('layer');
-                    var onlineResource = queryTarget.get('onlineResource');
-                    var typeName = onlineResource.get('name');
-                    var wfsUrl = onlineResource.get('url');        
-                    //we need to get a reference to the parent known layer (if it is a known layer)
-                    var knownLayer = null;
-                    if (layer.get('sourceType') === portal.layer.Layer.KNOWN_LAYER) {
-                        knownLayer = layer.get('source');
-                    }    
+
                     var me = this;                                       
                     if (!featureTypeRoot) {
                         callback(me, [me._generateErrorComponent(Ext.util.Format.format('There was a problem when looking up the feature with id \"{0}\"', id))], queryTarget);
                         return;
                     }                                                            
-                    var base = me.parser.parseNode(featureTypeRoot, onlineResource.get('url'));                    
-                    if (knownLayer && me.knownLayerParser.canParseKnownLayerFeature(id, knownLayer, onlineResource, layer)) {
-                        var knownLayerFeature = me.knownLayerParser.parseKnownLayerFeature(id, knownLayer, onlineResource, layer);
+                    var base = me.parser.parseNode(featureTypeRoot, featureUrl, applicationProfile);        
+                    var wmsOnlineResource = queryTarget.get('onlineResource');
+                    if (knownLayer && me.knownLayerParser.canParseKnownLayerFeature(id, knownLayer, wmsOnlineResource, layer)) {
+                        var knownLayerFeature = me.knownLayerParser.parseKnownLayerFeature(id, knownLayer, wmsOnlineResource, layer);
                         if(knownLayerFeature){                            
                             var tabTitle = id;
                             if(base.tabTitle){
@@ -197,6 +279,7 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
         var layer = queryTarget.get('layer');
         var typeName = onlineResource.get('name');
         var wfsUrl = onlineResource.get('url');
+        var applicationProfile = queryTarget.get('onlineResource').get('applicationProfile');
 
         //we need to get a reference to the parent known layer (if it is a known layer)
         var knownLayer = null;
@@ -214,7 +297,7 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
 
             //Parse our response into a number of GUI components, pass those along to the callback
             var allComponents = [];
-            allComponents.push(me.parser.parseNode(wfsResponseRoot, onlineResource.get('url')));
+            allComponents.push(me.parser.parseNode(wfsResponseRoot, onlineResource.get('url'), applicationProfile));
             if (knownLayer && me.knownLayerParser.canParseKnownLayerFeature(queryTarget.get('id'), knownLayer, onlineResource, layer)) {
                 allComponents.push(me.knownLayerParser.parseKnownLayerFeature(queryTarget.get('id'), knownLayer, onlineResource, layer));
             }

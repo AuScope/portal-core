@@ -49,7 +49,7 @@ Ext.define('portal.widgets.panel.recordpanel.GroupPanel', {
         
         //We have to adjust our item count algorithm based on whether
         //we are dealing with a constructed widget or a config object
-        if (this.rendered) {
+        if (this.items instanceof Ext.util.AbstractMixedCollection) {
             this.items.each(function(cmp) {
                 if (!cmp.isHidden()) {
                     visibleItemCount++;

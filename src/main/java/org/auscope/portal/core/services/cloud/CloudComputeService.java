@@ -19,6 +19,8 @@ abstract public class CloudComputeService {
         NovaKeystone,
         /** Connect to an Amazon Web Services instance via EC2 */
         AWSEc2,
+        /** Connect to Raijin NCI HPC */
+        RAIJIN
     }
 
     /**
@@ -284,4 +286,13 @@ abstract public class CloudComputeService {
      * @throws PortalServiceException
      */
     abstract public InstanceStatus getJobStatus(CloudJob job) throws PortalServiceException;
+
+    /**
+     * Return all VM types that can run the specified image
+     * 
+     * @param machineImageId
+     * @return all VM types that can run the specified image
+     * @throws PortalServiceException 
+     */
+    abstract public ComputeType[] getAvailableComputeTypes(String machineImageId) throws PortalServiceException;
 }

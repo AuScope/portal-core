@@ -1,15 +1,15 @@
 package org.auscope.portal.core.services.methodmakers.sissvoc;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.net.URLDecoder;
 
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.test.PortalTestClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import junit.framework.Assert;
-
-@SuppressWarnings("deprecation")
 public class TestSISSVoc2MethodMaker extends PortalTestClass {
     SISSVoc2MethodMaker mm;
 
@@ -20,11 +20,11 @@ public class TestSISSVoc2MethodMaker extends PortalTestClass {
 
     /**
      * Tests the getConceptByLabelMethod performs correctly
-     * 
-     * @throws Exception
+     * @throws URISyntaxException 
+     * @throws UnsupportedEncodingException 
      */
     @Test
-    public void testGetConceptByLabelMethod() throws Exception {
+    public void testGetConceptByLabelMethod() throws URISyntaxException, UnsupportedEncodingException  {
         HttpRequestBase method = mm.getConceptByLabelMethod("http://example.org", "repo", "label");
 
         Assert.assertEquals("http://example.org/getConceptByLabel?repo/label",
@@ -33,11 +33,11 @@ public class TestSISSVoc2MethodMaker extends PortalTestClass {
 
     /**
      * Tests the getConceptByLabelMethod performs correctly
-     * 
-     * @throws Exception
+     * @throws URISyntaxException 
+     * @throws UnsupportedEncodingException 
      */
     @Test
-    public void testGetConceptByUriMethod() throws Exception {
+    public void testGetConceptByUriMethod() throws URISyntaxException, UnsupportedEncodingException {
         HttpRequestBase method = mm.getConceptByUriMethod("http://example.org", "repo", "uri");
 
         Assert.assertEquals("http://example.org/getConceptByURI?repo/uri",
@@ -46,11 +46,11 @@ public class TestSISSVoc2MethodMaker extends PortalTestClass {
 
     /**
      * Tests the getCommodityMethod performs correctly
-     * 
-     * @throws Exception
+     * @throws URISyntaxException 
+     * @throws UnsupportedEncodingException 
      */
     @Test
-    public void testGetCommodityMethod() throws Exception {
+    public void testGetCommodityMethod() throws URISyntaxException, UnsupportedEncodingException {
         HttpRequestBase method = mm.getCommodityMethod("http://example.org", "repo", "label");
 
         Assert.assertEquals("http://example.org/getCommodity?repo/label",

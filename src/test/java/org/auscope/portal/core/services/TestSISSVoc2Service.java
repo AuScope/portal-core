@@ -1,6 +1,7 @@
 package org.auscope.portal.core.services;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpClientInputStream;
@@ -31,11 +32,12 @@ public class TestSISSVoc2Service extends PortalTestClass {
 
     /**
      * Tests the correct calls are made and the response is correctly parsed
-     * 
-     * @throws Exception
+     * @throws PortalServiceException 
+     * @throws IOException 
+     * @throws URISyntaxException 
      */
     @Test
-    public void testGetConceptByLabel() throws Exception {
+    public void testGetConceptByLabel() throws PortalServiceException, URISyntaxException, IOException {
         final String serviceUrl = "http://example.org/opendap";
         final String repository = "repository";
         final String label = "label";
@@ -62,11 +64,12 @@ public class TestSISSVoc2Service extends PortalTestClass {
 
     /**
      * Tests the correct calls are made and response errors are correctly parsed
-     * 
-     * @throws Exception
+     * @throws PortalServiceException 
+     * @throws IOException 
+     * @throws URISyntaxException 
      */
     @Test(expected = PortalServiceException.class)
-    public void testGetConceptByLabelException() throws Exception {
+    public void testGetConceptByLabelException() throws PortalServiceException, URISyntaxException, IOException {
         final String serviceUrl = "http://example.org/opendap";
         final String repository = "repository";
         final String label = "label";
@@ -86,11 +89,12 @@ public class TestSISSVoc2Service extends PortalTestClass {
 
     /**
      * Tests the correct calls are made and the response is correctly parsed
-     * 
-     * @throws Exception
+     * @throws PortalServiceException 
+     * @throws IOException 
+     * @throws URISyntaxException 
      */
     @Test
-    public void testGetCommodityConcepts() throws Exception {
+    public void testGetCommodityConcepts() throws PortalServiceException, IOException, URISyntaxException {
         final String serviceUrl = "http://example.org/opendap";
         final String repository = "repository";
         final String commodityParent = "parent";
@@ -123,11 +127,12 @@ public class TestSISSVoc2Service extends PortalTestClass {
 
     /**
      * Tests the correct calls are made and response errors are correctly parsed
-     * 
-     * @throws Exception
+     * @throws IOException 
+     * @throws URISyntaxException 
+     * @throws PortalServiceException 
      */
     @Test(expected = PortalServiceException.class)
-    public void testGetCommodityConceptsException() throws Exception {
+    public void testGetCommodityConceptsException() throws URISyntaxException, IOException, PortalServiceException {
         final String serviceUrl = "http://example.org/opendap";
         final String repository = "repository";
         final String parent = "paretn";

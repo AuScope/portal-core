@@ -1,6 +1,8 @@
 package org.auscope.portal.core.services.admin;
 
+import java.io.IOException;
 import java.net.ConnectException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -29,11 +31,10 @@ public class TestAdminService extends PortalTestClass {
 
     /**
      * Tests that each URL is tested once
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test
-    public void testExternalConnectivity() throws Exception {
+    public void testExternalConnectivity() throws IOException {
         final URL[] urls = new URL[] {
                 new URL("http://example.fake/path"),
                 new URL("https://example2.fake.secure/path"),
@@ -60,11 +61,10 @@ public class TestAdminService extends PortalTestClass {
 
     /**
      * Tests that each failing URL fails in a predictable way
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test
-    public void testExternalConnectivityErrors() throws Exception {
+    public void testExternalConnectivityErrors() throws IOException {
         final URL[] urls = new URL[] {
                 new URL("http://example.fake/path"),
                 new URL("https://example2.fake.secure/path"),
@@ -92,11 +92,10 @@ public class TestAdminService extends PortalTestClass {
 
     /**
      * Tests CSW connectivity method for correct usage of the service caller and handling of error responses
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test
-    public void testCSWConnectivityErrors() throws Exception {
+    public void testCSWConnectivityErrors() throws IOException {
         final List<CSWServiceItem> items = Arrays.asList(
                 new CSWServiceItem("id-1", "http://example.fake/thisWillWork"),
                 new CSWServiceItem("id-2", "http://example2.fake/thisWillReturnInvalidCount"),
@@ -142,11 +141,11 @@ public class TestAdminService extends PortalTestClass {
 
     /**
      * Tests that WFS connectivity correctly calls services/handles responses
-     * 
-     * @throws Exception
+     * @throws IOException 
+     * @throws URISyntaxException 
      */
     @Test
-    public void testWFSConnectivity() throws Exception {
+    public void testWFSConnectivity() throws IOException, URISyntaxException {
         final List<EndpointAndSelector> endpoints = Arrays.asList(
                 new EndpointAndSelector("http://endpoint1.url/wfs", "wfs:type1"), //will fail to connect
                 new EndpointAndSelector("http://endpoint1.url/wfs", "wfs:type2"), //will be skipped for sharing same endpoint as #1

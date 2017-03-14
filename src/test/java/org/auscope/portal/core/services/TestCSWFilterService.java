@@ -1,9 +1,11 @@
 package org.auscope.portal.core.services;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import org.auscope.portal.core.server.http.DistributedHTTPServiceCallerException;
 import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.csw.CSWServiceItem;
@@ -60,11 +62,11 @@ public class TestCSWFilterService extends PortalTestClass {
 
     /**
      * Test that the function is able to actually load CSW records from multiple services
-     * 
-     * @throws Exception
+     * @throws PortalServiceException 
+     * @throws IOException 
      */
     @Test
-    public void testGetCSWRecordsMultiService() throws Exception {
+    public void testGetCSWRecordsMultiService() throws PortalServiceException, IOException {
         final String docString = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
 
@@ -118,11 +120,11 @@ public class TestCSWFilterService extends PortalTestClass {
 
     /**
      * Test that the function is able to actually load CSW records
-     * 
-     * @throws Exception
+     * @throws IOException 
+     * @throws DistributedHTTPServiceCallerException 
      */
     @Test
-    public void testGetCountMultiService() throws Exception {
+    public void testGetCountMultiService() throws DistributedHTTPServiceCallerException, IOException {
         final String docString = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
         try (final HttpClientInputStream is1 = new HttpClientInputStream(new ByteArrayInputStream(docString.getBytes()), null);
@@ -165,11 +167,11 @@ public class TestCSWFilterService extends PortalTestClass {
 
     /**
      * Test that the function is able to actually load CSW records from multiple services
-     * 
-     * @throws Exception
+     * @throws PortalServiceException 
+     * @throws IOException 
      */
     @Test
-    public void testGetCSWRecordsSingleService() throws Exception {
+    public void testGetCSWRecordsSingleService() throws PortalServiceException, IOException {
         final String docString = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
         try (final HttpClientInputStream is1 = new HttpClientInputStream(new ByteArrayInputStream(docString.getBytes()),
@@ -201,11 +203,11 @@ public class TestCSWFilterService extends PortalTestClass {
 
     /**
      * Test that the function is able to actually load CSW records from multiple services
-     * 
-     * @throws Exception
+     * @throws IOException 
+     * @throws PortalServiceException 
      */
     @Test
-    public void testGetCountSingleService() throws Exception {
+    public void testGetCountSingleService() throws IOException, PortalServiceException {
         final String docString = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
         try (final HttpClientInputStream is1 = new HttpClientInputStream(new ByteArrayInputStream(docString.getBytes()),
@@ -236,8 +238,6 @@ public class TestCSWFilterService extends PortalTestClass {
 
     /**
      * Simple test to ensure that we can fetch the list of CSWServiceItems
-     * 
-     * @throws Exception
      */
     @Test
     public void testGetCSWServices() {

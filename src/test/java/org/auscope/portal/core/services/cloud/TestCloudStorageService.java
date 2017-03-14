@@ -1,8 +1,10 @@
 package org.auscope.portal.core.services.cloud;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -51,14 +53,15 @@ public class TestCloudStorageService extends PortalTestClass {
     }
 
     @Test
-    public void testGetJobFileData() throws Exception {
-        final String myKey = "my/key";
+    public void testGetJobFileData() throws IOException, PortalServiceException  {
+        final String myKey = "my.key";
         final BlobStore mockBlobStore = context.mock(BlobStore.class);
         final Blob mockBlob = context.mock(Blob.class);
         try (final Payload mockPayload = context.mock(Payload.class);
                 final InputStream mockReturnedInputStream = context.mock(InputStream.class)) {
             context.checking(new Expectations() {
                 {
+                    oneOf(mockBlobStoreContext).close();
                     oneOf(mockBlobStoreContext).getBlobStore();
                     will(returnValue(mockBlobStore));
 
@@ -70,7 +73,7 @@ public class TestCloudStorageService extends PortalTestClass {
 
                     oneOf(mockPayload).openStream();
                     will(returnValue(mockReturnedInputStream));
-                    
+
                     allowing(mockReturnedInputStream).close();
                     allowing(mockPayload).close();
                 }
@@ -83,8 +86,8 @@ public class TestCloudStorageService extends PortalTestClass {
     }
 
     @Test
-    public void testGetJobFileMetaData() throws Exception {
-        final String myKey = "my/key";
+    public void testGetJobFileMetaData() throws URISyntaxException, PortalServiceException  {
+        final String myKey = "my.key";
         final BlobStore mockBlobStore = context.mock(BlobStore.class);
 
         final Map<String, String> userMetadata = new HashMap<>();
@@ -94,6 +97,7 @@ public class TestCloudStorageService extends PortalTestClass {
 
         context.checking(new Expectations() {
             {
+                oneOf(mockBlobStoreContext).close();
                 oneOf(mockBlobStoreContext).getBlobStore();
                 will(returnValue(mockBlobStore));
 
@@ -109,13 +113,44 @@ public class TestCloudStorageService extends PortalTestClass {
         Assert.assertEquals(24L, result.getSize());
     }
 
+    @Test
+    public void testGetJobFileSanitation() throws URISyntaxException, PortalServiceException  {
+        final String myKey = "my.key"; //will have . preserved
+        final BlobStore mockBlobStore = context.mock(BlobStore.class);
+
+        final Map<String, String> userMetadata = new HashMap<>();
+        final BaseImmutableContentMetadata contentMetadata = new BaseImmutableContentMetadata("mime/type", 24L, null, null, null, null, null);
+        final StorageMetadata metadata = new BlobMetadataImpl("id", "name", null, new URI("http://example.cloud/file"), "asdsadsasd", new Date(), new Date(), userMetadata, new URI("http://example.cloud/publicfile"), null, contentMetadata);
+
+        job.setStorageBaseKey(null);
+        job.setUser("user");
+        service.setJobPrefix("prefix.san-"); //will get the . removed
+
+        context.checking(new Expectations() {
+            {
+                oneOf(mockBlobStoreContext).close();
+                oneOf(mockBlobStoreContext).getBlobStore();
+                will(returnValue(mockBlobStore));
+
+                oneOf(mockBlobStore).blobMetadata(bucket, "prefix_san-user-0000000013/my.key");
+                will(returnValue(metadata));
+            }
+        });
+
+        CloudFileInformation result = service.getJobFileMetadata(job, myKey);
+
+        Assert.assertEquals("asdsadsasd", result.getFileHash());
+        Assert.assertEquals("name", result.getName());
+        Assert.assertEquals(24L, result.getSize());
+    }
+
     /**
      * Tests that requests for listing files successfully call all dependencies
-     *
-     * @throws Exception
+     * @throws URISyntaxException
+     * @throws PortalServiceException
      */
     @Test
-    public void testListOutputJobFiles() throws Exception {
+    public void testListOutputJobFiles() throws URISyntaxException, PortalServiceException  {
         final BlobStore mockBlobStore = context.mock(BlobStore.class);
 
         final BlobMetadataImpl mockStorageMetadata1 = context.mock(BlobMetadataImpl.class, "mockStorageMetadata1");
@@ -140,6 +175,7 @@ public class TestCloudStorageService extends PortalTestClass {
 
         context.checking(new Expectations() {
             {
+                oneOf(mockBlobStoreContext).close();
                 oneOf(mockBlobStoreContext).getBlobStore();
                 will(returnValue(mockBlobStore));
 
@@ -197,11 +233,10 @@ public class TestCloudStorageService extends PortalTestClass {
 
     /**
      * Tests that requests for uploading files successfully call all dependencies
-     *
-     * @throws Exception
+     * @throws PortalServiceException
      */
     @Test
-    public void testUploadJobFiles() throws Exception {
+    public void testUploadJobFiles() throws PortalServiceException {
         final BlobStore mockBlobStore = context.mock(BlobStore.class);
 
         final Blob mockBlob1 = context.mock(Blob.class, "mockBlob1");
@@ -254,6 +289,7 @@ public class TestCloudStorageService extends PortalTestClass {
 
                 oneOf(mockBlobStore).putBlob(bucket, mockBlob1);
                 oneOf(mockBlobStore).putBlob(bucket, mockBlob2);
+                oneOf(mockBlobStoreContext).close();
             }
         });
 
@@ -261,12 +297,52 @@ public class TestCloudStorageService extends PortalTestClass {
     }
 
     /**
-     * Tests that requests for deleting files successfully call all dependencies
-     *
-     * @throws Exception
+     * Tests that requests for uploading single files successfully call all dependencies
+     * @throws PortalServiceException
      */
     @Test
-    public void testDeleteJobFiles() throws Exception {
+    public void testUploadSingleJobFile() throws PortalServiceException {
+        final BlobStore mockBlobStore = context.mock(BlobStore.class);
+
+        final Blob mockBlob1 = context.mock(Blob.class, "mockBlob1");
+
+        final PayloadBlobBuilder mockBuilder1 = context.mock(PayloadBlobBuilder.class, "mockBuilder1");
+
+        final InputStream mockInputStream = context.mock(InputStream.class);
+        final String fileName = "file.name";
+
+        context.checking(new Expectations() {
+            {
+                oneOf(mockBlobStoreContext).getBlobStore();
+                will(returnValue(mockBlobStore));
+
+                oneOf(mockBlobStore).createContainerInLocation(null, bucket);
+                will(returnValue(true));
+
+                oneOf(mockBlobStore).blobBuilder(jobStorageBaseKey + "/" + fileName);
+                will(returnValue(mockBuilder1));
+
+                allowing(mockBuilder1).contentLength(1L);
+                will(returnValue(mockBuilder1));
+                allowing(mockBuilder1).payload(with(mockInputStream));
+                will(returnValue(mockBuilder1));
+                oneOf(mockBuilder1).build();
+                will(returnValue(mockBlob1));
+
+                oneOf(mockBlobStore).putBlob(bucket, mockBlob1);
+                oneOf(mockBlobStoreContext).close();
+            }
+        });
+
+        service.uploadJobFile(job, fileName, mockInputStream);
+    }
+
+    /**
+     * Tests that requests for deleting files successfully call all dependencies
+     * @throws PortalServiceException
+     */
+    @Test
+    public void testDeleteJobFiles() throws PortalServiceException {
         final BlobStore mockBlobStore = context.mock(BlobStore.class);
 
         context.checking(new Expectations() {
@@ -274,6 +350,7 @@ public class TestCloudStorageService extends PortalTestClass {
                 allowing(mockBlobStoreContext).getBlobStore();
                 will(returnValue(mockBlobStore));
                 oneOf(mockBlobStore).deleteDirectory(bucket, jobStorageBaseKey);
+                oneOf(mockBlobStoreContext).close();
             }
         });
 
@@ -330,9 +407,9 @@ public class TestCloudStorageService extends PortalTestClass {
     }
 
     @Test(expected=PortalServiceException.class)
-    public void testStsRequired() throws Exception {
-        CloudStorageService stsService = new CloudStorageService("dummy1", "dummy2", "dummy3");
-        stsService.setRequireSts(true);
+    public void testStsRequired() throws PortalServiceException {
+        CloudStorageServiceJClouds stsService = new CloudStorageServiceJClouds("dummy1", "dummy2", "dummy3");
+        stsService.setStsRequirement(STSRequirement.Mandatory);
         stsService.getBlobStoreContext(null, null);
     }
 

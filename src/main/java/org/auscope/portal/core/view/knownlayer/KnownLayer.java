@@ -4,6 +4,8 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.io.Serializable;
 
+import org.auscope.portal.core.uifilter.FilterCollection;
+
 /**
  * A known layer is a grouping of CSWRecords representing some form of logical similarity that the registry couldn't provide.
  *
@@ -35,6 +37,9 @@ public class KnownLayer implements Serializable {
     /** URL to proxy data requests through */
     private String proxyUrl;
 
+    /** URL to proxy WMS Get Feature Info requests through */
+    private String proxyGetFeatureInfoUrl;
+
     /** URL to proxy data count requests through */
     private String proxyCountUrl;
 
@@ -63,22 +68,17 @@ public class KnownLayer implements Serializable {
 
     /** Set an order - defaults to name */
     private String order;
-    
+
     /** Whether the layer should be requested as a single tile or many tiles
      * (many is the default).
      */
     private Boolean singleTile = Boolean.FALSE;
-    
-    /** For cases where POSTing an SLD to a WMS service is not possible (eg ArcGIS) 
-     *  (default is not to force and let the JS framework decide based on URL length
-     *  which usually results in a POST)   
-     */
-    private Boolean forceWMSGet = Boolean.FALSE;
 
     /** A URL to use to grab a canned legend graphic for the layer (optional). */
     private String staticLegendUrl;
 
 
+    private FilterCollection filterCollection;
     /**
      * Creates a new KnownLayer
      *
@@ -122,7 +122,7 @@ public class KnownLayer implements Serializable {
 
     /**
      * Sets the human readable name/title of this layer.
-     * 
+     *
      * @param title
      *            the title to set
      */
@@ -132,7 +132,7 @@ public class KnownLayer implements Serializable {
 
     /**
      * Gets the human readable description of this layer.
-     * 
+     *
      * @return the description
      */
     public String getDescription() {
@@ -141,7 +141,7 @@ public class KnownLayer implements Serializable {
 
     /**
      * Sets the human readable description of this layer.
-     * 
+     *
      * @param description
      *            the description to set
      */
@@ -189,7 +189,7 @@ public class KnownLayer implements Serializable {
 
     /**
      * Gets the URL to proxy data requests through
-     * 
+     *
      * @return
      */
     public String getProxyUrl() {
@@ -198,16 +198,24 @@ public class KnownLayer implements Serializable {
 
     /**
      * Sets the URL to proxy data requests through
-     * 
+     *
      * @param proxyUrl
      */
     public void setProxyUrl(String proxyUrl) {
         this.proxyUrl = proxyUrl;
     }
 
+    public String getProxyGetFeatureInfoUrl() {
+        return proxyGetFeatureInfoUrl;
+    }
+
+    public void setProxyGetFeatureInfoUrl(String proxyGetFeatureInfoUrl) {
+        this.proxyGetFeatureInfoUrl = proxyGetFeatureInfoUrl;
+    }
+
     /**
      * Gets the URL to proxy data count requests through
-     * 
+     *
      * @return
      */
     public String getProxyCountUrl() {
@@ -216,7 +224,7 @@ public class KnownLayer implements Serializable {
 
     /**
      * Sets the URL to proxy data count requests through
-     * 
+     *
      * @param proxyCountUrl
      */
     public void setProxyCountUrl(String proxyCountUrl) {
@@ -225,7 +233,7 @@ public class KnownLayer implements Serializable {
 
     /**
      * Sets the URL to proxy style requests through
-     * 
+     *
      * @param proxyUrl
      */
     public void setProxyStyleUrl(String proxyStyleUrl) {
@@ -234,7 +242,7 @@ public class KnownLayer implements Serializable {
 
     /**
      * Gets the URL to proxy style requests through
-     * 
+     *
      * @return
      */
     public String getProxyStyleUrl() {
@@ -243,7 +251,7 @@ public class KnownLayer implements Serializable {
 
     /**
      * Sets the URL to proxy download requests through
-     * 
+     *
      * @param proxyUrl
      */
     public void setProxyDownloadUrl(String proxyDownloadUrl) {
@@ -252,7 +260,7 @@ public class KnownLayer implements Serializable {
 
     /**
      * Gets the URL to proxy download requests through
-     * 
+     *
      * @return
      */
     public String getProxyDownloadUrl() {
@@ -261,7 +269,7 @@ public class KnownLayer implements Serializable {
 
     /**
      * Gets the selector for this known layer
-     * 
+     *
      * @return
      */
     public KnownLayerSelector getKnownLayerSelector() {
@@ -270,7 +278,7 @@ public class KnownLayer implements Serializable {
 
     /**
      * Sets the selector for this known layer
-     * 
+     *
      * @param knownLayerSelector
      */
     public void setKnownLayerSelector(KnownLayerSelector knownLayerSelector) {
@@ -279,7 +287,7 @@ public class KnownLayer implements Serializable {
 
     /**
      * Gets the URL of an icon used to mark any point geometries
-     * 
+     *
      * @return
      */
     public String getIconUrl() {
@@ -288,7 +296,7 @@ public class KnownLayer implements Serializable {
 
     /**
      * Sets the URL of an icon used to mark any point geometries
-     * 
+     *
      * @param iconUrl
      */
     public void setIconUrl(String iconUrl) {
@@ -297,7 +305,7 @@ public class KnownLayer implements Serializable {
 
     /**
      * Gets the color of a polygon used to mark any polygon geometries
-     * 
+     *
      * @return
      */
     public String getPolygonColor() {
@@ -306,7 +314,7 @@ public class KnownLayer implements Serializable {
 
     /**
      * Sets the color of a polygon used to mark any polygon geometries
-     * 
+     *
      * @param iconUrl
      */
     public void setPolygonColor(String polygonColor) {
@@ -315,7 +323,7 @@ public class KnownLayer implements Serializable {
 
     /**
      * Gets the offset in pixels of the location where the icon will be anchored to the map
-     * 
+     *
      * @return
      */
     public Point getIconAnchor() {
@@ -324,7 +332,7 @@ public class KnownLayer implements Serializable {
 
     /**
      * Sets the offset in pixels of the location where the icon will be anchored to the map
-     * 
+     *
      * @param iconAnchor
      */
     public void setIconAnchor(Point iconAnchor) {
@@ -333,7 +341,7 @@ public class KnownLayer implements Serializable {
 
     /**
      * Gets the size of the icon in pixels
-     * 
+     *
      * @return
      */
     public Dimension getIconSize() {
@@ -342,7 +350,7 @@ public class KnownLayer implements Serializable {
 
     /**
      * Sets the size of the icon in pixels
-     * 
+     *
      * @param iconSize
      */
     public void setIconSize(Dimension iconSize) {
@@ -362,7 +370,7 @@ public class KnownLayer implements Serializable {
     }
 
     public void setOrder(String order) {
-    	this.order = (order == null) ? "" : order;
+        this.order = (order == null) ? "" : order;
     }
 
     public Boolean getSingleTile() {
@@ -372,14 +380,6 @@ public class KnownLayer implements Serializable {
     public void setSingleTile(Boolean singleTile) {
         this.singleTile = singleTile;
     }
-
-	public Boolean getForceWMSGet() {
-		return forceWMSGet;
-	}
-
-	public void setForceWMSGet(Boolean forceWMSGet) {
-		this.forceWMSGet = forceWMSGet;
-	}
 
     public String getStaticLegendUrl() {
         return staticLegendUrl;
@@ -400,5 +400,13 @@ public class KnownLayer implements Serializable {
                 + ", knownLayerSelector=" + knownLayerSelector + ", iconUrl=" + iconUrl + ", polygonColor="
                 + polygonColor + ", iconAnchor=" + iconAnchor + ", iconSize=" + iconSize + ", feature_count="
                 + feature_count + ", order=" + order + ", singleTile=" + singleTile + ", staticLegendUrl=" + staticLegendUrl + "]";
+    }
+
+    public FilterCollection getFilterCollection() {
+        return filterCollection;
+    }
+
+    public void setFilterCollection(FilterCollection filterCollection) {
+        this.filterCollection = filterCollection;
     }
 }

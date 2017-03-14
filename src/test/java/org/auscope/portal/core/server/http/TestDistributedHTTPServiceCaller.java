@@ -1,5 +1,6 @@
 package org.auscope.portal.core.server.http;
 
+import java.io.IOException;
 import java.net.ConnectException;
 import java.util.Arrays;
 import java.util.List;
@@ -7,16 +8,18 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.Assert;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.jmock.Expectations;
+import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-@SuppressWarnings("deprecation")
 public class TestDistributedHTTPServiceCaller extends PortalTestClass {
+    protected final Log logger = LogFactory.getLog(getClass());
 
     private HttpRequestBase mockMethod1 = context.mock(HttpRequestBase.class, "method1");
     private HttpRequestBase mockMethod2 = context.mock(HttpRequestBase.class, "method2");
@@ -33,6 +36,12 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
     @Before
     public void initialise() {
         threadPool = Executors.newFixedThreadPool(5); //don't adjust this, most of the tests are built on the assumption of 5 threads
+    }
+
+    @After
+    public void teardDown() throws InterruptedException {
+        threadPool.shutdownNow();
+        threadPool.awaitTermination(5000L, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -52,11 +61,10 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
 
     /**
      * Tests that exceptions in the HTTP call will result in exceptions in the next
-     *
-     * @throws Exception
+     * @throws IOException
      */
     @Test
-    public void testReturnException() throws Exception {
+    public void testReturnException() throws IOException  {
         final ConnectException expectedError = new ConnectException("fooBARbaz");
         final DistributedHTTPServiceCaller dsc = new DistributedHTTPServiceCaller(Arrays.asList(mockMethod1),
                 mockServiceCaller);
@@ -82,11 +90,10 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
 
     /**
      * Tests that calls to next will block
-     *
-     * @throws Exception
+     * @throws IOException
      */
     @Test
-    public void testBlockingNext() throws Exception {
+    public void testBlockingNext() throws IOException {
         final long delay2ms = 3000;
         final long timeEpsilonMs = 600; //This should be an order of magnitude smaller than the above delays
         final ConnectException expectedError = new ConnectException("fooBARbaz");
@@ -135,11 +142,10 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
 
     /**
      * Tests that calls to next will return the NEXT item to complete
-     *
-     * @throws Exception
+     * @throws IOException
      */
     @Test
-    public void testFastestOrdering() throws Exception {
+    public void testFastestOrdering() throws IOException {
         final long delay1ms = 2400;
         final long delay2ms = 600;
         final long delay3ms = 1500;
@@ -185,11 +191,10 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
 
     /**
      * Tests that calls to abort actually work...
-     *
-     * @throws Exception
+     * @throws IOException
      */
     @Test
-    public void testAbort() throws Exception {
+    public void testAbort() throws IOException {
         //We want a list with more methods than the threadpool has threads
         final List<HttpRequestBase> bigMethodList = Arrays.asList(mockMethod1, mockMethod1, mockMethod1, mockMethod1,
                 mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1,
@@ -206,12 +211,20 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
         //start our threads executing (we need to use this class to pickup any failures)
         dsc.beginCallingServices(threadPool);
 
-        Thread.sleep(150);//ensure that the first 5 startup (the size of our threadpool)
+        try {
+            Thread.sleep(150);
+        } catch (InterruptedException e) {
+            Assert.fail("testAbort unexpectedly aborted");
+        }//ensure that the first 5 startup (the size of our threadpool)
 
         dsc.dispose(); //abort everything
 
         //Wait for the threadpool to shutdown
         threadPool.shutdown();
-        Assert.assertTrue("Threadpool didnt shutdown!!", threadPool.awaitTermination(3000, TimeUnit.MILLISECONDS));
+        try {
+            Assert.assertTrue("Threadpool didnt shutdown!!", threadPool.awaitTermination(3000, TimeUnit.MILLISECONDS));
+        } catch (InterruptedException e) {
+            Assert.fail("Threadpool shutdown unexpectedly aborted");
+        }
     }
 }

@@ -51,7 +51,6 @@ public class SOSService {
      *            - optional - FilterBoundingBox object -> convert to 52NorthSOS BBOX format : maxlat,minlon,minlat,maxlon(,srsURI) srsURI format :
      *            "http://www.opengis.net/def/crs/EPSG/0/"+epsg code
      * @return HttpMethodBase object
-     * @throws Exception
      */
     protected HttpRequestBase generateSOSRequest(String sosUrl, String request, String featureOfInterest,
             Date beginPosition, Date endPosition, FilterBoundingBox bbox) {

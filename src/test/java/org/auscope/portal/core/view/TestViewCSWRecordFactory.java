@@ -1,5 +1,6 @@
 package org.auscope.portal.core.view;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +30,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
     private CSWContact mockContact = context.mock(CSWContact.class);
 
     @Test
-    public void testToView() throws Exception {
+    public void testToView() throws MalformedURLException  {
         ViewCSWRecordFactory factory = new ViewCSWRecordFactory();
 
         //for mockCSWRecord
@@ -52,6 +53,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         final String orName = "ascom";
         final String orDesc = "desc";
         final OnlineResourceType orType = OnlineResourceType.WFS;
+        final String applicationProfile = "Esri:ArcGIS Server/x";
 
         final double bboxNorth = 10;
         final double bboxSouth = 5;
@@ -86,6 +88,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         onlineResExpectation.put("description", orDesc);
         onlineResExpectation.put("type", orType.name());
         onlineResExpectation.put("version", version);
+        onlineResExpectation.put("applicationProfile", applicationProfile);
 
         geoExpectation.put("type", "bbox");
         geoExpectation.put("eastBoundLongitude", bboxEast);
@@ -137,6 +140,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         onlineResExpectation_1.put("description", orDesc_1);
         onlineResExpectation_1.put("type", orType_1.name());
         onlineResExpectation_1.put("version", version);
+        onlineResExpectation_1.put("applicationProfile", applicationProfile);
 
         context.checking(new Expectations() {
             {
@@ -223,6 +227,8 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 will(returnValue(orUrl));
                 allowing(mockOnlineRes).getVersion();
                 will(returnValue(version));
+                allowing(mockOnlineRes).getApplicationProfile();
+                will(returnValue(applicationProfile));
 
                 allowing(mockOnlineRes_1).getDescription();
                 will(returnValue(orDesc_1));
@@ -234,6 +240,8 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 will(returnValue(orUrl_1));
                 allowing(mockOnlineRes_1).getVersion();
                 will(returnValue(version));
+                allowing(mockOnlineRes_1).getApplicationProfile();
+                will(returnValue(applicationProfile));
 
                 allowing(mockResponsibleParty).getOrganisationName();
                 will(returnValue(contactOrg));
@@ -269,6 +277,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         final String orName = "ascom";
         final String orDesc = "desc";
         final OnlineResourceType orType = OnlineResourceType.WFS;
+        final String applicationProfile = "Esri:ArcGIS Server/x";
 
         final double bboxNorth = 10;
         final double bboxSouth = 5;
@@ -351,6 +360,8 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 will(returnValue(orType));
                 allowing(mockOnlineRes).getLinkage();
                 will(returnValue(orUrl));
+                allowing(mockOnlineRes).getApplicationProfile();
+                will(returnValue(applicationProfile));
 
                 allowing(mockResponsibleParty).getOrganisationName();
                 will(returnValue(contactOrg));
@@ -368,11 +379,10 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
 
     /**
      * Tests that the view correctly handles a null responsible party contact.
-     *
-     * @throws Exception
+     * @throws MalformedURLException 
      */
     @Test
-    public void testToViewNoResponsibleParty() throws Exception {
+    public void testToViewNoResponsibleParty() throws MalformedURLException {
         ViewCSWRecordFactory factory = new ViewCSWRecordFactory();
 
         final String serviceName = "sn";
@@ -391,6 +401,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         final String orName = "ascom";
         final String orDesc = "desc";
         final OnlineResourceType orType = OnlineResourceType.WFS;
+        final String applicationProfile = "Esri:ArcGIS Server/x";
 
         final double bboxNorth = 10;
         final double bboxSouth = 5;
@@ -423,6 +434,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         onlineResExpectation.put("description", orDesc);
         onlineResExpectation.put("type", orType.name());
         onlineResExpectation.put("version", version);
+        onlineResExpectation.put("applicationProfile", applicationProfile);
 
         geoExpectation.put("type", "bbox");
         geoExpectation.put("eastBoundLongitude", bboxEast);
@@ -482,6 +494,8 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 will(returnValue(orUrl));
                 allowing(mockOnlineRes).getVersion();
                 will(returnValue(version));
+                allowing(mockOnlineRes).getApplicationProfile();
+                will(returnValue(applicationProfile));
 
                 allowing(mockResponsibleParty).getOrganisationName();
                 will(returnValue(contactOrg));

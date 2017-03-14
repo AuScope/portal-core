@@ -3,6 +3,7 @@ package org.auscope.portal.core.server.http.download;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.zip.ZipEntry;
@@ -30,7 +31,7 @@ public class TestDownloadTracker extends PortalTestClass {
     }
 
     @Test
-    public void testDownloadAll() throws Exception {
+    public void testDownloadAll() throws IOException, URISyntaxException, InCompleteDownloadException {
 
         final String[] serviceUrls = {
                 "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://nvclwebservices.vm.csiro.au:80/geoserverBH/wfs",
@@ -76,7 +77,11 @@ public class TestDownloadTracker extends PortalTestClass {
         while (downloadTracker.getProgress() != Progression.COMPLETED
                 && System.currentTimeMillis() < (startTime + 15000)) {
             synchronized (this) {
-                this.wait(2000);
+                try {
+                    this.wait(2000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException("testDownloadAll interrupted. Aborting test.");
+                }
             }
         }
 
@@ -97,7 +102,7 @@ public class TestDownloadTracker extends PortalTestClass {
     }
 
     @Test
-    public void testDownloadAllWithPaging() throws Exception {
+    public void testDownloadAllWithPaging() throws IOException, URISyntaxException, InCompleteDownloadException {
 
         final ServiceConfigurationItem scItem = new ServiceConfigurationItem("exampleTestId", "exampleTest.com/test",
                 true);
@@ -156,7 +161,11 @@ public class TestDownloadTracker extends PortalTestClass {
         while (downloadTracker.getProgress() != Progression.COMPLETED
                 && System.currentTimeMillis() < (startTime + 15000)) {
             synchronized (this) {
-                this.wait(2000);
+                try {
+                    this.wait(2000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException("testDownloadAllWithPaging interrupted. Aborting test.");
+                }
             }
         }
 
@@ -181,7 +190,7 @@ public class TestDownloadTracker extends PortalTestClass {
     }
 
     @Test
-    public void testDownloadWithFailure() throws Exception {
+    public void testDownloadWithFailure() throws IOException, URISyntaxException, InCompleteDownloadException {
         final String[] serviceUrls = {
                 "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://nvclwebservices.vm.csiro.au:80/geoserverBH/wfs",
                 "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://nvclwebservices.vm.csiro.au:80/geoserverBH/wfs"};
@@ -222,7 +231,11 @@ public class TestDownloadTracker extends PortalTestClass {
         while (downloadTracker.getProgress() != Progression.COMPLETED
                 && System.currentTimeMillis() < (startTime + 15000)) {
             synchronized (this) {
-                this.wait(2000);
+                try {
+                    this.wait(2000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException("testDownloadWithFailure interrupted. Aborting test.");
+                }
             }
         }
 

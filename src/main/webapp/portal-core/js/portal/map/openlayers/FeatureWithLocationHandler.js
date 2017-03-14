@@ -14,7 +14,7 @@ portal.map.openlayers.FeatureWithLocationHandler = OpenLayers.Class(OpenLayers.H
      * of the event handler
      */
     lastHandledEvent : null,
-    mouseDragFlag: true,
+    mouseDragFlag: false,
     downX: 0,
     downY: 0,
     handle : function(event) {
@@ -28,7 +28,7 @@ portal.map.openlayers.FeatureWithLocationHandler = OpenLayers.Class(OpenLayers.H
         if (!handled) {
             var type = event.type;
             if (type === 'click' && !this.mouseDragFlag) {
-                handled = true;            	
+                handled = true;                
                 this.callback('click', [null, event]);                
             } else if (type === 'mousedown') {
                 this.downX = event.xy.x;

@@ -8,12 +8,14 @@ import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.namespaces.CSWNamespaceContext;
 import org.auscope.portal.core.util.DOMUtil;
 import org.w3c.dom.Document;
@@ -58,19 +60,23 @@ public class CSWRecordTransformer {
     private static final String DATASETURIEXPRESSION = "gmd:dataSetURI/gco:CharacterString";
     private static final String SUPPLEMENTALINFOEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:supplementalInformation/gco:CharacterString";
     private static final String LANGUAGEEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:language/gco:CharacterString";
-    private static final String OTHERCONSTRAINTSEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_LegalConstraints/gmd:otherConstraints/gco:CharacterString";
+    private static final String OTHERCONSTRAINTSEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_LegalConstraints/(gmd:otherConstraints/gco:CharacterString | gmd:reference/gmd:CI_Citation/gmd:title/gco:CharacterString)";
     private static final String DATAQUALITYSTATEMENTEXPRESSION = "gmd:dataQualityInfo/gmd:DQ_DataQuality/gmd:lineage/gmd:LI_Lineage/gmd:statement/gco:CharacterString";
     private static final String LAYERNAME = "gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource/gmd:name/gco:CharacterString";
 
     /**
      * Creates a new instance of this class and generates an empty document that will be used for constructing DOM.
-     *
-     * @throws Exception
+     * @throws ParserConfigurationException 
      */
-    public CSWRecordTransformer() throws Exception {
+    public CSWRecordTransformer() throws PortalServiceException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true); // never forget this!
-        DocumentBuilder builder = factory.newDocumentBuilder();
+        DocumentBuilder builder;
+        try {
+            builder = factory.newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
+            throw new PortalServiceException(e.getMessage(),e);
+        }
 
         //Build an empty document and a simple mdMetadataNode template
         this.document = builder.newDocument();

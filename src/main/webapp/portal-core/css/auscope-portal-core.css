@@ -222,3 +222,22 @@
 .fa-gray-icon {
     color: #3f3f3f;
 }
+
+/*See AUS-2754 - this ensures the DD ghost displays in full*/
+.x-dd-drag-ghost>.x-panel-header {
+    position: relative!important;
+}
+
+/*See AUS-2754 - this draws our DD highlight*/
+.recordpanel-insertabove {
+    border-top-width: 2px;
+    border-top-style: solid;
+    border-top-color: #157FCC;
+}
+
+/*See AUS-2754 - this draws our DD highlight*/
+.recordpanel-insertbelow {
+    border-bottom-width: 2px;
+    border-bottom-style: solid;
+    border-bottom-color: #157FCC;
+}

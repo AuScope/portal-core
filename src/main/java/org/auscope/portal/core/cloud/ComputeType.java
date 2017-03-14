@@ -28,6 +28,11 @@ public class ComputeType implements Serializable {
     /** How much does the Ephemeral disk of this compute type offer (in GB) */
     private Integer ephemeralDiskGB;
 
+    public ComputeType(String id, int vcpus, int ramMB) {
+        this.id=id;
+        this.vcpus=vcpus;
+        this.ramMB=ramMB;
+    }
     /**
      * 
      * @param id

@@ -9,7 +9,7 @@ import org.jclouds.blobstore.BlobStoreContext;
  * @author fri096
  *
  */
-public class MockCloudStorageService extends CloudStorageService {
+public class MockCloudStorageService extends CloudStorageServiceJClouds {
 
     private BlobStoreContext mockBlobStoreContext;
 

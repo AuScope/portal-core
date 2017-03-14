@@ -26,11 +26,10 @@ public class TestJobStatusMonitor extends PortalTestClass {
 
     /**
      * Tests that the execution of VGLJobStatusMonitor task run as expected.
-     * 
-     * @throws Exception
+     * @throws JobStatusException 
      */
     @Test
-    public void testExecuteInternal() throws Exception {
+    public void testExecuteInternal() throws JobStatusException {
         final CloudJob job1 = new CloudJob(1);
         job1.setStatus("s1");
 
@@ -59,11 +58,10 @@ public class TestJobStatusMonitor extends PortalTestClass {
 
     /**
      * Tests that exception caused by job status change handler won't impact the status change handling for other job(s) being processed.
-     * 
-     * @throws Exception
+     * @throws JobStatusException 
      */
     @Test(expected = JobStatusException.class)
-    public void testExecuteInternal_Exception() throws Exception {
+    public void testExecuteInternal_Exception() throws JobStatusException {
         final CloudJob job1 = new CloudJob(1);
         job1.setStatus("s1");
 

@@ -1,15 +1,19 @@
 package org.auscope.portal.core.services.responses.wcs;
 
 import java.io.Serializable;
+import java.text.ParseException;
 
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.services.namespaces.WCSNamespaceContext;
+import org.auscope.portal.core.services.responses.ows.OWSException;
 import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
 import org.auscope.portal.core.util.DOMUtil;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -106,10 +110,11 @@ public class DescribeCoverageRecord implements Serializable {
      *            the node
      * @param xPath
      *            Should be configured with the WCSNamespaceContext
-     * @throws Exception
-     *             the exception
+     * @throws XPathExpressionException 
+     * @throws ParseException 
+     * @throws DOMException 
      */
-    private DescribeCoverageRecord(Node node, WCSNamespaceContext nc) throws Exception {
+    private DescribeCoverageRecord(Node node, WCSNamespaceContext nc) throws XPathExpressionException, DOMException, ParseException {
         Node tempNode = null;
         NodeList tempNodeList = null;
 
@@ -305,10 +310,12 @@ public class DescribeCoverageRecord implements Serializable {
      * @param doc
      *            the input xml
      * @return the describe coverage record[]
-     * @throws Exception
-     *             the exception
+     * @throws OWSException 
+     * @throws XPathExpressionException 
+     * @throws ParseException 
+     * @throws DOMException 
      */
-    public static DescribeCoverageRecord[] parseRecords(Document doc) throws Exception {
+    public static DescribeCoverageRecord[] parseRecords(Document doc) throws OWSException, XPathExpressionException, DOMException, ParseException {
         //This is to make sure we actually receive a valid response
         OWSExceptionParser.checkForExceptionResponse(doc);
 

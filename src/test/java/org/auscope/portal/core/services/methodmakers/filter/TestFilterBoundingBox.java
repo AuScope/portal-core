@@ -2,10 +2,9 @@ package org.auscope.portal.core.services.methodmakers.filter;
 
 import org.auscope.portal.core.server.OgcServiceProviderType;
 import org.auscope.portal.core.test.PortalTestClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import junit.framework.Assert;
 
 /**
  * Unit tests for FilterBoundingBox
@@ -13,7 +12,6 @@ import junit.framework.Assert;
  * @author Josh Vote
  *
  */
-@SuppressWarnings("deprecation")
 public class TestFilterBoundingBox extends PortalTestClass {
 
     private static void assertBBoxEquals(FilterBoundingBox expected, FilterBoundingBox actual, double delta) {
@@ -90,18 +88,18 @@ public class TestFilterBoundingBox extends PortalTestClass {
     @Test
     public void testAttemptParseFromJSONArcGis() {
         FilterBoundingBox fbb =  FilterBoundingBox.attemptParseFromJSON(json.toString(), OgcServiceProviderType.ArcGis);
-        Assert.assertEquals(fbb.getLowerCornerPoints()[0], south);
-        Assert.assertEquals(fbb.getLowerCornerPoints()[1], west);
-        Assert.assertEquals(fbb.getUpperCornerPoints()[0],north);
-        Assert.assertEquals(fbb.getUpperCornerPoints()[1],east);
+        Assert.assertEquals(fbb.getLowerCornerPoints()[0], south, 0.001);
+        Assert.assertEquals(fbb.getLowerCornerPoints()[1], west, 0.001);
+        Assert.assertEquals(fbb.getUpperCornerPoints()[0],north, 0.001);
+        Assert.assertEquals(fbb.getUpperCornerPoints()[1],east, 0.001);
     }
     @Test
     public void testAttemptParseFromJSONGeoserver() {
         FilterBoundingBox fbb =  FilterBoundingBox.attemptParseFromJSON(json.toString(), OgcServiceProviderType.GeoServer);
-        Assert.assertEquals(fbb.getLowerCornerPoints()[0], west);
-        Assert.assertEquals(fbb.getLowerCornerPoints()[1], south);
-        Assert.assertEquals(fbb.getUpperCornerPoints()[0], east);
-        Assert.assertEquals(fbb.getUpperCornerPoints()[1], north);
+        Assert.assertEquals(fbb.getLowerCornerPoints()[0], west, 0.001);
+        Assert.assertEquals(fbb.getLowerCornerPoints()[1], south, 0.001);
+        Assert.assertEquals(fbb.getUpperCornerPoints()[0], east, 0.001);
+        Assert.assertEquals(fbb.getUpperCornerPoints()[1], north, 0.001);
     }
 
 }

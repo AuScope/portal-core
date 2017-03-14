@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -24,12 +22,6 @@ import org.auscope.portal.core.cloud.CloudJob;
 import org.auscope.portal.core.cloud.ComputeType;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.util.TextUtil;
-import org.jclouds.ContextBuilder;
-import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.domain.Hardware;
-import org.jclouds.compute.domain.Processor;
-import org.jclouds.compute.domain.Volume;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
@@ -78,23 +70,7 @@ public class CloudComputeServiceAws extends CloudComputeService {
 
     private String devSecretKey;
 
-    private boolean requireSts=false;
-
-    /**
-     * Returns whether AWS cross account authorization is mandatory.
-     * @return whether AWS cross account authorization is mandatory.
-     */
-    public boolean isRequireSts() {
-      return requireSts;
-    }
-
-    /**
-     * Sets whether AWS cross account authorization is mandatory.
-     * @param requireSts if true, AWS cross account authorization will be mandatory.
-     */
-    public void setRequireSts(boolean requireSts) {
-      this.requireSts = requireSts;
-    }
+    private STSRequirement stsRequirement  = STSRequirement.Permissable;
 
     /**
      * Creates a new instance with the specified credentials (no endpoint
@@ -141,7 +117,28 @@ public class CloudComputeServiceAws extends CloudComputeService {
 
     }
 
+    /**
+     * Returns whether AWS cross account authorization is mandatory, optional or forced off
+     * @return
+     */
+    public STSRequirement getStsRequirement() {
+        return stsRequirement;
+    }
+
+    /**
+     * Sets whether AWS cross account authorization is mandatory, optional or forced off
+     * @param stsRequirement
+     */
+    public void setStsRequirement(STSRequirement stsRequirement) {
+        this.stsRequirement = stsRequirement;
+    }
+
     protected AWSCredentials getCredentials(String arn, String clientSecret) throws PortalServiceException {
+        if (stsRequirement == STSRequirement.ForceNone) {
+            arn = null;
+            clientSecret = null;
+        }
+
         if (!TextUtil.isNullOrEmpty(arn)) {
             if (TextUtil.isNullOrEmpty(clientSecret))
                 throw new PortalServiceException("Job ARN set, but no client secret");
@@ -156,7 +153,7 @@ public class CloudComputeServiceAws extends CloudComputeService {
             }
 
             AssumeRoleRequest assumeRequest = new AssumeRoleRequest().withRoleArn(arn).withDurationSeconds(3600)
-                    .withExternalId(clientSecret).withRoleSessionName("anvgl");
+                    .withExternalId(clientSecret).withRoleSessionName("vgl");
 
             AssumeRoleResult assumeResult = stsClient.assumeRole(assumeRequest);
 
@@ -166,7 +163,7 @@ public class CloudComputeServiceAws extends CloudComputeService {
             return new BasicSessionCredentials(assumeResult.getCredentials().getAccessKeyId(),
                     assumeResult.getCredentials().getSecretAccessKey(),
                     assumeResult.getCredentials().getSessionToken());
-        } else if (isRequireSts()) {
+        } else if (stsRequirement == STSRequirement.Mandatory) {
             throw new PortalServiceException("AWS cross account authorization required, but not configured");
         } else if (!TextUtil.isAnyNullOrEmpty(devAccessKey, devSecretKey)) {
             return new BasicAWSCredentials(devAccessKey, devSecretKey);
@@ -266,7 +263,14 @@ public class CloudComputeServiceAws extends CloudComputeService {
             // Placement(getZone()));
         }
 
-        RunInstancesResult runInstances = ec2.runInstances(runInstancesRequest);
+        // Wrap any AWS exception into a PortalServiceException
+        RunInstancesResult runInstances;
+        try {
+            runInstances = ec2.runInstances(runInstancesRequest);
+        }
+        catch (AmazonServiceException ex) {
+            throw new PortalServiceException("AWS RunInstances request failed", ex);
+        }
 
         // TAG EC2 INSTANCES
         List<Instance> instances = runInstances.getReservation().getInstances();
@@ -276,7 +280,7 @@ public class CloudComputeServiceAws extends CloudComputeService {
         Instance instance = instances.get(0);
         CreateTagsRequest createTagsRequest = new CreateTagsRequest();
         createTagsRequest.withResources(instance.getInstanceId()) //
-                .withTags(new Tag("Name", "ANVGL - Job: " + job.getId()));
+                .withTags(new Tag("Name", "VGL - Job: " + job.getId()));
         ec2.createTags(createTagsRequest);
 
         return instance.getInstanceId();
@@ -298,72 +302,35 @@ public class CloudComputeServiceAws extends CloudComputeService {
         ec2.terminateInstances(terminateInstancesRequest);
     }
 
+    final static ComputeType[] COMPUTE_TYPES = {
+            new ComputeType("x1.32xlarge", 128, 1920000),
+            new ComputeType("c4.8xlarge", 36, 60000),
+            new ComputeType("c4.4xlarge", 16, 30000),
+            new ComputeType("c4.2xlarge", 8, 15000),
+            new ComputeType("c4.xlarge", 4, 7500),
+            new ComputeType("c4.large", 2, 3750),
+            new ComputeType("m4.10xlarge", 40, 160000),
+            new ComputeType("m4.4xlarge", 16, 64000),
+            new ComputeType("m4.2xlarge", 8, 32000),
+            new ComputeType("m4.xlarge", 4, 16000),
+            new ComputeType("m4.large", 2, 8000)
+    };
+
     /**
      * An array of compute types that are available through this compute service
      */
     @Override
     public ComputeType[] getAvailableComputeTypes(Integer minimumVCPUs, Integer minimumRamMB,
             Integer minimumRootDiskGB) {
-        // InstanceType[] types = InstanceType.values();
 
-        Properties overrides = new Properties();
+        ArrayList<ComputeType> result = new ArrayList<>();
 
-        ContextBuilder builder = ContextBuilder.newBuilder("aws-ec2").overrides(overrides);
-
-        if (devAccessKey != null && devSecretKey != null)
-            builder.credentials(devAccessKey, devSecretKey);
-
-        if (getApiVersion() != null) {
-            builder.apiVersion(getApiVersion());
-        }
-
-        if (getEndpoint() != null) {
-            builder.endpoint(getEndpoint());
-        }
-
-        try (ComputeServiceContext context = builder.buildView(ComputeServiceContext.class)) {
-            ComputeService computeService = context.getComputeService();
-            Set<? extends Hardware> hardwareSet = computeService.listHardwareProfiles();
-
-            List<ComputeType> computeTypes = new ArrayList<>();
-
-            for (Hardware hw : hardwareSet) {
-                ComputeType ct = new ComputeType(hw.getId());
-
-                ct.setDescription(hw.getName());
-                double vCpus = 0;
-                for (Processor p : hw.getProcessors()) {
-                    vCpus += p.getCores();
-                }
-                ct.setVcpus((int) vCpus);
-                ct.setRamMB(hw.getRam());
-
-                double rootDiskGB = 0;
-                double ephemeralDiskGB = 0;
-                for (Volume v : hw.getVolumes()) {
-                    if (v.isBootDevice()) {
-                        rootDiskGB += v.getSize();
-                    } else {
-                        ephemeralDiskGB += v.getSize();
-                    }
-                }
-                ct.setRootDiskGB((int) rootDiskGB);
-                ct.setEphemeralDiskGB((int) ephemeralDiskGB);
-
-                // Skip anything that doesn't match our filters
-                if (minimumVCPUs != null && minimumVCPUs > ct.getVcpus()) {
-                    continue;
-                } else if (minimumRamMB != null && minimumRamMB > ct.getRamMB()) {
-                    continue;
-                } else if (minimumRootDiskGB != null && minimumRootDiskGB > ct.getRootDiskGB()) {
-                    continue;
-                }
-
-                computeTypes.add(ct);
+        for (ComputeType type : COMPUTE_TYPES) {
+            if(    (minimumVCPUs == null || type.getVcpus()>= minimumVCPUs) && (minimumRamMB == null || type.getRamMB()>= minimumRamMB)) {
+                result.add(type);
             }
-
-            return computeTypes.toArray(new ComputeType[computeTypes.size()]);
         }
+        return result.toArray(new ComputeType[result.size()]);
     }
 
     /**
@@ -414,7 +381,8 @@ public class CloudComputeServiceAws extends CloudComputeService {
         }
 
         if (StringUtils.isEmpty(job.getComputeInstanceId())) {
-            throw new PortalServiceException("No compute instance ID has been set");
+            logger.debug("Unexpected missing job ID in getJobStatus(). Will return 'pending'. Local status: "+job.getStatus());
+            return InstanceStatus.Pending;
         }
 
         DescribeInstanceStatusRequest request = new DescribeInstanceStatusRequest();
@@ -456,5 +424,12 @@ public class CloudComputeServiceAws extends CloudComputeService {
         } catch (Exception ex) {
             throw new PortalServiceException("Unable to lookup status code for :" + job.getComputeInstanceId(), ex);
         }
+    }
+
+    @Override
+    public ComputeType[] getAvailableComputeTypes(String machineImageId) throws PortalServiceException {
+        // Carsten: As far as I know AWS images have no specific limitation on what ComputeType can run them. To be implemented properly if this
+        //          turns out to be wrong
+        return getAvailableComputeTypes();
     }
 }

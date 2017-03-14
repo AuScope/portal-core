@@ -18,11 +18,10 @@ public class TestFileIOUtil extends PortalTestClass {
 
     /**
      * Tests closeQuietely works as intended
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test
-    public void testCloseQuietly() throws Exception {
+    public void testCloseQuietly() throws IOException {
         context.checking(new Expectations() {
             {
                 oneOf(mockInputStream).close();
@@ -34,11 +33,10 @@ public class TestFileIOUtil extends PortalTestClass {
 
     /**
      * Tests closeQuietely works as intended when an error is thrown
-     * 
-     * @throws Exception
+     * @throws IOException 
      */
     @Test
-    public void testCloseQuietlyError() throws Exception {
+    public void testCloseQuietlyError() throws IOException {
         context.checking(new Expectations() {
             {
                 oneOf(mockInputStream).close();
@@ -51,8 +49,6 @@ public class TestFileIOUtil extends PortalTestClass {
 
     /**
      * Tests closeQuietely works as intended when a null reference is passed
-     * 
-     * @throws Exception
      */
     @Test
     public void testCloseQuietlyNull() {

@@ -3,6 +3,7 @@ package org.auscope.portal.core.services;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +35,7 @@ public class TestWCSService extends PortalTestClass {
     }
 
     @Test
-    public void testGetCoverage() throws Exception {
+    public void testGetCoverage() throws PortalServiceException, URISyntaxException, IOException {
         final String serviceUrl = "http://example.org/wcs";
         final String coverageName = "coverage";
         final String downloadFormat = "geotiff";
@@ -65,7 +66,7 @@ public class TestWCSService extends PortalTestClass {
     }
 
     @Test(expected = PortalServiceException.class)
-    public void testGetCoverageException() throws Exception {
+    public void testGetCoverageException() throws PortalServiceException, URISyntaxException, IOException {
         final String serviceUrl = "http://example.org/wcs";
         final String coverageName = "coverage";
         final String downloadFormat = "geotiff";
@@ -93,7 +94,7 @@ public class TestWCSService extends PortalTestClass {
     }
 
     @Test
-    public void testDescribeCoverage() throws Exception {
+    public void testDescribeCoverage() throws PortalServiceException, URISyntaxException, IOException {
         final String serviceUrl = "http://example.org/wcs";
         final String coverageName = "coverage";
 
@@ -120,7 +121,7 @@ public class TestWCSService extends PortalTestClass {
     }
 
     @Test(expected = PortalServiceException.class)
-    public void testDescribeCoverageOwsError() throws Exception {
+    public void testDescribeCoverageOwsError() throws PortalServiceException, URISyntaxException, IOException {
         final String serviceUrl = "http://example.org/wcs";
         final String coverageName = "coverage";
 
@@ -141,7 +142,7 @@ public class TestWCSService extends PortalTestClass {
     }
 
     @Test(expected = PortalServiceException.class)
-    public void testDescribeCoverageConnectionError() throws Exception {
+    public void testDescribeCoverageConnectionError() throws URISyntaxException, IOException, PortalServiceException {
         final String serviceUrl = "http://example.org/wcs";
         final String coverageName = "coverage";
 
