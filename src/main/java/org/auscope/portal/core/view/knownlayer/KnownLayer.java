@@ -77,6 +77,8 @@ public class KnownLayer implements Serializable {
     /** A URL to use to grab a canned legend graphic for the layer (optional). */
     private String staticLegendUrl;
 
+    /** If specified, the name/id of a Nagios host group whose status reflects the availability of this known layer */
+    private String nagiosHostGroup;
 
     private FilterCollection filterCollection;
     /**
@@ -387,6 +389,14 @@ public class KnownLayer implements Serializable {
 
     public void setStaticLegendUrl(String staticLegendUrl) {
         this.staticLegendUrl = staticLegendUrl;
+    }
+
+    public String getNagiosHostGroup() {
+        return nagiosHostGroup;
+    }
+
+    public void setNagiosHostGroup(String nagiosHostGroup) {
+        this.nagiosHostGroup = nagiosHostGroup;
     }
 
     /* (non-Javadoc)
