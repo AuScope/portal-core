@@ -6,12 +6,16 @@ Ext.define('portal.layer.querier.wfs.factories.BaseFactory', {
 
     //Namespace Constants
     XMLNS_ER : 'urn:cgi:xmlns:GGIC:EarthResource:1.1',
+    XMLNS_ER_2 : 'http://xmlns.earthresourceml.org/EarthResource/2.0',
     XMLNS_GSML_2 : 'urn:cgi:xmlns:CGI:GeoSciML:2.0',
+    XMLNS_GSML_32 : 'http://xmlns.geosciml.org/GeoSciML-Core/3.2',
     XMLNS_GML : 'http://www.opengis.net/gml',
+    XMLNS_GML_32 : 'http://www.opengis.net/gml/3.2',
     XMLNS_SA : 'http://www.opengis.net/sampling/1.0',
     XMLNS_OM : 'http://www.opengis.net/om/1.0',
     XMLNS_SWE : 'http://www.opengis.net/swe/1.0.1',
     XMLNS_GSMLP : 'http://xmlns.geosciml.org/geosciml-portrayal/2.0',
+    XMLNS_GSMLP_4 : 'http://xmlns.geosciml.org/geosciml-portrayal/4.0',
     XMLNS_MT : 'http://xmlns.geoscience.gov.au/mineraltenementml/1.0',
     XMLNS_MO : 'http://xmlns.geoscience.gov.au/minoccml/1.0',
     XMLNS_RA : 'http://remanentanomalies.csiro.au',

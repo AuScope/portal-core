@@ -14,11 +14,20 @@ public class ServiceConfigurationItem {
 
     String id, url;
     boolean paging;
-
+    boolean isGml32;
+    
     public ServiceConfigurationItem(String id, String url, boolean paging) {
         this.id = id;
         this.url = url;
         this.paging = paging;
+        this.isGml32 = false;
+    }
+    
+    public ServiceConfigurationItem(String id, String url, boolean paging, boolean isGml32) {
+        this.id = id;
+        this.url = url;
+        this.paging = paging;
+        this.isGml32 = isGml32;
     }
 
     /**
@@ -44,6 +53,14 @@ public class ServiceConfigurationItem {
      */
     public boolean doesPaging() {
         return paging;
+    }
+    
+    /**
+     * 
+     * @return true if this service is GML 3.2 based otherwise assumes GML 3.1.1
+     */
+    public boolean isGml32() {
+        return isGml32;
     }
 
 }

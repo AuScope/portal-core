@@ -153,7 +153,7 @@ public class CloudComputeServiceAws extends CloudComputeService {
             }
 
             AssumeRoleRequest assumeRequest = new AssumeRoleRequest().withRoleArn(arn).withDurationSeconds(3600)
-                    .withExternalId(clientSecret).withRoleSessionName("anvgl");
+                    .withExternalId(clientSecret).withRoleSessionName("vgl");
 
             AssumeRoleResult assumeResult = stsClient.assumeRole(assumeRequest);
 
@@ -280,7 +280,7 @@ public class CloudComputeServiceAws extends CloudComputeService {
         Instance instance = instances.get(0);
         CreateTagsRequest createTagsRequest = new CreateTagsRequest();
         createTagsRequest.withResources(instance.getInstanceId()) //
-                .withTags(new Tag("Name", "ANVGL - Job: " + job.getId()));
+                .withTags(new Tag("Name", "VGL - Job: " + job.getId()));
         ec2.createTags(createTagsRequest);
 
         return instance.getInstanceId();
@@ -424,5 +424,12 @@ public class CloudComputeServiceAws extends CloudComputeService {
         } catch (Exception ex) {
             throw new PortalServiceException("Unable to lookup status code for :" + job.getComputeInstanceId(), ex);
         }
+    }
+
+    @Override
+    public ComputeType[] getAvailableComputeTypes(String machineImageId) throws PortalServiceException {
+        // Carsten: As far as I know AWS images have no specific limitation on what ComputeType can run them. To be implemented properly if this
+        //          turns out to be wrong
+        return getAvailableComputeTypes();
     }
 }
