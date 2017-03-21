@@ -107,7 +107,7 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                         boxLabel : 'Filter my download using the current visible map bounds.',
                         name : 'wfs-download-radio',
                         inputValue : portal.layer.downloader.wfs.WFSDownloader.DOWNLOAD_CURRENTLY_VISIBLE,
-                        hidden : !isDifferentBBox,
+                        hidden : !isDifferentBBox || Ext.Object.isEmpty(currentlyVisibleBBox),
                         checked : isDifferentBBox
 
                     },{
@@ -119,7 +119,7 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                         },
                         width : 18,
                         height : 21,
-                        hidden : !isDifferentBBox,
+                        hidden : !isDifferentBBox || Ext.Object.isEmpty(currentlyVisibleBBox),
                         style : 'padding:3px 0px 0px 0px;',
                         listeners : {
                             render : Ext.bind(this._configureImageClickHandlers, this, [currentlyVisibleBBox], true)
@@ -128,8 +128,8 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                         boxLabel : 'Filter my download using the original bounds that were used to load the layer.',
                         name : 'wfs-download-radio',
                         inputValue : portal.layer.downloader.wfs.WFSDownloader.DOWNLOAD_ORIGINALLY_VISIBLE,
-                        checked : !isDifferentBBox && originallyVisibleBBox !== null,
-                        hidden : originallyVisibleBBox === null
+                        checked : !isDifferentBBox && !Ext.Object.isEmpty(originallyVisibleBBox),
+                        hidden : Ext.Object.isEmpty(originallyVisibleBBox)
                     },{
                         xtype : 'box',
                         autoEl : {
@@ -140,7 +140,7 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                         width : 18,
                         height : 21,
                         style : 'padding:3px 0px 0px 0px;',
-                        hidden : originallyVisibleBBox === null,
+                        hidden : Ext.Object.isEmpty(originallyVisibleBBox),
                         listeners : {
                             render : Ext.bind(this._configureImageClickHandlers, this, [originallyVisibleBBox], true)
                         }
@@ -148,7 +148,7 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                         boxLabel : 'Don\'t filter my download. Return all available data.',
                         name : 'wfs-download-radio',
                         inputValue : portal.layer.downloader.wfs.WFSDownloader.DOWNLOAD_ALL,
-                        checked : !isDifferentBBox && originallyVisibleBBox === null
+                        checked : !isDifferentBBox && Ext.Object.isEmpty(originallyVisibleBBox)
                     }]
                 },{
 
@@ -240,8 +240,11 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                                 me._doDownload(layer, renderedFilterer, resources, sEmail, outputFormat);
                                 break;
                             default:
-                                me._doDownload(layer, renderedFilterer, resources, sEmail, outputFormat);
-                                break;
+                                if (!Ext.Object.isEmpty(renderedFilterer.getParameters())) {
+                                    me._doDownload(layer, renderedFilterer, resources, sEmail, outputFormat);
+                                } else if (!Ext.Object.isEmpty(currentFilterer.getParameters())) {
+                                    me._doDownload(layer, currentFilterer, resources, sEmail, outputFormat);
+                                }
                             }
 
                             //popup.close();
