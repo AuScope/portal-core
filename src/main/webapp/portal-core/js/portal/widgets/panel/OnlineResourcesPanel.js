@@ -61,7 +61,7 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
             width: 55,
             dataIndex: 'onlineResource',
             menuDisabled: true,
-            renderer: Ext.bind(this._errorRenderer, this),
+            renderer: Ext.bind(this._errorRenderer, this)
         },{
             dataIndex: 'onlineResource',
             width: 140,
