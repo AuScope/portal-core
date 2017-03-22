@@ -82,7 +82,10 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 field: 'serviceInformation',
                 stopEvent: true,
                 clickHandler: Ext.bind(me._serviceInformationClickHandler, me),
-                tipRenderer: function(layer, tip) {
+                tipRenderer: function(value, record, tip) {
+                    if ((record instanceof portal.knownlayer.KnownLayer) && record.containsNagiosFailures()) {
+                        return 'One or more of the services used by this layer are reported to be experiencing issues at the moment. Some aspects of this layer may not load/work.';
+                    }
                     return 'Click for detailed information about the web services this layer utilises.';
                 },
                 iconRenderer: Ext.bind(me._serviceInformationRenderer, me)

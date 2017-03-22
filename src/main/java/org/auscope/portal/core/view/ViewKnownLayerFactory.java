@@ -74,6 +74,10 @@ public class ViewKnownLayerFactory {
             obj.put("filterCollection",k.getFilterCollection());
         }
 
+        if (k.getNagiosHostGroup() != null) {
+            obj.put("nagiosHostGroup", k.getNagiosHostGroup());
+        }
+
         return obj;
     }
 
