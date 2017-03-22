@@ -52,11 +52,12 @@ Ext.define('portal.layer.querier.coverage.WCSQuerier', {
             },
             scope : this,
             callback : function(success, data, message) {
-                if(success){
-                    if (!data) { //LJ: AUS-2598 ASTER mask hanging when server is down.
-                        callback(this, [this._generateErrorComponent('There was a problem when looking up the point')], queryTarget);
-                        return;
-                    }                    
+                if (!success || !data) { //LJ: AUS-2598 ASTER mask hanging when server is down.
+                    callback(this, [this._generateErrorComponent('There was a problem when looking up the coverage: ' + message)], queryTarget);
+                    return;
+                }
+                
+                if(success) {
                     var record = data[0];
                     var spatialFunc=function(item) {
                         var s = '';
@@ -118,7 +119,7 @@ Ext.define('portal.layer.querier.coverage.WCSQuerier', {
                             },{
                                 xtype : 'displayfield',
                                 fieldLabel : 'WMS URLs',
-                                value : options.params.layerName + '-' + options.params.serviceUrl
+                                value : queryTarget.get('onlineResource').get('name') + '-' + queryTarget.get('onlineResource').get('url')
                             },{
                                 xtype : 'displayfield',
                                 fieldLabel : 'Spatial Domain',
