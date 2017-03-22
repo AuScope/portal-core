@@ -35,13 +35,19 @@ Ext.define('portal.util.Ajax', {
             return;
         }
         
+        var responseObj = null;
         try {
-            var responseObj = Ext.JSON.decode(response.responseText);
-            callback(responseObj.success === true, responseObj.data, responseObj.msg, responseObj.debugInfo);
-            return;
+            responseObj = Ext.JSON.decode(response.responseText);
         } catch(err) {
             console.log('ERROR parsing Ajax response:', err);
             callback(false, undefined, undefined, undefined);
+            return;
+        }
+        
+        try {
+            callback(responseObj.success === true, responseObj.data, responseObj.msg, responseObj.debugInfo);
+        } catch(err) {
+            console.log('ERROR calling user callback:', err);
             return;
         }
     },
