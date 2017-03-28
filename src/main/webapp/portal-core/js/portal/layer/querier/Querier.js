@@ -30,16 +30,8 @@ Ext.define('portal.layer.querier.Querier', {
      * @param queryTarget A portal.layer.querier.QueryTarget
      * @param infoFormat a String representing a MIME type
      */
-    generateWmsProxyQuery : function(queryTarget, infoFormat, post) {
-        //VT: default to use GET rather then post.
-        var postMethod = false;
-        var sld_body=null;
-
-
-        if(post != undefined){
-            postMethod = post;
-        }
-
+    generateWmsProxyQuery : function(queryTarget, infoFormat) {
+        
         var point = Ext.create('portal.map.Point', {latitude : queryTarget.get('lat'), longitude : queryTarget.get('lng')});
         var lonLat = new OpenLayers.LonLat(point.getLongitude(), point.getLatitude());
         lonLat = lonLat.transform('EPSG:4326','EPSG:3857');
@@ -64,7 +56,8 @@ Ext.define('portal.layer.querier.Querier', {
                 bbox.northBoundLatitude,
                 bbox.westBoundLongitude,
                 bbox.southBoundLatitude);
-
+        
+        var sldParams = this.generateSLDParams (queryTarget, infoFormat);
         
         var queryParams = Ext.Object.merge({
             WMS_URL : serviceUrl,
@@ -77,46 +70,52 @@ Ext.define('portal.layer.querier.Querier', {
             WIDTH : tileInfo.getWidth(),
             HEIGHT : tileInfo.getHeight(),
             INFO_FORMAT : infoFormat,
-            SLD_BODY : sld_body,
-            postMethod : postMethod,
             version : wmsOnlineResource.get('version'),
             feature_count : feature_count
-        }, this.generateSLDParams (queryTarget,infoFormat))
+        }, sldParams)
         
         //Build our proxy URL
         var queryString = Ext.Object.toQueryString(queryParams);
         return Ext.urlAppend('wmsMarkerPopup.do', queryString);
     },
     
-    generateSLDParams : function (queryTarget,infoFormat) {
+    /*
+     * Determines the parameters to use when applying an SLD to a GetFeatureInfo query.
+     * 
+     */    
+    generateSLDParams : function (queryTarget, infoFormat) {
         var postMethod = false;
+        var sld_body = null;
+        
+        if(queryTarget.get('layer').get('filterer').getParameters().postMethod){
+            postMethod = queryTarget.get('layer').get('filterer').getParameters().postMethod;
+        }
+        
         var applicationProfile = queryTarget.get('onlineResource').get('applicationProfile');
         
         if (applicationProfile && applicationProfile.indexOf("Esri:ArcGIS Server") > -1) {
-             
-             return {
-                 postMethod : postMethod,
-                 SLD_BODY : null,
-                 INFO_FORMAT : infoFormat ? infoFormat : 'text/xml'
-             }
-         }
-         else if (queryTarget.get('layer').get('renderer').sld_body){
-            postMethod = false
+             postMethod = false;
+             infoFormat = infoFormat ? infoFormat : 'text/xml'
+        }
+        else if (queryTarget.get('layer').get('renderer').sld_body){
             sld_body=queryTarget.get('layer').get('renderer').sld_body;
             //VT: if post is undefined and we have a very long sld_body
             //VT: we are goign to take a best guess approach and use post instead of get
-            if(sld_body.length > 1500){
+            if(sld_body.length > 1200){
                 postMethod = true;
                 console.log('You really should not be using this method if the query' +
                         'is going be long as it generates a GET spring request to and' +
                         ' there are limitation to the lenght of a URI in GET method');
             }
-            return {
-                postMethod : postMethod,
-                SLD_BODY : sld_body,
-                INFO_FORMAT : infoFormat ? infoFormat : 'application/vnd.ogc.gml/3.1.1'
-            }
+            infoFormat = infoFormat ? infoFormat : 'application/vnd.ogc.gml/3.1.1'
+            
         }
+        return {
+            postMethod : postMethod,
+            SLD_BODY : sld_body,
+            INFO_FORMAT : infoFormat
+        }
+
     },
 
     /**

@@ -77,21 +77,13 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
     
     _handleWMSQuery : function(queryTarget,callback,scope){
         //VT:app-schema wms requires the gml version to be declared in the info_format
-        var methodPost = false;
         var applicationProfile = queryTarget.get('onlineResource').get('applicationProfile');
-
-        if(queryTarget.get('layer').get('filterer').getParameters().postMethod){
-            methodPost = queryTarget.get('layer').get('filterer').getParameters().postMethod;
-        }
-
-        var sld_body;
         
         var wmsOnlineResource = queryTarget.get('onlineResource');
         var typeName = wmsOnlineResource.get('name');
         var serviceUrl = wmsOnlineResource.get('url');
         var featureUrl=serviceUrl;
         if (applicationProfile && applicationProfile.indexOf("Esri:ArcGIS Server") > -1) {
-            sld_body = null;
             // ArcGIS does not permit a WMS query with feature ids with, so must use a WFS url
             var onlineResources = queryTarget.get('cswRecord').get('onlineResources');
             for (var idx=0; idx < onlineResources.length; idx++) {
@@ -100,13 +92,8 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
                     break;
                 }
             }
-        } else if (queryTarget.get('layer').get('renderer').sld_body){
-            sld_body=queryTarget.get('layer').get('renderer').sld_body;
-            if (!methodPost && sld_body.length > 1200){//VT; if the length of the sld is too long we HAVE to use post
-                methodPost = true
-            }
         }
-
+        
         var point = Ext.create('portal.map.Point', {latitude : queryTarget.get('lat'), longitude : queryTarget.get('lng')});
         var lonLat = new OpenLayers.LonLat(point.getLongitude(), point.getLatitude());
         lonLat = lonLat.transform('EPSG:4326','EPSG:3857');
@@ -121,6 +108,8 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
                 bbox.westBoundLongitude,
                 bbox.southBoundLatitude);
 
+        var sldParams = this.generateSLDParams(queryTarget);
+        
         var queryParams = Ext.Object.merge({
             WMS_URL : serviceUrl,
             lat : lonLat.lat,
@@ -131,11 +120,8 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
             BBOX : bboxString,
             WIDTH : tileInfo.getWidth(),
             HEIGHT : tileInfo.getHeight(),
-            INFO_FORMAT : 'application/vnd.ogc.gml/3.1.1',
-            SLD_BODY : sld_body,
-            postMethod : methodPost,
             version : wmsOnlineResource.get('version')                
-            }, this.generateSLDParams(queryTarget, null));
+            }, sldParams);
         
         var proxyGetFeatureInfoUrl ="wmsMarkerPopup.do";
         if (queryTarget.get('layer').get('source').get('proxyGetFeatureInfoUrl')) {
