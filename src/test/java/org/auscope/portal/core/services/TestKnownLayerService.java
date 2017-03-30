@@ -151,6 +151,13 @@ public class TestKnownLayerService extends PortalTestClass {
                 will(returnValue(RelationType.NotRelated));
                 oneOf(mockSelector3).isRelatedRecord(cswRecordList.get(2));
                 will(returnValue(RelationType.NotRelated));
+
+                allowing(cswRecordList.get(0)).hasNamedOnlineResources();
+                will(returnValue(true));
+                allowing(cswRecordList.get(1)).hasNamedOnlineResources();
+                will(returnValue(true));
+                allowing(cswRecordList.get(2)).hasNamedOnlineResources();
+                will(returnValue(true));
             }
         });
 
@@ -209,6 +216,13 @@ public class TestKnownLayerService extends PortalTestClass {
                 will(returnValue(RelationType.NotRelated));
                 oneOf(mockSelector3).isRelatedRecord(cswRecordList.get(2));
                 will(returnValue(RelationType.NotRelated));
+
+                allowing(cswRecordList.get(0)).hasNamedOnlineResources();
+                will(returnValue(true));
+                allowing(cswRecordList.get(1)).hasNamedOnlineResources();
+                will(returnValue(true));
+                allowing(cswRecordList.get(2)).hasNamedOnlineResources();
+                will(returnValue(true));
             }
         });
 
@@ -219,5 +233,72 @@ public class TestKnownLayerService extends PortalTestClass {
         // Assert
         Assert.assertEquals(1, groups.size());
         Assert.assertTrue(groups.get(0).getKnownLayer() instanceof FakeKnownLayerChild);
+    }
+    
+    @Test
+    public void groupKnownLayerRecords_avoids_metadatacsw_records() {
+        context.checking(new Expectations() {
+            {
+                oneOf(mockCacheService).getRecordCache();
+                will(returnValue(cswRecordList));
+
+                oneOf(mockSelector1).isRelatedRecord(cswRecordList.get(0));
+                will(returnValue(RelationType.NotRelated));
+                oneOf(mockSelector1).isRelatedRecord(cswRecordList.get(1));
+                will(returnValue(RelationType.NotRelated));
+                oneOf(mockSelector1).isRelatedRecord(cswRecordList.get(2));
+                will(returnValue(RelationType.NotRelated));
+
+                oneOf(mockSelector2).isRelatedRecord(cswRecordList.get(0));
+                will(returnValue(RelationType.NotRelated));
+                oneOf(mockSelector2).isRelatedRecord(cswRecordList.get(1));
+                will(returnValue(RelationType.NotRelated));
+                oneOf(mockSelector2).isRelatedRecord(cswRecordList.get(2));
+                will(returnValue(RelationType.NotRelated));
+
+                oneOf(mockSelector3).isRelatedRecord(cswRecordList.get(0));
+                will(returnValue(RelationType.NotRelated));
+                oneOf(mockSelector3).isRelatedRecord(cswRecordList.get(1));
+                will(returnValue(RelationType.NotRelated));
+                oneOf(mockSelector3).isRelatedRecord(cswRecordList.get(2));
+                will(returnValue(RelationType.NotRelated));
+
+                allowing(cswRecordList.get(0)).hasNamedOnlineResources();
+                will(returnValue(false));
+                allowing(cswRecordList.get(0)).hasGeographicElements();
+                will(returnValue(false));
+                allowing(cswRecordList.get(1)).hasNamedOnlineResources();
+                will(returnValue(true));
+                allowing(cswRecordList.get(1)).hasGeographicElements();
+                will(returnValue(false));
+                allowing(cswRecordList.get(2)).hasNamedOnlineResources();
+                will(returnValue(false));
+                allowing(cswRecordList.get(2)).hasGeographicElements();
+                will(returnValue(true));
+            }
+        });
+
+        // Start execution
+        KnownLayerGrouping grouping = knownLayerService.groupKnownLayerRecords();
+
+        // Test the results
+        Assert.assertNotNull(grouping);
+        Assert.assertNotNull(grouping.getKnownLayers());
+        Assert.assertNotNull(grouping.getOriginalRecordSet());
+        Assert.assertNotNull(grouping.getUnmappedRecords());
+
+        List<KnownLayerAndRecords> groups = grouping.getKnownLayers();
+        Assert.assertEquals(2, groups.size());
+        Assert.assertEquals(0, groups.get(0).getBelongingRecords().size());
+        Assert.assertEquals(0, groups.get(0).getRelatedRecords().size());
+        Assert.assertEquals(0, groups.get(1).getBelongingRecords().size());
+        Assert.assertEquals(0, groups.get(1).getRelatedRecords().size());
+
+        List<CSWRecord> unmappedCSWList = grouping.getUnmappedRecords();
+        Assert.assertEquals(2, unmappedCSWList.size());
+
+        assertListContentsSame(cswRecordList, grouping.getOriginalRecordSet());
+        Assert.assertEquals(cswRecordList.get(1), unmappedCSWList.get(0));
+        Assert.assertEquals(cswRecordList.get(2), unmappedCSWList.get(1));
     }
 }
