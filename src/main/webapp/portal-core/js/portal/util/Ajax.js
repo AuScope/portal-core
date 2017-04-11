@@ -24,6 +24,7 @@ Ext.define('portal.util.Ajax', {
      *               data - Array/Object - contents of the data response (if any)
      *               message - String - String message returned by server if connection succeeded, otherwise a generic HTTP error message
      *               debugInfo - Object - debug object returned by server (if any)
+     *               response - Object - Ajax response object
      */
     parseResponse: function(success, response, callback) {
         if (!success) {
@@ -31,7 +32,7 @@ Ext.define('portal.util.Ajax', {
                             response.status + ': ' + response.statusText :
                             'Network Error: Cannot connect to server.';
 
-            callback(false, undefined, message, undefined);
+            callback(false, undefined, message, undefined, response);
             return;
         }
         
@@ -40,12 +41,12 @@ Ext.define('portal.util.Ajax', {
             responseObj = Ext.JSON.decode(response.responseText);
         } catch(err) {
             console.log('ERROR parsing Ajax response:', err);
-            callback(false, undefined, undefined, undefined);
+            callback(false, undefined, undefined, undefined, response);
             return;
         }
         
         try {
-            callback(responseObj.success === true, responseObj.data, responseObj.msg, responseObj.debugInfo);
+            callback(responseObj.success === true, responseObj.data, responseObj.msg, responseObj.debugInfo, response);
         } catch(err) {
             console.log('ERROR calling user callback:', err);
             return;
@@ -60,15 +61,18 @@ Ext.define('portal.util.Ajax', {
      *               data - Array/Object - contents of the data response (if any)
      *               message - String - String message returned by server if connection succeeded, otherwise a generic HTTP error message
      *               debugInfo - Object - debug object returned by server (if any)
+     *               response - Object - Ajax response object
      *               
      *  success - function(data, message, debugInfo) - This will be called IFF the connection succeeds AND the response object indicates success
      *               data - Array/Object - contents of the data response (if any)
      *               message - String - String message returned by server if connection succeeded, otherwise a generic HTTP error message
      *               debugInfo - Object - debug object returned by server (if any)
+     *               response - Object - Ajax response object
      *               
      *  failure - function(message, debugInfo) - This will be called if the connection fail OR the response object indicates failure
      *               message - String - String message returned by server if connection succeeded, otherwise a generic HTTP error message
      *               debugInfo - Object - debug object returned by server (if any)
+     *               response - Object - Ajax response object
      */
     request: function(cfg) {
         //We do all injection via callback and then offload back 
@@ -87,18 +91,18 @@ Ext.define('portal.util.Ajax', {
             //Because we need to parse the response before we can workout whether to call success/failure callbacks
             //We need to go another level deeper with our wrapping functions. This final callback will decide what user callbacks
             //to fire and in what order depending on the results of the parseResponse function.
-            portal.util.Ajax.parseResponse(success, response, Ext.bind(function(success, data, message, debugInfo, userCallbacks) {
+            portal.util.Ajax.parseResponse(success, response, Ext.bind(function(success, data, message, debugInfo, response, userCallbacks) {
                 if (userCallbacks.callback) {
-                    userCallbacks.callback(success, data, message, debugInfo);
+                    userCallbacks.callback(success, data, message, debugInfo, response);
                 }
                 
                 if (success) {
                     if (userCallbacks.success) {
-                        userCallbacks.success(data, message, debugInfo);
+                        userCallbacks.success(data, message, debugInfo, response);
                     }
                 } else {
                     if (userCallbacks.failure) {
-                        userCallbacks.failure(message, debugInfo);
+                        userCallbacks.failure(message, debugInfo, response);
                     }
                 }
             }, undefined, [userCallbacks], true));
