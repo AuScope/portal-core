@@ -3,6 +3,8 @@ package org.auscope.portal.core.server.http;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
+import java.net.URI;
+import java.net.URLDecoder;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 
@@ -11,6 +13,7 @@ import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;
@@ -289,6 +292,18 @@ public class HttpServiceCaller {
             }
         }
 
+        //decode and re-encode the query portion of the URI.
+        if (StringUtils.isNotBlank(method.getURI().getQuery())) {        	
+            String decodedQuery = URLDecoder.decode(method.getURI().getQuery(), "UTF-8");        
+            // the URI constructor does the encoding for us (" " -> "%20" etc)
+            URI uri = new URI(method.getURI().getScheme(),
+            		method.getURI().getHost(),
+            		method.getURI().getPath(),
+            		decodedQuery,
+            		method.getURI().getFragment());
+            method.setURI(uri);         	
+        }          
+        
         // make the call
         HttpResponse response = client.execute(method);
 
