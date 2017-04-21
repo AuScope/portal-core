@@ -17,9 +17,9 @@
         <url>https://cgsrv8.arrc.csiro.au/jenkins</url>
     </ciManagement>
     <scm>
-        <connection>scm:git:https://github.com/AuScope/portal-core.git</connection>
-        <developerConnection>scm:git:https://github.com/AuScope/portal-core.git</developerConnection>
-        <url>https://github.com/AuScope/portal-core</url>
+        <connection>scm:git:git@github.com:GeoscienceAustralia/portal-core.git</connection>
+        <developerConnection>scm:git:git@github.com:GeoscienceAustralia/portal-core.git</developerConnection>
+        <url>https://github.com/GeoscienceAustralia/portal-core</url>
     </scm>
 <!--
     <distributionManagement>
@@ -31,9 +31,14 @@
     </distributionManagement>
 -->
     <distributionManagement>
+        <repository>
+            <id>nexus.gadevs.releases</id>
+            <name>Internal nexus</name>
+            <url>https://nexus.gadevs.ga/repository/maven-releases</url>
+        </repository>
         <snapshotRepository>
-          <id>nexus.gadevs</id>
-	  <url>https://nexus.gadevs.ga/repository/maven-snapshots</url>
+            <id>nexus.gadevs.snapshots</id>
+            <url>https://nexus.gadevs.ga/repository/maven-snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 
