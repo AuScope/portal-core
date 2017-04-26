@@ -25,7 +25,7 @@ Ext.define('portal.widgets.panel.CSWMetadataPanel', {
 
         if (typeof(cfg.extraItems) === 'undefined') {
 
-            if (source.indexOf('eos-test.ga.gov.au') !== -1 || source.indexOf('eos.ga.gov.au') !== -1) {
+            if (source.indexOf('ecat-test.ga.gov.au') !== -1 || source.indexOf('ecat.ga.gov.au') !== -1) {
                 this.extraItems = {
                         xtype : 'displayfield',
                         fieldLabel : 'Notes',
