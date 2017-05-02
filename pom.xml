@@ -319,7 +319,7 @@
         <repository>
             <id>cgsrv8.arrc.csiro.au-snapshots</id>
             <name>AuScope Nexus - PortalRepo</name>
-            <url>http://cgsrv8.arrc.csiro.au/nexus/content/groups/PortalSnapshot/</url>
+            <url>https://cgsrv8.arrc.csiro.au/nexus/content/repositories/PortalSnapshot/</url>
         </repository>
     </repositories>
     <!-- Dependencies -->
