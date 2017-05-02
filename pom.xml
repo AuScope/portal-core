@@ -317,7 +317,7 @@
         </repository>
         <!-- This is for AuScope specific snapshot builds of packages that arent in Maven central -->
         <repository>
-            <id>cgsrv8.arrc.csiro.au</id>
+            <id>cgsrv8.arrc.csiro.au-snapshots</id>
             <name>AuScope Nexus - PortalRepo</name>
             <url>http://cgsrv8.arrc.csiro.au/nexus/content/groups/PortalSnapshot/</url>
         </repository>
