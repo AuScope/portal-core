@@ -323,6 +323,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         var layer = record.get('layer');
         if(layer && record.get('active')){
             ActiveLayerManager.removeLayer(layer);
+            this.menuFactory.layerRemoveHandler(layer);
             this.fireEvent('cellclick',this,undefined,undefined,layer,undefined,undefined);
         }
     },
