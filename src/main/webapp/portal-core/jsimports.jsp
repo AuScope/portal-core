@@ -88,6 +88,7 @@
 <script src="portal-core/js/portal/layer/legend/Legend.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/layer/legend/wfs/WFSLegend.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/layer/legend/wms/WMSLegend.js?v=${buildTimestamp}" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/legend/csw/CSWLegend.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/layer/legend/wms/WMSLegendForm.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/layer/querier/BaseComponent.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/layer/querier/Querier.js?v=${buildTimestamp}" type="text/javascript"></script>
