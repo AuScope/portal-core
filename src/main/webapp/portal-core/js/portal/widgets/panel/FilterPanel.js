@@ -257,6 +257,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
             handler : function(){
                 var layer = me.filterForm.layer; 
                 ActiveLayerManager.removeLayer(layer);
+                me.menuFactory.layerRemoveHandler(layer);
             }
         });
         
@@ -308,6 +309,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         
         this._showConstraintWindow(layer);
         this._showNagiosAlerts(layer);
+        this.menuFactory.layerAddHandler(layer);
 
         //VT: Tracking
         
