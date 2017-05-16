@@ -11,8 +11,9 @@ Ext.define('portal.layer.renderer.csw.CSWRenderer', {
     polygonColor : null,
 
     constructor: function(config) {
-        this.legend = Ext.create('portal.layer.legend.wfs.WFSLegend', {
-            iconUrl : config.icon ? config.icon.getUrl() : ''
+        this.legend = Ext.create('portal.layer.legend.csw.CSWLegend', {
+            iconUrl : config.icon ? config.icon.getUrl() : '',
+            polygonColor : config.polygonColor ? config.polygonColor : this._getPolygonColor(null).join() /* Use local default color if not supplied in config */
         });
         this.callParent(arguments);
     }, 
