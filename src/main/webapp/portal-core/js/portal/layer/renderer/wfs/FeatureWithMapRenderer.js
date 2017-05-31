@@ -36,6 +36,8 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
         this.currentRequestCount = 0;
         // Call our superclass constructor to complete construction process.
         this.callParent(arguments);
+        
+        this.on('renderfinished', this._cleanupAbort, this);
     },
 
     /**
@@ -415,5 +417,9 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
         for (var i = 0; i < this.allDownloadManagers.length; i++) {
             this.allDownloadManagers[i].abortDownload();
         }
+    },
+    
+    _cleanupAbort : function() {
+        this.aborted = false;
     }
 });
