@@ -43,6 +43,7 @@ Ext.define('portal.layer.downloader.wfs.WFSDownloader', {
             buttonAlign : 'right',
             width : 550,
             height : 200,
+            modal : true,
             layout : {
                 type : 'anchor'
                 //align : 'stretch'
