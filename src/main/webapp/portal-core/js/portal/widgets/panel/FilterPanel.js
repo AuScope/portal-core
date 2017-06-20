@@ -172,6 +172,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
                             layout      : 'fit',
                             width       : 200,
                             height      : 300,
+                            modal : true,
                             items: form
                         });
                         return win.show();

@@ -23,7 +23,8 @@ Ext.define('portal.widgets.window.CSWRecordDescriptionWindow', {
             autoDestroy : true,
             width : 830,
             maxHeight : 400,
-            minHeight : 100
+            minHeight : 100,
+            modal : true
         });
         
         if(cswRecords[0].get('resourceProvider')=='kml'){
