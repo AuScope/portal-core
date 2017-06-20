@@ -396,8 +396,8 @@
         </dependency>
         <dependency>
             <groupId>net.sf.saxon</groupId>
-            <artifactId>saxon-xom</artifactId>
-            <version>8.7</version>
+            <artifactId>Saxon-HE</artifactId>
+            <version>9.7.0-18</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -482,18 +482,6 @@
             <groupId>edu.ucar</groupId>
             <artifactId>netcdf</artifactId>
             <version>4.2</version>
-            <optional>false</optional>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.saxon</groupId>
-            <artifactId>saxon-xpath</artifactId>
-            <version>8.7</version>
-            <optional>false</optional>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.saxon</groupId>
-            <artifactId>saxon-dom</artifactId>
-            <version>8.7</version>
             <optional>false</optional>
         </dependency>
         <dependency>
