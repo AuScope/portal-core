@@ -411,6 +411,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             height: 200,
             width: 500,
             layout: 'fit',
+            modal : true,
             items: {  // Let's put an empty grid in just to illustrate fit layout
                 xtype: 'panel',
                 autoScroll : true,                
