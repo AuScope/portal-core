@@ -342,9 +342,9 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 var errorCount = this._statusListErrorCount(listOfStatus);
                 var sizeOfList = Ext.Object.getSize(listOfStatus);
                 if(errorCount > 0 && errorCount == sizeOfList){
-                    return 'portal-core/img/exclamation.png';
-                }else if(errorCount > 0 && errorCount < sizeOfList){
                     return 'portal-core/img/warning.png';
+                }else if(errorCount > 0 && errorCount < sizeOfList){
+                    return 'portal-core/img/exclamation.png';
                 }else{
                     return 'portal-core/img/tick.png';
                 }
