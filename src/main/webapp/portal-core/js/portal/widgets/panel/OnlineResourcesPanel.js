@@ -22,7 +22,7 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
         // Ensures this.cswRecords is an array:
         this.cswRecords = [].concat(cfg.cswRecords);
         
-        this.nagiosErrorIcon = Ext.isEmpty(cfg.nagiosErrorIcon) ? 'portal-core/img/exclamation.png' : cfg.nagiosErrorIcon;
+        this.nagiosErrorIcon = Ext.isEmpty(cfg.nagiosErrorIcon) ? 'portal-core/img/warning.png' : cfg.nagiosErrorIcon;
 
         //Generate our flattened 'data items' list for rendering to the grid
         var dataItems = portal.widgets.panel.OnlineResourcePanelRow.parseCswRecords(this.cswRecords);

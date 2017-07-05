@@ -39,7 +39,7 @@ Ext.define('portal.widgets.panel.CommonBaseRecordPanel', {
         me.menuFactory = cfg.menuFactory;
         me.onlineResourcePanelType = cfg.onlineResourcePanelType;
         me.serviceInformationIcon = cfg.serviceInformationIcon;
-        me.nagiosErrorIcon = Ext.isEmpty(cfg.nagiosErrorIcon) ? 'portal-core/img/exclamation.png' : cfg.nagiosErrorIcon;
+        me.nagiosErrorIcon = Ext.isEmpty(cfg.nagiosErrorIcon) ? 'portal-core/img/warning.png' : cfg.nagiosErrorIcon;
         me.mapExtentIcon = cfg.mapExtentIcon;
         me.listeners = Object.extend(me.listenersHere, cfg.listeners);
 
@@ -147,7 +147,7 @@ Ext.define('portal.widgets.panel.CommonBaseRecordPanel', {
         var containsImageService = serviceType.containsImageService;
 
         // default iconPath where there is no service info available
-        var iconPath = 'portal-core/img/warning.png';
+        var iconPath = 'portal-core/img/exclamation.png';
 
         if ((containsDataService || containsImageService) && 
             (record instanceof portal.knownlayer.KnownLayer) &&
