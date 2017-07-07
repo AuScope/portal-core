@@ -7,6 +7,7 @@ Ext.define('portal.layer.querier.wfs.factories.BaseFactory', {
     //Namespace Constants
     XMLNS_ER : 'urn:cgi:xmlns:GGIC:EarthResource:1.1',
     XMLNS_ER_2 : 'http://xmlns.earthresourceml.org/EarthResource/2.0',
+    XMLNS_ERL : 'http://xmlns.earthresourceml.org/earthresourceml-lite/1.0',
     XMLNS_GSML_2 : 'urn:cgi:xmlns:CGI:GeoSciML:2.0',
     XMLNS_GSML_32 : 'http://xmlns.geosciml.org/GeoSciML-Core/3.2',
     XMLNS_GML : 'http://www.opengis.net/gml',
