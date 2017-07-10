@@ -11,6 +11,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.sissvoc.SISSVoc3MethodMaker;
 import org.auscope.portal.core.services.methodmakers.sissvoc.SISSVoc3MethodMaker.Format;
+import org.auscope.portal.core.services.methodmakers.sissvoc.SISSVoc3MethodMaker.View;
 import org.auscope.portal.core.services.namespaces.VocabNamespaceContext;
 import org.auscope.portal.core.util.DOMUtil;
 import org.auscope.portal.core.util.FileIOUtil;
@@ -121,8 +122,7 @@ public class SISSVoc3Service {
             doc = DOMUtil.buildDomFromStream(is);
 
             VocabNamespaceContext nc = new VocabNamespaceContext();
-            XPathExpression getDescriptionsExpr = DOMUtil.compileXPathExpr(
-                    "rdf:RDF/descendant::api:Page/api:items/rdf:Description", nc);
+            XPathExpression getDescriptionsExpr = DOMUtil.compileXPathExpr("rdf:RDF/descendant::rdf:Description", nc);
             XPathExpression nextPageExpr = DOMUtil.compileXPathExpr("rdf:RDF/descendant::api:Page/xhv:next", nc);
 
             Node nextPageNode = (Node) nextPageExpr.evaluate(doc, XPathConstants.NODE);
@@ -146,8 +146,9 @@ public class SISSVoc3Service {
     }
 
     /**
-     * Gets all RDF concepts at the specified repository as a single JENA Model. The results will be requested page by page until the entire repository has been
-     * traversed.
+     * Gets all RDF concepts at the specified repository as a single JENA Model.
+     * The results will be requested page by page until the entire repository
+     * has been traversed.
      *
      * @return
      * @throws PortalServiceException
@@ -158,10 +159,9 @@ public class SISSVoc3Service {
         int pageNumber = 0;
         int ps = this.pageSize;
 
-        //Request each page in turn - put the results into Model
+        // Request each page in turn - put the results into Model
         do {
-            HttpRequestBase method = sissVocMethodMaker.getAllConcepts(baseUrl, repository, Format.Rdf, ps,
-                    pageNumber);
+            HttpRequestBase method = sissVocMethodMaker.getAllConcepts(baseUrl, repository, Format.Rdf, ps, pageNumber);
             if (requestPageOfConcepts(method, model)) {
                 pageNumber++;
             } else {
@@ -172,6 +172,34 @@ public class SISSVoc3Service {
         return model;
     }
 
+    /**
+     * Gets all RDF concepts in the specified scheme as a single JENA Model. The
+     * results will be requested page by page until the entire repository has
+     * been traversed.
+     *
+     * @return
+     * @throws PortalServiceException
+     * @throws URISyntaxException
+     */
+
+    public Model getAllConceptsInScheme(String inScheme, View view) throws URISyntaxException, PortalServiceException {
+        Model model = ModelFactory.createDefaultModel();
+        int pageNumber = 0;
+        int ps = this.pageSize;
+
+        do {
+            HttpRequestBase method = sissVocMethodMaker.getAllConceptsInScheme(baseUrl, repository, inScheme,
+                    Format.Rdf, view, ps, pageNumber);
+            if (requestPageOfConcepts(method, model)) {
+                pageNumber++;
+            } else {
+                break;
+            }
+        } while (true);
+
+        return model;
+
+    }
     /**
      * Makes a request to the configured SISSVoc service for a concept to describe the specified URI
      * 

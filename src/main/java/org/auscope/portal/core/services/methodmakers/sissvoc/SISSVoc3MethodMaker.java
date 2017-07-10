@@ -12,7 +12,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.auscope.portal.core.services.methodmakers.AbstractMethodMaker;
 
 /**
- * A class for generating HTTP methods to communicate with a SISSVoc version 3 service
+ * A class for generating HTTP methods to communicate with a SISSVoc version 3
+ * service
  *
  * @author Josh Vote
  *
@@ -35,9 +36,20 @@ public class SISSVoc3MethodMaker extends AbstractMethodMaker {
          */
         Json,
         /**
-         * Request the response styled using Turtle http://www.w3.org/TeamSubmission/turtle/
+         * Request the response styled using Turtle
+         * http://www.w3.org/TeamSubmission/turtle/
          */
         Ttl
+    }
+
+    public enum View {
+        basic,
+
+        concept,
+
+        description,
+
+        all
     }
 
     /**
@@ -108,7 +120,21 @@ public class SISSVoc3MethodMaker extends AbstractMethodMaker {
     }
 
     /**
-     * Generates a method for requesting all concepts (as rdf:Descriptions) in the specified repository
+     * Appends the view parameter to the list, in the case where the vocabulary
+     * service presents a limited description for a vocabulary by default
+     * 
+     * @param params
+     *            The list to append params to
+     * @param view
+     *            The view parameter value to append
+     */
+    protected void appendViewParam(List<NameValuePair> params, String view) {
+        params.add(new BasicNameValuePair("_view", view));
+    }
+
+    /**
+     * Generates a method for requesting all concepts (as rdf:Descriptions) in
+     * the specified repository
      *
      * The request supports rudimentary paging of the returned results
      *
@@ -127,15 +153,84 @@ public class SISSVoc3MethodMaker extends AbstractMethodMaker {
      */
     public HttpRequestBase getAllConcepts(String sissVocUrl, String repository, Format format, Integer pageSize,
             Integer pageNumber) throws URISyntaxException {
+
+        return getAllConcepts(sissVocUrl, repository, format, null, pageSize, pageNumber);
+    }
+
+    /**
+     * Generates a method for requesting all concepts (as rdf:Descriptions) in
+     * the specified repository
+     *
+     * The request supports rudimentary paging of the returned results
+     *
+     * @param sissVocUrl
+     *            The base URL of a SISSVoc service
+     * @param repository
+     *            The repository name to query
+     * @param format
+     *            How the response should be structured.
+     * @param view
+     *            Type of view to be returned
+     * @param pageSize
+     *            [Optional] How many concepts should be returned per page
+     * @param pageNumber
+     *            [Optional] The page number to request (0 based)
+     * @return
+     * @throws URISyntaxException
+     */
+    public HttpRequestBase getAllConcepts(String sissVocUrl, String repository, Format format, View view,
+            Integer pageSize, Integer pageNumber) throws URISyntaxException {
+
         List<NameValuePair> params = new ArrayList<>();
 
         appendPagingParams(params, pageSize, pageNumber);
+
+        if (view != null) {
+            appendViewParam(params, view.name());
+        }
 
         return buildGetMethod(sissVocUrl, repository, "concept", format, params);
     }
 
     /**
-     * Generates a method for requesting all concepts (as rdf:Descriptions) that match label in the specified repository
+     * Generates a method for requesting all concepts (as rdf:Descriptions) in
+     * the specified repository that below to the scheme requested
+     *
+     * The request supports rudimentary paging of the returned results
+     *
+     * @param sissVocUrl
+     *            The base URL of a SISSVoc service
+     * @param repository
+     *            The repository name to query
+     * @param schemeUrl
+     *            The scheme the vocabulary is in
+     * @param format
+     *            How the response should be structured.
+     * @param pageSize
+     *            [Optional] How many concepts should be returned per page
+     * @param pageNumber
+     *            [Optional] The page number to request (0 based)
+     * @return
+     * @throws URISyntaxException
+     */
+
+    public HttpRequestBase getAllConceptsInScheme(String sissVocUrl, String repository, String schemeUrl, Format format,
+            View view, Integer pageSize, Integer pageNumber) throws URISyntaxException {
+
+        List<NameValuePair> params = new ArrayList<>();
+
+        params.add(new BasicNameValuePair("inScheme", schemeUrl));
+        appendPagingParams(params, pageSize, pageNumber);
+        if (view != null) {
+            appendViewParam(params, view.name());
+        }
+        return buildGetMethod(sissVocUrl, repository, "concept", format, params);
+
+    }
+
+    /**
+     * Generates a method for requesting all concepts (as rdf:Descriptions) that
+     * match label in the specified repository
      *
      * The request supports rudimentary paging of the returned results
      *
@@ -165,7 +260,8 @@ public class SISSVoc3MethodMaker extends AbstractMethodMaker {
     }
 
     /**
-     * Generates a method for the concept with matching URI from the specified repository
+     * Generates a method for the concept with matching URI from the specified
+     * repository
      *
      * @param sissVocUrl
      *            The base URL of a SISSVoc service
@@ -187,7 +283,8 @@ public class SISSVoc3MethodMaker extends AbstractMethodMaker {
     }
 
     /**
-     * Generates a method for requesting all concepts (as rdf:Descriptions) that are broader than the specified concept as defined by skos:broader
+     * Generates a method for requesting all concepts (as rdf:Descriptions) that
+     * are broader than the specified concept as defined by skos:broader
      *
      * The request supports rudimentary paging of the returned results
      *
@@ -217,7 +314,8 @@ public class SISSVoc3MethodMaker extends AbstractMethodMaker {
     }
 
     /**
-     * Generates a method for requesting all concepts (as rdf:Descriptions) that are narrower than the specified concept as defined by skos:narrower
+     * Generates a method for requesting all concepts (as rdf:Descriptions) that
+     * are narrower than the specified concept as defined by skos:narrower
      *
      * The request supports rudimentary paging of the returned results
      *
@@ -245,4 +343,5 @@ public class SISSVoc3MethodMaker extends AbstractMethodMaker {
 
         return buildGetMethod(sissVocUrl, repository, "concept/narrower", format, params);
     }
+
 }

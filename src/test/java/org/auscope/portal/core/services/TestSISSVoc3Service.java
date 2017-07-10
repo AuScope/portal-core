@@ -11,6 +11,7 @@ import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.sissvoc.SISSVoc3MethodMaker;
 import org.auscope.portal.core.services.methodmakers.sissvoc.SISSVoc3MethodMaker.Format;
+import org.auscope.portal.core.services.methodmakers.sissvoc.SISSVoc3MethodMaker.View;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.test.ResourceUtil;
 import org.jmock.Expectations;
@@ -30,6 +31,7 @@ public class TestSISSVoc3Service extends PortalTestClass {
     private HttpServiceCaller mockServiceCaller = context.mock(HttpServiceCaller.class);
     private SISSVoc3MethodMaker mockMethodMaker = context.mock(SISSVoc3MethodMaker.class);
     private String baseUrl = "http://example.org:8080/sissvoc/path";
+    private String schemeUrl = "http://example.org/classifier/repository/vocabulary-scheme";
     private String repository = "repository";
 
     private SISSVoc3Service service;
@@ -51,20 +53,23 @@ public class TestSISSVoc3Service extends PortalTestClass {
 
     /**
      * Tests that iterating a repository works as expected
-     * @throws URISyntaxException 
-     * @throws PortalServiceException 
-     * @throws IOException 
+     * 
+     * @throws URISyntaxException
+     * @throws PortalServiceException
+     * @throws IOException
      */
     @Test
     public void testGetAllConcepts() throws PortalServiceException, URISyntaxException, IOException {
-        try (final HttpClientInputStream rs1 = new HttpClientInputStream(ResourceUtil
-                .loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/SISSVoc3_ConceptsRDF_MoreData.xml"), null);
-        final InputStream rs2 = new HttpClientInputStream(ResourceUtil
-                        .loadResourceAsStream(
-                                "org/auscope/portal/core/test/responses/sissvoc/SISSVoc3_ConceptsRDF_NoMoreData.xml"), null)) {
+        try (final HttpClientInputStream rs1 = new HttpClientInputStream(ResourceUtil.loadResourceAsStream(
+                "org/auscope/portal/core/test/responses/sissvoc/SISSVoc3_ConceptsRDF_MoreData.xml"), null);
+                final InputStream rs2 = new HttpClientInputStream(
+                        ResourceUtil.loadResourceAsStream(
+                                "org/auscope/portal/core/test/responses/sissvoc/SISSVoc3_ConceptsRDF_NoMoreData.xml"),
+                        null)) {
 
             context.checking(new Expectations() {
                 {
+
                     oneOf(mockMethodMaker).getAllConcepts(baseUrl, repository, Format.Rdf, service.getPageSize(), 0);
                     will(returnValue(mockMethod));
                     oneOf(mockMethodMaker).getAllConcepts(baseUrl, repository, Format.Rdf, service.getPageSize(), 1);
@@ -84,28 +89,29 @@ public class TestSISSVoc3Service extends PortalTestClass {
             Assert.assertNotNull(model);
             List<Resource> resources = Lists.newArrayList(model.listSubjects());
             Assert.assertEquals(7, resources.size());
-            Assert.assertTrue(containsResourceUri(resources,
-                    "http://resource.auscope.org/classifier/AuScope/commodity/Energy"));
+            Assert.assertTrue(
+                    containsResourceUri(resources, "http://resource.auscope.org/classifier/AuScope/commodity/Energy"));
             Assert.assertTrue(
                     containsResourceUri(resources, "http://resource.auscope.org/classifier/PIRSA/commodity/U3O8"));
-            Assert.assertFalse(containsResourceUri(resources,
-                    "http://resource.auscope.org/classifier/GA/Non-Existent-Resource/"));
+            Assert.assertFalse(
+                    containsResourceUri(resources, "http://resource.auscope.org/classifier/GA/Non-Existent-Resource/"));
         }
     }
 
     /**
-     * Tests that when iterating a repository, a single failure is reported correctly
-     * @throws URISyntaxException 
-     * @throws PortalServiceException 
-     * @throws IOException 
+     * Tests that when iterating a repository, a single failure is reported
+     * correctly
+     * 
+     * @throws URISyntaxException
+     * @throws PortalServiceException
+     * @throws IOException
      */
     @Test(expected = PortalServiceException.class)
     public void testGetAllDescriptionsCommsError() throws PortalServiceException, URISyntaxException, IOException {
         // final String repository = "repository";
 
-        try (final HttpClientInputStream rs1 = new HttpClientInputStream(ResourceUtil
-                .loadResourceAsStream(
-                        "org/auscope/portal/core/test/responses/sissvoc/SISSVoc3_ConceptsRDF_MoreData.xml"), null)) {
+        try (final HttpClientInputStream rs1 = new HttpClientInputStream(ResourceUtil.loadResourceAsStream(
+                "org/auscope/portal/core/test/responses/sissvoc/SISSVoc3_ConceptsRDF_MoreData.xml"), null)) {
 
             context.checking(new Expectations() {
                 {
@@ -129,17 +135,91 @@ public class TestSISSVoc3Service extends PortalTestClass {
     }
 
     /**
+     * Tests that iterating a repository using a schemeUrl works as expected
+     * 
+     * @throws URISyntaxException
+     * @throws PortalServiceException
+     * @throws IOException
+     */
+    @Test
+    public void testGetAllConceptsInScheme() throws IOException, URISyntaxException, PortalServiceException {
+        final InputStream rs1 = new HttpClientInputStream(ResourceUtil.loadResourceAsStream(
+                "org/auscope/portal/core/test/responses/sissvoc/SISSVoc3_ConceptsRDF_MoreData.xml"), null);
+        final InputStream rs2 = new HttpClientInputStream(ResourceUtil.loadResourceAsStream(
+                "org/auscope/portal/core/test/responses/sissvoc/SISSVoc3_ConceptsRDF_NoMoreData.xml"), null);
+
+        context.checking(new Expectations() {
+            {
+                oneOf(mockMethodMaker).getAllConceptsInScheme(baseUrl, repository, schemeUrl, Format.Rdf, View.all,
+                        service.getPageSize(), 0);
+                will(returnValue(mockMethod));
+                oneOf(mockMethodMaker).getAllConceptsInScheme(baseUrl, repository, schemeUrl, Format.Rdf, View.all,
+                        service.getPageSize(), 1);
+                will(returnValue(mockMethod2));
+
+                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
+                will(returnValue(rs1));
+                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod2);
+                will(returnValue(rs2));
+
+                oneOf(mockMethod).releaseConnection();
+                oneOf(mockMethod2).releaseConnection();
+            }
+        });
+
+        Model model = service.getAllConceptsInScheme(schemeUrl, View.all);
+        Assert.assertNotNull(model);
+        List<Resource> resources = Lists.newArrayList(model.listSubjects());
+        Assert.assertEquals(7, resources.size());
+        Assert.assertTrue(
+                containsResourceUri(resources, "http://resource.auscope.org/classifier/AuScope/commodity/Energy"));
+        Assert.assertTrue(
+                containsResourceUri(resources, "http://resource.auscope.org/classifier/PIRSA/commodity/U3O8"));
+        Assert.assertFalse(
+                containsResourceUri(resources, "http://resource.auscope.org/classifier/GA/Non-Existent-Resource/"));
+
+    }
+
+    @Test(expected = PortalServiceException.class)
+    public void testGetAllConceptsInScheme_CommsError() throws IOException, URISyntaxException, PortalServiceException {
+        final HttpClientInputStream rs1 = new HttpClientInputStream(ResourceUtil.loadResourceAsStream(
+                "org/auscope/portal/core/test/responses/sissvoc/SISSVoc3_ConceptsRDF_MoreData.xml"), null);
+
+        context.checking(new Expectations() {
+            {
+                oneOf(mockMethodMaker).getAllConceptsInScheme(baseUrl, repository, schemeUrl, Format.Rdf, View.all,
+                        service.getPageSize(), 0);
+                will(returnValue(mockMethod));
+                oneOf(mockMethodMaker).getAllConceptsInScheme(baseUrl, repository, schemeUrl, Format.Rdf, View.all,
+                        service.getPageSize(), 1);
+                will(returnValue(mockMethod2));
+
+                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
+                will(returnValue(rs1));
+                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod2);
+                will(throwException(new ConnectException("error")));
+
+                oneOf(mockMethod).releaseConnection();
+                oneOf(mockMethod2).releaseConnection();
+
+            }
+        });
+        service.getAllConceptsInScheme(schemeUrl, View.all);
+    }
+
+    /**
      * Tests that single resources are extracted correctly
-     * @throws PortalServiceException 
-     * @throws IOException 
-     * @throws URISyntaxException 
+     * 
+     * @throws PortalServiceException
+     * @throws IOException
+     * @throws URISyntaxException
      */
     @Test
     public void testGetResourceByUri() throws PortalServiceException, URISyntaxException, IOException {
         final String uri = "http://resource.auscope.org/classifier/GA/commodity/Au";
 
-        try (final HttpClientInputStream rs1 = new HttpClientInputStream(ResourceUtil
-                .loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/SISSVoc3_ResourceRDF.xml"), null)) {
+        try (final HttpClientInputStream rs1 = new HttpClientInputStream(ResourceUtil.loadResourceAsStream(
+                "org/auscope/portal/core/test/responses/sissvoc/SISSVoc3_ResourceRDF.xml"), null)) {
 
             context.checking(new Expectations() {
                 {
@@ -164,8 +244,7 @@ public class TestSISSVoc3Service extends PortalTestClass {
                 if (statement.getObject().asLiteral().getLanguage().equals("en")) {
                     foundEnglishDef = true;
                     Assert.assertEquals("Gold is a highly sought-after precious metal in jewelry.",
-                            statement.getObject()
-                                    .asLiteral().getString());
+                            statement.getObject().asLiteral().getString());
                 }
             }
             Assert.assertTrue("No English skos definition found!", foundEnglishDef);
@@ -174,12 +253,13 @@ public class TestSISSVoc3Service extends PortalTestClass {
 
     /**
      * Tests that getting a resource with a comms error fails gracefully
-     * @throws IOException 
-     * @throws URISyntaxException 
-     * @throws PortalServiceException 
+     * 
+     * @throws IOException
+     * @throws URISyntaxException
+     * @throws PortalServiceException
      */
     @Test(expected = PortalServiceException.class)
-    public void testGetConceptByUri_CommsError() throws URISyntaxException, IOException, PortalServiceException  {
+    public void testGetConceptByUri_CommsError() throws URISyntaxException, IOException, PortalServiceException {
         final String uri = "http://resource.auscope.org/classifier/GA/commodity/Au";
 
         context.checking(new Expectations() {
