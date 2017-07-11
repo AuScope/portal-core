@@ -36,6 +36,8 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
         this.currentRequestCount = 0;
         // Call our superclass constructor to complete construction process.
         this.callParent(arguments);
+        
+        this.on('renderfinished', this._cleanupAbort, this);
     },
 
     /**
@@ -126,6 +128,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
         //start by removing any existing data
         this.abortDisplay();
         this.removeData();
+        this.aborted = false;
 
         var me = this;
         var wfsResources = portal.csw.OnlineResource.getFilteredFromArray(resources, portal.csw.OnlineResource.WFS);
@@ -283,7 +286,10 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
 
 
     _getRenderLayer : function(response,opts,wmsResource, wmsUrl, wmsLayer, wmsOpacity,wfsResources,filterer){
-
+        if (this.aborted) {
+            return;
+        }
+        
         if(wmsOpacity === undefined){
             wmsOpacity = filterer.parameters.opacity;
         }
@@ -323,6 +329,10 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
     _addWMSLayer : function(response,opts,wmsResource, wmsUrl, wmsLayer, wmsOpacity,wfsResources,filterer,sld_body){
         //VT: minus test connection
         this.currentRequestCount--;
+        
+        if (this.aborted) {
+            return;
+        }
         
         var layer=this.map.makeWms(undefined, undefined, wmsResource, this.parentLayer, wmsUrl, wmsLayer, wmsOpacity,sld_body)
 
@@ -394,6 +404,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
      * returns - void
      */
     removeData : function() {
+        this.abortDisplay();
         this.primitiveManager.clearPrimitives();
         this.fireEvent('renderfinished', this);
     },
@@ -402,8 +413,13 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
      * An abstract function - see parent class for more info
      */
     abortDisplay : function() {
+        this.aborted = true;
         for (var i = 0; i < this.allDownloadManagers.length; i++) {
             this.allDownloadManagers[i].abortDownload();
         }
+    },
+    
+    _cleanupAbort : function() {
+        this.aborted = false;
     }
 });

@@ -700,5 +700,17 @@ public abstract class AbstractFilter implements IFilter {
                 + "<ogc:Literal>%d</ogc:Literal>"
                 + "</ogc:Function>", inputYear);
     }
+    
+    /**
+     * Calls the attributeCount SLD function
+     * @param propertyName property to count
+     * @return ogc:function name = "attributeCount"
+     */
+    protected String generateFunctionAttributeCount(String propertyName) {
+
+        return String.format("<ogc:Function name=\"attributeCount\"> "
+                + "<PropertyName>%s</PropertyName>"
+                + "</ogc:Function>", propertyName);
+    }
 
 }

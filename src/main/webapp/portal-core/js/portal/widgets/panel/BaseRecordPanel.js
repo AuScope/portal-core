@@ -323,6 +323,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         var layer = record.get('layer');
         if(layer && record.get('active')){
             ActiveLayerManager.removeLayer(layer);
+            this.menuFactory.layerRemoveHandler(layer);
             this.fireEvent('cellclick',this,undefined,undefined,layer,undefined,undefined);
         }
     },
@@ -410,6 +411,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             height: 200,
             width: 500,
             layout: 'fit',
+            modal : true,
             items: {  // Let's put an empty grid in just to illustrate fit layout
                 xtype: 'panel',
                 autoScroll : true,                

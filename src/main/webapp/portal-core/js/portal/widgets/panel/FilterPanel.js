@@ -172,6 +172,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
                             layout      : 'fit',
                             width       : 200,
                             height      : 300,
+                            modal : true,
                             items: form
                         });
                         return win.show();
@@ -257,6 +258,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
             handler : function(){
                 var layer = me.filterForm.layer; 
                 ActiveLayerManager.removeLayer(layer);
+                me.menuFactory.layerRemoveHandler(layer);
             }
         });
         
@@ -308,6 +310,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         
         this._showConstraintWindow(layer);
         this._showNagiosAlerts(layer);
+        this.menuFactory.layerAddHandler(layer);
 
         //VT: Tracking
         
@@ -324,7 +327,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
             layer.get('source').containsNagiosFailures()) {
             var failingHosts = layer.get('source').get('nagiosFailingHosts');
             
-            var message = 'Please be aware that some of the services underpinning this layer have recently been reported as being unstable. Some aspects of this layer may fail to load successfully. The hosts reported to be experiencing problems are:<br><ul>';
+            var message = 'Please be aware that some of the services underpinning this layer have recently been reported as being unstable. The unstable hosts will be not be queried. The hosts reported to be experiencing problems are:<br><ul>';
             Ext.each(failingHosts, function(host) {
                 message += '<li><b>' + host + '</b></li>';
             });

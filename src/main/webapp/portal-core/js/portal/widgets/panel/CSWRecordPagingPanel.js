@@ -73,6 +73,7 @@ Ext.define('portal.widgets.panel.CSWRecordPagingPanel', {
     _callBackDisplayInfo : function(record){
         Ext.create('Ext.window.Window', {
             title : 'CSW Record Information',
+            modal: true,
             items : [{
                 xtype : 'cswmetadatapanel',
                 width : 500,
