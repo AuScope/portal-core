@@ -24,9 +24,9 @@ public class WMSService {
     private final Log log = LogFactory.getLog(getClass());
 
     // ----------------------------------------------------- Instance variables
-    private HttpServiceCaller serviceCaller;
+    protected HttpServiceCaller serviceCaller;
 
-    private List<WMSMethodMakerInterface> listOfSupportedWMSMethodMaker;
+    protected List<WMSMethodMakerInterface> listOfSupportedWMSMethodMaker;
 
     // ----------------------------------------------------------- Constructors
     public WMSService(HttpServiceCaller serviceCaller, List<WMSMethodMakerInterface> methodMaker) {
@@ -37,7 +37,7 @@ public class WMSService {
 
     // ------------------------------------------- Property Setters and Getters
 
-    private WMSMethodMakerInterface getSupportedMethodMaker(String wmsUrl, String version)
+    protected WMSMethodMakerInterface getSupportedMethodMaker(String wmsUrl, String version)
             throws OperationNotSupportedException {
         log.trace("WMSService::getsupportedMethodMaker() START");
         StringBuilder errStr = new StringBuilder();
