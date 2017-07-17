@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 public class GmlToHtml extends PortalXSLTTransformer {
 
     public GmlToHtml() {
-        super("/org/auscope/portal/xslt/WfsToHtml.xsl");
+        super("/org/auscope/portal/core/xslt/WfsToHtml.xsl");
     }
 
     /**
