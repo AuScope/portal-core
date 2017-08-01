@@ -25,16 +25,18 @@ public class KnownLayerController extends BaseCSWController {
     /** Used for converting data to something the view can understand */
     private ViewKnownLayerFactory viewKnownLayerFactory;
 
-    private Nagios4CachedService nagios4CachedService;
+    private Nagios4CachedService nagios4CachedService = null;
 
     @Autowired
     public KnownLayerController(KnownLayerService knownLayerService,
-            ViewKnownLayerFactory viewFactory, ViewCSWRecordFactory viewCSWRecordFactory, Nagios4CachedService nagios4CachedService) {
+            ViewKnownLayerFactory viewFactory, ViewCSWRecordFactory viewCSWRecordFactory) {
         super(viewCSWRecordFactory, viewFactory);
         this.knownLayerService = knownLayerService;
+    }
+    @Autowired(required = false)
+    public void setNagios4CachedService(Nagios4CachedService nagios4CachedService) {
         this.nagios4CachedService = nagios4CachedService;
     }
-
     /**
      * Gets a JSON response which contains the representations of each and every "KnownFeatureTypeDefinition".
      *
@@ -45,8 +47,11 @@ public class KnownLayerController extends BaseCSWController {
     @RequestMapping("getKnownLayers.do")
     public ModelAndView getKnownLayers() {
         KnownLayerGrouping grouping = knownLayerService.groupKnownLayerRecords();
-
-        return generateKnownLayerResponse(grouping.getKnownLayers(), nagios4CachedService);
+        if (nagios4CachedService != null) {
+            return generateKnownLayerResponse(grouping.getKnownLayers(), nagios4CachedService);
+        } else {
+            return generateKnownLayerResponse(grouping.getKnownLayers());
+        }
     }
 
     /**
