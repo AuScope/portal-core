@@ -49,11 +49,11 @@ public class WCSMethodMaker extends AbstractMethodMaker {
      * @return
      * @throws URISyntaxException
      */
-    public HttpRequestBase getCoverageMethod(String serviceURL, String coverageName,
+    public HttpRequestBase getCoverageMethod(String serviceUrl, String coverageName,
             String format, String outputCrs, Dimension outputSize, Resolution outputResolution, String inputCrs,
             CSWGeographicBoundingBox bbox, TimeConstraint timeConstraint, Map<String, String> customParams)
             throws URISyntaxException {
-        HttpGet httpMethod = new HttpGet(serviceURL);
+        HttpGet httpMethod = new HttpGet(serviceUrl);
 
         //Do some simple error checking to align with WCS standard
         if ((outputSize != null) && (outputResolution != null)) {
@@ -69,7 +69,7 @@ public class WCSMethodMaker extends AbstractMethodMaker {
             throw new IllegalArgumentException("You must specify an inputCrs");
         }
 
-        URIBuilder builder = new URIBuilder(serviceURL);
+        URIBuilder builder = new URIBuilder(serviceUrl);
 
         builder.setParameter("service", "WCS");
         builder.setParameter("version", "1.0.0");
@@ -129,7 +129,7 @@ public class WCSMethodMaker extends AbstractMethodMaker {
 
         httpMethod.setURI(builder.build());
 
-        logger.debug(String.format("url='%1$s' query='%2$s'", serviceURL, httpMethod.getURI().getQuery()));
+        logger.debug(String.format("url='%1$s' query='%2$s'", serviceUrl, httpMethod.getURI().getQuery()));
 
         return httpMethod;
     }

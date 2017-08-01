@@ -84,7 +84,7 @@ public class WMSController extends BaseCSWController {
      * @throws Exception
      */
     @RequestMapping("/getCustomLayers.do")
-    public ModelAndView getCustomLayers(@RequestParam("service_URL") String serviceUrl,
+    public ModelAndView getCustomLayers(@RequestParam("serviceUrl") String serviceUrl,
             @RequestParam(required = false, value="weakCheck", defaultValue = "N") String weakCheck) throws Exception {
 
         CSWRecord[] records;
@@ -263,7 +263,7 @@ public class WMSController extends BaseCSWController {
     @RequestMapping(value = "/wmsMarkerPopup.do", method = {RequestMethod.GET, RequestMethod.POST})
     public void wmsUnitPopup(HttpServletRequest request,
             HttpServletResponse response,
-            @RequestParam("WMS_URL") String wmsUrl,
+            @RequestParam("serviceUrl") String serviceUrl,
             @RequestParam("lat") String latitude,
             @RequestParam("lng") String longitude,
             @RequestParam("QUERY_LAYERS") String queryLayers,
@@ -284,7 +284,7 @@ public class WMSController extends BaseCSWController {
         double lat1 = Double.parseDouble(bboxParts[1]);
         double lat2 = Double.parseDouble(bboxParts[3]);
 
-        String responseString = wmsService.getFeatureInfo(wmsUrl, infoFormat, queryLayers, "EPSG:3857",
+        String responseString = wmsService.getFeatureInfo(serviceUrl, infoFormat, queryLayers, "EPSG:3857",
                 Math.min(lng1, lng2), Math.min(lat1, lat2), Math.max(lng1, lng2), Math.max(lat1, lat2),
                 Integer.parseInt(width), Integer.parseInt(height), Double.parseDouble(longitude),
                 Double.parseDouble(latitude),

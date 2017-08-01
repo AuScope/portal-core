@@ -50,7 +50,7 @@ public class TestPortalXSLTTransformer extends PortalTestClass {
                 .loadResourceAsString("org/auscope/portal/core/test/responses/wfs/GetUndefinedFeatureSet.xml");
         final Properties properties = new Properties();
 
-        properties.setProperty("serviceURL", "fake-service-url");
+        properties.setProperty("serviceUrl", "fake-service-url");
 
         String convertedText = transformer.convert(testXml, properties);
 
@@ -93,7 +93,7 @@ public class TestPortalXSLTTransformer extends PortalTestClass {
                 .loadResourceAsString("org/auscope/portal/core/xslt/oilPipeline.xml");
         final Properties properties = new Properties();
 
-        properties.setProperty("serviceURL", "fake-service-url");
+        properties.setProperty("serviceUrl", "fake-service-url");
 
         String convertedText = transformer.convert(testXml, properties);
         System.out.println("testOilPipelineFeatureParser - transformed XML:\n" + convertedText + "\n");

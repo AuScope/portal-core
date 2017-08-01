@@ -59,7 +59,7 @@ public class GmlToHtml extends PortalXSLTTransformer {
      */
     public String convert(StreamSource wfs, String serviceUrl) {
         Properties stylesheetParams = new Properties();
-        stylesheetParams.setProperty("serviceURL", serviceUrl);
+        stylesheetParams.setProperty("serviceUrl", serviceUrl);
         return convert(wfs, stylesheetParams);
     }
 }
