@@ -25,15 +25,15 @@ public class SOSMethodMaker extends AbstractMethodMaker {
     /**
      * Generates a SOS method for making a GetCapabilities request
      * 
-     * @param serviceURL
+     * @param serviceUrl
      *            - required, SOS End Point
      * @return
      */
-    //    public HttpMethodBase getCapabilitiesMethod(String serviceURL) {
-    //        GetMethod method = new GetMethod(serviceURL);
+    //    public HttpMethodBase getCapabilitiesMethod(String serviceUrl) {
+    //        GetMethod method = new GetMethod(serviceUrl);
     //        List<NameValuePair> options = new ArrayList<NameValuePair>();
     //
-    //        options.addAll(this.extractQueryParams(serviceURL)); //preserve any existing query params
+    //        options.addAll(this.extractQueryParams(serviceUrl)); //preserve any existing query params
     //        options.add(new NameValuePair("service", SOS_SERVICE));
     //        options.add(new NameValuePair("request", "GetCapabilities"));
     //        options.add(new NameValuePair("acceptVersions", SOS_VERSION));
@@ -46,7 +46,7 @@ public class SOSMethodMaker extends AbstractMethodMaker {
     /**
      * Creates a PostMethod given the following parameters.
      * 
-     * @param serviceURL
+     * @param serviceUrl
      *            - required, SOS End Point
      * @param request
      *            - required, service type identifier (e.g. GetObservation)
@@ -62,19 +62,19 @@ public class SOSMethodMaker extends AbstractMethodMaker {
      *            "http://www.opengis.net/def/crs/EPSG/0/"+epsg code
      * @return httpMethod
      */
-    public HttpRequestBase makePostMethod(String serviceURL, String request, String featureOfInterest,
+    public HttpRequestBase makePostMethod(String serviceUrl, String request, String featureOfInterest,
             Date beginPosition, Date endPosition, FilterBoundingBox bbox) {
 
         // Make sure the required parameters are given
-        if (serviceURL == null || serviceURL.equals("")) {
-            throw new IllegalArgumentException("serviceURL parameter can not be null or empty.");
+        if (serviceUrl == null || serviceUrl.equals("")) {
+            throw new IllegalArgumentException("serviceUrl parameter can not be null or empty.");
         }
 
         if (request == null || request.equals("")) {
             throw new IllegalArgumentException("request parameter can not be null or empty.");
         }
 
-        HttpPost httpMethod = new HttpPost(serviceURL);
+        HttpPost httpMethod = new HttpPost(serviceUrl);
 
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
@@ -138,7 +138,7 @@ public class SOSMethodMaker extends AbstractMethodMaker {
         sb.append("  </env:Body>");
         sb.append("</env:Envelope>");
 
-        log.debug("Service URL:\n\t" + serviceURL);
+        log.debug("Service URL:\n\t" + serviceUrl);
         log.debug("Get Feature Query:\n" + sb.toString());
 
         // If this does not work, try params: "text/xml; charset=ISO-8859-1"
@@ -147,8 +147,8 @@ public class SOSMethodMaker extends AbstractMethodMaker {
         return httpMethod;
     }
 
-    public HttpRequestBase makePostMethod(String serviceURL, String request) {
-        return makePostMethod(serviceURL, request, null, null, null, null);
+    public HttpRequestBase makePostMethod(String serviceUrl, String request) {
+        return makePostMethod(serviceUrl, request, null, null, null, null);
     }
 
 }

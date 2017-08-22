@@ -156,7 +156,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
 
             var wmsLayer = wmsResources[i].get('name');
             var wmsOpacity = filterer.getParameter('opacity');
-            //  FT: Generate serviceURL based on WFS URL, serviceURL is important for NVCL Borehole
+            //  FT: Generate serviceUrl based on WFS URL, serviceUrl is important for NVCL Borehole
             //      - to display only those with Hylogger Data based on those listed in nvcl:ScannedBoreholeCollection
             for (var j=0; j<wfsResources.length; j++) {
                 var wfsHost = this._getDomain(wfsResources[j].get('url'));

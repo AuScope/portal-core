@@ -6,31 +6,24 @@ import java.util.Properties;
 
 import javax.xml.transform.stream.StreamSource;
 
+import org.auscope.portal.core.xslt.PortalXSLTTransformer;
+import org.springframework.stereotype.Component;
+
 /**
- * A PortalXSLTTransformer for working with the wfsToKml stylesheet
+ * Utility class for converting Gml to a 'pretty' HTML representation
  * 
  * @author Josh Vote
+ *
  */
-public class WfsToKmlTransformer extends PortalXSLTTransformer {
+@Component
+public class GmlToHtml extends PortalXSLTTransformer {
 
-    /**
-     * Creates a new transformer using /org/auscope/portal/core/xslt/wfsToKml.xsl
-     */
-    public WfsToKmlTransformer() {
-        super("/org/auscope/portal/core/xslt/wfsToKml.xsl");
+    public GmlToHtml() {
+        super("/org/auscope/portal/core/xslt/WfsToHtml.xsl");
     }
 
     /**
-     * Creates a new transformer using the specified resource (should accept a serviceUrl parameter)
-     * 
-     * @param resource
-     */
-    public WfsToKmlTransformer(String resource) {
-        super(resource);
-    }
-
-    /**
-     * Utility method to transform a WFS response into kml
+     * Utility method to transform a WFS response into HTML
      *
      * @param wfs
      *            WFS response to be transformed
@@ -43,7 +36,7 @@ public class WfsToKmlTransformer extends PortalXSLTTransformer {
     }
 
     /**
-     * Utility method to transform a WFS response into kml
+     * Utility method to transform a WFS response into HTML
      *
      * @param wfs
      *            WFS response to be transformed
@@ -56,7 +49,7 @@ public class WfsToKmlTransformer extends PortalXSLTTransformer {
     }
 
     /**
-     * Utility method to transform a WFS response into kml
+     * Utility method to transform a WFS response into HTML
      *
      * @param wfs
      *            WFS response to be transformed

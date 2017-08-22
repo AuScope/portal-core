@@ -90,7 +90,7 @@ public class TestSOSMethodMaker extends PortalTestClass {
         try {
             sosMM.makePostMethod(sosUrl, request);
         } catch (IllegalArgumentException expected) {
-            Assert.assertEquals(expected.getMessage(), "serviceURL parameter can not be null or empty.");
+            Assert.assertEquals(expected.getMessage(), "serviceUrl parameter can not be null or empty.");
         }
         sosUrl = "http://example.url";
         //test empty request parameter
