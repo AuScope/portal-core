@@ -337,13 +337,17 @@ public class WMSController extends BaseCSWController {
             @RequestParam("bbox") String bbox,
             @RequestParam("sldUrl") String sldUrl,
             @RequestParam("version") String version,
+            @RequestParam("crs") String crs,
             HttpServletResponse response,
             HttpServletRequest request)
                     throws Exception {
 
         response.setContentType("image/png");
+        
+        sldUrl = request.getRequestURL().toString().replace(request.getServletPath(),"").replace("4200", "8080") + sldUrl;
+        
 
-        HttpClientInputStream styleStream = this.wmsService.getMap(url, layer, bbox, request.getRequestURL().toString().replace(request.getServletPath(),"") + sldUrl, version);
+        HttpClientInputStream styleStream = this.wmsService.getMap(url, layer, bbox,sldUrl, version,crs);
         OutputStream outputStream = response.getOutputStream();
         IOUtils.copy(styleStream,outputStream);
         //FileIOUtil.writeInputToOutputStream(styleStream, outputStream, 1024, false);
