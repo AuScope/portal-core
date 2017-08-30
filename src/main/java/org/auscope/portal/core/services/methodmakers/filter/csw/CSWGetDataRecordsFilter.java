@@ -136,6 +136,8 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     /** The sensor. */
     private String sensor;
 
+    private String alternateIdentifier;
+    
     /** The keyword match type. */
     private KeywordMatchType keywordMatchType;
 
@@ -144,7 +146,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     private SortType sortType;
 
     private String basicSearchTerm;
-
+    
     /**
      * Default constructor for creating a filter in a factory method manner.
      * Create an empty filter and set the fields manually.
@@ -305,6 +307,10 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
 
             if (sensor != null && !sensor.isEmpty()) {
                 fragments.add(this.generatePropertyIsEqualToFragment("sensor", sensor));
+            }
+            
+            if (alternateIdentifier != null && !alternateIdentifier.isEmpty()) {
+                fragments.add(this.generatePropertyIsEqualToFragment("AlternateIdentifier", alternateIdentifier));
             }
 
             if (temporalExtentFrom != null) {
@@ -653,5 +659,13 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
 
     public void setBasicSearchTerm(String basicSearchTerm) {
         this.basicSearchTerm = basicSearchTerm;
+    }
+
+    public String getAlternateIdentifier() {
+        return alternateIdentifier;
+    }
+
+    public void setAlternateIdentifier(String alternateIdentifier) {
+        this.alternateIdentifier = alternateIdentifier;
     }
 }
