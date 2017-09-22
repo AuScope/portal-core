@@ -149,8 +149,20 @@ public class DownloadController extends BasePortalController {
 
             response.getOutputStream().write(htmlResponse.getBytes());
 
-        } else {
+        } else if(outputFormat.equals("csv")){
             // set the content type for zip files
+            response.setContentType("application/zip");
+            response.setHeader("Content-Disposition",
+                    "inline; filename=CSVDownload.zip;");
+            ZipOutputStream zout = new ZipOutputStream(response.getOutputStream());
+            //VT: threadpool is closed within downloadAll();
+            ArrayList<DownloadResponse> gmlDownloads = downloadManager.downloadAll();
+            FileIOUtil.writeResponseToZip(gmlDownloads, zout,outputFormat);
+            zout.finish();
+            zout.flush();
+            zout.close();
+        } else {
+        	// set the content type for zip files
             response.setContentType("application/zip");
             response.setHeader("Content-Disposition",
                     "inline; filename=GMLDownload.zip;");

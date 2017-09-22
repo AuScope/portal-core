@@ -3,6 +3,7 @@ package org.auscope.portal.core.server.controllers;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -130,6 +131,48 @@ public class WFSController extends BasePortalController {
         }
 
         return generateNamedJSONResponseMAV(true, "gml", response.getData(), response.getMethod());
+    }
+    
+    
+    /**
+     * Given a service Url and a feature type this will query for all of the features, then convert them into KML, to be displayed, assuming that the response
+     * will be complex feature GeoSciML
+     *
+     * @param serviceUrl
+     * @param featureType
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/getAllFeaturesInCSV.do")
+    public void getAllFeaturesInCSV(@RequestParam("serviceUrl") final String serviceUrl,
+            @RequestParam("typeName") final String featureType,
+            @RequestParam(required = false, value = "bbox") final String bboxJSONString,
+            @RequestParam(required = false, value = "maxFeatures", defaultValue = "0") int maxFeatures,
+            HttpServletResponse response)
+            throws Exception {
+
+        FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxJSONString);
+        OutputStream outputStream = response.getOutputStream();
+        SimpleBBoxFilter filter = new SimpleBBoxFilter();
+        String filterString = null;
+        String srs = null;
+        if (bbox == null) {
+            filterString = filter.getFilterStringAllRecords();
+        } else {
+            filterString = filter.getFilterStringBoundingBox(bbox);
+        }
+
+        InputStream result = null;
+        try {
+        	result = wfsService.downloadCSV(serviceUrl, featureType, filterString, maxFeatures);
+        } catch (Exception ex) {
+            log.warn(String.format("Exception getting '%2$s' from '%1$s': %3$s", serviceUrl, featureType, ex));
+            log.debug("Exception: ", ex);           
+        }
+
+        FileIOUtil.writeInputToOutputStream(result, outputStream, 8 * 1024, true);
+        outputStream.close();
     }
 
     /**
