@@ -22,6 +22,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
 
@@ -108,6 +109,7 @@ public class HttpServiceCaller {
                     .useSystemProperties()
                     .setConnectionManager(man)
                     .setDefaultRequestConfig(requestConfig)
+                    .setRedirectStrategy(new LaxRedirectStrategy())
                     .build();
         return new HttpClientInputStream(this.getMethodResponseAsStream(method, httpClient), httpClient);
     }
