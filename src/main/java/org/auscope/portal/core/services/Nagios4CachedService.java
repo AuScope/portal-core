@@ -50,16 +50,27 @@ public class Nagios4CachedService extends Nagios4Service {
         CacheEntry cacheEntry = cache.get(hostGroup);
 
         if (cacheEntry != null) {
+        	if(cacheEntry.getPortalServiceException() != null){
+        		throw cacheEntry.getPortalServiceException();
+        	}
             long differenceSeconds = (new Date().getTime() - cacheEntry.getCreated().getTime()) / 1000l;
             if (differenceSeconds < ttlSeconds) {
                 return cacheEntry.getResponse();
             }
-        }
+        } 
 
         // I don't want a swarm of requests going out if the cache needs updating and there's lots of incoming requests
         // This could allow better throughput by only synchronizing requests with the same hostname
         // but I feel that's over engineering it
-        Map<String, List<ServiceStatusResponse>> response = super.getStatuses(hostGroup);
+        Map<String, List<ServiceStatusResponse>> response = null;
+        try{
+        	response = super.getStatuses(hostGroup);
+        } catch(PortalServiceException pse){
+        	cacheEntry = new CacheEntry(new Date(), pse); // This could potentially recycle the CacheEntry objects instead
+            cache.put(hostGroup, cacheEntry);
+        	throw pse;
+        }
+        
         cacheEntry = new CacheEntry(new Date(), response); // This could potentially recycle the CacheEntry objects instead
         cache.put(hostGroup, cacheEntry);
 
@@ -70,6 +81,22 @@ public class Nagios4CachedService extends Nagios4Service {
     public class CacheEntry {
         private Date created;
         private Map<String, List<ServiceStatusResponse>> response;
+        private PortalServiceException portalServiceException;
+        
+        public CacheEntry(Date created, Map<String, List<ServiceStatusResponse>> response) {
+            super();
+            this.created = created;
+            this.response = response;
+            this.portalServiceException = null;
+        }
+        
+        public CacheEntry(Date created, PortalServiceException ex) {
+            super();
+            this.created = created;
+            this.setPortalServiceException(ex);
+            this.response = null;
+        }
+        
         public Date getCreated() {
             return created;
         }
@@ -82,10 +109,12 @@ public class Nagios4CachedService extends Nagios4Service {
         public void setResponse(Map<String, List<ServiceStatusResponse>> response) {
             this.response = response;
         }
-        public CacheEntry(Date created, Map<String, List<ServiceStatusResponse>> response) {
-            super();
-            this.created = created;
-            this.response = response;
-        }
+        
+		public PortalServiceException getPortalServiceException() {
+			return portalServiceException;
+		}
+		public void setPortalServiceException(PortalServiceException exception) {
+			this.portalServiceException = exception;
+		}
     }
 }
