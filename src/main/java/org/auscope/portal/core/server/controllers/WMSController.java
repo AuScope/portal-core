@@ -276,7 +276,7 @@ public class WMSController extends BaseCSWController {
             @RequestParam(value = "SLD_BODY", defaultValue = "") String sldBody,
             @RequestParam(value = "postMethod", defaultValue = "false") Boolean postMethod,
             @RequestParam("version") String version,
-            @RequestParam(value = "feature_count", defaultValue = "10") String feature_count) throws Exception {
+            @RequestParam(value = "feature_count", defaultValue = "0") String feature_count) throws Exception {
 
         String[] bboxParts = bbox.split(",");
         double lng1 = Double.parseDouble(bboxParts[0]);
