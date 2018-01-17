@@ -25,7 +25,7 @@
         <repository>
             <id>deployment</id>
             <name>Internal nexus</name>
-            <url>https://cgsrv8.arrc.csiro.au/nexus/content/repositories/PortalRelease/</url>
+            <url>https://cgsrv8.arrc.csiro.au/nexus/repository/PortalRelease/</url>
         </repository>
     </distributionManagement>
 
@@ -313,14 +313,10 @@
         <repository>
             <id>cgsrv8.arrc.csiro.au</id>
             <name>AuScope Nexus - PortalRepo</name>
-            <url>http://cgsrv8.arrc.csiro.au/nexus/content/groups/PortalRepository/</url>
+            <url>https://cgsrv8.arrc.csiro.au/nexus/repository/PortalRepository/</url>
         </repository>
         <!-- This is for AuScope specific snapshot builds of packages that arent in Maven central -->
-        <repository>
-            <id>cgsrv8.arrc.csiro.au-snapshots</id>
-            <name>AuScope Nexus - PortalRepo</name>
-            <url>https://cgsrv8.arrc.csiro.au/nexus/content/repositories/PortalSnapshot/</url>
-        </repository>
+        
     </repositories>
     <!-- Dependencies -->
     <dependencies>
