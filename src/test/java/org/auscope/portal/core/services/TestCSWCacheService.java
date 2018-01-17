@@ -236,6 +236,145 @@ public class TestCSWCacheService extends PortalTestClass {
     }
 
     /**
+     * Tests that the records cache is use as a fallback when a CSW  reqeust fails.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testMultiUpdateFallbackOnCache() throws IOException {
+        final String moreRecordsString = ResourceUtil
+                .loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
+        final String noMoreRecordsString = ResourceUtil
+                .loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse_NoMoreRecords.xml");
+
+        final Sequence t1Sequence = context.sequence("t1Sequence");
+        final Sequence t2Sequence = context.sequence("t2Sequence");
+        final Sequence t3Sequence = context.sequence("t3Sequence");
+
+        final int totalRequestsMade = CONCURRENT_THREADS_TO_RUN + 2;
+        try (final HttpClientInputStream t1r1 = new HttpClientInputStream(new ByteArrayInputStream(moreRecordsString.getBytes()), null);
+        final HttpClientInputStream t1r2 = new HttpClientInputStream(new ByteArrayInputStream(noMoreRecordsString.getBytes()), null);
+        final HttpClientInputStream t2r1 = new HttpClientInputStream(new ByteArrayInputStream(noMoreRecordsString.getBytes()), null);
+        final HttpClientInputStream t3r1 = new HttpClientInputStream(new ByteArrayInputStream(moreRecordsString.getBytes()), null);
+                final HttpClientInputStream t3r2 = new HttpClientInputStream(
+                        new ByteArrayInputStream(noMoreRecordsString.getBytes()), null)) {
+
+            context.checking(new Expectations() {
+                {
+                    // Thread 1 will make 2 requests
+                    oneOf(httpServiceCaller).getMethodResponseAsStream(
+                            with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)));
+                    inSequence(t1Sequence);
+                    will(returnValue(t1r1));
+                    oneOf(httpServiceCaller).getMethodResponseAsStream(
+                            with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)));
+                    inSequence(t1Sequence);
+                    will(returnValue(t1r2));
+
+                    // Thread 2 will make 1 requests
+                    oneOf(httpServiceCaller).getMethodResponseAsStream(
+                            with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 2), null)));
+                    inSequence(t2Sequence);
+                    will(returnValue(t2r1));
+
+                    // Thread 3 will make 2 requests
+                    oneOf(httpServiceCaller).getMethodResponseAsStream(
+                            with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)));
+                    inSequence(t3Sequence);
+                    will(returnValue(t3r1));
+                    oneOf(httpServiceCaller).getMethodResponseAsStream(
+                            with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)));
+                    inSequence(t3Sequence);
+                    will(returnValue(t3r2));
+                }
+            });
+
+            // Start our updating and wait for our threads to finish
+            Assert.assertTrue(this.cswCacheService.updateCache());
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                Assert.fail("Test sleep interrupted. Test aborted.");
+            }
+
+            // Check our expected responses
+            Assert.assertEquals(totalRequestsMade * RECORD_COUNT_TOTAL, this.cswCacheService.getRecordCache().size());
+            Assert.assertEquals(totalRequestsMade * RECORD_COUNT_WMS, this.cswCacheService.getWMSRecords().size());
+            Assert.assertEquals(totalRequestsMade * RECORD_COUNT_WFS, this.cswCacheService.getWFSRecords().size());
+            Assert.assertEquals(totalRequestsMade * RECORD_COUNT_ERMINE_RECORDS, this.cswCacheService.getWCSRecords()
+                    .size());
+
+            // Ensure that our internal state is set to NOT RUNNING AN UPDATE
+            Assert.assertFalse(this.cswCacheService.updateRunning);
+
+        }
+
+        // Try again, with an error, but should still have the full number of records from before.
+        try (final HttpClientInputStream t1r1 = new HttpClientInputStream(new ByteArrayInputStream(moreRecordsString.getBytes()), null);
+                final HttpClientInputStream t1r2 = new HttpClientInputStream(new ByteArrayInputStream(noMoreRecordsString.getBytes()), null);
+                final HttpClientInputStream t3r1 = new HttpClientInputStream(new ByteArrayInputStream(moreRecordsString.getBytes()), null);
+                final HttpClientInputStream t3r2 = new HttpClientInputStream(
+                        new ByteArrayInputStream(noMoreRecordsString.getBytes()), null)) {
+            context.checking(new Expectations() {
+                {
+                    // Thread 1 will make 2 requests
+                    oneOf(httpServiceCaller).getMethodResponseAsStream(
+                            with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)));
+                    inSequence(t1Sequence);
+                    will(returnValue(t1r1));
+                    oneOf(httpServiceCaller).getMethodResponseAsStream(
+                            with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)));
+                    inSequence(t1Sequence);
+                    will(returnValue(t1r2));
+
+                    // Thread 2 will throw an exception
+                    oneOf(httpServiceCaller).getMethodResponseAsStream(
+                            with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 2), null)));
+                    inSequence(t2Sequence);
+                    will(throwException(new Exception()));
+
+                    // Thread 3 will make 2 requests
+                    oneOf(httpServiceCaller).getMethodResponseAsStream(
+                            with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)));
+                    inSequence(t3Sequence);
+                    will(returnValue(t3r1));
+                    oneOf(httpServiceCaller).getMethodResponseAsStream(
+                            with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)));
+                    inSequence(t3Sequence);
+                    will(returnValue(t3r2));
+                }
+            });
+
+            // Start our updating and wait for our threads to finish
+            Assert.assertTrue(this.cswCacheService.updateCache());
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                Assert.fail("Test sleep interrupted. Test aborted.");
+            }
+            try {
+                threadExecutor.getExecutorService().shutdown();
+                threadExecutor.getExecutorService().awaitTermination(180, TimeUnit.SECONDS);
+            } catch (Exception ex) {
+                threadExecutor.getExecutorService().shutdownNow();
+                Assert.fail("Exception whilst waiting for update to finish " + ex.getMessage());
+            }
+
+            // Check our expected responses
+            Assert.assertEquals(totalRequestsMade * RECORD_COUNT_TOTAL, this.cswCacheService.getRecordCache().size());
+            Assert.assertEquals(totalRequestsMade * RECORD_COUNT_WMS, this.cswCacheService.getWMSRecords().size());
+            Assert.assertEquals(totalRequestsMade * RECORD_COUNT_WFS, this.cswCacheService.getWFSRecords().size());
+            Assert.assertEquals(totalRequestsMade * RECORD_COUNT_ERMINE_RECORDS, this.cswCacheService.getWCSRecords()
+                    .size());
+
+            // Ensure that our internal state is set to NOT RUNNING AN UPDATE
+            Assert.assertFalse(this.cswCacheService.updateRunning);
+        }
+
+    }
+
+
+    /**
      * Tests a regular update goes through and makes multiple requests over multiple threads
      * @throws IOException
      */
