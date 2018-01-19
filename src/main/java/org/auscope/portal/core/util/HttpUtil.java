@@ -33,7 +33,7 @@ public class HttpUtil {
             throw new RuntimeException("No support for UTF-8", ex);
         }
     }
-
+    
     /**
      * comparing url with a list of filter urls
      *
