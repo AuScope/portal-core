@@ -1,0 +1,9 @@
+<csw:GetDomainResponse xmlns:csw="http://www.opengis.net/cat/csw/2.0.2">
+    <csw:DomainValues type="csw:Record">
+      <csw:PropertyName>Subject</csw:PropertyName>
+      <csw:ListOfValues>
+          <csw:Value>Test</csw:Value>
+          <csw:Value>Test 2</csw:Value>
+    </csw:ListOfValues>
+    </csw:DomainValues>
+</csw:GetDomainResponse>

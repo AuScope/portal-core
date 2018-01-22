@@ -156,6 +156,7 @@ public class HttpServiceCaller {
         return getMethodResponseAsStream(method, (CredentialsProvider) null);
     }
 
+
     /**
      * Invokes a method and returns the binary response as a stream. (Creates a new HttpClient for use with this request)
      *
@@ -168,6 +169,7 @@ public class HttpServiceCaller {
      */
     public HttpClientInputStream getMethodResponseAsStream(HttpRequestBase method, CredentialsProvider credentialsProvider) throws IOException {
         CloseableHttpClient httpClient = generateClient(credentialsProvider);
+
         return new HttpClientInputStream(this.getMethodResponseAsStream(method, httpClient), httpClient);
     }
 
