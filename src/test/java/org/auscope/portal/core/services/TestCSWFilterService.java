@@ -2,6 +2,7 @@ package org.auscope.portal.core.services;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -10,6 +11,7 @@ import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter;
+import org.auscope.portal.core.services.responses.csw.CSWGetDomainResponse;
 import org.auscope.portal.core.services.responses.csw.CSWGetRecordResponse;
 import org.auscope.portal.core.test.BasicThreadExecutor;
 import org.auscope.portal.core.test.PortalTestClass;
@@ -41,6 +43,7 @@ public class TestCSWFilterService extends PortalTestClass {
 
     private static final String IDFORMATSTRING = "id:%1$s";
     private static final String SERVICEURLFORMATSTRING = "http://cswservice.%1$s.url/";
+    private static final String PROPERTYNAME = "Subject";
 
     /**
      * Initialises each of our unit tests with a new CSWFilterService
@@ -246,4 +249,5 @@ public class TestCSWFilterService extends PortalTestClass {
 
         Assert.assertArrayEquals(expected, actual);
     }
+
 }
