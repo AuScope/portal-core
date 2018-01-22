@@ -99,6 +99,9 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
 
     /** The Author's surname */
     private String authorSurname = null;
+    
+    /** The type of online resource - WFS or WMS */
+    private String onlineResourceType = null;
 
     /** Date on which the record was created or updated within the catalogue. */
     private DateTime modifiedDateFrom = null;
@@ -253,6 +256,11 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
             if (authorSurname != null && !authorSurname.isEmpty()) {
                 fragments.add(generateAndComparisonFragment(
                         this.generatePropertyIsLikeFragment("authorSurname", "*" + authorSurname + "*")));
+            }
+            
+            if (onlineResourceType != null && !onlineResourceType.isEmpty()) {
+                fragments.add(generateAndComparisonFragment(
+                        this.generatePropertyIsLikeFragment("onlineResourceType", "OGC:" + onlineResourceType + "*")));
             }
 
             if (publicationDateFrom != null) {
@@ -668,4 +676,14 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     public void setAlternateIdentifier(String alternateIdentifier) {
         this.alternateIdentifier = alternateIdentifier;
     }
+
+    
+    public String getOnlineResourceType() {
+        return onlineResourceType;
+    }
+    
+    public void setOnlineResourceType(String onlineResourceType) {
+        this.onlineResourceType = onlineResourceType;
+    }
+
 }
