@@ -358,7 +358,7 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
 
 
     @Override
-    public HttpRequestBase getMap(String url,String layer,String bbox, String sldUrl) throws URISyntaxException, IOException {
+    public HttpRequestBase getMap(String url,String layer,String bbox, String sldUrl, String crs) throws URISyntaxException, IOException {
 
         HttpGet getSld = new HttpGet(sldUrl);
         String sldBody =  serviceCaller.getMethodResponseAsString(getSld);
@@ -376,7 +376,7 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
         existingParam.add(new BasicNameValuePair("LAYERS", layer));
         existingParam.add(new BasicNameValuePair("FORMAT", "image/png"));
         existingParam.add(new BasicNameValuePair("TRANSPARENT", "TRUE"));
-        existingParam.add(new BasicNameValuePair("CRS", "EPSG:4326"));
+        existingParam.add(new BasicNameValuePair("CRS", crs));
         existingParam.add(new BasicNameValuePair("BBOX", bbox));
         existingParam.add(new BasicNameValuePair("WIDTH", "256"));
         existingParam.add(new BasicNameValuePair("HEIGHT", "256"));

@@ -88,6 +88,7 @@
 <script src="portal-core/js/portal/layer/legend/Legend.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/layer/legend/wfs/WFSLegend.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/layer/legend/wms/WMSLegend.js?v=${buildTimestamp}" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/legend/csw/CSWLegend.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/layer/legend/wms/WMSLegendForm.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/layer/querier/BaseComponent.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/layer/querier/Querier.js?v=${buildTimestamp}" type="text/javascript"></script>
@@ -108,7 +109,6 @@
 <script src="portal-core/js/portal/layer/querier/wms/WMSQuerier.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/layer/querier/wms/WMSXMLFormatQuerier.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/layer/querier/coverage/WCSQuerier.js?v=${buildTimestamp}" type="text/javascript"></script>
-<script src="portal-core/js/portal/layer/querier/wms/GeotransectQuerier.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/layer/querier/wms/WMSMultipleTabDisplayQuerier.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/layer/renderer/RenderDebuggerData.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/layer/renderer/Renderer.js?v=${buildTimestamp}" type="text/javascript"></script>

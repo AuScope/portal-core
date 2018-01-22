@@ -70,7 +70,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
     /**
      * Creates a PostMethod given the following parameters.
      *
-     * @param serviceURL
+     * @param serviceUrl
      *            - required, exception thrown if not provided
      * @param featureType
      *            - required, exception thrown if not provided
@@ -80,14 +80,14 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      *            - Set to non zero to specify a cap on the number of features to fetch
      * @return
      */
-    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures) {
-        return makePostMethod(serviceURL, featureType, filterString, maxFeatures, null, null, null, null);
+    public HttpRequestBase makePostMethod(String serviceUrl, String featureType, String filterString, int maxFeatures) {
+        return makePostMethod(serviceUrl, featureType, filterString, maxFeatures, null, null, null, null);
     }
 
     /**
      * Creates a PostMethod given the following parameters.
      *
-     * @param serviceURL
+     * @param serviceUrl
      *            - required, exception thrown if not provided
      * @param featureType
      *            - required, exception thrown if not provided
@@ -97,15 +97,15 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      *            - Can be null - The type of response set you wish to request (default is Results)
      * @return
      */
-    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString,
+    public HttpRequestBase makePostMethod(String serviceUrl, String featureType, String filterString,
             ResultType resultType) {
-        return makePostMethod(serviceURL, featureType, filterString, 0, null, resultType, null, null);
+        return makePostMethod(serviceUrl, featureType, filterString, 0, null, resultType, null, null);
     }
 
     /**
      * Creates a PostMethod given the following parameters.
      *
-     * @param serviceURL
+     * @param serviceUrl
      *            - required, exception thrown if not provided
      * @param featureType
      *            - required, exception thrown if not provided
@@ -117,15 +117,15 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      *            - Can be null or empty
      * @return
      */
-    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures,
+    public HttpRequestBase makePostMethod(String serviceUrl, String featureType, String filterString, int maxFeatures,
             String srsName) {
-        return makePostMethod(serviceURL, featureType, filterString, 0, srsName, null, null, null);
+        return makePostMethod(serviceUrl, featureType, filterString, 0, srsName, null, null, null);
     }
 
     /**
      * Creates a PostMethod given the following parameters.
      *
-     * @param serviceURL
+     * @param serviceUrl
      *            - required, exception thrown if not provided
      * @param featureType
      *            - required, exception thrown if not provided
@@ -139,15 +139,15 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      *            - Can be null - The type of response set you wish to request (default is Results)
      * @return
      */
-    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures,
+    public HttpRequestBase makePostMethod(String serviceUrl, String featureType, String filterString, int maxFeatures,
             String srsName, ResultType resultType) {
-        return makePostMethod(serviceURL, featureType, filterString, maxFeatures, srsName, resultType, null, null);
+        return makePostMethod(serviceUrl, featureType, filterString, maxFeatures, srsName, resultType, null, null);
     }
 
     /**
      * Creates a PostMethod given the following parameters.
      *
-     * @param serviceURL
+     * @param serviceUrl
      *            - required, exception thrown if not provided
      * @param featureType
      *            - required, exception thrown if not provided
@@ -163,16 +163,16 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      *            - Can be null - The format you wish the response to take
      * @return
      */
-    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures,
+    public HttpRequestBase makePostMethod(String serviceUrl, String featureType, String filterString, int maxFeatures,
             String srsName, ResultType resultType, String outputFormat) {
-        return makePostMethod(serviceURL, featureType, filterString, maxFeatures, srsName, resultType, outputFormat,
+        return makePostMethod(serviceUrl, featureType, filterString, maxFeatures, srsName, resultType, outputFormat,
                 null);
     }
 
     /**
      * Creates a PostMethod given the following parameters.
      *
-     * @param serviceURL
+     * @param serviceUrl
      *            - required, exception thrown if not provided
      * @param featureType
      *            - required, exception thrown if not provided
@@ -190,7 +190,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      *            - This is for services that supports paging.
      * @return
      */
-    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures,
+    public HttpRequestBase makePostMethod(String serviceUrl, String featureType, String filterString, int maxFeatures,
             String srsName, ResultType resultType, String outputFormat, String startIndex) {
 
         // Make sure the required parameters are given
@@ -198,11 +198,11 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
             throw new IllegalArgumentException("featureType parameter can not be null or empty.");
         }
 
-        if (serviceURL == null || serviceURL.equals("")) {
-            throw new IllegalArgumentException("serviceURL parameter can not be null or empty.");
+        if (serviceUrl == null || serviceUrl.equals("")) {
+            throw new IllegalArgumentException("serviceUrl parameter can not be null or empty.");
         }
 
-        HttpPost httpMethod = new HttpPost(serviceURL);
+        HttpPost httpMethod = new HttpPost(serviceUrl);
 
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
@@ -252,7 +252,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
         sb.append("  </wfs:Query>\n");
         sb.append("</wfs:GetFeature>");
 
-        log.debug("Service URL:\n\t" + serviceURL);
+        log.debug("Service URL:\n\t" + serviceUrl);
         log.debug("Get Feature Query:\n" + sb.toString());
 
         // If this does not work, try params: "text/xml; charset=ISO-8859-1"

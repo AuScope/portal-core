@@ -52,6 +52,7 @@ public class TestViewKnownLayerFactory extends PortalTestClass {
         knownLayer.setIconUrl("http://icon.url.test");
         knownLayer.setIconSize(mockD1);
         knownLayer.setIconAnchor(mockP1);
+        knownLayer.setNagiosHostGroup("nagios-host-group");
 
         //Test with all optional params
         model = factory.toView(knownLayer);
@@ -70,5 +71,7 @@ public class TestViewKnownLayerFactory extends PortalTestClass {
         ModelMap iconSize = (ModelMap) model.get("iconSize");
         Assert.assertEquals(width, (Double) iconSize.get("width"), 0.01);
         Assert.assertEquals(height, (Double) iconSize.get("height"), 0.01);
+
+        Assert.assertEquals("nagios-host-group", model.get("nagiosHostGroup"));
     }
 }

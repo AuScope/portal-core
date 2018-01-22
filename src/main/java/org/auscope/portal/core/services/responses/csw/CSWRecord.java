@@ -215,6 +215,24 @@ public class CSWRecord {
     public AbstractCSWOnlineResource[] getOnlineResources() {
         return onlineResources;
     }
+    
+    /**
+     * Check for an online resource with a name
+     *
+     * @return true if there exists an online resource with a name 
+     */
+    public boolean hasNamedOnlineResources() {
+        boolean hasName = false;
+        if (onlineResources != null) {
+            for (int i=0; i<onlineResources.length; i++) {
+                if (!onlineResources[i].getName().equals("")) {
+                    hasName = true;
+                    break;
+                }
+            }
+        }
+        return hasName;
+    }
 
     /**
      * Gets the resource provider.
@@ -251,6 +269,15 @@ public class CSWRecord {
      */
     public CSWGeographicElement[] getCSWGeographicElements() {
         return cswGeographicElements;
+    }
+    
+    /**
+     * Checks if there are any BBOXes for this record
+     *
+     * @return true if there are any BBOXes in the geographic elements
+     */
+    public boolean hasGeographicElements() {
+        return (cswGeographicElements!=null && cswGeographicElements.length>0);
     }
 
     /**

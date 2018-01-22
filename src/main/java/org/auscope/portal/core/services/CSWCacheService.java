@@ -64,6 +64,14 @@ public class CSWCacheService {
     protected Map<String, Set<String>> keywordsByRegistry;
     /** A list of records representing the most recent snapshot of all CSW's */
     protected List<CSWRecord> recordCache;
+
+    /**
+     * A cache of records from each csw endpoint, to be used in case of failures.
+     *
+     * Map of endpoint id to csw records.
+     */
+    protected Map<String, Map<String, CSWRecord>> cswRecordCache;
+
     protected HttpServiceCaller serviceCaller;
     protected Executor executor;
     protected CSWServiceItem[] cswServiceList;
@@ -114,6 +122,7 @@ public class CSWCacheService {
         this.keywordCache = new HashMap<>();
         this.keywordsByRegistry = new HashMap<String, Set<String>>();
         this.recordCache = new ArrayList<>();
+        this.cswRecordCache = new HashMap<String, Map<String, CSWRecord>>();
         this.transformerFactory = transformerFactory;
         this.cswServiceList = new CSWServiceItem[cswServiceList.size()];
         for (int i = 0; i < cswServiceList.size(); i++) {
@@ -265,9 +274,17 @@ public class CSWCacheService {
         //Create our worker threads (ensure they are all aware of each other)
         CSWCacheUpdateThread[] updateThreads = new CSWCacheUpdateThread[cswServiceList.length];
         for (int i = 0; i < updateThreads.length; i++) {
-            updateThreads[i] = new CSWCacheUpdateThread(this, updateThreads, cswServiceList[i],
-                    newKeywordCache, newKeywordByEndpointCache, newRecordCache, serviceCaller, connectionAttempts,
-                    timeBtwConnectionAttempts);
+            updateThreads[i] =
+                new CSWCacheUpdateThread(this,
+                                         updateThreads,
+                                         cswServiceList[i],
+                                         newKeywordCache,
+                                         newKeywordByEndpointCache,
+                                         newRecordCache,
+                                         this.cswRecordCache,
+                                         serviceCaller,
+                                         connectionAttempts,
+                                         timeBtwConnectionAttempts);
         }
 
         //Fire off our worker threads, the last one to finish will update the
@@ -343,11 +360,18 @@ public class CSWCacheService {
         private CSWService cswService;
         private int connectionAttempts;
         private long timeBtwConnectionAttempts;
+        private Map<String, Map<String, CSWRecord>> cswRecordsCache;
 
         public CSWCacheUpdateThread(CSWCacheService parent,
-                CSWCacheUpdateThread[] siblings, CSWServiceItem endpoint,
-                Map<String, Set<CSWRecord>> newKeywordCache, Map<String, Set<String>> newKeywordByEndpointCache, List<CSWRecord> newRecordCache,
-                HttpServiceCaller serviceCaller, int connectionAttempts, long timeBtwConnectionAttempts) {
+                                    CSWCacheUpdateThread[] siblings,
+                                    CSWServiceItem endpoint,
+                                    Map<String, Set<CSWRecord>> newKeywordCache,
+                                    Map<String, Set<String>> newKeywordByEndpointCache,
+                                    List<CSWRecord> newRecordCache,
+                                    Map<String, Map<String, CSWRecord>> cswRecordsCache,
+                                    HttpServiceCaller serviceCaller,
+                                    int connectionAttempts,
+                                    long timeBtwConnectionAttempts) {
             super();
             this.parent = parent;
             this.siblings = siblings;
@@ -355,6 +379,7 @@ public class CSWCacheService {
             this.newKeywordCache = newKeywordCache;
             this.newKeywordByEndpointCache = newKeywordByEndpointCache;
             this.newRecordCache = newRecordCache;
+            this.cswRecordsCache = cswRecordsCache;
             this.finishedExecution = false;
             this.connectionAttempts = connectionAttempts;
             this.timeBtwConnectionAttempts = timeBtwConnectionAttempts;
@@ -465,6 +490,53 @@ public class CSWCacheService {
             }
         }
 
+        /*
+         * After retrieving the current set of records from the endpoint, this
+         * will update the application cache.
+         */
+        private void updateAppCache(Map<String, CSWRecord> cswRecordMap) {
+            //After parent/children have been linked, begin the keyword merging and extraction
+            synchronized (newKeywordCache) {
+                synchronized (newRecordCache) {
+                    for (CSWRecord record : cswRecordMap.values()) {
+                        boolean recordMerged = false;
+
+                        //Firstly we may possibly merge this
+                        //record into an existing record IF particular keywords
+                        //are present. In this case, record will be discarded (its contents
+                        //already found their way into an existing record)
+                        //Hence we need to perform this step first
+                        for (String keyword : record.getDescriptiveKeywords()) {
+                            if (keyword == null || keyword.isEmpty()) {
+                                continue;
+                            }
+
+                            //If we have an 'association keyword', look for existing records
+                            //to merge this record's contents in to.
+                            if (keyword.startsWith(KEYWORD_MERGE_PREFIX)) {
+                                Set<CSWRecord> existingRecs = newKeywordCache.get(keyword);
+                                if (existingRecs != null && !existingRecs.isEmpty()) {
+                                    mergeRecords(endpoint, existingRecs.iterator().next(), record, newKeywordCache, newKeywordByEndpointCache);
+                                    recordMerged = true;
+                                }
+                            }
+                        }
+
+                        //If the record was NOT merged into an existing record we then update the record cache
+                        if (!recordMerged) {
+                            //Update the keyword cache
+                            for (String keyword : record.getDescriptiveKeywords()) {
+                                addToKeywordCache(endpoint, keyword, record, newKeywordCache, newKeywordByEndpointCache);
+                            }
+
+                            //Add record to record list
+                            newRecordCache.add(record);
+                        }
+                    }
+                }
+            }
+        }
+
         @Override
         public void run() {
             try {
@@ -537,53 +609,28 @@ public class CSWCacheService {
                         }
                     }
 
-                    //After parent/children have been linked, begin the keyword merging and extraction
-                    synchronized (newKeywordCache) {
-                        synchronized (newRecordCache) {
-                            for (CSWRecord record : cswRecordMap.values()) {
-                                boolean recordMerged = false;
-
-                                //Firstly we may possibly merge this
-                                //record into an existing record IF particular keywords
-                                //are present. In this case, record will be discarded (its contents
-                                //already found their way into an existing record)
-                                //Hence we need to perform this step first
-                                for (String keyword : record.getDescriptiveKeywords()) {
-                                    if (keyword == null || keyword.isEmpty()) {
-                                        continue;
-                                    }
-
-                                    //If we have an 'association keyword', look for existing records
-                                    //to merge this record's contents in to.
-                                    if (keyword.startsWith(KEYWORD_MERGE_PREFIX)) {
-                                        Set<CSWRecord> existingRecs = newKeywordCache.get(keyword);
-                                        if (existingRecs != null && !existingRecs.isEmpty()) {
-                                            mergeRecords(endpoint, existingRecs.iterator().next(), record, newKeywordCache, newKeywordByEndpointCache);
-                                            recordMerged = true;
-                                        }
-                                    }
-                                }
-
-                                //If the record was NOT merged into an existing record we then update the record cache
-                                if (!recordMerged) {
-                                    //Update the keyword cache
-                                    for (String keyword : record.getDescriptiveKeywords()) {
-                                        addToKeywordCache(endpoint, keyword, record, newKeywordCache, newKeywordByEndpointCache);
-                                    }
-
-                                    //Add record to record list
-                                    newRecordCache.add(record);
-                                }
-                            }
-                        }
+                    // Cache the contents for this endpoint so we can use it in
+                    // case of errors later.
+                    synchronized(this.cswRecordsCache) {
+                        this.cswRecordsCache.put(endpoint.getId(), cswRecordMap);
                     }
-
                 }
             } catch (Exception ex) {
                 threadLog.warn(String.format("Error updating keyword cache for '%1$s': %2$s", this.endpoint.getServiceUrl(),
                         ex));
                 threadLog.warn("Exception: ", ex);
+                threadLog.info("Falling back on cached results for this endpoint.");
             } finally {
+                // Update the cache using the new records, if successfully
+                // retrieved, or the cached version if not.
+                Map<String, CSWRecord> cswRecordMap = this.cswRecordsCache.get(endpoint.getId());
+                if (cswRecordMap != null) {
+                    updateAppCache(cswRecordMap);
+                } else {
+                    threadLog.warn(String.format("No cached results available for failed CSW %1$s", this.endpoint.getServiceUrl()));
+                }
+
+                // Finish up
                 attemptCleanup();
             }
         }

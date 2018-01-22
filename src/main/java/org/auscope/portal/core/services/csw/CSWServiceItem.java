@@ -63,6 +63,24 @@ public class CSWServiceItem {
         this.recordInformationUrl = recordInformationUrl;
         this.title = title;
     }
+    
+    /**
+     * Creates a new service item with NO role restrictions and a cqlText query, used to restrict the downloaded CSW records
+     * 
+     * @param id
+     *            Must be unique per service
+     * @param serviceUrl
+     * @param recordInformationUrl
+     * @param title
+     * @param cqlText
+     */
+    public CSWServiceItem(String id, String serviceUrl, String recordInformationUrl, String title, String cqlText) {
+        this.id = id;
+        this.serviceUrl = serviceUrl;
+        this.recordInformationUrl = recordInformationUrl;
+        this.title = title;
+        this.cqlText = cqlText;
+    }
 
     /**
      * Creates a new service item that is restricted to users with ANY of the specified roles

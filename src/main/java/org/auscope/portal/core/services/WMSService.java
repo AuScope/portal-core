@@ -24,9 +24,9 @@ public class WMSService {
     private final Log log = LogFactory.getLog(getClass());
 
     // ----------------------------------------------------- Instance variables
-    private HttpServiceCaller serviceCaller;
+    protected HttpServiceCaller serviceCaller;
 
-    private List<WMSMethodMakerInterface> listOfSupportedWMSMethodMaker;
+    protected List<WMSMethodMakerInterface> listOfSupportedWMSMethodMaker;
 
     // ----------------------------------------------------------- Constructors
     public WMSService(HttpServiceCaller serviceCaller, List<WMSMethodMakerInterface> methodMaker) {
@@ -37,7 +37,7 @@ public class WMSService {
 
     // ------------------------------------------- Property Setters and Getters
 
-    private WMSMethodMakerInterface getSupportedMethodMaker(String wmsUrl, String version)
+    protected WMSMethodMakerInterface getSupportedMethodMaker(String wmsUrl, String version)
             throws OperationNotSupportedException {
         log.trace("WMSService::getsupportedMethodMaker() START");
         StringBuilder errStr = new StringBuilder();
@@ -140,7 +140,10 @@ public class WMSService {
             String response = serviceCaller.getMethodResponseAsString(method);
             //VT: a html response may not be xml valid therefore cannot go through the same validation process.
             //Rely on the service to return meaningful response to the user.
-            if (format.toLowerCase().equals("text/html")) {
+            if (format.toLowerCase().equals("text/html") ||
+                format.toLowerCase().equals("text/plain") ||
+                format.toLowerCase().equals("application/vnd.ogc.gml") ||
+                format.toLowerCase().equals("application/vnd.ogc.gml/3.1.1")) {
                 return response;
             } else {
                 OWSExceptionParser.checkForExceptionResponse(response);
@@ -176,11 +179,11 @@ public class WMSService {
         return "";
     }
 
-    public HttpClientInputStream getMap(String url,String layer,String bbox,String sldUrl, String version) throws OperationNotSupportedException, URISyntaxException, IOException{
+    public HttpClientInputStream getMap(String url,String layer,String bbox,String sldUrl, String version, String crs) throws OperationNotSupportedException, URISyntaxException, IOException{
 
         WMSMethodMakerInterface methodMaker;
         methodMaker = getSupportedMethodMaker(url, version);
-        HttpRequestBase method = methodMaker.getMap(url,layer,bbox, sldUrl);
+        HttpRequestBase method = methodMaker.getMap(url,layer,bbox, sldUrl, crs);
         HttpClientInputStream  response = serviceCaller.getMethodResponseAsStream(method);
         return response;
 

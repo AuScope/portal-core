@@ -1,0 +1,15 @@
+{
+  "format_version": 0,
+  "result": {
+    "query_time": 1470185701000,
+    "cgi": "statusjson.cgi",
+    "user": "Foo",
+    "query": "servicelist",
+    "query_status": "released",
+    "program_start": 1470035836000,
+    "last_data_update": 1470185695000,
+    "type_code": 0,
+    "type_text": "Failure",
+    "message": "This is a mock failure message"
+  }
+}

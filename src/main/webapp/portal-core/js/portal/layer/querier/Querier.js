@@ -60,7 +60,7 @@ Ext.define('portal.layer.querier.Querier', {
         var sldParams = this.generateSLDParams (queryTarget, infoFormat);
         
         var queryParams = Ext.Object.merge({
-            WMS_URL : serviceUrl,
+            serviceUrl : serviceUrl,
             lat : lonLat.lat,
             lng : lonLat.lon,
             QUERY_LAYERS : typeName,

@@ -676,6 +676,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     public void setAlternateIdentifier(String alternateIdentifier) {
         this.alternateIdentifier = alternateIdentifier;
     }
+
     
     public String getOnlineResourceType() {
         return onlineResourceType;
@@ -684,4 +685,5 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     public void setOnlineResourceType(String onlineResourceType) {
         this.onlineResourceType = onlineResourceType;
     }
+
 }

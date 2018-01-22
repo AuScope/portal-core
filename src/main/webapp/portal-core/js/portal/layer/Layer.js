@@ -41,15 +41,43 @@ Ext.define('portal.layer.Layer', {
 
     /**
      * Utility function for concatenating all online resources stored in all
-     * CSWRecords and returning the result as an Array.
+     * CSWRecords and returning the result as an Array. Online resources
+     * that are sourced from a known layer with defined nagiosFailingHosts
+     * that are "known failing" will be omitted. To force the inclusion of
+     * all online resources set includeFailingHosts to true.
      *
      * returns an Array of portal.csw.OnlineResource objects
      */
-    getAllOnlineResources : function() {
+    getAllOnlineResources : function(includeFailingHosts) {
+        
+        var failingHosts = null;
+        if (!includeFailingHosts) {
+            if (this.get('sourceType') === portal.layer.Layer.KNOWN_LAYER) {
+                failingHosts = this.get('source').get('nagiosFailingHosts');
+            }
+        }
+        
         var resources = [];
         var cswRecords = this.get('cswRecords');
         for (var i = 0; i < cswRecords.length; i++) {
-            resources = resources.concat(cswRecords[i].get('onlineResources'));
+            if (includeFailingHosts || Ext.isEmpty(failingHosts)) {
+                resources = resources.concat(cswRecords[i].get('onlineResources'));
+            } else {
+                Ext.each(cswRecords[i].get('onlineResources'), function(or) {
+                    var isFailing = false;
+                    Ext.each(failingHosts, function(host) {
+                        if (or.get('url').indexOf(host) >= 0) {
+                            isFailing = true;
+                            return false;
+                        }
+                    });
+                    
+                    if (!isFailing) {
+                        resources.push(or);
+                    }
+                });
+            }
+            
         }
         return resources;
     },

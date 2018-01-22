@@ -13,12 +13,16 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
      * Accepts all Ext.grid.Panel options as well as
      * {
      *  cswRecords : single instance of array of portal.csw.CSWRecord objects
+     *  parentRecord: The KnownLayer/KML/CSWRecord that owns these records
+     *  nagiosErrorIcon: Error icon to show when rendering resources from a host that nagios has declared as "down"
      *  allow
      * }
      */
     constructor : function(cfg) {
         // Ensures this.cswRecords is an array:
         this.cswRecords = [].concat(cfg.cswRecords);
+        
+        this.nagiosErrorIcon = Ext.isEmpty(cfg.nagiosErrorIcon) ? 'portal-core/img/warning.png' : cfg.nagiosErrorIcon;
 
         //Generate our flattened 'data items' list for rendering to the grid
         var dataItems = portal.widgets.panel.OnlineResourcePanelRow.parseCswRecords(this.cswRecords);
@@ -36,6 +40,14 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
         if (typeof(cfg.sortable) !== 'undefined' && cfg.sortable != null) {
             sortable = cfg.sortable;
         }
+        
+        //Build up our set of "problem" hosts for marking with a special icon
+        this.problemHosts = [];
+        if (cfg.parentRecord && 
+            cfg.parentRecord instanceof portal.knownlayer.KnownLayer && 
+            cfg.parentRecord.containsNagiosFailures()) {
+            this.problemHosts = cfg.parentRecord.get('nagiosFailingHosts');
+        }
 
         //We allow the owner to specify additional columns
         var columns = [{
@@ -45,6 +57,11 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
             sortable: sortable,
             flex: 1,
             renderer: Ext.bind(this._titleRenderer, this)
+        },{
+            width: 55,
+            dataIndex: 'onlineResource',
+            menuDisabled: true,
+            renderer: Ext.bind(this._errorRenderer, this)
         },{
             dataIndex: 'onlineResource',
             width: 140,
@@ -74,6 +91,31 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
         });
 
         this.callParent(arguments);
+    },
+    
+    _errorRenderer : function(value, metaData, record, row, col, store, gridView) {
+        var onlineResource = record.get('onlineResource');
+        var url = onlineResource.get('url');
+        var matchesError = false;
+        Ext.each(this.problemHosts, function(host) {
+            if (url.indexOf(host) >= 0) {
+                matchesError = true;
+                return false;
+            }
+        })
+        
+        if (matchesError) {
+            return Ext.DomHelper.markup({
+                tag : 'img',
+                src: this.nagiosErrorIcon,
+                width: 32,
+                height: 32,
+                style: 'margin-top:6px;',
+                title: 'This service is reported to be experiencing issues at the moment. Some aspects of this layer may not load/work.'
+            });
+        }
+        
+        return '';
     },
 
     _titleRenderer : function(value, metaData, record, row, col, store, gridView) {

@@ -75,4 +75,13 @@ public class TextUtil {
 
         return sb.toString();
     }
+    
+    /**
+     * for some annoying reason, angular param adds double quote to its string parameter. use this to clean it up
+     * @param param
+     * @return a clean param
+     */
+    public static String cleanQueryParameter(String param){
+    	return param.replace("\"", "");    	
+    }
 }

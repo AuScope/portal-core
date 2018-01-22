@@ -1,9 +1,10 @@
 package org.auscope.portal.core.services;
 
-import java.io.IOException;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.message.BasicHeader;
 import org.auscope.portal.core.server.http.HttpClientResponse;
@@ -16,9 +17,10 @@ import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.test.ResourceUtil;
 import org.jmock.Expectations;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import junit.framework.Assert;
 
 public class TestGeonetworkService extends PortalTestClass {
 
@@ -41,7 +43,7 @@ public class TestGeonetworkService extends PortalTestClass {
     }
 
     @Test
-    public void testSuccessfulRequest() throws PortalServiceException, IOException, URISyntaxException {
+    public void testSuccessfulRequest() throws Exception {
         final String sessionCookie = "sessionCookie";
         final HttpRequestBase insertRecordMethod = context.mock(HttpRequestBase.class, "insertRecordMethod");
         final HttpRequestBase recordMetadataShowMethod = context
@@ -50,13 +52,14 @@ public class TestGeonetworkService extends PortalTestClass {
         final HttpRequestBase recordPublicMethod = context.mock(HttpRequestBase.class, "recordPublicMethod");
         final HttpRequestBase loginMethod = context.mock(HttpRequestBase.class, "loginMethod");
         final HttpRequestBase logoutMethod = context.mock(HttpRequestBase.class, "logoutMethod");
+        final HttpEntity mockEntity = context.mock(HttpEntity.class);
 
         final String uuid = "4cda9dc3-9a0e-40cd-a3a9-64db5ce3c031";
         final String recordId = "21569";
         final String insertResponse = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/responses/geonetwork/GNCSWInsertResponse.xml");
-        final String loginResponse = ResourceUtil
-                .loadResourceAsString("org/auscope/portal/core/test/responses/geonetwork/GNLoginLogoutSuccessResponse.xml");
+        final InputStream loginResponse = ResourceUtil
+                .loadResourceAsStream("org/auscope/portal/core/test/responses/geonetwork/GNLoginLogoutSuccessResponse.xml");
         final String logoutResponse = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/responses/geonetwork/GNLoginLogoutSuccessResponse.xml");
         final String recordPublicResponse = ResourceUtil
@@ -97,14 +100,16 @@ public class TestGeonetworkService extends PortalTestClass {
                     will(returnValue(recordPublicResponse));
                     oneOf(serviceCaller).getMethodResponseAsHttpResponse(loginMethod);
                     will(returnValue(mockLoginResponse));
-                    oneOf(serviceCaller).responseToString(mockLoginResponse);
+                    oneOf(mockLoginResponse).getEntity();
+                    will(returnValue(mockEntity));
+                    oneOf(mockEntity).getContent();
                     will(returnValue(loginResponse));
                     oneOf(serviceCaller).getMethodResponseAsString(logoutMethod);
                     will(returnValue(logoutResponse));
 
                     allowing(recordMetadataShowMethod).getURI();
                     will(returnValue(responseUri));
-                    
+
                     allowing(mockLoginResponse).close();
                 }
             });
@@ -114,9 +119,10 @@ public class TestGeonetworkService extends PortalTestClass {
     }
 
     @Test(expected = Exception.class)
-    public void testBadLoginRequest() throws IOException, URISyntaxException, PortalServiceException {
+    public void testBadLoginRequest() throws Exception {
         final HttpRequestBase loginMethod = context.mock(HttpRequestBase.class, "loginMethod");
-        final String loginResponse = "<html>The contents doesn't matter as a failed GN login returns a static page</html>";
+        final HttpEntity mockEntity = context.mock(HttpEntity.class);
+        final InputStream loginResponse = new ByteArrayInputStream("<html>The contents doesn't matter as a failed GN login returns a static page</html>".getBytes());
 
         final CSWRecord record = new CSWRecord("a", "b", "c", "", new CSWOnlineResourceImpl[0],
                 new CSWGeographicElement[0]);
@@ -129,7 +135,9 @@ public class TestGeonetworkService extends PortalTestClass {
 
                     oneOf(serviceCaller).getMethodResponseAsHttpResponse(loginMethod);
                     will(returnValue(mockLoginResponse));
-                    oneOf(serviceCaller).responseToString(mockLoginResponse);
+                    oneOf(mockLoginResponse).getEntity();
+                    will(returnValue(mockEntity));
+                    oneOf(mockEntity).getContent();
                     will(returnValue(loginResponse));
 
                     allowing(mockLoginResponse).close();
