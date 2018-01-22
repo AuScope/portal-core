@@ -147,6 +147,7 @@ Ext.define('portal.layer.Layer', {
                 map.map.setLayerZIndex(layer, 20000 + i);
             }
         }
+
     },
 
 

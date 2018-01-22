@@ -4,3 +4,4 @@
 target/
 .buildpath
 *.swp
+/bin/
