@@ -292,7 +292,10 @@ public class TestCSWCacheService extends PortalTestClass {
             // Start our updating and wait for our threads to finish
             Assert.assertTrue(this.cswCacheService.updateCache());
             try {
-                Thread.sleep(3000);
+                do {
+                Thread.sleep(300);
+                } while (this.cswCacheService.updateRunning);
+
             } catch (InterruptedException e) {
                 Assert.fail("Test sleep interrupted. Test aborted.");
             }
