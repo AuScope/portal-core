@@ -2,6 +2,8 @@ package org.auscope.portal.core.services.responses.csw;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.ParserConfigurationException;
@@ -10,10 +12,13 @@ import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.xalan.xsltc.DOM;
 import org.auscope.portal.core.services.namespaces.IterableNamespace;
 import org.auscope.portal.core.util.DOMUtil;
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
@@ -30,8 +35,11 @@ public class CSWGetCapabilities {
 
     NamespaceContext nc;
     public static final String TITLE_EXPRESSION = "/csw:Capabilities/ows:ServiceIdentification/ows:Title";
+    public static final String OPERATIONS_EXPRESSION = "/csw:Capabilities/ows:OperationsMetadata/ows:Operation";
 
     private String title;
+
+    private List<String> operations;
 
     public CSWGetCapabilities(InputStream getCapXML) throws IOException {
         nc = new CSWGetCapabilitiesNamespace();
@@ -39,6 +47,7 @@ public class CSWGetCapabilities {
         try {
             doc = DOMUtil.buildDomFromStream(getCapXML, true);
             this.setTitle(doc);
+            this.setOperations(doc);
         } catch (ParserConfigurationException | SAXException | XPathExpressionException e) {
             throw new IOException(e.getMessage(), e);
         }
@@ -60,6 +69,23 @@ public class CSWGetCapabilities {
 
     public String getTitle() {
         return this.title;
+    }
+
+    public void setOperations(Document document) throws XPathExpressionException {
+        List<String> ops = new ArrayList<String>();
+        NodeList nodes = (NodeList) DOMUtil.compileXPathExpr(OPERATIONS_EXPRESSION, nc).evaluate(document, XPathConstants.NODESET);
+        for (int i=0; i < nodes.getLength(); i++ ) {
+
+            NamedNodeMap attributes = nodes.item(i).getAttributes();
+            if (attributes != null) {
+                ops.add(attributes.getNamedItem("name").getNodeValue());
+            }
+        }
+        this.operations = ops;
+    }
+
+    public List<String> getOperations() {
+        return operations;
     }
 
     private class CSWGetCapabilitiesNamespace extends IterableNamespace {

@@ -46,10 +46,7 @@ public class TestCSWFilterController extends PortalTestClass {
         mockViewRecordFactory = context.mock(ViewCSWRecordFactory.class);
         mockKnownLayerFactory = context.mock(ViewKnownLayerFactory.class);
         mockService = context.mock(CSWFilterService.class);
-        CustomRegistry catalogueOnly = new CustomRegistry("1234", "aaa", "bbb", "vvv");
-        ArrayList<CustomRegistryInt> catalogueOnlys = new ArrayList<CustomRegistryInt>();
-        catalogueOnlys.add(catalogueOnly);
-        controller = new CSWFilterController(mockService, mockViewRecordFactory, mockKnownLayerFactory, catalogueOnlys);
+        controller = new CSWFilterController(mockService, mockViewRecordFactory, mockKnownLayerFactory);
         customRegistry = new CustomRegistry("", "", "", "");
     }
 
@@ -503,7 +500,7 @@ public class TestCSWFilterController extends PortalTestClass {
         List<ModelMap> actual = (List<ModelMap>) mav.getModel().get("data");
         Assert.assertNotNull(actual);
 
-        Assert.assertEquals(3, actual.size());
+        Assert.assertEquals(2, actual.size());
         Assert.assertEquals("id1", actual.get(0).get("id"));
         Assert.assertEquals("serviceUrl1", actual.get(0).get("url"));
         Assert.assertEquals("title1", actual.get(0).get("title"));
@@ -537,6 +534,7 @@ public class TestCSWFilterController extends PortalTestClass {
 
         context.checking(new Expectations() {
             {
+                oneOf(mockService).getCapabilitiesByServiceId(cswServiceIds[0]);
                 //oneOf(mockService).getFilteredRecords(with(equal(cswServiceIds[0])),with(equal(null)),with(equal(CSWFilterController.DEFAULT_MAX_RECORDS)),with(equal(1)));will(returnValue(filteredResponse));
                 oneOf(mockService).getFilteredRecords(cswServiceIds[0], null, CSWFilterController.DEFAULT_MAX_RECORDS,
                         1);
@@ -561,18 +559,12 @@ public class TestCSWFilterController extends PortalTestClass {
         Assert.assertEquals(3, actual.size());
 
         //This is so we arent sensitive to return order
-        boolean[] isKwMatched = new boolean[] {false, false, false};
         String[] kwNames =  new String[] {"kw1", "kw2", "kw3"};
-        int[] kwActualCounts =  new int[] {3, 2, 1};
         for (ModelMap map : actual) {
-            int index = Arrays.asList(kwNames).indexOf(map.get("keyword"));
+            String keyword = (String) map.get("keyword");
+            Assert.assertTrue(Arrays.asList(kwNames).contains(keyword));
 
-            isKwMatched[index] = true;
-            Assert.assertEquals(kwActualCounts[index], map.get("count"));
         }
-        Assert.assertTrue("kwNames[0] not found", isKwMatched[0]);
-        Assert.assertTrue("kwNames[1] not found", isKwMatched[1]);
-        Assert.assertTrue("kwNames[2] not found", isKwMatched[2]);
 
         //VT: since this is a static variable, we clean this up incase it corrupts other test cases.
         CSWFilterController.catalogueKeywordCache.clear();
