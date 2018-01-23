@@ -1,10 +1,7 @@
 package org.auscope.portal.core.server.controllers;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.MissingResourceException;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.http.client.methods.HttpGet;
@@ -18,6 +15,7 @@ import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
 import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter;
 import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter.KeywordMatchType;
 import org.auscope.portal.core.services.responses.csw.CSWGetCapabilities;
+import org.auscope.portal.core.services.responses.csw.CSWGetDomainResponse;
 import org.auscope.portal.core.services.responses.csw.CSWGetRecordResponse;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.view.ViewCSWRecordFactory;
@@ -41,13 +39,13 @@ import org.springframework.web.servlet.ModelAndView;
 public class CSWFilterController extends BaseCSWController {
     public static final int DEFAULT_MAX_RECORDS = 100;
     private CSWFilterService cswFilterService;
-    protected static ConcurrentHashMap<String, KeywordCacheEntity> catalogueKeywordCache;
-    protected List<CustomRegistryInt> catalogueOnlyRegistries;
+    protected static ConcurrentHashMap<String, Set> catalogueKeywordCache;
+
     @Autowired
     private ConversionService converter;
 
     static {
-        catalogueKeywordCache = new ConcurrentHashMap<String, KeywordCacheEntity>();
+        catalogueKeywordCache = new ConcurrentHashMap<String, Set>();
     }
 
     /**
@@ -61,10 +59,9 @@ public class CSWFilterController extends BaseCSWController {
     @Autowired
     public CSWFilterController(CSWFilterService cswFilterService,
             ViewCSWRecordFactory viewCSWRecordFactory,
-            ViewKnownLayerFactory viewKnownLayerFactory, List<CustomRegistryInt> customRegistries) {
+            ViewKnownLayerFactory viewKnownLayerFactory) {
         super(viewCSWRecordFactory, viewKnownLayerFactory);
         this.cswFilterService = cswFilterService;
-        this.catalogueOnlyRegistries = customRegistries;
 
     }
 
@@ -119,52 +116,44 @@ public class CSWFilterController extends BaseCSWController {
             convertedServiceItems.add(map);
         }
 
-        //Simplify our service items for the view
-        for (CustomRegistryInt item : this.catalogueOnlyRegistries) {
-            ModelMap map = new ModelMap();
-            map.put("title", item.getTitle());
-            map.put("id", item.getId());
-            map.put("url", item.getServiceUrl());
-            convertedServiceItems.add(map);
-        }
-
         return generateJSONResponseMAV(true, convertedServiceItems, "");
     }
 
-    private void generateKeywordCache(String cswServiceId) throws Exception {
 
-        KeywordCacheEntity keywordCacheEntity = new KeywordCacheEntity();
+    /**
+     *
+     * @param serviceId
+     * @throws Exception
+     */
+    private void generateKeywordCache(String serviceId) throws Exception {
+        Set<String> keywordList = new HashSet<String>();
+        final String getDomain = "GetDomain";
+        final String keywordTerm = "Subject";
+        CSWGetCapabilities cswGetCapabilities = cswFilterService.getCapabilitiesByServiceId(serviceId);
 
-        CSWGetRecordResponse response = null;
+        if (cswGetCapabilities.getOperations().contains(getDomain)){
+            CSWGetDomainResponse response;
+            response = cswFilterService.getDomainResponse(serviceId, keywordTerm);
+            keywordList = response.getDomainValues();
+        } else {
+            int startPosition = 1;
+            do {
+                CSWGetRecordResponse response = cswFilterService.getFilteredRecords(serviceId, null, DEFAULT_MAX_RECORDS, startPosition);
+                for (CSWRecord record : response.getRecords()) {
 
-        int startPosition = 1;
+                    keywordList.addAll(Arrays.asList(record.getDescriptiveKeywords()));
 
-        do {
-            try {
-                response = cswFilterService.getFilteredRecords(cswServiceId, null, DEFAULT_MAX_RECORDS, startPosition);
-            } catch (IllegalArgumentException e) {
-                response = cswFilterService.getFilteredRecords(this.getCustomRegistry(cswServiceId), null,
-                        DEFAULT_MAX_RECORDS, startPosition);
-            }
-
-            for (CSWRecord record : response.getRecords()) {
-
-                for (String recordKeyword : record.getDescriptiveKeywords()) {
-                    if (!recordKeyword.startsWith("association:")) {
-                        keywordCacheEntity.addTo(recordKeyword, 1);
-                    }
                 }
+                // Prepare to request next 'page' of records (if required)
+                if (response.getNextRecord() > response.getRecordsMatched() || response.getNextRecord() <= 0) {
+                    startPosition = -1; // we are done in this case
+                } else {
+                    startPosition = response.getNextRecord();
+                }
+            } while (startPosition > 1);
+        }
 
-            }
-            // Prepare to request next 'page' of records (if required)
-            if (response.getNextRecord() > response.getRecordsMatched() || response.getNextRecord() <= 0) {
-                startPosition = -1; // we are done in this case
-            } else {
-                startPosition = response.getNextRecord();
-            }
-        } while (startPosition > 0);
-        this.catalogueKeywordCache.put(cswServiceId, keywordCacheEntity);
-
+        catalogueKeywordCache.put(serviceId,keywordList);
     }
 
     /**
@@ -187,89 +176,14 @@ public class CSWFilterController extends BaseCSWController {
             modelMap.put("title", uri.getHost());
 
         }
+        modelMap.put("operations",cswGetCapabilities.getOperations());
 
         return generateJSONResponseMAV(true, modelMap, "success");
     }
 
     /**
-     * Get CSW keywords related to the registry
-     */
-    @RequestMapping("/getFilteredCSWKeywords.do")
-    public ModelAndView getFilteredCSWKeywords(
-            @RequestParam(value = "cswServiceIds", required = false) String[] cswServiceIds,
-            @RequestParam(value = "keyword", required = true, defaultValue = "") String keyword) {
-
-        try {
-
-            if (cswServiceIds == null) {
-                return generateJSONResponseMAV(true);
-            }
-            //VT: if the cache keyword has not been generated, generate it.
-            for (String cswServiceId : cswServiceIds) {
-                if (!CSWFilterController.catalogueKeywordCache.containsKey(cswServiceId)) {
-                    try {
-                        this.generateKeywordCache(cswServiceId);
-                    } catch (IllegalArgumentException ex) {
-                        //VT: if the key does not exist, it does not matter.
-                        log.info(String.format("serviceId '%s' DNE", cswServiceId));
-                    }
-                }
-            }
-
-            List<ModelMap> resultModalMap = new ArrayList<ModelMap>();
-            KeywordCacheEntity keywordCacheEntity = new KeywordCacheEntity();
-            //VT: this is to append the results from the different registeries
-            for (String cswServiceId : cswServiceIds) {
-                if (this.catalogueKeywordCache.get(cswServiceId) != null) {
-                    keywordCacheEntity.append(this.catalogueKeywordCache.get(cswServiceId));
-                }
-            }
-            //VT: if no keyword is found, just return.
-            if (keywordCacheEntity.getKeywordPair().keySet().size() <= 0) {
-                return generateJSONResponseMAV(true);
-            }
-
-            //VT: Put the accumalated results into a ModalMap.
-            for (String key : keywordCacheEntity.getKeywordPair().keySet()) {
-                if (!key.toLowerCase().contains(keyword.toLowerCase())) {
-                    continue;
-                }
-                ModelMap modelMap = new ModelMap();
-                modelMap.put("keyword", key);
-                modelMap.put("count", keywordCacheEntity.getKeywordPair().get(key));
-                resultModalMap.add(modelMap);
-            }
-
-            return generateJSONResponseMAV(true, resultModalMap, "");
-        } catch (Exception ex) {
-            log.warn(String.format("Error updating keyword cache", ex));
-            log.warn("Exception: ", ex);
-            ex.printStackTrace();
-            return generateJSONResponseMAV(false, null, "Error Generating keyword");
-        }
-
-    }
-
-    /**
      * Gets a list of CSWRecord view objects filtered by the specified values from all internal CSW's
-     * 
-     * @param cswServiceId
-     *            [Optional] The ID of a CSWService to query (if omitted ALL CSWServices will be queried)
-     * @param westBoundLongitude
-     *            [Optional] Spatial bbox constraint
-     * @param eastBoundLongitude
-     *            [Optional] Spatial bbox constraint
-     * @param northBoundLatitude
-     *            [Optional] Spatial bbox constraint
-     * @param southBoundLatitude
-     *            [Optional] Spatial bbox constraint
-     * @param keywords
-     *            [Optional] One or more keywords to filter by
-     * @param keywordMatchType
-     *            [Optional] how the keyword list will be matched against records
-     * @param capturePlatform
-     *            [Optional] A capture platform filter
-     * @param sensor
+     *
      *            [Optional] A sensor filter
      * @param startPosition
      *            [Optional] 0 based index indicating what index to start reading records from (only applicable if cswServiceId is specified)
@@ -308,13 +222,10 @@ public class CSWFilterController extends BaseCSWController {
             } else {
                 CSWGetRecordResponse response = null;
                 //VT: if it returns an exception, try finding it in the customRegistry
-                try {
+
                     response = cswFilterService.getFilteredRecords(cswServiceId, filter,
                             maxRecords == null ? DEFAULT_MAX_RECORDS : maxRecords, startPosition);
-                } catch (IllegalArgumentException e) {
-                    response = cswFilterService.getFilteredRecords(this.getCustomRegistry(cswServiceId), filter,
-                            maxRecords == null ? DEFAULT_MAX_RECORDS : maxRecords, startPosition);
-                }
+
                 records = response.getRecords();
                 matchedResults = response.getRecordsMatched();
             }
@@ -323,6 +234,65 @@ public class CSWFilterController extends BaseCSWController {
         } catch (Exception ex) {
             log.warn(String.format("Error fetching filtered records for filter '%1$s'", filter), ex);
             return generateJSONResponseMAV(false, null, "Error fetching filtered records");
+        }
+    }
+
+    /**
+     * Get CSW Keywords related to the registry
+     * @param cswServiceIds
+     * @param keyword
+     * @return Set of keywords without counts, for quicker performance
+     */
+    @RequestMapping("/getFilteredCSWKeywords.do")
+    public ModelAndView getFilteredCSWKeywords(
+            @RequestParam(value = "cswServiceIds", required = false) String[] cswServiceIds,
+            @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword) {
+
+        try {
+            if (cswServiceIds == null) {
+                return generateJSONResponseMAV(true);
+            }
+
+            for (String serviceId : cswServiceIds) {
+                if (!catalogueKeywordCache.containsKey(serviceId)) {
+                    try {
+                        this.generateKeywordCache(serviceId);
+                    } catch (IllegalArgumentException ex) {
+                        //VT: if the key does not exist, it does not matter.
+                        log.info(String.format("serviceId '%s' DNE", serviceId));
+                    }
+                }
+            }
+
+            List<ModelMap> returnedKeywords = new ArrayList<ModelMap>();
+            Set<String> keywordSet = new HashSet<String>();
+            //VT: this is to append the results from the different registries
+            for (String serviceId : cswServiceIds) {
+                if (catalogueKeywordCache.get(serviceId) != null) {
+                    keywordSet.addAll(catalogueKeywordCache.get(serviceId));
+                }
+            }
+            //VT: if no keyword is found, just return.
+            if (keywordSet.isEmpty()) {
+                return generateJSONResponseMAV(true);
+            }
+
+            //VT: Put the accumulated results into a ModalMap.
+            for (String k : keywordSet) {
+                if (!k.toLowerCase().contains(keyword.toLowerCase())) {
+                    continue;
+                }
+                ModelMap modelMap = new ModelMap();
+                modelMap.put("keyword", k);
+                returnedKeywords.add(modelMap);
+            }
+
+            return generateJSONResponseMAV(true, returnedKeywords, "");
+        } catch (Exception e) {
+            log.warn(String.format("Error updating keyword cache %s", e));
+            log.warn("Exception: ", e);
+            e.printStackTrace();
+            return generateJSONResponseMAV(false, null, "Error Generating keyword");
         }
     }
 
@@ -446,53 +416,4 @@ public class CSWFilterController extends BaseCSWController {
         return generateJSONResponseMAV(true, count, "");
     }
 
-    private CustomRegistryInt getCustomRegistry(String id) {
-        for (CustomRegistryInt cr : this.catalogueOnlyRegistries) {
-            if (cr.getId().equals(id)) {
-                return cr;
-            }
-        }
-        return null;
-    }
-
-    protected class KeywordCacheEntity {
-        private HashMap<String, Integer> keywordPair;
-
-        protected KeywordCacheEntity(HashMap<String, Integer> keywordPair) {
-            this.keywordPair = keywordPair;
-        }
-
-        protected KeywordCacheEntity() {
-            this.keywordPair = new HashMap<String, Integer>();
-        }
-
-        protected void addTo(String keyword, int count) {
-            if (keywordPair.containsKey(keyword)) {
-                keywordPair.put(keyword, keywordPair.get(keyword) + count);
-            } else {
-                keywordPair.put(keyword, count);
-            }
-        }
-
-        protected void addReplace(String keyword, int count) {
-            keywordPair.put(keyword, count);
-        }
-
-        protected HashMap<String, Integer> getKeywordPair() {
-            return keywordPair;
-        }
-
-        protected KeywordCacheEntity append(KeywordCacheEntity toAppend) {
-            HashMap<String, Integer> appendKeywordPair = toAppend.getKeywordPair();
-            for (String appendKey : appendKeywordPair.keySet()) {
-                if (this.keywordPair.containsKey(appendKey)) {
-                    this.keywordPair.put(appendKey, this.keywordPair.get(appendKey) + appendKeywordPair.get(appendKey));
-                } else {
-                    this.keywordPair.put(appendKey, appendKeywordPair.get(appendKey));
-                }
-            }
-            return this;
-        }
-
-    }
 }

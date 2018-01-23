@@ -21,10 +21,12 @@ import org.auscope.portal.core.server.http.DistributedHTTPServiceCallerException
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.csw.custom.CustomRegistryInt;
+import org.auscope.portal.core.services.methodmakers.CSWMethodMaker;
 import org.auscope.portal.core.services.methodmakers.CSWMethodMakerGetDataRecords;
 import org.auscope.portal.core.services.methodmakers.CSWMethodMakerGetDataRecords.ResultType;
 import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter;
 import org.auscope.portal.core.services.responses.csw.CSWGetCapabilities;
+import org.auscope.portal.core.services.responses.csw.CSWGetDomainResponse;
 import org.auscope.portal.core.services.responses.csw.CSWGetRecordResponse;
 import org.auscope.portal.core.services.responses.csw.CSWRecordTransformerFactory;
 import org.auscope.portal.core.util.DOMUtil;
@@ -327,5 +329,39 @@ public class CSWFilterService {
         method.setURI(builder.build());
         getCap = new CSWGetCapabilities(this.serviceCaller.getMethodResponseAsStream(method));
         return getCap;
+    }
+
+    public CSWGetCapabilities getCapabilitiesByServiceId(String serviceId) throws IllegalArgumentException, IOException, URISyntaxException {
+        CSWServiceItem serviceItem = getServiceItemById(serviceId);
+        return getCapabilities(serviceItem.getServiceUrl());
+    }
+
+    public CSWGetDomainResponse getDomainResponse(String serviceId, String propertyName) throws URISyntaxException, IOException {
+        CSWGetDomainResponse getDomain = null;
+
+        CSWServiceItem serviceItem = getServiceItemById(serviceId);
+
+        String serviceUrl = serviceItem.getServiceUrl();
+
+        CSWMethodMaker methodMaker = new CSWMethodMaker();
+        HttpRequestBase method = methodMaker.getDomain(serviceUrl,propertyName);
+
+        getDomain = new CSWGetDomainResponse(this.serviceCaller.getMethodResponseAsStream(method));
+        return getDomain;
+
+    }
+
+    private CSWServiceItem getServiceItemById(String serviceId) {
+        CSWServiceItem serviceItem = null;
+        for (CSWServiceItem cswServiceItem: cswServiceList) {
+            if (cswServiceItem.getId().equals(serviceId)) {
+                serviceItem = cswServiceItem;
+            }
+
+        }
+        if (serviceItem == null) {
+            throw new IllegalArgumentException(String.format("serviceId '%1$s' does not exist", serviceId));
+        }
+        return serviceItem;
     }
 }

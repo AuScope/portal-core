@@ -1,5 +1,8 @@
 package org.auscope.portal.core.services;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +27,12 @@ import org.auscope.portal.core.services.responses.csw.CSWGetRecordResponse;
 import org.auscope.portal.core.services.responses.csw.CSWOnlineResourceImpl;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.services.responses.csw.CSWRecordTransformerFactory;
+import org.auscope.portal.core.util.FileIOUtil;
+import org.objenesis.strategy.StdInstantiatorStrategy;
+
+import com.esotericsoftware.kryo.Kryo;
+
+
 
 /**
  * A service for creating a cache of all keywords at a CSW.
@@ -613,6 +622,13 @@ public class CSWCacheService {
                     // case of errors later.
                     synchronized(this.cswRecordsCache) {
                         this.cswRecordsCache.put(endpoint.getId(), cswRecordMap);
+                        if(!new File(FileIOUtil.getTempDirURL() + endpoint.getId() +".ser").exists()){
+	                        Kryo kryo = new Kryo();
+	                        com.esotericsoftware.kryo.io.Output output = new com.esotericsoftware.kryo.io.Output(new FileOutputStream( FileIOUtil.getTempDirURL() + endpoint.getId() +".ser"));
+	                        kryo.writeObject(output, cswRecordMap);
+	                        output.close();
+	                        threadLog.info(endpoint.getServiceUrl() + " have been serialized.To refresh, delete " + FileIOUtil.getTempDirURL() + endpoint.getId() +".ser");
+                        }
                     }
                 }
             } catch (Exception ex) {
@@ -627,7 +643,28 @@ public class CSWCacheService {
                 if (cswRecordMap != null) {
                     updateAppCache(cswRecordMap);
                 } else {
-                    threadLog.warn(String.format("No cached results available for failed CSW %1$s", this.endpoint.getServiceUrl()));
+                		if(new File(FileIOUtil.getTempDirURL() + endpoint.getId() +".ser").exists()){
+	                		Kryo kryo = new Kryo();
+	                		kryo.setInstantiatorStrategy(new Kryo.DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
+	                		com.esotericsoftware.kryo.io.Input input=null;
+						try {
+							input = new com.esotericsoftware.kryo.io.Input(new FileInputStream(FileIOUtil.getTempDirURL() + endpoint.getId() +".ser"));
+							cswRecordMap =  kryo.readObject(input, HashMap.class);
+		                	    input.close();		
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							return;
+						}
+						if (cswRecordMap != null) {
+							threadLog.info(String.format("Endpoint failed for CSW %1$s, falling back to saved cached on disk:" + FileIOUtil.getTempDirURL() + endpoint.getId() +".ser", this.endpoint.getServiceUrl()));
+		                    updateAppCache(cswRecordMap);
+						}else {
+							threadLog.warn(String.format("No cached results available for failed CSW %1$s", this.endpoint.getServiceUrl()));
+						}
+					} else {
+						threadLog.warn(String.format("No saved registry found on disk on:") + FileIOUtil.getTempDirURL() + endpoint.getId() +".ser");
+					}
                 }
 
                 // Finish up
@@ -635,4 +672,5 @@ public class CSWCacheService {
             }
         }
     }
+    
 }

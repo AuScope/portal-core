@@ -1,6 +1,8 @@
 package org.auscope.portal.core.services;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.util.ArrayList;
@@ -22,13 +24,16 @@ import org.auscope.portal.core.test.BasicThreadExecutor;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.test.ResourceUtil;
 import org.auscope.portal.core.test.jmock.HttpMethodBaseMatcher.HttpMethodType;
+import org.auscope.portal.core.util.FileIOUtil;
 import org.jmock.Expectations;
 import org.jmock.Sequence;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.objenesis.strategy.StdInstantiatorStrategy;
 
+import com.esotericsoftware.kryo.Kryo;
 import com.google.common.collect.Lists;
 
 /**
@@ -75,6 +80,19 @@ public class TestCSWCacheService extends PortalTestClass {
     public void tearDown() {
         this.threadExecutor = null;
         this.cswCacheService = null;
+        File f1 = new File(FileIOUtil.getTempDirURL() + "id:1.ser");
+        File f2 = new File(FileIOUtil.getTempDirURL() + "id:2.ser");
+        File f3 = new File(FileIOUtil.getTempDirURL() + "id:3.ser");
+
+		if (f1.exists()) {
+			f1.delete();
+		}
+		if (f2.exists()) {
+			f2.delete();
+		}
+		if (f3.exists()) {
+			f3.delete();
+		}
     }
 
     /**
@@ -234,6 +252,99 @@ public class TestCSWCacheService extends PortalTestClass {
             Assert.assertFalse(this.cswCacheService.updateRunning);
         }
     }
+    
+    /**
+     * Tests a regular update goes through and makes multiple requests over multiple threads
+     * @throws IOException
+     */
+    @Test
+    public void testSerialization() throws IOException {
+        final String moreRecordsString = ResourceUtil
+                .loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
+        final String noMoreRecordsString = ResourceUtil
+                .loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse_NoMoreRecords.xml");
+
+        final Sequence t1Sequence = context.sequence("t1Sequence");
+        final Sequence t2Sequence = context.sequence("t2Sequence");
+        final Sequence t3Sequence = context.sequence("t3Sequence");
+
+        final int totalRequestsMade = CONCURRENT_THREADS_TO_RUN + 1;
+        try (final HttpClientInputStream t1r1 = new HttpClientInputStream(new ByteArrayInputStream(moreRecordsString.getBytes()), null);
+                final HttpClientInputStream t1r2 = new HttpClientInputStream(new ByteArrayInputStream(noMoreRecordsString.getBytes()), null);
+                final HttpClientInputStream t3r1 = new HttpClientInputStream(new ByteArrayInputStream(moreRecordsString.getBytes()), null);
+                final HttpClientInputStream t3r2 = new HttpClientInputStream(
+                        new ByteArrayInputStream(noMoreRecordsString.getBytes()), null)) {
+            context.checking(new Expectations() {
+                {
+                    // Thread 1 will make 2 requests
+                    oneOf(httpServiceCaller).getMethodResponseAsStream(
+                            with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)));
+                    inSequence(t1Sequence);
+                    will(returnValue(t1r1));
+                    oneOf(httpServiceCaller).getMethodResponseAsStream(
+                            with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)));
+                    inSequence(t1Sequence);
+                    will(returnValue(t1r2));
+
+                    // Thread 2 will throw an exception
+                    oneOf(httpServiceCaller).getMethodResponseAsStream(
+                            with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 2), null)));
+                    inSequence(t2Sequence);
+                    will(throwException(new Exception()));
+
+                    // Thread 3 will make 2 requests
+                    oneOf(httpServiceCaller).getMethodResponseAsStream(
+                            with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)));
+                    inSequence(t3Sequence);
+                    will(returnValue(t3r1));
+                    oneOf(httpServiceCaller).getMethodResponseAsStream(
+                            with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)));
+                    inSequence(t3Sequence);
+                    will(returnValue(t3r2));
+                }
+            });
+
+            // Start our updating and wait for our threads to finish
+            Assert.assertTrue(this.cswCacheService.updateCache());
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                Assert.fail("Test sleep interrupted. Test aborted.");
+            }
+            try {
+                threadExecutor.getExecutorService().shutdown();
+                threadExecutor.getExecutorService().awaitTermination(180, TimeUnit.SECONDS);
+            } catch (Exception ex) {
+                threadExecutor.getExecutorService().shutdownNow();
+                Assert.fail("Exception whilst waiting for update to finish " + ex.getMessage());
+            }
+
+            File f1 = new File(FileIOUtil.getTempDirURL() + "id:1.ser");
+            File f3 = new File(FileIOUtil.getTempDirURL() + "id:3.ser");
+            
+           Assert.assertTrue(f1.exists());
+           
+           Assert.assertTrue(f3.exists());
+            // Ensure that our internal state is set to NOT RUNNING AN UPDATE
+            Assert.assertFalse(this.cswCacheService.updateRunning);
+            
+			Kryo kryo = new Kryo();
+			kryo.setInstantiatorStrategy(new Kryo.DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
+			com.esotericsoftware.kryo.io.Input input = null;
+			try {
+				input = new com.esotericsoftware.kryo.io.Input(
+						new FileInputStream(f1));
+				HashMap cswRecordMap = kryo.readObject(input, HashMap.class);
+				input.close();
+				Assert.assertEquals(30, cswRecordMap.size());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return;
+			}
+			
+        }
+    }
 
     /**
      * Tests that the records cache is use as a fallback when a CSW  reqeust fails.
@@ -351,7 +462,7 @@ public class TestCSWCacheService extends PortalTestClass {
             // Start our updating and wait for our threads to finish
             Assert.assertTrue(this.cswCacheService.updateCache());
             try {
-                Thread.sleep(50);
+                Thread.sleep(200);
             } catch (InterruptedException e) {
                 Assert.fail("Test sleep interrupted. Test aborted.");
             }
@@ -885,6 +996,7 @@ public class TestCSWCacheService extends PortalTestClass {
             Assert.assertFalse(this.cswCacheService.updateRunning);
         }
     }
+    
 
     /**
      * Tests that getting a parent and child on different CSW pages will still result in the parent/child being preserved

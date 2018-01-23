@@ -86,6 +86,10 @@ public class CSWRecord {
     public CSWRecord(String fileIdentifier) {
         this(null, fileIdentifier, null, null, null, null, "");
     }
+    
+    public CSWRecord() {
+        this(null, null, null, null, null, null, "");
+    }
 
     /**
      * Instantiates a new CSW record.

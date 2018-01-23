@@ -473,6 +473,19 @@ public class FileIOUtil {
             zout.closeEntry();
         }
     }
+    
+    /**
+     * Get the absolute url of a os specific temp directory 
+     * @return absolute url of a temp directory
+     */
+	public static String getTempDirURL() {
+		String tempdir = System.getProperty("java.io.tmpdir");
+
+		if (!(tempdir.endsWith("/") || tempdir.endsWith("\\"))) {
+			tempdir = tempdir + System.getProperty("file.separator");
+		}
+		return tempdir;
+	}
 
     /**
      * VT: Have to think of a better way to handle exception rather then just encapsulating the error in xml
