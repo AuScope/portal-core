@@ -38,6 +38,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class CSWFilterController extends BaseCSWController {
     public static final int DEFAULT_MAX_RECORDS = 100;
+    private static final char SINGLE_CHAR_WILDCARD = '#';
     private CSWFilterService cswFilterService;
     protected static ConcurrentHashMap<String, Set> catalogueKeywordCache;
 
@@ -317,9 +318,23 @@ public class CSWFilterController extends BaseCSWController {
             southBoundLatitude = Double.parseDouble(parameters.get("south"));
         }
 
+        CSWGetDataRecordsFilter.Type type = CSWGetDataRecordsFilter.Type.all;
+        if (parameters.get("type") != null) {
+            if (parameters.get("type").toLowerCase().equals("dataset")) {
+                type = CSWGetDataRecordsFilter.Type.dataset;
+            } else if (parameters.get("type").toLowerCase().equals("service")) {
+                type = CSWGetDataRecordsFilter.Type.service;
+            }
+        }
+
         String[] keywords = null;
         if (parameters.get("keywords") != null) {
             keywords = parameters.get("keywords").split(",");
+            for (int i = 0; i < keywords.length; i++) {
+                if (keywords[i] != null) {
+                    keywords[i] = keywords[i].replace(' ', SINGLE_CHAR_WILDCARD);
+                }
+            }
         }
         KeywordMatchType keywordMatchType = null;
         String capturePlatform = parameters.get("capturePlatform");
@@ -339,7 +354,7 @@ public class CSWFilterController extends BaseCSWController {
         FilterBoundingBox filterBbox = attemptParseBBox(westBoundLongitude, eastBoundLongitude,
                 northBoundLatitude, southBoundLatitude);
         CSWGetDataRecordsFilter filter = new CSWGetDataRecordsFilter(anyText, filterBbox, keywords, capturePlatform,
-                sensor, keywordMatchType, abstrac, title, CSWGetDataRecordsFilter.Type.dataset);
+                sensor, keywordMatchType, abstrac, title, type) ;
         log.debug(String.format("filter '%1$s'", filter));
         return filter;
     }
