@@ -212,7 +212,7 @@ public class CSWFilterController extends BaseCSWController {
         int matchedResults = 0;
         try {
             //We may be requesting from all CSW's or just a specific one
-            if (!customRegistries.isEmpty()) {
+            if (customRegistries != null && !customRegistries.isEmpty()) {
                 records = new ArrayList<CSWRecord>();
                 CSWGetRecordResponse response = cswFilterService.getFilteredRecords(customRegistries, filter,
                         maxRecords == null ? DEFAULT_MAX_RECORDS : maxRecords, startPosition);
