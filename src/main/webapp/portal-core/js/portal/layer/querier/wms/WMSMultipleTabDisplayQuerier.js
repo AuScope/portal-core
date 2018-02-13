@@ -98,37 +98,57 @@ Ext.define('portal.layer.querier.wms.WMSMultipleTabDisplayQuerier', {
 
         for (var i = 0; i < fieldsArray.length; i++) {
             var store = this._getPopulatedStore(fieldsArray[i]);
-            
+            var tabTitle = fieldsArray[i][this.getTabTitleMappedName()];
+
+
             var gridPanel = Ext.create('Ext.grid.Panel', {
                 store : store,
                 width : 860,
                 hideHeaders : true,
                 columns : [
-                   {text : "Feature", dataIndex:"field", width : 250, align : "right", 
+                   {
+                       text : "Feature",
+                       dataIndex:"field",
+                       width : 250,
+                       align : "right",
                        renderer: function(value) {
                            return '<span style="font-size : 1.2 em; font-weight : bolder">'+value+'</span>';
                        }
                    },
-                   {text : "Value", dataIndex:"value", flex : true, 
-                       renderer: function(value){
+                   {
+                       text : "Value",
+                       dataIndex: "value",
+                       flex : true,
+                       renderer: function(value) {
                            if (value.indexOf("http") == 0) {
-                               return '<a href="'+value+'" target="_blank">'+value+'</a>';
+                               return '<a href="' + value + '" target="_blank">' + value + '</a>';
                            } else {
                                return value;
                            }
+                       },
+                       listeners : {
+                           delegate: 'div a',
+                           click : function(name, title, cell, element) {
+                               var link = element.innerText.trim();
+                               if (link.indexOf("http") === 0 ){
+                                   portal.util.GoogleAnalytic.trackevent("QueryPanelLinkClick", name, title, link);
+                               }
+                           },
+                           args: [name, tabTitle]
                        }
+
                    }
                ]
             });
-     
+
             tabPanel.add({
-                title : fieldsArray[i][this.getTabTitleMappedName()],
+                title : tabTitle,
                 items : [gridPanel]
             });
         }
         win.show();
-    }, 
-    
+    },
+
     /**
      * Define the mapping from WFS GetFeatureInfo Key to what should be displayed for it.
      * eg. 
