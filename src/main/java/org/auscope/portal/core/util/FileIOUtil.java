@@ -456,7 +456,7 @@ public class FileIOUtil {
                     zout.putNextEntry(new ZipEntry(new SimpleDateFormat(
                             (i + 1) + "_yyyyMMdd_HHmmss").format(new Date())
                             + "_" + downloadDomain
-                            + (extension == null ? ".xml" : extension)));
+                            + (extension == null ? ".xml" : "." + extension)));
                     zout.write(gmlBytes);
                     zout.closeEntry();
                 }
