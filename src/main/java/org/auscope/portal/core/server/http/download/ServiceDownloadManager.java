@@ -123,7 +123,11 @@ public class ServiceDownloadManager {
 
         ArrayList<DownloadResponse> responses = new ArrayList<>();
         for (GMLDownload gmlDownload : gmlDownloads) {
-            responses.add(gmlDownload.getGMLDownload());
+            try {
+                responses.add(gmlDownload.getGMLDownload());
+            } catch (InCompleteDownloadException ex) {
+                continue;
+            }
         }
 
         return responses;
@@ -224,6 +228,7 @@ public class ServiceDownloadManager {
         }
 
         public DownloadResponse getGMLDownload() throws InCompleteDownloadException {
+            logger.info("Get download for service url:" + this.url);
             if (downloadComplete) {
                 return response;
             } else {
