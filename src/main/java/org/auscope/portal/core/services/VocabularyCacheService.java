@@ -163,4 +163,8 @@ public class VocabularyCacheService {
         return vocabularyCache;
     }
 
+    public synchronized Map<String, String> getVocabularyCacheById(String vocabularyId) {
+        return vocabularyCache.get(vocabularyId);
+    }
+
 }
