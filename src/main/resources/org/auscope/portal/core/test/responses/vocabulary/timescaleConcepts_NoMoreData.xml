@@ -1,0 +1,107 @@
+<rdf:RDF
+        xmlns:dcterms="http://purl.org/dc/terms/"
+        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        xmlns:j.0="http://www.w3.org/1999/xhtml/vocab#"
+        xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+        xmlns:j.1="http://a9.com/-/spec/opensearch/1.1/"
+        xmlns:api="http://purl.org/linked-data/api/vocab#"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+    <api:ListEndpoint rdf:about="http://vocabs.ands.org.au/repository/api/lda/csiro/international-chronostratigraphic-chart-2017/2017/concept.rdf">
+        <api:definition rdf:resource="http://vocabs.ands.org.au/repository/api/lda/meta/csiro/international-chronostratigraphic-chart-2017/2017/concept.rdf"/>
+        <dcterms:hasPart>
+            <api:Page rdf:about="http://vocabs.ands.org.au/repository/api/lda/csiro/international-chronostratigraphic-chart-2017/2017/concept.rdf?_page=29">
+                <j.1:itemsPerPage rdf:datatype="http://www.w3.org/2001/XMLSchema#long"
+                >10</j.1:itemsPerPage>
+                <api:definition rdf:resource="http://vocabs.ands.org.au/repository/api/lda/meta/csiro/international-chronostratigraphic-chart-2017/2017/concept.rdf"/>
+                <j.0:first rdf:resource="http://vocabs.ands.org.au/repository/api/lda/csiro/international-chronostratigraphic-chart-2017/2017/concept.rdf?_page=0"/>
+                <api:items rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://resource.geosciml.org/classifier/ics/ischart/Orosirian">
+                        <skos:broader>
+                            <rdf:Description rdf:about="http://resource.geosciml.org/classifier/ics/ischart/Paleoproterozoic">
+                                <skos:prefLabel xml:lang="sl">paleoproterozoik</skos:prefLabel>
+                                <skos:prefLabel xml:lang="ja">原生代前期</skos:prefLabel>
+                                <skos:prefLabel xml:lang="es">Paleoproterozoico</skos:prefLabel>
+                                <skos:prefLabel xml:lang="pt">Paleoproterozóico</skos:prefLabel>
+                                <skos:prefLabel xml:lang="fr">Paléoprotérozoïque</skos:prefLabel>
+                                <skos:prefLabel xml:lang="zh">古元古代</skos:prefLabel>
+                                <skos:prefLabel xml:lang="en-gb">Palaeoproterozoic</skos:prefLabel>
+                                <skos:prefLabel xml:lang="pl">Paleoproterozoik</skos:prefLabel>
+                                <skos:prefLabel xml:lang="no">Paleoproterozoikum</skos:prefLabel>
+                                <skos:prefLabel xml:lang="cs">Paleoproterozoikum</skos:prefLabel>
+                                <skos:prefLabel xml:lang="da">Palæoproterozoisk</skos:prefLabel>
+                                <skos:prefLabel xml:lang="hu">paleoproterozikum</skos:prefLabel>
+                                <skos:prefLabel xml:lang="sk">paleoproterozoikum</skos:prefLabel>
+                                <skos:prefLabel xml:lang="sv">paleoproterozoikum</skos:prefLabel>
+                                <skos:prefLabel xml:lang="bg">Палеопротерозой</skos:prefLabel>
+                                <skos:prefLabel xml:lang="nl">paleoproterozoïcum</skos:prefLabel>
+                                <skos:prefLabel xml:lang="it">paleoproterozoico</skos:prefLabel>
+                                <skos:prefLabel xml:lang="de">Paläoproteroizoikum</skos:prefLabel>
+                                <skos:prefLabel xml:lang="fi">Paleoproterotsoikum</skos:prefLabel>
+                                <skos:prefLabel xml:lang="en">Paleoproterozoic</skos:prefLabel>
+                                <skos:prefLabel xml:lang="et">Paleoproterosoikum</skos:prefLabel>
+                                <skos:prefLabel xml:lang="en-us">Paleoproterozoic</skos:prefLabel>
+                                <skos:prefLabel xml:lang="lt">Paleoproterozojus</skos:prefLabel>
+                            </rdf:Description>
+                        </skos:broader>
+                        <skos:prefLabel xml:lang="lt">Orosiris</skos:prefLabel>
+                        <skos:prefLabel xml:lang="zh">造山纪</skos:prefLabel>
+                        <skos:prefLabel xml:lang="sl">orosijrij</skos:prefLabel>
+                        <skos:prefLabel xml:lang="hu">orosiri</skos:prefLabel>
+                        <skos:prefLabel xml:lang="da">Orosirien</skos:prefLabel>
+                        <skos:prefLabel xml:lang="fr">Orosirien</skos:prefLabel>
+                        <skos:prefLabel xml:lang="pt">Orosiriano</skos:prefLabel>
+                        <skos:prefLabel xml:lang="no">Orosirium</skos:prefLabel>
+                        <skos:prefLabel xml:lang="de">Orosirium</skos:prefLabel>
+                        <skos:prefLabel xml:lang="en">Orosirian</skos:prefLabel>
+                        <skos:prefLabel xml:lang="ja">オロシリアン紀</skos:prefLabel>
+                        <skos:prefLabel xml:lang="et">Orosir</skos:prefLabel>
+                        <skos:prefLabel xml:lang="fi">Orosir</skos:prefLabel>
+                        <skos:prefLabel xml:lang="pl">Orosir</skos:prefLabel>
+                        <skos:prefLabel xml:lang="cs">Orosir</skos:prefLabel>
+                        <skos:prefLabel xml:lang="bg">Ороѿир</skos:prefLabel>
+                        <skos:prefLabel xml:lang="it">orosiriano</skos:prefLabel>
+                        <skos:prefLabel xml:lang="nl">Orosiriën</skos:prefLabel>
+                        <skos:prefLabel xml:lang="es">Orosiriense</skos:prefLabel>
+                        <skos:prefLabel xml:lang="sk">orosirium</skos:prefLabel>
+                        <skos:prefLabel xml:lang="sv">orosirium</skos:prefLabel>
+                        <skos:notation rdf:datatype="http://resource.geosciml.org/ontology/timescale/gts#EraCode"
+                        >a2.1.3.2</skos:notation>
+                    </rdf:Description>
+                    <rdf:Description rdf:about="http://resource.geosciml.org/classifier/ics/ischart/Rhyacian">
+                        <skos:prefLabel xml:lang="et">Rhyac</skos:prefLabel>
+                        <skos:prefLabel xml:lang="nl">Rhyaciën</skos:prefLabel>
+                        <skos:prefLabel xml:lang="sk">rhyacium</skos:prefLabel>
+                        <skos:prefLabel xml:lang="ja">リヤシアン紀</skos:prefLabel>
+                        <skos:prefLabel xml:lang="cs">Rhyak</skos:prefLabel>
+                        <skos:prefLabel xml:lang="fi">Ryak</skos:prefLabel>
+                        <skos:prefLabel xml:lang="it">rhyaciano</skos:prefLabel>
+                        <skos:prefLabel xml:lang="sl">rhyacij</skos:prefLabel>
+                        <skos:prefLabel xml:lang="zh">层侵纪</skos:prefLabel>
+                        <skos:notation rdf:datatype="http://resource.geosciml.org/ontology/timescale/gts#EraCode"
+                        >a2.1.3.3</skos:notation>
+                        <skos:prefLabel xml:lang="es">Ryaciense</skos:prefLabel>
+                        <skos:prefLabel xml:lang="bg">Риац</skos:prefLabel>
+                        <skos:prefLabel xml:lang="da">Rhyacien</skos:prefLabel>
+                        <skos:prefLabel xml:lang="en">Rhyacian</skos:prefLabel>
+                        <skos:prefLabel xml:lang="fr">Rhyacien</skos:prefLabel>
+                        <skos:broader rdf:resource="http://resource.geosciml.org/classifier/ics/ischart/Paleoproterozoic"/>
+                        <skos:prefLabel xml:lang="no">Ryasium</skos:prefLabel>
+                        <skos:prefLabel xml:lang="pl">Riak</skos:prefLabel>
+                        <skos:prefLabel xml:lang="hu">rhyaci</skos:prefLabel>
+                        <skos:prefLabel xml:lang="lt">Riacis</skos:prefLabel>
+                        <skos:prefLabel xml:lang="sv">ryacium</skos:prefLabel>
+                        <skos:prefLabel xml:lang="pt">Riaciano</skos:prefLabel>
+                        <skos:prefLabel xml:lang="de">Rhyacium</skos:prefLabel>
+                    </rdf:Description>
+                </api:items>
+                <api:extendedMetadataVersion rdf:resource="http://vocabs.ands.org.au/repository/api/lda/csiro/international-chronostratigraphic-chart-2017/2017/concept.rdf?_page=29&amp;_metadata=all"/>
+                <api:page rdf:datatype="http://www.w3.org/2001/XMLSchema#long"
+                >29</api:page>
+                <j.0:prev rdf:resource="http://vocabs.ands.org.au/repository/api/lda/csiro/international-chronostratigraphic-chart-2017/2017/concept.rdf?_page=28"/>
+                <j.1:startIndex rdf:datatype="http://www.w3.org/2001/XMLSchema#long"
+                >291</j.1:startIndex>
+                <dcterms:isPartOf rdf:resource="http://vocabs.ands.org.au/repository/api/lda/csiro/international-chronostratigraphic-chart-2017/2017/concept.rdf"/>
+            </api:Page>
+        </dcterms:hasPart>
+    </api:ListEndpoint>
+</rdf:RDF>
