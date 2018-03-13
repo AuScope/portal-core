@@ -13,6 +13,7 @@ import org.auscope.portal.core.services.csw.custom.CustomRegistry;
 import org.auscope.portal.core.services.csw.custom.CustomRegistryInt;
 import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
 import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter;
+import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter.SortType;
 import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter.KeywordMatchType;
 import org.auscope.portal.core.services.responses.csw.CSWGetCapabilities;
 import org.auscope.portal.core.services.responses.csw.CSWGetDomainResponse;
@@ -29,6 +30,8 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+
+import static org.auscope.portal.core.util.DateUtil.stringYearToDate;
 
 /**
  * A controller class for marshalling access to the underling CSWFilterService
@@ -337,10 +340,12 @@ public class CSWFilterController extends BaseCSWController {
             }
         }
         KeywordMatchType keywordMatchType = null;
+
         String capturePlatform = parameters.get("capturePlatform");
         String sensor = parameters.get("sensor");
         String abstrac = parameters.get("abstract");
         String title = parameters.get("title");
+
 
         if (parameters.get("keywordMatchType") != null) {
             if (parameters.get("keywordMatchType").toLowerCase().equals("any")) {
@@ -350,11 +355,31 @@ public class CSWFilterController extends BaseCSWController {
             }
         }
 
+        // AusGIN parameters
+        String titleOrAbstract = parameters.get("titleOrAbstract");
+        String authorSurname = parameters.get("authorSurname");
+        String onlineResourceType = parameters.get("onlineResourceType");
+        String publicationDateFrom = parameters.get("publicationDateFrom");
+        String publicationDateTo = parameters.get("publicationDateTo");
+        String basicSearchTerm = parameters.get("basicSearchTerm");
+        String sortType = parameters.get("sortType");
+
         //Firstly generate our filter
         FilterBoundingBox filterBbox = attemptParseBBox(westBoundLongitude, eastBoundLongitude,
                 northBoundLatitude, southBoundLatitude);
         CSWGetDataRecordsFilter filter = new CSWGetDataRecordsFilter(anyText, filterBbox, keywords, capturePlatform,
                 sensor, keywordMatchType, abstrac, title, type) ;
+
+        // Populate filter with AusGIN parameters
+        filter.setTitleOrAbstract(titleOrAbstract != null ? titleOrAbstract : null);
+        filter.setAuthorSurname(authorSurname != null ? authorSurname : null);
+        filter.setBasicSearchTerm(basicSearchTerm != null ? basicSearchTerm : null);
+        filter.setOnlineResourceType(onlineResourceType != null ? onlineResourceType : null);
+        filter.setPublicationDateFrom(
+                publicationDateFrom != null ? stringYearToDate(publicationDateFrom.trim(), false) : null);
+        filter.setPublicationDateTo(publicationDateTo != null ? stringYearToDate(publicationDateTo.trim(), true) : null);
+        filter.setSortType(SortType.getByStringValue(sortType));
+
         log.debug(String.format("filter '%1$s'", filter));
         return filter;
     }
