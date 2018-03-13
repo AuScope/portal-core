@@ -1,0 +1,56 @@
+<rdf:RDF
+        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        xmlns:dcterms="http://purl.org/dc/terms/"
+        xmlns:xhv="http://www.w3.org/1999/xhtml/vocab#"
+        xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+        xmlns:os="http://a9.com/-/spec/opensearch/1.1/"
+        xmlns:api="http://purl.org/linked-data/api/vocab#"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+    <api:ListEndpoint rdf:about="http://vocabs.ga.gov.au/cgi/sissvoc/mine-status/concept.rdf">
+        <xhv:first rdf:resource="http://vocabs.ga.gov.au/cgi/sissvoc/mine-status/concept.rdf?_page=0"/>
+        <api:page rdf:datatype="http://www.w3.org/2001/XMLSchema#long"
+        >0</api:page>
+        <dcterms:hasPart rdf:resource="http://vocabs.ga.gov.au/cgi/sissvoc/mine-status/concept.rdf"/>
+        <dcterms:isPartOf rdf:resource="http://vocabs.ga.gov.au/cgi/sissvoc/mine-status/concept.rdf"/>
+        <api:definition rdf:resource="http://vocabs.ga.gov.au/cgi/sissvoc/meta/mine-status/concept.rdf"/>
+        <os:startIndex rdf:datatype="http://www.w3.org/2001/XMLSchema#long"
+        >1</os:startIndex>
+        <api:items rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://resource.geosciml.org/classifier/cgi/mine-status/operating">
+                <skos:prefLabel xml:lang="en">operating</skos:prefLabel>
+            </rdf:Description>
+            <rdf:Description rdf:about="http://resource.geosciml.org/classifier/cgi/mine-status/under-development">
+                <skos:prefLabel xml:lang="en">under development</skos:prefLabel>
+            </rdf:Description>
+            <rdf:Description rdf:about="http://resource.geosciml.org/classifier/cgi/mine-status/abandoned">
+                <skos:prefLabel xml:lang="en">abandoned</skos:prefLabel>
+            </rdf:Description>
+            <rdf:Description rdf:about="http://resource.geosciml.org/classifier/cgi/mine-status/care-and-maintenance">
+                <skos:prefLabel xml:lang="en">care and maintenance</skos:prefLabel>
+            </rdf:Description>
+            <rdf:Description rdf:about="http://resource.geosciml.org/classifier/cgi/mine-status/closed">
+                <skos:prefLabel xml:lang="en">closed</skos:prefLabel>
+            </rdf:Description>
+            <rdf:Description rdf:about="http://resource.geosciml.org/classifier/cgi/mine-status/construction">
+                <skos:prefLabel xml:lang="en">construction</skos:prefLabel>
+            </rdf:Description>
+            <rdf:Description rdf:about="http://resource.geosciml.org/classifier/cgi/mine-status/feasibility">
+                <skos:prefLabel xml:lang="en">feasibility</skos:prefLabel>
+            </rdf:Description>
+            <rdf:Description rdf:about="http://resource.geosciml.org/classifier/cgi/mine-status/historic">
+                <skos:prefLabel xml:lang="en">historic</skos:prefLabel>
+            </rdf:Description>
+            <rdf:Description rdf:about="http://resource.geosciml.org/classifier/cgi/mine-status/not-operating">
+                <skos:prefLabel xml:lang="en">not operating</skos:prefLabel>
+            </rdf:Description>
+            <rdf:Description rdf:about="http://resource.geosciml.org/classifier/cgi/mine-status/operating-continuously">
+                <skos:prefLabel xml:lang="en">operating continuously</skos:prefLabel>
+            </rdf:Description>
+        </api:items>
+        <rdf:type rdf:resource="http://purl.org/linked-data/api/vocab#Page"/>
+        <xhv:next rdf:resource="http://vocabs.ga.gov.au/cgi/sissvoc/mine-status/concept.rdf?_page=1"/>
+        <api:extendedMetadataVersion rdf:resource="http://vocabs.ga.gov.au/cgi/sissvoc/mine-status/concept.rdf?_metadata=all"/>
+        <os:itemsPerPage rdf:datatype="http://www.w3.org/2001/XMLSchema#long"
+        >10</os:itemsPerPage>
+    </api:ListEndpoint>
+</rdf:RDF>

@@ -1,0 +1,33 @@
+<rdf:RDF
+        xmlns:api="http://purl.org/linked-data/api/vocab#"
+        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+        xmlns:os="http://a9.com/-/spec/opensearch/1.1/"
+        xmlns:dcterms="http://purl.org/dc/terms/"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+        xmlns:xhv="http://www.w3.org/1999/xhtml/vocab#">
+    <api:Page rdf:about="http://52.63.163.95/cgi/sissvoc/commodity-code/concept.rdf?_pageSize=1&amp;_page=2">
+        <api:page rdf:datatype="http://www.w3.org/2001/XMLSchema#long"
+        >2</api:page>
+        <api:items rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://resource.geosciml.org/classifier/cgi/commodity-code/gold">
+                <skos:prefLabel xml:lang="en">gold</skos:prefLabel>
+            </rdf:Description>
+        </api:items>
+        <os:startIndex rdf:datatype="http://www.w3.org/2001/XMLSchema#long"
+        >3</os:startIndex>
+        <dcterms:isPartOf>
+            <api:ListEndpoint rdf:about="http://52.63.163.95/cgi/sissvoc/commodity-code/concept.rdf">
+                <api:definition rdf:resource="http://52.63.163.95/cgi/sissvoc/meta/commodity-code/concept.rdf"/>
+                <dcterms:hasPart rdf:resource="http://52.63.163.95/cgi/sissvoc/commodity-code/concept.rdf?_pageSize=1&amp;_page=2"/>
+            </api:ListEndpoint>
+        </dcterms:isPartOf>
+        <xhv:prev rdf:resource="http://52.63.163.95/cgi/sissvoc/commodity-code/concept.rdf?_pageSize=1&amp;_page=1"/>
+        <api:definition rdf:resource="http://52.63.163.95/cgi/sissvoc/meta/commodity-code/concept.rdf"/>
+        <api:extendedMetadataVersion rdf:resource="http://52.63.163.95/cgi/sissvoc/commodity-code/concept.rdf?_metadata=all&amp;_pageSize=1&amp;_page=2"/>
+        <xhv:first rdf:resource="http://52.63.163.95/cgi/sissvoc/commodity-code/concept.rdf?_pageSize=1&amp;_page=0"/>
+        <xhv:next rdf:resource="http://52.63.163.95/cgi/sissvoc/commodity-code/concept.rdf?_pageSize=1&amp;_page=3"/>
+        <os:itemsPerPage rdf:datatype="http://www.w3.org/2001/XMLSchema#long"
+        >1</os:itemsPerPage>
+    </api:Page>
+</rdf:RDF>
