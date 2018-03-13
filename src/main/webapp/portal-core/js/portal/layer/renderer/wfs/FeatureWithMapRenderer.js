@@ -184,6 +184,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
             var styleUrl="";
             if(proxyUrl){
                 styleUrl = Ext.urlAppend(proxyUrl,filterParams);
+                styleUrl = Ext.urlAppend(styleUrl,"layerName="+wmsLayer);
             }else{
                 //VT: if style proxy url is not defined, we assign it a default.
                 styleUrl = Ext.urlAppend("getDefaultStyle.do","layerName="+wmsLayer);
