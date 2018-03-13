@@ -1,0 +1,35 @@
+<rdf:RDF
+        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        xmlns:dcterms="http://purl.org/dc/terms/"
+        xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+        xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+        xmlns:api="http://purl.org/linked-data/api/vocab#"
+        xmlns:foaf="http://xmlns.com/foaf/0.1/">
+    <rdf:Description rdf:about="http://resource.geosciml.org/classifier/cgi/mineral-occurrence-type">
+        <skos:member>
+            <rdfs:Resource rdf:about="http://resource.geosciml.org/classifier/cgi/mineral-occurrence-type/deposit">
+                <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+                <dcterms:source xml:lang="en">This vocabulary, modified from Neuendorf et al., 2005 (AGI Glossary)</dcterms:source>
+                <skos:altLabel xml:lang="en">mineral deposit</skos:altLabel>
+                <skos:broader>
+                    <rdf:Description rdf:about="http://resource.geosciml.org/classifier/cgi/mineral-occurrence-type/occurrence">
+                        <skos:narrower rdf:resource="http://resource.geosciml.org/classifier/cgi/mineral-occurrence-type/deposit"/>
+                    </rdf:Description>
+                </skos:broader>
+                <skos:definition xml:lang="en">A mass of naturally occurring material in the Earth that contains an anomalous concentration of some mineral or rock type that has some potential for human utilization, without regard to mode of origin. Typically is a single, connected, genetically related body of material.</skos:definition>
+                <skos:inScheme rdf:resource="http://resource.geosciml.org/classifierscheme/cgi/2016.01/mineral-occurrence-type"/>
+                <skos:notation rdf:datatype="http://resource.geosciml.org/classifier/cgi/LocalHierarchyKey"
+                >01.1</skos:notation>
+                <skos:prefLabel xml:lang="en">deposit</skos:prefLabel>
+                <foaf:isPrimaryTopicOf>
+                    <api:ItemEndpoint rdf:about="http://vocabs.ga.gov.au/cgi/sissvoc/mineral-occurrence-type/resource.rdf?uri=http://resource.geosciml.org/classifier/cgi/mineral-occurrence-type/deposit">
+                        <foaf:primaryTopic rdf:resource="http://resource.geosciml.org/classifier/cgi/mineral-occurrence-type/deposit"/>
+                        <rdf:type rdf:resource="http://purl.org/linked-data/api/vocab#Page"/>
+                        <api:extendedMetadataVersion rdf:resource="http://vocabs.ga.gov.au/cgi/sissvoc/mineral-occurrence-type/resource.rdf?_metadata=all&amp;uri=http://resource.geosciml.org/classifier/cgi/mineral-occurrence-type/deposit"/>
+                        <api:definition rdf:resource="http://vocabs.ga.gov.au/cgi/sissvoc/mineral-occurrence-type/resource.rdf?uri=http://resource.geosciml.org/classifier/cgi/mineral-occurrence-type/deposit"/>
+                    </api:ItemEndpoint>
+                </foaf:isPrimaryTopicOf>
+            </rdfs:Resource>
+        </skos:member>
+    </rdf:Description>
+</rdf:RDF>

@@ -1,0 +1,552 @@
+<rdf:RDF
+        xmlns:dcterms="http://purl.org/dc/terms/"
+        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        xmlns:j.0="http://www.w3.org/1999/xhtml/vocab#"
+        xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+        xmlns:j.1="http://a9.com/-/spec/opensearch/1.1/"
+        xmlns:api="http://purl.org/linked-data/api/vocab#"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+    <api:Page
+            rdf:about="http://vocabs.ands.org.au/repository/api/lda/csiro/international-chronostratigraphic-chart-2017/2017/concept.rdf?_page=0">
+        <api:definition
+                rdf:resource="http://vocabs.ands.org.au/repository/api/lda/meta/csiro/international-chronostratigraphic-chart-2017/2017/concept.rdf"/>
+        <j.1:startIndex rdf:datatype="http://www.w3.org/2001/XMLSchema#long">1</j.1:startIndex>
+        <api:page rdf:datatype="http://www.w3.org/2001/XMLSchema#long">0</api:page>
+        <api:items rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://resource.geosciml.org/classifier/ics/ischart/Aalenian">
+                <skos:prefLabel xml:lang="nl">Aaleniën</skos:prefLabel>
+                <skos:prefLabel xml:lang="et">Aaleni</skos:prefLabel>
+                <skos:broader>
+                    <rdf:Description rdf:about="http://resource.geosciml.org/classifier/ics/ischart/MiddleJurassic">
+                        <skos:prefLabel xml:lang="zh">中侏罗世</skos:prefLabel>
+                        <skos:prefLabel xml:lang="lt">Vidurinė Jura</skos:prefLabel>
+                        <skos:prefLabel xml:lang="et">Kesk-Juura</skos:prefLabel>
+                        <skos:prefLabel xml:lang="en">Middle Jurassic</skos:prefLabel>
+                        <skos:prefLabel xml:lang="fr">Jurassique moyen</skos:prefLabel>
+                        <skos:prefLabel xml:lang="bg">Средна Юра</skos:prefLabel>
+                        <skos:prefLabel xml:lang="fi">Keski-Jura</skos:prefLabel>
+                        <skos:narrower>
+                            <rdf:Description rdf:about="http://resource.geosciml.org/classifier/ics/ischart/Callovian">
+                                <skos:prefLabel xml:lang="es">Calloviense</skos:prefLabel>
+                                <skos:prefLabel xml:lang="it">calloviano</skos:prefLabel>
+                                <skos:prefLabel xml:lang="hu">callovi</skos:prefLabel>
+                                <skos:prefLabel xml:lang="sv">callov</skos:prefLabel>
+                                <skos:prefLabel xml:lang="pl">Kelowej</skos:prefLabel>
+                                <skos:prefLabel xml:lang="sk">kelovej</skos:prefLabel>
+                                <skos:prefLabel xml:lang="nl">Calloviën</skos:prefLabel>
+                                <skos:prefLabel xml:lang="lt">Kelovėjis</skos:prefLabel>
+                                <skos:prefLabel xml:lang="fi">Callov</skos:prefLabel>
+                                <skos:prefLabel xml:lang="cs">Callov</skos:prefLabel>
+                                <skos:prefLabel xml:lang="en">Callovian</skos:prefLabel>
+                                <skos:prefLabel xml:lang="pt">Caloviano</skos:prefLabel>
+                                <skos:prefLabel xml:lang="et">Callovi</skos:prefLabel>
+                                <skos:prefLabel xml:lang="de">Callovium</skos:prefLabel>
+                                <skos:prefLabel xml:lang="sl">callovij</skos:prefLabel>
+                                <skos:prefLabel xml:lang="ja">カロビアン期</skos:prefLabel>
+                                <skos:prefLabel xml:lang="bg">Калов</skos:prefLabel>
+                                <skos:prefLabel xml:lang="zh">卡洛夫期</skos:prefLabel>
+                                <skos:prefLabel xml:lang="da">Callovien</skos:prefLabel>
+                                <skos:prefLabel xml:lang="fr">Callovien</skos:prefLabel>
+                                <skos:prefLabel xml:lang="no">Callove</skos:prefLabel>
+                            </rdf:Description>
+                        </skos:narrower>
+                        <skos:prefLabel xml:lang="it">giurassico medio</skos:prefLabel>
+                        <skos:prefLabel xml:lang="no">Midtre jura</skos:prefLabel>
+                        <skos:prefLabel xml:lang="hu">középső-jura</skos:prefLabel>
+                        <skos:narrower rdf:resource="http://resource.geosciml.org/classifier/ics/ischart/Aalenian"/>
+                        <skos:prefLabel xml:lang="sv">mellersta jura</skos:prefLabel>
+                        <skos:prefLabel xml:lang="pt">Jurássico Médio</skos:prefLabel>
+                        <skos:prefLabel xml:lang="ja">中期ジュラ紀</skos:prefLabel>
+                        <skos:notation rdf:datatype="http://resource.geosciml.org/ontology/timescale/gts#EraCode">
+                            a1.1.2.2.2
+                        </skos:notation>
+                        <skos:prefLabel xml:lang="de">Mittlerer Jura</skos:prefLabel>
+                        <skos:prefLabel xml:lang="es">Jurásico Medio</skos:prefLabel>
+                        <skos:prefLabel xml:lang="da">Mellem Jurassisk</skos:prefLabel>
+                        <skos:prefLabel xml:lang="sl">srednja jura</skos:prefLabel>
+                        <skos:narrower>
+                            <rdf:Description rdf:about="http://resource.geosciml.org/classifier/ics/ischart/Bathonian">
+                                <skos:prefLabel xml:lang="es">Bathoniense</skos:prefLabel>
+                                <skos:prefLabel xml:lang="it">bathoniano</skos:prefLabel>
+                                <skos:prefLabel xml:lang="da">Bathonien</skos:prefLabel>
+                                <skos:prefLabel xml:lang="fr">Bathonien</skos:prefLabel>
+                                <skos:prefLabel xml:lang="nl">Barthoniën</skos:prefLabel>
+                                <skos:prefLabel xml:lang="sv">bathon</skos:prefLabel>
+                                <skos:prefLabel xml:lang="ja">バソニアン期</skos:prefLabel>
+                                <skos:prefLabel xml:lang="et">Bathoni</skos:prefLabel>
+                                <skos:prefLabel xml:lang="cs">Bathon</skos:prefLabel>
+                                <skos:prefLabel xml:lang="no">Bathon</skos:prefLabel>
+                                <skos:prefLabel xml:lang="fi">Bathon</skos:prefLabel>
+                                <skos:prefLabel xml:lang="zh">巴通期</skos:prefLabel>
+                                <skos:prefLabel xml:lang="bg">Бат</skos:prefLabel>
+                                <skos:prefLabel xml:lang="de">Bathonium</skos:prefLabel>
+                                <skos:prefLabel xml:lang="lt">Batonis</skos:prefLabel>
+                                <skos:prefLabel xml:lang="pt">Batoniano</skos:prefLabel>
+                                <skos:prefLabel xml:lang="hu">bath</skos:prefLabel>
+                                <skos:prefLabel xml:lang="sk">bath</skos:prefLabel>
+                                <skos:prefLabel xml:lang="pl">Baton</skos:prefLabel>
+                                <skos:prefLabel xml:lang="en">Bathonian</skos:prefLabel>
+                                <skos:prefLabel xml:lang="sl">bathonij</skos:prefLabel>
+                            </rdf:Description>
+                        </skos:narrower>
+                        <skos:prefLabel xml:lang="nl">Midden Jura</skos:prefLabel>
+                        <skos:prefLabel xml:lang="cs">Střední jura</skos:prefLabel>
+                        <skos:narrower>
+                            <rdf:Description rdf:about="http://resource.geosciml.org/classifier/ics/ischart/Bajocian">
+                                <skos:prefLabel xml:lang="zh">巴柔期</skos:prefLabel>
+                                <skos:prefLabel xml:lang="pl">Bajos</skos:prefLabel>
+                                <skos:notation
+                                        rdf:datatype="http://resource.geosciml.org/ontology/timescale/gts#EraCode"
+                                >a1.1.2.2.2.3
+                                </skos:notation>
+                                <skos:prefLabel xml:lang="hu">bajoci</skos:prefLabel>
+                                <skos:prefLabel xml:lang="es">Bajociense</skos:prefLabel>
+                                <skos:prefLabel xml:lang="de">Bajocium</skos:prefLabel>
+                                <skos:prefLabel xml:lang="da">Bajocien</skos:prefLabel>
+                                <skos:prefLabel xml:lang="fr">Bajocien</skos:prefLabel>
+                                <skos:prefLabel xml:lang="lt">Bajosis</skos:prefLabel>
+                                <skos:prefLabel xml:lang="sk">bajok</skos:prefLabel>
+                                <skos:broader
+                                        rdf:resource="http://resource.geosciml.org/classifier/ics/ischart/MiddleJurassic"/>
+                                <skos:prefLabel xml:lang="sv">bajoc</skos:prefLabel>
+                                <skos:prefLabel xml:lang="et">Bajoci</skos:prefLabel>
+                                <skos:prefLabel xml:lang="sl">bajocij</skos:prefLabel>
+                                <skos:prefLabel xml:lang="nl">Bajociën</skos:prefLabel>
+                                <skos:prefLabel xml:lang="en">Bajocian</skos:prefLabel>
+                                <skos:prefLabel xml:lang="pt">Bajociano</skos:prefLabel>
+                                <skos:prefLabel xml:lang="ja">バジョシアン期</skos:prefLabel>
+                                <skos:prefLabel xml:lang="it">bajociano</skos:prefLabel>
+                                <skos:prefLabel xml:lang="cs">Bajok</skos:prefLabel>
+                                <skos:prefLabel xml:lang="bg">Байоѿ</skos:prefLabel>
+                                <skos:prefLabel xml:lang="fi">Bajoc</skos:prefLabel>
+                                <skos:prefLabel xml:lang="no">Bajoc</skos:prefLabel>
+                            </rdf:Description>
+                        </skos:narrower>
+                        <skos:prefLabel xml:lang="sk">stredná jura</skos:prefLabel>
+                        <skos:broader>
+                            <rdf:Description rdf:about="http://resource.geosciml.org/classifier/ics/ischart/Jurassic">
+                                <skos:prefLabel xml:lang="zh">侏罗纪</skos:prefLabel>
+                                <skos:narrower>
+                                    <rdf:Description
+                                            rdf:about="http://resource.geosciml.org/classifier/ics/ischart/LowerJurassic">
+                                        <skos:broader
+                                                rdf:resource="http://resource.geosciml.org/classifier/ics/ischart/Jurassic"/>
+                                        <skos:prefLabel xml:lang="ja">前期ジュラ紀</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="fi">Varhais/Ala-Jura</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="en">Early/Lower Jurassic</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="es">Jurásico Inferior</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="sk">raná/odnSPá jura</skos:prefLabel>
+                                        <skos:narrower>
+                                            <rdf:Description
+                                                    rdf:about="http://resource.geosciml.org/classifier/ics/ischart/Sinemurian">
+                                                <skos:prefLabel xml:lang="de">Sinémurium</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="sv">sinemur</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="es">Sinemuriense</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="pl">Synemur</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="cs">Sinemur</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="fi">Sinemur</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="no">Sinemur</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="fr">Sinémurien</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="en">Sinemurian</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="bg">Синемур</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="nl">Sinemuriën</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="zh">辛涅穆尔期</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="hu">sinemuri</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="lt">Sinemiūris</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="sl">sinemurij</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="pt">Sinemuriano</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="et">Sinemuri</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="it">sinemuriano</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="da">Sinemurien</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="sk">sinemúr</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="ja">シネムール期</skos:prefLabel>
+                                            </rdf:Description>
+                                        </skos:narrower>
+                                        <skos:prefLabel xml:lang="da">Tidlig/Nedre Jurassisk</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="lt">Ankstyvoji/Apatinė Jura</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="no">Tidlig/undre jura</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="nl">Vroeg/Onder Jura</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="bg">Ранна/Долна Юра</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="et">Vara/Alam-Juura</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="pt">Jurássico Inferior</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="zh">早侏罗世</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="de">Früher / Unterer Jura</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="hu">kora/alsó-ura</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="it">giurassico inferiore</skos:prefLabel>
+                                        <skos:notation
+                                                rdf:datatype="http://resource.geosciml.org/ontology/timescale/gts#EraCode"
+                                        >a1.1.2.2.3
+                                        </skos:notation>
+                                        <skos:prefLabel xml:lang="sl">zgodnja/odnjaSP kreda</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="sv">äldre/undre jura</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="pl">Wczesna/Dolna Jura</skos:prefLabel>
+                                        <skos:narrower>
+                                            <rdf:Description
+                                                    rdf:about="http://resource.geosciml.org/classifier/ics/ischart/Toarcian">
+                                                <skos:prefLabel xml:lang="sv">toarc</skos:prefLabel>
+                                                <skos:broader
+                                                        rdf:resource="http://resource.geosciml.org/classifier/ics/ischart/LowerJurassic"/>
+                                                <skos:prefLabel xml:lang="de">Toarcium</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="ja">トアルシアン期</skos:prefLabel>
+                                                <skos:notation
+                                                        rdf:datatype="http://resource.geosciml.org/ontology/timescale/gts#EraCode"
+                                                >a1.1.2.2.3.1
+                                                </skos:notation>
+                                                <skos:prefLabel xml:lang="en">Toarcian</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="es">Toarciense</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="lt">Toaris</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="zh">托阿尔期</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="cs">Toark</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="pl">Toark</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="et">Toarci</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="it">toarciano</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="da">Toarcien</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="fr">Toarcien</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="fi">Toarc</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="no">Toarc</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="sl">toarcij</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="bg">Тоар</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="hu">toarci</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="pt">Toarciano</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="sk">toark</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="nl">Toarciën</skos:prefLabel>
+                                            </rdf:Description>
+                                        </skos:narrower>
+                                        <skos:prefLabel xml:lang="fr">Jurassique inférieur</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="cs">odnSPí jura</skos:prefLabel>
+                                        <skos:narrower>
+                                            <rdf:Description
+                                                    rdf:about="http://resource.geosciml.org/classifier/ics/ischart/Hettangian">
+                                                <skos:prefLabel xml:lang="pl">Hetang</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="en">Hettangian</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="pt">Hetangiano</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="bg">Хетанж</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="sl">hettangij</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="fi">Hettang</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="et">Hettangi</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="es">Hettagiense</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="no">Hettang</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="cs">Hettang</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="nl">Hettangiën</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="sv">hettang</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="ja">ヘッタンギアン期</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="da">Hettangien</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="fr">Hettangien</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="de">Hettangium</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="it">hettangiano</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="zh">赫唐期</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="hu">hettangi</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="lt">Hetangis</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="sk">hetanž</skos:prefLabel>
+                                            </rdf:Description>
+                                        </skos:narrower>
+                                        <skos:narrower>
+                                            <rdf:Description
+                                                    rdf:about="http://resource.geosciml.org/classifier/ics/ischart/Pliensbachian">
+                                                <skos:prefLabel xml:lang="sk">pliensbach</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="sv">pliensbach</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="hu">pliensbachi</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="lt">Plynsbachis</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="pt">Pliensbaquiano</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="zh">普连斯巴奇期</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="bg">Плиинѿбах</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="ja">プリンスバッキアン期</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="es">Pliensbachiense</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="fi">Plienbach</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="de">Pliensbachium</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="en">Pliensbachian</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="et">Pliensbachi</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="nl">Pliënsbachiën</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="sl">pleinsbachij</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="cs">Pliensbach</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="no">Pliensbach</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="pl">Pliensbach</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="it">pliensbachiano</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="da">Pliensbachien</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="fr">Pliensbachien</skos:prefLabel>
+                                            </rdf:Description>
+                                        </skos:narrower>
+                                    </rdf:Description>
+                                </skos:narrower>
+                                <skos:prefLabel xml:lang="en">Jurassic</skos:prefLabel>
+                                <skos:prefLabel xml:lang="bg">Юра</skos:prefLabel>
+                                <skos:broader>
+                                    <rdf:Description
+                                            rdf:about="http://resource.geosciml.org/classifier/ics/ischart/Mesozoic">
+                                        <skos:prefLabel xml:lang="da">Mesozoisk</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="pt">Mesozóico</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="fr">Mésozoïque</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="en">Mesozoic</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="it">mesozoico</skos:prefLabel>
+                                        <skos:notation
+                                                rdf:datatype="http://resource.geosciml.org/ontology/timescale/gts#EraCode"
+                                        >a1.1.2
+                                        </skos:notation>
+                                        <skos:prefLabel xml:lang="cs">Mezozoikum</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="hu">mezozoikum</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="sk">mezozoikum</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="sv">mesozoikum</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="ja">中生代</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="zh">中生代</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="es">Mesozoico</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="fi">Mesotsoikum</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="sl">mezozoik</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="et">Mesosoikum</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="bg">Мезозой</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="lt">Mezozojus</skos:prefLabel>
+                                        <skos:narrower
+                                                rdf:resource="http://resource.geosciml.org/classifier/ics/ischart/Jurassic"/>
+                                        <skos:broader>
+                                            <rdf:Description
+                                                    rdf:about="http://resource.geosciml.org/classifier/ics/ischart/Phanerozoic">
+                                                <skos:prefLabel xml:lang="es">Fanerozoico</skos:prefLabel>
+                                                <skos:narrower>
+                                                    <rdf:Description
+                                                            rdf:about="http://resource.geosciml.org/classifier/ics/ischart/Paleozoic">
+                                                        <skos:prefLabel xml:lang="et">Paleosoikum</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="it">paleozoico</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="pl">Paleozoik</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="en">Paleozoic</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="en-us">Paleozoic</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="es">Palozoico</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="ja">古生代</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="lt">Paleozojus</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="de">Paläozoikum</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="zh">古生代</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="no">Paleozoikum</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="cs">Paleozoikum</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="nl">Paleozoïcum</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="fr">Paléozoïque</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="fi">Paleotsoikum</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="pt">Paleozóico</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="sl">paleozoik</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="en-gb">Palaeozoic</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="hu">paleozoikum</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="sk">paleozoikum</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="sv">paleozoikum</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="bg">Палеозой</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="da">Palæozoisk</skos:prefLabel>
+                                                    </rdf:Description>
+                                                </skos:narrower>
+                                                <skos:prefLabel xml:lang="da">Phanerozoisk</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="cs">Fanerozoikum</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="no">Fanerozoikum</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="hu">fanerozoikum</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="nl">Phanerozoïcum</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="sk">fanerozoikum</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="sv">fanerozoikum</skos:prefLabel>
+                                                <skos:narrower
+                                                        rdf:resource="http://resource.geosciml.org/classifier/ics/ischart/Mesozoic"/>
+                                                <skos:prefLabel xml:lang="sl">fanerozoik</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="pt">Fanerozóico</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="bg">Фанерозой</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="fr">Phanérozoïque</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="it">fanerozoico</skos:prefLabel>
+                                                <skos:notation
+                                                        rdf:datatype="http://resource.geosciml.org/ontology/timescale/gts#EraCode"
+                                                >a1.1
+                                                </skos:notation>
+                                                <skos:prefLabel xml:lang="ja">顕生代</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="de">Phanerozoikum</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="en">Phanerozoic</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="et">Fanerosoikum</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="lt">Fanerozojus</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="zh">显生宙</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="fi">Fanerotsoikum</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="pl">Fanerozoik</skos:prefLabel>
+                                                <skos:narrower>
+                                                    <rdf:Description
+                                                            rdf:about="http://resource.geosciml.org/classifier/ics/ischart/Cenozoic">
+                                                        <skos:prefLabel xml:lang="de">Känozoikum</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="sk">kenozoikum</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="sv">kenozoikum</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="fi">Kenotsoikum</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="en">Cenozoic</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="en-us">Cenozoic</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="it">cenozoico</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="et">Kainosoikum</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="lt">Cenozojus</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="pl">Kenozoik</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="ja">新生代</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="zh">新生代</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="fr">Cénozoïque</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="bg">пеозой</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="da">Kænozoisk</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="es">Cenozoico</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="pt">Cenozóico</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="nl">Kaenozoïcum</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="hu">kainozoikum</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="cs">Kenozoikum</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="no">Kenozoikum</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="sl">kenozoik</skos:prefLabel>
+                                                        <skos:prefLabel xml:lang="en-gb">Cainozoic</skos:prefLabel>
+                                                    </rdf:Description>
+                                                </skos:narrower>
+                                            </rdf:Description>
+                                        </skos:broader>
+                                        <skos:prefLabel xml:lang="pl">Mezozoik</skos:prefLabel>
+                                        <skos:narrower>
+                                            <rdf:Description
+                                                    rdf:about="http://resource.geosciml.org/classifier/ics/ischart/Triassic">
+                                                <skos:prefLabel xml:lang="it">triassico</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="bg">Триаѿ</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="en">Triassic</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="da">Triassisk</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="et">Triias</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="zh">三叠纪</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="sl">trias</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="sv">trias</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="sk">trias</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="lt">Triasas</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="cs">Trias</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="de">Trias</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="es">Triásico</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="ja">三畳紀</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="pt">Triásico</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="fi">Trias</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="fr">Trias</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="nl">Trias</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="hu">triász</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="no">Trias</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="pl">Trias</skos:prefLabel>
+                                            </rdf:Description>
+                                        </skos:narrower>
+                                        <skos:prefLabel xml:lang="nl">Mesozoïcum</skos:prefLabel>
+                                        <skos:narrower>
+                                            <rdf:Description
+                                                    rdf:about="http://resource.geosciml.org/classifier/ics/ischart/Cretaceous">
+                                                <skos:prefLabel xml:lang="da">Kridt</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="ja">白亜紀</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="fr">Crétacé</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="sk">krieda</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="nl">Krijt</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="lt">Kreida</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="sl">kreda</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="it">cretacico</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="zh">白垩纪</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="no">Kritt</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="bg">Креда</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="en">Cretaceous</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="de">Kreide</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="et">Kriit</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="fi">Liitu</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="sv">krita</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="es">Cretácico</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="pt">Cretácico</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="hu">kréta</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="cs">Křída</skos:prefLabel>
+                                                <skos:prefLabel xml:lang="pl">Kreda</skos:prefLabel>
+                                            </rdf:Description>
+                                        </skos:narrower>
+                                        <skos:prefLabel xml:lang="de">Mesozoikum</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="no">Mesozoikum</skos:prefLabel>
+                                    </rdf:Description>
+                                </skos:broader>
+                                <skos:prefLabel xml:lang="sk">jura, jurský</skos:prefLabel>
+                                <skos:prefLabel xml:lang="et">Juura</skos:prefLabel>
+                                <skos:prefLabel xml:lang="ja">ジュラ紀</skos:prefLabel>
+                                <skos:prefLabel xml:lang="da">Jurassisk</skos:prefLabel>
+                                <skos:narrower
+                                        rdf:resource="http://resource.geosciml.org/classifier/ics/ischart/MiddleJurassic"/>
+                                <skos:notation
+                                        rdf:datatype="http://resource.geosciml.org/ontology/timescale/gts#EraCode"
+                                >a1.1.2.2
+                                </skos:notation>
+                                <skos:prefLabel xml:lang="hu">jura</skos:prefLabel>
+                                <skos:prefLabel xml:lang="de">Jura</skos:prefLabel>
+                                <skos:prefLabel xml:lang="fi">Jura</skos:prefLabel>
+                                <skos:prefLabel xml:lang="lt">Jura</skos:prefLabel>
+                                <skos:prefLabel xml:lang="nl">Jura</skos:prefLabel>
+                                <skos:prefLabel xml:lang="pt">Jurássico</skos:prefLabel>
+                                <skos:prefLabel xml:lang="it">giurassico</skos:prefLabel>
+                                <skos:prefLabel xml:lang="no">Jura</skos:prefLabel>
+                                <skos:prefLabel xml:lang="pl">Jura</skos:prefLabel>
+                                <skos:prefLabel xml:lang="cs">Jura</skos:prefLabel>
+                                <skos:prefLabel xml:lang="sl">jura</skos:prefLabel>
+                                <skos:prefLabel xml:lang="sv">jura</skos:prefLabel>
+                                <skos:narrower>
+                                    <rdf:Description
+                                            rdf:about="http://resource.geosciml.org/classifier/ics/ischart/UpperJurassic">
+                                        <skos:prefLabel xml:lang="sv">yngre/övre jura</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="en">Late/Upper Jurassic</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="zh">晚侏罗世</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="sl">pozna/zgornja jura</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="cs">Svrchní jura</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="ja">後期ジュラ紀</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="et">Hilis/Ülem-Juura</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="lt">Vėlyvoji/Viršutinė Jura</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="it">giurassico superiore</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="no">Sen/øvre jura</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="sk">mladšia/vrchná jura</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="nl">Laat/Boven Jura</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="pt">Jurássico Superior</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="fi">Myöhäis/Ylä-Jura</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="bg">Къѿна/Горна Юра</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="es">Jurásico Superior</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="fr">Jurassique supérieur</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="hu">késő/felső-jura</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="pl">Późna/Górna Jura</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="da">Sen/Øvre Jurassisk</skos:prefLabel>
+                                        <skos:prefLabel xml:lang="de">Später/Oberer Jura</skos:prefLabel>
+                                    </rdf:Description>
+                                </skos:narrower>
+                                <skos:prefLabel xml:lang="es">Jurásico</skos:prefLabel>
+                                <skos:prefLabel xml:lang="fr">Jurassique</skos:prefLabel>
+                            </rdf:Description>
+                        </skos:broader>
+                        <skos:prefLabel xml:lang="pl">Środkowa Jura</skos:prefLabel>
+                    </rdf:Description>
+                </skos:broader>
+                <skos:prefLabel xml:lang="sv">aalen</skos:prefLabel>
+                <skos:prefLabel xml:lang="ja">アーレニアン期</skos:prefLabel>
+                <skos:prefLabel xml:lang="lt">Alenis</skos:prefLabel>
+                <skos:prefLabel xml:lang="bg">пален</skos:prefLabel>
+                <skos:prefLabel xml:lang="en">Aalenian</skos:prefLabel>
+                <skos:prefLabel xml:lang="de">Aalénium</skos:prefLabel>
+                <skos:prefLabel xml:lang="cs">Aalen</skos:prefLabel>
+                <skos:prefLabel xml:lang="fi">Aalen</skos:prefLabel>
+                <skos:prefLabel xml:lang="no">Aalen</skos:prefLabel>
+                <skos:prefLabel xml:lang="da">Aalenien</skos:prefLabel>
+                <skos:prefLabel xml:lang="pl">Aalen</skos:prefLabel>
+                <skos:prefLabel xml:lang="it">aaleniano</skos:prefLabel>
+                <skos:prefLabel xml:lang="es">Aaleniense</skos:prefLabel>
+                <skos:notation rdf:datatype="http://resource.geosciml.org/ontology/timescale/gts#EraCode">a1.1.2.2.2.4</skos:notation>
+                <skos:prefLabel xml:lang="pt">Aaleniano</skos:prefLabel>
+                <skos:prefLabel xml:lang="hu">aaleni</skos:prefLabel>
+                <skos:prefLabel xml:lang="sl">aalenij</skos:prefLabel>
+                <skos:prefLabel xml:lang="sk">álen</skos:prefLabel>
+                <skos:prefLabel xml:lang="fr">Aalénien</skos:prefLabel>
+                <skos:prefLabel xml:lang="zh">阿连期</skos:prefLabel>
+            </rdf:Description>
+            <rdf:Description rdf:about="http://resource.geosciml.org/classifier/ics/ischart/MiddleJurassic"/>
+            <rdf:Description rdf:about="http://resource.geosciml.org/classifier/ics/ischart/Jurassic"/>
+            <rdf:Description rdf:about="http://resource.geosciml.org/classifier/ics/ischart/Mesozoic"/>
+            <rdf:Description rdf:about="http://resource.geosciml.org/classifier/ics/ischart/Phanerozoic"/>
+            <rdf:Description rdf:about="http://resource.geosciml.org/classifier/ics/ischart/BaseMiddleJurassic">
+                <skos:prefLabel xml:lang="en">Base of Middle Jurassic</skos:prefLabel>
+            </rdf:Description>
+            <rdf:Description rdf:about="http://resource.geosciml.org/classifier/ics/ischart/BaseBajocian">
+                <skos:prefLabel xml:lang="en">Base of Bajocian</skos:prefLabel>
+            </rdf:Description>
+            <rdf:Description rdf:about="http://resource.geosciml.org/classifier/ics/ischart/Bajocian"/>
+            <rdf:Description rdf:about="http://resource.geosciml.org/classifier/ics/ischart/LowerJurassic"/>
+            <rdf:Description rdf:about="http://resource.geosciml.org/classifier/ics/ischart/Toarcian"/>
+        </api:items>
+        <dcterms:isPartOf>
+            <api:ListEndpoint
+                    rdf:about="http://vocabs.ands.org.au/repository/api/lda/csiro/international-chronostratigraphic-chart-2017/2017/concept.rdf">
+                <api:definition
+                        rdf:resource="http://vocabs.ands.org.au/repository/api/lda/meta/csiro/international-chronostratigraphic-chart-2017/2017/concept.rdf"/>
+                <dcterms:hasPart
+                        rdf:resource="http://vocabs.ands.org.au/repository/api/lda/csiro/international-chronostratigraphic-chart-2017/2017/concept.rdf?_page=0"/>
+            </api:ListEndpoint>
+        </dcterms:isPartOf>
+        <j.0:first
+                rdf:resource="http://vocabs.ands.org.au/repository/api/lda/csiro/international-chronostratigraphic-chart-2017/2017/concept.rdf?_page=0"/>
+        <api:extendedMetadataVersion
+                rdf:resource="http://vocabs.ands.org.au/repository/api/lda/csiro/international-chronostratigraphic-chart-2017/2017/concept.rdf?_page=0&amp;_metadata=all"/>
+        <j.1:itemsPerPage rdf:datatype="http://www.w3.org/2001/XMLSchema#long">10</j.1:itemsPerPage>
+        <j.0:next
+                rdf:resource="http://vocabs.ands.org.au/repository/api/lda/csiro/international-chronostratigraphic-chart-2017/2017/concept.rdf?_page=1"/>
+    </api:Page>
+</rdf:RDF>
