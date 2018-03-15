@@ -313,10 +313,14 @@ public class WMSController extends BaseCSWController {
     @RequestMapping("/getDefaultPolygonStyle.do")
     public void getDefaultPolygonStyle( 
             HttpServletResponse response,    		
-            @RequestParam(required = false, value = "layerName") String layerName)
+            @RequestParam(required = false, value = "layerName") String layerName,
+            @RequestParam(required = false, value = "colour") Integer colour)
                     throws Exception {
-    	
-        String style = this.getStyle(layerName, "#ed9c38", "POLYGON");     
+        if (colour == null) {
+            colour = 0xed9c38; 
+        }
+        String hexColour="#" + Integer.toHexString(colour);    	
+        String style = this.getStyle(layerName, hexColour, "POLYGON");
 
         response.setContentType("text/xml");
 
@@ -339,10 +343,14 @@ public class WMSController extends BaseCSWController {
     @RequestMapping("/getDefaultStyle.do")
     public void getDefaultStyle(
             HttpServletResponse response,
-            @RequestParam("layerName") String layerName)
+            @RequestParam("layerName") String layerName,
+            @RequestParam(required = false, value = "colour") Integer colour)
                     throws Exception {
-
-        String style = this.getStyle(layerName, "#ed9c38", "POINT");
+        if (colour == null) {
+            colour = 0xed9c38; 
+        }
+        String hexColour="#" + Integer.toHexString(colour);
+        String style = this.getStyle(layerName, hexColour, "POINT");
 
         response.setContentType("text/xml");
 
