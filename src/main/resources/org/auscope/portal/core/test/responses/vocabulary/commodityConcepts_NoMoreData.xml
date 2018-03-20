@@ -1,0 +1,32 @@
+<rdf:RDF
+        xmlns:api="http://purl.org/linked-data/api/vocab#"
+        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+        xmlns:os="http://a9.com/-/spec/opensearch/1.1/"
+        xmlns:dcterms="http://purl.org/dc/terms/"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+        xmlns:xhv="http://www.w3.org/1999/xhtml/vocab#">
+    <api:Page rdf:about="http://52.63.163.95/cgi/sissvoc/commodity-code/concept.rdf?_pageSize=1&amp;_page=176">
+        <api:items rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://resource.geosciml.org/classifier/cgi/commodity-code/uranium">
+                <skos:prefLabel xml:lang="en">uranium</skos:prefLabel>
+            </rdf:Description>
+        </api:items>
+        <api:definition rdf:resource="http://52.63.163.95/cgi/sissvoc/meta/commodity-code/concept.rdf"/>
+        <api:extendedMetadataVersion rdf:resource="http://52.63.163.95/cgi/sissvoc/commodity-code/concept.rdf?_metadata=all&amp;_pageSize=1&amp;_page=176"/>
+        <xhv:prev rdf:resource="http://52.63.163.95/cgi/sissvoc/commodity-code/concept.rdf?_pageSize=1&amp;_page=175"/>
+        <dcterms:isPartOf>
+            <api:ListEndpoint rdf:about="http://52.63.163.95/cgi/sissvoc/commodity-code/concept.rdf">
+                <api:definition rdf:resource="http://52.63.163.95/cgi/sissvoc/meta/commodity-code/concept.rdf"/>
+                <dcterms:hasPart rdf:resource="http://52.63.163.95/cgi/sissvoc/commodity-code/concept.rdf?_pageSize=1&amp;_page=176"/>
+            </api:ListEndpoint>
+        </dcterms:isPartOf>
+        <xhv:first rdf:resource="http://52.63.163.95/cgi/sissvoc/commodity-code/concept.rdf?_pageSize=1&amp;_page=0"/>
+        <os:startIndex rdf:datatype="http://www.w3.org/2001/XMLSchema#long"
+        >177</os:startIndex>
+        <os:itemsPerPage rdf:datatype="http://www.w3.org/2001/XMLSchema#long"
+        >1</os:itemsPerPage>
+        <api:page rdf:datatype="http://www.w3.org/2001/XMLSchema#long"
+        >176</api:page>
+    </api:Page>
+</rdf:RDF>
