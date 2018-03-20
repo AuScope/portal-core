@@ -455,15 +455,8 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
         	}
             //Create a copy of the last set of filter parameters
             var url = wfsResources[i].get('url');
-
-            if(filterer.getParameters().serviceFilter &&
-                    url != filterer.getParameters().serviceFilter[0]){
-                continue;
-            }
             var typeName = wfsResources[i].get('name');
             var filterParameters = filterer.getParameters();
-
-
 
             filterParameters.serviceUrl = url;
             filterParameters.typeName = typeName;
