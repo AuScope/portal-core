@@ -447,17 +447,16 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
         //multiple requests and zipping the responses into a single stream for the user to download.
         var wfsResources = portal.csw.OnlineResource.getFilteredFromArray(resources, portal.csw.OnlineResource.WFS);
         for (var i = 0; i < wfsResources.length; i++) {
+        	
+        	//VT: if there is a service provider filter we only want to download from the service provider specified
+        	if(filterer.parameters.serviceFilter && filterer.parameters.serviceFilter.length > 0
+        			&& wfsResources[i].get('url')!= filterer.parameters.serviceFilter[0]){
+        		continue;
+        	}
             //Create a copy of the last set of filter parameters
             var url = wfsResources[i].get('url');
-
-            if(filterer.getParameters().serviceFilter &&
-                    url != filterer.getParameters().serviceFilter[0]){
-                continue;
-            }
             var typeName = wfsResources[i].get('name');
             var filterParameters = filterer.getParameters();
-
-
 
             filterParameters.serviceUrl = url;
             filterParameters.typeName = typeName;
