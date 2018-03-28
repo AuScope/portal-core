@@ -206,9 +206,9 @@ public class TestServiceDownloadManager extends PortalTestClass {
                 context.mock(InputStream.class, "is-3"),
         };
         final long[] responseDelays = {
-                400,
-                800,
-                600
+                1000,
+                2000,
+                1500
         };
 
         //The service should hit url 0 and 2 simultaneously and when one returns
@@ -249,7 +249,7 @@ public class TestServiceDownloadManager extends PortalTestClass {
 
         //We have a pretty good idea of what the processing time and margin of error should be
         long processingTime = Math.min(responseDelays[0], responseDelays[2]) + responseDelays[1];
-        long marginOfError = Math.min(Math.min(responseDelays[0], responseDelays[1]), responseDelays[2]) / 10;
+        long marginOfError = processingTime / 10;
         long minProcessingTime = processingTime - 5;
         long maxProcessingTime = processingTime + marginOfError;
 
