@@ -86,9 +86,11 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         //VT:All special menu item should be determined from the menu factory. This is the only exception as all layers 
         //VT:Should have a legend action except for Insar data.
         // but even then if the portal is specifiying the menu items then don't add a legend by default
+        /*
         if (config.menuItems && this.filterForm.layer.get('renderer').getLegend()){            
             menuItems.push(this._getLegendAction(this.filterForm.layer));
         }   
+        */
         
         if(!config.menuFactory){
             //VT:Default behavior if there are no menuFactory defined.

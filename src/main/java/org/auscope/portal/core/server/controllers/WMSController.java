@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -234,6 +235,52 @@ public class WMSController extends BaseCSWController {
             log.warn(String.format("Unable to download WMS layer formats for '%1$s'", serviceUrl));
             log.debug(e);
             return generateJSONResponseMAV(false, "Unable to process request", null);
+        }
+    }
+
+    /**
+     * Gets the Metadata URL from the getCapabilities record if it is defined there.
+     *
+     * @param serviceUrl The WMS URL to query
+     * @param version the WMS version
+     * @param name the layer name
+     */
+    @RequestMapping("/getWMSLayerMetadataURL.do")
+    public ModelAndView getWMSLayerMetadataURL(
+            @RequestParam("serviceUrl") String serviceUrl,
+            @RequestParam("version") String wmsVersion,
+            @RequestParam("name") String name) throws Exception {
+
+        try {
+            /*
+             * It might be preferable to create a nicer way of getting the data for the specific layer
+             * This implementation just loops through the whole capabilities document looking for the layer.
+             */
+            String decodedServiceURL = URLDecoder.decode(serviceUrl, "UTF-8");
+
+            GetCapabilitiesRecord getCapabilitiesRecord =
+                    wmsService.getWmsCapabilities(decodedServiceURL, wmsVersion);
+
+            String metadataURL = null;
+
+            for (GetCapabilitiesWMSLayerRecord layer : getCapabilitiesRecord.getLayers()) {
+                if (name.equals(layer.getTitle())) {
+                    metadataURL = layer.getMetadataURL();
+                    break;
+                }
+            }
+
+            // if no value was found in a child layer then use the value in the parent record.
+            if (StringUtils.isBlank(metadataURL)) {
+                metadataURL = getCapabilitiesRecord.getMetadataUrl();
+            }
+
+            return generateJSONResponseMAV(true, metadataURL, "");
+
+        } catch (Exception e) {
+            log.warn(String.format("Unable to download WMS MetadataURL for '%1$s'", serviceUrl));
+            log.debug(e);
+            return generateJSONResponseMAV(false, "", null);
         }
     }
 
