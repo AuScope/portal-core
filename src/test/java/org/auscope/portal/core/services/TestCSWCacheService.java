@@ -151,13 +151,7 @@ public class TestCSWCacheService extends PortalTestClass {
             // Start our updating and wait for our threads to finish
             Assert.assertTrue(this.cswCacheService.updateCache());
             try {           
-            	int threadSleepCount=0;
-            	Thread.sleep(50);
-            	while (this.cswCacheService.updateRunning) {
-	                Thread.sleep(500);
-	                Assert.assertTrue("timeout exceeded waiting for CSW Cache Service to complete an update",threadSleepCount<60);
-	                threadSleepCount++;
-                }
+            	waitForCSWUpdateToComplete();
             } catch (InterruptedException e) {
                 Assert.fail("Test sleep interrupted. Test aborted.");
             }
@@ -235,13 +229,7 @@ public class TestCSWCacheService extends PortalTestClass {
             // Start our updating and wait for our threads to finish
             Assert.assertTrue(this.cswCacheService.updateCache());
             try {
-            	int threadSleepCount=0;
-            	Thread.sleep(50);
-            	while (this.cswCacheService.updateRunning) {
-	                Thread.sleep(500);
-	                Assert.assertTrue("timeout exceeded waiting for CSW Cache Service to complete an update",threadSleepCount<60);
-	                threadSleepCount++;
-                }
+            	waitForCSWUpdateToComplete();
             } catch (InterruptedException e) {
                 Assert.fail("Test sleep interrupted. Test aborted.");
             }
@@ -319,13 +307,7 @@ public class TestCSWCacheService extends PortalTestClass {
             // Start our updating and wait for our threads to finish
             Assert.assertTrue(this.cswCacheService.updateCache());
             try {
-            	int threadSleepCount=0;
-            	Thread.sleep(50);
-            	while (this.cswCacheService.updateRunning) {
-	                Thread.sleep(500);
-	                Assert.assertTrue("timeout exceeded waiting for CSW Cache Service to complete an update",threadSleepCount<60);
-	                threadSleepCount++;
-                }
+            	waitForCSWUpdateToComplete();
             } catch (InterruptedException e) {
                 Assert.fail("Test sleep interrupted. Test aborted.");
             }
@@ -421,13 +403,7 @@ public class TestCSWCacheService extends PortalTestClass {
             // Start our updating and wait for our threads to finish
             Assert.assertTrue(this.cswCacheService.updateCache());
             try {
-            	int threadSleepCount=0;
-            	Thread.sleep(50);
-            	while (this.cswCacheService.updateRunning) {
-	                Thread.sleep(500);
-	                Assert.assertTrue("timeout exceeded waiting for CSW Cache Service to complete an update",threadSleepCount<60);
-	                threadSleepCount++;
-                }
+            	waitForCSWUpdateToComplete();
 
             } catch (InterruptedException e) {
                 Assert.fail("Test sleep interrupted. Test aborted.");
@@ -484,13 +460,7 @@ public class TestCSWCacheService extends PortalTestClass {
             // Start our updating and wait for our threads to finish
             Assert.assertTrue(this.cswCacheService.updateCache());
             try {
-            	int threadSleepCount=0;
-            	Thread.sleep(50);
-            	while (this.cswCacheService.updateRunning) {
-	                Thread.sleep(500);
-	                Assert.assertTrue("timeout exceeded waiting for CSW Cache Service to complete an update",threadSleepCount<60);
-	                threadSleepCount++;
-                }
+                waitForCSWUpdateToComplete();
             } catch (InterruptedException e) {
                 Assert.fail("Test sleep interrupted. Test aborted.");
             }
@@ -538,13 +508,7 @@ public class TestCSWCacheService extends PortalTestClass {
         //Start our updating and wait for our threads to finish
         Assert.assertTrue(this.cswCacheService.updateCache());
         try {
-        	int threadSleepCount=0;
-        	Thread.sleep(50);
-        	while (this.cswCacheService.updateRunning) {
-                Thread.sleep(500);
-                Assert.assertTrue("timeout exceeded waiting for CSW Cache Service to complete an update",threadSleepCount<60);
-                threadSleepCount++;
-            }
+            waitForCSWUpdateToComplete();
         } catch (InterruptedException e) {
             Assert.fail("Test sleep interrupted. Test aborted.");
         }
@@ -634,13 +598,7 @@ public class TestCSWCacheService extends PortalTestClass {
             // Start our updating and wait for our threads to finish
             Assert.assertTrue(this.cswCacheService.updateCache(3, 2000));
             try {
-            	int threadSleepCount=0;
-            	Thread.sleep(50);
-            	while (this.cswCacheService.updateRunning) {
-	                Thread.sleep(500);
-	                Assert.assertTrue("timeout exceeded waiting for CSW Cache Service to complete an update",threadSleepCount<60);
-	                threadSleepCount++;
-                }
+                waitForCSWUpdateToComplete();
             } catch (InterruptedException e) {
                 Assert.fail("Test sleep interrupted. Test aborted.");
             }
@@ -713,13 +671,7 @@ public class TestCSWCacheService extends PortalTestClass {
             // Start our updating and wait for our threads to finish
             Assert.assertTrue(this.cswCacheService.updateCache(3, 2000));
             try {
-            	int threadSleepCount=0;
-            	Thread.sleep(50);
-            	while (this.cswCacheService.updateRunning) {
-	                Thread.sleep(500);
-	                Assert.assertTrue("timeout exceeded waiting for CSW Cache Service to complete an update",threadSleepCount<60);
-	                threadSleepCount++;
-                }
+                waitForCSWUpdateToComplete();
             } catch (InterruptedException e) {
                 Assert.fail("Test sleep interrupted. Test aborted.");
             }
@@ -807,13 +759,7 @@ public class TestCSWCacheService extends PortalTestClass {
             // Start our updating and wait for our threads to finish
             Assert.assertTrue(this.cswCacheService.updateCache(3, 2000));
             try {
-            	int threadSleepCount=0;
-            	Thread.sleep(50);
-            	while (this.cswCacheService.updateRunning) {
-	                Thread.sleep(500);
-	                Assert.assertTrue("timeout exceeded waiting for CSW Cache Service to complete an update",threadSleepCount<60);
-	                threadSleepCount++;
-                }
+                waitForCSWUpdateToComplete();
             } catch (InterruptedException e) {
                 Assert.fail("Test sleep interrupted. Test aborted.");
             }
@@ -870,13 +816,7 @@ public class TestCSWCacheService extends PortalTestClass {
                 // Start our updating and wait for our threads to finish
                 Assert.assertTrue(this.cswCacheService.updateCache(3, 2000));
                 try {
-                	int threadSleepCount=0;
-                	Thread.sleep(50);
-                	while (this.cswCacheService.updateRunning) {
-    	                Thread.sleep(500);
-    	                Assert.assertTrue("timeout exceeded waiting for CSW Cache Service to complete an update",threadSleepCount<60);
-    	                threadSleepCount++;
-                    }
+                    waitForCSWUpdateToComplete();
                 } catch (InterruptedException e) {
                     Assert.fail("Test sleep interrupted. Test aborted.");
                 }
@@ -945,13 +885,7 @@ public class TestCSWCacheService extends PortalTestClass {
         //Start our updating and wait for our threads to finish
         Assert.assertTrue(this.cswCacheService.updateCache(3, 2000));
         try {
-        	int threadSleepCount=0;
-        	Thread.sleep(50);
-        	while (this.cswCacheService.updateRunning) {
-                Thread.sleep(500);
-                Assert.assertTrue("timeout exceeded waiting for CSW Cache Service to complete an update",threadSleepCount<60);
-                threadSleepCount++;
-            }
+            waitForCSWUpdateToComplete();
         } catch (InterruptedException e) {
             Assert.fail("Test sleep interrupted. Test aborted.");
         }
@@ -1037,13 +971,7 @@ public class TestCSWCacheService extends PortalTestClass {
             Assert.assertTrue(this.cswCacheService.isForceGetMethods());
             Assert.assertTrue(this.cswCacheService.updateCache());
             try {
-            	int threadSleepCount=0;
-            	Thread.sleep(50);
-            	while (this.cswCacheService.updateRunning) {
-	                Thread.sleep(500);
-	                Assert.assertTrue("timeout exceeded waiting for CSW Cache Service to complete an update",threadSleepCount<60);
-	                threadSleepCount++;
-                }
+                waitForCSWUpdateToComplete();
             } catch (InterruptedException e) {
                 Assert.fail("Test sleep interrupted. Test aborted.");
             }
@@ -1115,13 +1043,7 @@ public class TestCSWCacheService extends PortalTestClass {
             // Start our updating and wait for our threads to finish
             Assert.assertTrue(this.cswCacheService.updateCache(3, 2000));
             try {
-            	int threadSleepCount=0;
-            	Thread.sleep(50);
-            	while (this.cswCacheService.updateRunning) {
-	                Thread.sleep(500);
-	                Assert.assertTrue("timeout exceeded waiting for CSW Cache Service to complete an update",threadSleepCount<60);
-	                threadSleepCount++;
-                }
+            	waitForCSWUpdateToComplete();
             } catch (InterruptedException e) {
                 Assert.fail("Test sleep interrupted. Test aborted.");
             }
@@ -1153,6 +1075,16 @@ public class TestCSWCacheService extends PortalTestClass {
 
             Assert.assertEquals(1, parent.getChildRecords().length);
             Assert.assertSame(child, parent.getChildRecords()[0]);
+        }
+    }
+
+    private void waitForCSWUpdateToComplete() throws InterruptedException {
+        int threadSleepCount=0;
+        Thread.sleep(50);
+        while (this.cswCacheService.updateRunning) {
+            Thread.sleep(500);
+            Assert.assertTrue("timeout exceeded waiting for CSW Cache Service to complete an update",threadSleepCount<60);
+            threadSleepCount++;
         }
     }
 }
