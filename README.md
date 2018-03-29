@@ -13,4 +13,3 @@ The Geoscience Australia contact for this repository is:
 **Michael Sexton**  
 Geoscience Australia  
 <michael.sexton@ga.gov.au>  
- 
