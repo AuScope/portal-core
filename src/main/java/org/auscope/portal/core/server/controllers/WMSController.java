@@ -385,7 +385,7 @@ public class WMSController extends BaseCSWController {
             HttpServletRequest request)
                     throws Exception ,UnsupportedOperationException{
         if (sldBody == null && sldUrl == null) {
-            throw new UnsupportedOperationException("Has to setup sldUrl or sldBody.");
+            throw new Exception("Has to setup sldUrl or sldBody.");
         }
         response.setContentType("image/png");
   
