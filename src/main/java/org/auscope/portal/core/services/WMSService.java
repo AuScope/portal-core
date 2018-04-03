@@ -179,13 +179,20 @@ public class WMSService {
         return "";
     }
 
-    public HttpClientInputStream getMap(String url,String layer,String bbox,String sldUrl, String version, String crs) throws OperationNotSupportedException, URISyntaxException, IOException{
+    public HttpClientInputStream getMap(String url,String layer,String bbox,String sldBody, String version, String crs) throws OperationNotSupportedException, URISyntaxException, IOException{
 
         WMSMethodMakerInterface methodMaker;
         methodMaker = getSupportedMethodMaker(url, version);
-        HttpRequestBase method = methodMaker.getMap(url,layer,bbox, sldUrl, crs);
+        HttpRequestBase method = methodMaker.getMap(url,layer,bbox, sldBody, crs);
         HttpClientInputStream  response = serviceCaller.getMethodResponseAsStream(method);
         return response;
 
     }
+    
+    public String getStyle(String url,String sldUrl, String version) throws OperationNotSupportedException, URISyntaxException, IOException{
+        WMSMethodMakerInterface methodMaker;
+        methodMaker = getSupportedMethodMaker(url, version);
+        String sldBody = methodMaker.getStyle(sldUrl);
+        return sldBody;
+    }    
 }

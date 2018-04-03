@@ -340,11 +340,7 @@ public class WMSMethodMaker extends AbstractMethodMaker implements WMSMethodMake
     }
 
     @Override
-    public HttpRequestBase getMap(String url,String layer,String bbox, String sldUrl, String crs) throws URISyntaxException, IOException {
-
-        HttpGet getSld = new HttpGet(sldUrl);
-        String sldBody =  serviceCaller.getMethodResponseAsString(getSld);
-
+    public HttpRequestBase getMap(String url,String layer,String bbox, String sldBody, String crs) throws URISyntaxException, IOException {
 
         List<NameValuePair> existingParam = this.extractQueryParams(url); //preserve any existing query params
 
@@ -376,7 +372,15 @@ public class WMSMethodMaker extends AbstractMethodMaker implements WMSMethodMake
 
         return method;
     }
+    
+    @Override
+    public String getStyle(String sldUrl) throws URISyntaxException, IOException {
 
+        HttpGet getSld = new HttpGet(sldUrl);
+        String sldBody =  serviceCaller.getMethodResponseAsString(getSld);
+
+        return sldBody;
+    }
     /**
      * Test whether wms 1.3.0 is accepted. Not sure if there is a better way of testing though.
      */

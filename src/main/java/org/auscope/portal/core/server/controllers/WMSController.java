@@ -40,6 +40,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.amazonaws.services.sqs.model.UnsupportedOperationException;
+
 /**
  * Handles GetCapabilites (WFS)WMS queries.
  *
@@ -375,22 +377,25 @@ public class WMSController extends BaseCSWController {
             @RequestParam("url") String url,
             @RequestParam("layer") String layer,
             @RequestParam("bbox") String bbox,
-            @RequestParam("sldUrl") String sldUrl,
+            @RequestParam(required = false, value = "sldUrl") String sldUrl,
+            @RequestParam(required = false, value = "sldBody") String sldBody,            
             @RequestParam("version") String version,
             @RequestParam("crs") String crs,
             HttpServletResponse response,
             HttpServletRequest request)
-                    throws Exception {
-
+                    throws Exception ,UnsupportedOperationException{
+        if (sldBody == null && sldUrl == null) {
+            throw new Exception("Has to setup sldUrl or sldBody.");
+        }
         response.setContentType("image/png");
-        
-        sldUrl = request.getRequestURL().toString().replace(request.getServletPath(),"").replace("4200", "8080") + sldUrl;
-        
-
-        HttpClientInputStream styleStream = this.wmsService.getMap(url, layer, bbox,sldUrl, version,crs);
+  
+        if (sldBody == null) {
+            sldUrl = request.getRequestURL().toString().replace(request.getServletPath(),"").replace("4200", "8080") + sldUrl;  
+            sldBody = this.wmsService.getStyle(url, sldUrl, version);            
+        }
+        HttpClientInputStream styleStream = this.wmsService.getMap(url, layer, bbox,sldBody, version,crs);
         OutputStream outputStream = response.getOutputStream();
         IOUtils.copy(styleStream,outputStream);
-        //FileIOUtil.writeInputToOutputStream(styleStream, outputStream, 1024, false);
         styleStream.close();
         outputStream.close();
     }
