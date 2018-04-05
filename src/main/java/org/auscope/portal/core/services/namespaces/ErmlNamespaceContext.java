@@ -11,6 +11,7 @@ public class ErmlNamespaceContext extends WFSNamespaceContext {
         super();
         map.put("er", "urn:cgi:xmlns:GGIC:EarthResource:1.1");
         map.put("gsml", "urn:cgi:xmlns:CGI:GeoSciML:2.0");
+        map.put("erl", "http://xmlns.earthresourceml.org/earthresourceml-lite/1.0");
     }
     
     public ErmlNamespaceContext (String erVersion) {

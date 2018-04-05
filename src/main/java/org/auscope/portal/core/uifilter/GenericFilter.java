@@ -111,7 +111,7 @@ public abstract class GenericFilter extends AbstractFilter {
         JSONArray jArray = (JSONArray) JSONSerializer.toJSON("["+this.getxPathFilters()+"]");
 
         if(jArray.isEmpty()){
-            throw new IllegalStateException(unInitializedXPathFiltersMessage);
+            return results;
         }
 
         if(jArray.isArray()){
@@ -135,7 +135,7 @@ public abstract class GenericFilter extends AbstractFilter {
     }
 
 
-    @Override
+    
     public String getFilterStringAllRecords() {
         return this.generateFilter(this.generateFilterFragment());
     }
