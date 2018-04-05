@@ -27,9 +27,10 @@ public class TestGenericFilter extends GenericFilter{
         Assert.assertEquals("<ogc:PropertyIsLike escapeChar=\"!\" singleChar=\"#\" matchCase=\"false\" wildCard=\"*\" ><ogc:PropertyName>mt:tenementType</ogc:PropertyName><ogc:Literal>*prospecting*</ogc:Literal></ogc:PropertyIsLike>", result.get(1));
     }
 
-    @Test(expected=IllegalStateException.class)
-    public void testExceptionStringNotSet(){
+    @Test
+    public void testEmptyResult(){
         List<String> result = generateParameterFragments();
+        Assert.assertEquals(0, result.size());
     }
 
 }
