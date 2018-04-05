@@ -196,6 +196,12 @@ public interface WMSMethodMakerInterface {
      * @throws URISyntaxException
      * @throws IOException
      */
-    public HttpRequestBase getMap(String url,String layer,String bbox, String sldUrl, String crs) throws URISyntaxException, IOException;
+    public HttpRequestBase getMap(String url,String layer,String bbox, String sldBody, String crs) throws URISyntaxException, IOException;
+    /**
+     * get style
+     * @throws URISyntaxException
+     * @throws IOException
+     */
+    public String getStyle(String sldUrl) throws URISyntaxException, IOException;    
 
 }

@@ -80,19 +80,7 @@ public abstract class GenericFilter extends AbstractFilter {
         	obj.getString("xpath") +
         	"</ogc:PropertyName>" +
         	"<Literal>" +
-        	"<gml:MultiPolygon srsName=\"urn:ogc:def:crs:EPSG::3857\">" +
-        	"<gml:polygonMember>" +
-        	"<gml:Polygon srsName=\"EPSG:3857\">" +
-        	"<gml:outerBoundaryIs>" +
-        	"<gml:LinearRing>" +
-        	"<gml:coordinates xmlns:gml=\"http://www.opengis.net/gml\" decimal=\".\" cs=\",\" ts=\" \">" +
         	obj.getString("value") +
-        	"</gml:coordinates>" +
-        	"</gml:LinearRing>" +
-        	"</gml:outerBoundaryIs>" +
-        	"</gml:Polygon>" +
-        	"</gml:polygonMember>" +
-        	"</gml:MultiPolygon>" +
         	"</Literal>" +
         	"</ogc:Intersects>";        	
             return polygonString;

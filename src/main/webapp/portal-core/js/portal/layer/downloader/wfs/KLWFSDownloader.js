@@ -17,19 +17,16 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
     currentTooltip : null,
     featureCountUrl : null,
     enableFeatureCounts : false,
-    enableFormatSelection : false,
 
     /**
      * Adds the following config options
      * 
      * featureCountUrl : String - URL where feature counts will be looked up if proxy URL DNE. 
      * enableFeatureCounts : Boolean - Set to true to use feature counting in the popup.   
-     * enableFormatSelection : Boolean - Set to true to allow download format selection
      */
     constructor : function(cfg) {
         this.featureCountUrl = cfg.featureCountUrl ? cfg.featureCountUrl : null;
         this.enableFeatureCounts = cfg.enableFeatureCounts ? true : false;
-        this.enableFormatSelection = cfg.enableFormatSelection ? true : false;
         this.callParent(arguments);
     },
 
@@ -54,15 +51,6 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
         isDifferentBBox = originallyVisibleBBox && currentlyVisibleBBox &&
                           !originallyVisibleBBox.equals(currentlyVisibleBBox);
 
-        //Hardcode this for now as GetCap responses aren't always accurate
-        //For instance - Geoserver Complex WFS doesn't work with many formats other than gml/csv
-        var formatStore = Ext.data.Store({
-            fields: [{name: 'name'}, {name: 'mime'}],
-            data: [{name:'GML 3.0', mime: 'gml3'},
-                   {name:'GML 3.2', mime: 'gml32'},
-                   {name:'CSV', mime: 'csv'}]
-        });
-        
         //Create a popup showing our options
         Ext.create('Ext.Window', {
             title : 'Download Options',
@@ -167,19 +155,6 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                         allowBlank      : false,
                         blankText       : 'This field is required',
                         anchor          : '-50'
-                    },{
-                        xtype: 'combo',
-                        fieldLabel: 'Format',
-                        hidden: !me.enableFormatSelection,
-                        store: formatStore,
-                        name: 'outputFormat',
-                        itemId: 'outputFormat',
-                        typeAhead: false,
-                        queryMode: 'local',
-                        forceSelection: true,
-                        anchor: '-50',
-                        displayField: 'name',
-                        valueField: 'mime'
                     }]
 
                 }]
@@ -218,14 +193,11 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                     handler : function(button) {
                         var popup = button.up('window');
                         var sEmail = popup.down('#downloadToken').getValue();
-                        var outputFormat = me.enableFormatSelection ? popup.down('#outputFormat').getValue() : '';
+                        var outputFormat = "csv";
                         if ( sEmail === '' && sEmail.length < 4) {
                             Ext.MessageBox.alert('Unable to submit request...','Please enter a valid email address');
                             popup.down('#downloadToken').markInvalid();
                             return;
-                        } else if (me.enableFormatSelection && !outputFormat) {
-                            Ext.MessageBox.alert('Unable to submit request...','Please select an output format');
-                            popup.down('#outputFormat').markInvalid();
                         } else {
                             var bboxJson = '';
                             var popup = button.ownerCt.ownerCt;
@@ -384,7 +356,7 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
             text += 'Please check back with us later using your email as access token and click on Check Status</p>';
             text += '<p>We limit the results to 5000 features per access point.';
             text += 'You can either modify the download filter or alternatively, you can download directly from the WFS service points below</p>';
-            text += "<p>Note:The links below are WFS service endpoints. Read <a href='http://docs.geoserver.org/latest/en/user/services/wfs/reference.html'> here</a> for more information </p>";
+            text += "<p>Note: The links below are WFS service endpoints. Read <a href='http://docs.geoserver.org/latest/en/user/services/wfs/reference.html'> here</a> for more information </p>";
 
         var wfsResources = portal.csw.OnlineResource.getFilteredFromArray(resources, portal.csw.OnlineResource.WFS);
 

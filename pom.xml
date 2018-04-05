@@ -104,9 +104,10 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.18.1</version>
                 <configuration>
-                    <parallel>methods</parallel>
+                    <parallel>classes</parallel>
                     <threadCount>10</threadCount>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                    <argLine>-Dfile.encoding=UTF-8</argLine>
                 </configuration>
             </plugin>
             <plugin>
@@ -147,6 +148,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.0</version>
                 <executions>
                     <execution>
                         <goals>
