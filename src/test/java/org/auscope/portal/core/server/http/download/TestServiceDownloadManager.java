@@ -198,7 +198,8 @@ public class TestServiceDownloadManager extends PortalTestClass {
         
         // assume this test is NOT running within TRAVIS CI. If it is the result will be ignored.
         // This is done because TRAVIS is not fair even if this service class is.
-        org.junit.Assume.assumeTrue(System.getenv("TRAVIS")==null);
+        
+        org.junit.Assume.assumeTrue("Travis environment detected, skipping Service fairness test because Travis performance is not sufficiently predictable to reliably evaluate fairness",System.getenv("TRAVIS")==null);
         
         final String[] serviceUrls = {
                 "http://localhost/portal?serviceUrl=http://domain1/wfs",
