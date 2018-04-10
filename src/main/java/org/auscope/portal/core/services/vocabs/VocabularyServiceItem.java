@@ -1,6 +1,5 @@
 package org.auscope.portal.core.services.vocabs;
 
-import org.auscope.portal.core.services.SISSVoc3Service;
 import org.auscope.portal.core.services.VocabularyService;
 
 /**
