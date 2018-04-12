@@ -184,26 +184,15 @@ public class VocabularyService {
     }
 
     /**
-     * Returns all the relevant concepts for this. By default returns
+     * Returns all the relevant concepts for the given vocabulary
      *
      *
      * @return
      */
-    public Map<String,String> getAllRelevantConcepts() throws URISyntaxException, PortalServiceException {
+    public Map<String, String> getAllRelevantConcepts() throws URISyntaxException, PortalServiceException {
         Map<String, String> result = new HashMap<String, String>();
 
-        Model model = ModelFactory.createDefaultModel();
-        int pageNumber = 0;
-        int pageSize = this.getPageSize();
-
-        do {
-            HttpRequestBase method = vocabularyMethodMaker.getAllConcepts(getServiceUrl(), Format.Rdf, View.description, pageSize, pageNumber);
-            if (requestPageOfConcepts(method, model)) {
-                pageNumber++;
-            } else {
-                break;
-            }
-        } while (true);
+        Model model = getModel();
 
         Property prefLabelProperty = model.createProperty(VocabNamespaceContext.SKOS_NAMESPACE, "prefLabel");
         ResIterator iterator = model.listResourcesWithProperty(prefLabelProperty);
@@ -221,6 +210,30 @@ public class VocabularyService {
             }
         }
         return result;
+    }
+
+    /**
+     * @return Returns full Jena model of the vocabulary
+     *
+     * @throws URISyntaxException
+     * @throws PortalServiceException
+     */
+    public Model getModel() throws URISyntaxException, PortalServiceException {
+
+        Model model = ModelFactory.createDefaultModel();
+        int pageNumber = 0;
+        int pageSize = this.getPageSize();
+
+        do {
+            HttpRequestBase method = vocabularyMethodMaker.getAllConcepts(getServiceUrl(), Format.Rdf, View.description, pageSize, pageNumber);
+            if (requestPageOfConcepts(method, model)) {
+                pageNumber++;
+            } else {
+                break;
+            }
+        } while (true);
+
+        return model;
     }
 
 
