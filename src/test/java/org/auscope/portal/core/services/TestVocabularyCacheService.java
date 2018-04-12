@@ -1,5 +1,6 @@
 package org.auscope.portal.core.services;
 
+import com.hp.hpl.jena.rdf.model.Model;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
@@ -177,7 +178,7 @@ public class TestVocabularyCacheService extends PortalTestClass {
 
             Assert.assertEquals(totalRequestsMade, this.vocabularyCacheService.getVocabularyCache().size());
             int numberOfTerms = 0;
-            for (Map.Entry<String, Map<String, String>> entry : this.vocabularyCacheService.vocabularyCache.entrySet()) {
+            for (Map.Entry<String, Model> entry : this.vocabularyCacheService.vocabularyCache.entrySet()) {
                 numberOfTerms +=  entry.getValue().size();
             }
             Assert.assertEquals(VOCABULARY_COUNT_TOTAL, numberOfTerms);
@@ -281,7 +282,7 @@ public class TestVocabularyCacheService extends PortalTestClass {
 
             Assert.assertEquals(CONCURRENT_THREADS_TO_RUN - 1, this.vocabularyCacheService.getVocabularyCache().size());
             int numberOfTerms = 0;
-            for (Map.Entry<String, Map<String, String>> entry : this.vocabularyCacheService.vocabularyCache.entrySet()) {
+            for (Map.Entry<String, Model> entry : this.vocabularyCacheService.vocabularyCache.entrySet()) {
                 numberOfTerms += entry.getValue().size();
             }
             Assert.assertEquals(VOCABULARY_ERRORS_COUNT_TOTAL, numberOfTerms);
