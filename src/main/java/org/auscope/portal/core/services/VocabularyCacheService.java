@@ -1,8 +1,12 @@
 package org.auscope.portal.core.services;
 
+import com.hp.hpl.jena.rdf.model.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
+import org.auscope.portal.core.services.methodmakers.VocabularyMethodMaker;
+import org.auscope.portal.core.services.namespaces.VocabNamespaceContext;
 import org.auscope.portal.core.services.vocabs.VocabularyServiceItem;
 
 import java.net.URISyntaxException;
@@ -20,7 +24,7 @@ public class VocabularyCacheService {
     protected List<VocabularyServiceItem> serviceList;
     protected Executor executor;
 
-    protected Map<String, Map<String, String>> vocabularyCache;
+    protected Map<String, Model> vocabularyCache;
     protected boolean updateRunning;
 
     public VocabularyCacheService(Executor executor,
@@ -28,7 +32,7 @@ public class VocabularyCacheService {
         this.executor = executor;
         this.serviceList = serviceList;
 
-        this.vocabularyCache = new HashMap<String, Map<String, String>>();
+        this.vocabularyCache = new HashMap<String, Model>();
     }
 
     /**
@@ -64,7 +68,7 @@ public class VocabularyCacheService {
         return true;
     }
 
-    private synchronized void updateFinished(Map<String, Map<String, String>> vocabularyCache) {
+    private synchronized void updateFinished(Map<String, Model> vocabularyCache) {
         this.updateRunning = false;
 
         if (vocabularyCache != null) {
@@ -74,7 +78,7 @@ public class VocabularyCacheService {
         int numberOfTerms = 0;
         int numberOfVocabularies = this.vocabularyCache.size();
 
-        for (Entry<String, Map<String, String>> entry : this.vocabularyCache.entrySet()) {
+        for (Entry<String, Model> entry : this.vocabularyCache.entrySet()) {
             numberOfTerms +=  entry.getValue().size();
         }
         log.info(String.format("Vocabulary cache updated! Cache now has '%1$d' unique vocabulary terms, from '%2$d' vocabulary services",
@@ -92,14 +96,14 @@ public class VocabularyCacheService {
         private VocabularyCacheUpdateThread[] siblings;
         private VocabularyServiceItem serviceItem;
 
-        private Map<String, Map<String, String>> vocabularyCache;
+        private Map<String, Model> vocabularyCache;
         private boolean finishedExecution;
 
 
         public VocabularyCacheUpdateThread(VocabularyCacheService parent,
                                            VocabularyCacheUpdateThread[] siblings,
                                            VocabularyServiceItem serviceItem,
-                                           Map<String, Map<String, String>> vocabularyCache){
+                                           Map<String, Model> vocabularyCache){
             this.parent = parent;
             this.siblings = siblings;
             this.serviceItem = serviceItem;
@@ -125,9 +129,9 @@ public class VocabularyCacheService {
         public void run() {
             try {
                 VocabularyService service = serviceItem.getVocabularyService();
-                Map<String,String> map = service.getAllRelevantConcepts();
+                Model model  = service.getModel();
                 synchronized (this.vocabularyCache){
-                    this.vocabularyCache.put(this.serviceItem.getId(), map);
+                    this.vocabularyCache.put(this.serviceItem.getId(), model);
                 }
             }
             catch (PortalServiceException | URISyntaxException e) {
@@ -159,12 +163,23 @@ public class VocabularyCacheService {
 
     }
 
-    public synchronized Map<String, Map<String, String>> getVocabularyCache() {
+    /**
+     * Returns the full vocabulary cache mapped as cache IDs with their respective models.
+     *
+     * @return
+     */
+    public synchronized Map<String, Model> getVocabularyCache() {
         return vocabularyCache;
     }
 
-    public synchronized Map<String, String> getVocabularyCacheById(String vocabularyId) {
-        return vocabularyCache.get(vocabularyId);
+    /**
+     * Returns the full vocabulary model by its respective cache ID.
+     *
+     * @param vocabularyId ID of the vocabulary you wish to access
+     * @return
+     */
+    public synchronized Model getVocabularyCacheById(String vocabularyId) {
+        return this.vocabularyCache.get(vocabularyId);
     }
 
 }
