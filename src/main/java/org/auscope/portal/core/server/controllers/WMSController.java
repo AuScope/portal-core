@@ -380,6 +380,45 @@ public class WMSController extends BaseCSWController {
         styleStream.close();
         outputStream.close();
     }
+
+
+    /**
+     * Gets the LegendURL from the getCapabilities record if it is defined there.
+     * TODO I think this should be the default but at the moment it is not being used at all.
+     *
+     * @param serviceUrl The WMS URL to query
+     */
+    @RequestMapping("/getLegendURL.do")
+    public ModelAndView getLegendURL(
+            @RequestParam("serviceUrl") String serviceUrl,
+            @RequestParam("wmsVersion") String wmsVersion,
+            @RequestParam("layerName") String layerName) throws Exception {
+
+        try {
+            /*
+             * It might be preferable to create a nicer way of getting the data for the specific layer
+             * This implementation just loops through the whole capabilities document looking for the layer.
+             */
+            GetCapabilitiesRecord getCapabilitiesRecord =
+                    wmsService.getWmsCapabilities(serviceUrl, wmsVersion);
+
+            String url = null;
+
+            for (GetCapabilitiesWMSLayerRecord layer : getCapabilitiesRecord.getLayers()) {
+                if (layerName.equals(layer.getName())) {
+                    url = layer.getLegendURL();
+                    break;
+                }
+            }
+            return generateJSONResponseMAV(true, url, "");
+
+        } catch (Exception e) {
+            log.warn(String.format("Unable to download WMS legendURL for '%1$s'", serviceUrl));
+            log.debug(e);
+            return generateJSONResponseMAV(false, "", null);
+        }
+    }
+
     /**
     * get the default style for point Layer
     * @param response
