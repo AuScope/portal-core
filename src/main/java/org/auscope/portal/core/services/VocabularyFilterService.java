@@ -10,7 +10,8 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 /**
- * Service class that handles filtering of
+ * Service class that handles filtering of JENA models that are cached by the {@link VocabularyCacheService}.
+ * Filters are either selectors on resources or properties, and also find narrower relationships with specified resources
  */
 public class VocabularyFilterService {
 
