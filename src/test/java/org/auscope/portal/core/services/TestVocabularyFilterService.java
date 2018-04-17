@@ -100,7 +100,7 @@ public class TestVocabularyFilterService extends PortalTestClass {
             }
         });
 
-        Map<String, String> values = vocabularyFilterService.getFilteredVocabularyById(mockVocabularyCacheId, mockSelector);
+        Map<String, String> values = vocabularyFilterService.getVocabularyById(mockVocabularyCacheId, mockSelector);
 
         Assert.assertEquals(1, values.size());
     }
