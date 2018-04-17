@@ -14,7 +14,7 @@ import java.util.List;
  * A class for generating HTTP methods to communicate with a vocabulary
  * service that uses the Linked Data API
  *
- * @author Josh Vote, Michael Sexton
+ * @author Josh Vote
  *
  */
 public class VocabularyMethodMaker extends AbstractMethodMaker {
@@ -116,6 +116,7 @@ public class VocabularyMethodMaker extends AbstractMethodMaker {
         }
     }
 
+
     /**
      * Appends the view parameter to the list, in the case where the vocabulary
      * service presents a limited description for a vocabulary by default
@@ -181,6 +182,7 @@ public class VocabularyMethodMaker extends AbstractMethodMaker {
         if (view != null) {
             appendViewParam(params, view.name());
         }
+        params.add(new BasicNameValuePair("_lang", "en"));
 
         return buildGetMethod(serviceUrl, "concept", format, params);
     }
@@ -299,6 +301,25 @@ public class VocabularyMethodMaker extends AbstractMethodMaker {
     }
 
     /**
+     * @param serviceUrl
+     * @param baseConceptUri
+     * @param format
+     * @param pageSize
+     * @param pageNumber
+     * @return
+     * @throws URISyntaxException
+     */
+    public HttpRequestBase getBroaderTransitiveConcepts(String serviceUrl, String baseConceptUri,
+                                              Format format, Integer pageSize, Integer pageNumber) throws URISyntaxException {
+        List<NameValuePair> params = new ArrayList<>();
+
+        appendPagingParams(params, pageSize, pageNumber);
+        params.add(new BasicNameValuePair("uri", baseConceptUri));
+
+        return buildGetMethod(serviceUrl,"concept/broaderTransitive", format, params);
+    }
+
+    /**
      * Generates a method for requesting all concepts (as rdf:Descriptions) that
      * are narrower than the specified concept as defined by skos:narrower
      *
@@ -327,4 +348,24 @@ public class VocabularyMethodMaker extends AbstractMethodMaker {
         return buildGetMethod(serviceUrl,"concept/narrower", format, params);
     }
 
+
+    /**
+     * @param serviceUrl
+     * @param baseConceptUri
+     * @param format
+     * @param pageSize
+     * @param pageNumber
+     * @return
+     * @throws URISyntaxException
+     */
+    public HttpRequestBase getNarrowerTransitiveConcepts(String serviceUrl, String baseConceptUri,
+                                               Format format, View view, Integer pageSize, Integer pageNumber) throws URISyntaxException {
+        List<NameValuePair> params = new ArrayList<>();
+
+        appendPagingParams(params, pageSize, pageNumber);
+        params.add(new BasicNameValuePair("uri", baseConceptUri));
+
+
+        return buildGetMethod(serviceUrl,"concept/narrowerTransitive", format, params);
+    }
 }

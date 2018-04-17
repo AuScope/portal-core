@@ -1,5 +1,6 @@
 package org.auscope.portal.core.services;
 
+import com.hp.hpl.jena.rdf.model.*;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
@@ -7,6 +8,7 @@ import org.auscope.portal.core.services.methodmakers.VocabularyMethodMaker;
 import org.auscope.portal.core.services.methodmakers.VocabularyMethodMaker.Format;
 import org.auscope.portal.core.services.methodmakers.VocabularyMethodMaker.View;
 
+import org.auscope.portal.core.services.namespaces.VocabNamespaceContext;
 import org.auscope.portal.core.services.vocabs.VocabularyServiceItem;
 import org.auscope.portal.core.test.BasicThreadExecutor;
 import org.auscope.portal.core.test.PortalTestClass;
@@ -29,8 +31,8 @@ public class TestVocabularyCacheService extends PortalTestClass {
 
     private static final int CONCURRENT_THREADS_TO_RUN = 3;
 
-    static final int VOCABULARY_COUNT_TOTAL = 35;
-    static final int VOCABULARY_ERRORS_COUNT_TOTAL = 25;
+    static final int VOCABULARY_COUNT_TOTAL = 461;
+    static final int VOCABULARY_ERRORS_COUNT_TOTAL = 451;
 
     private BasicThreadExecutor threadExecutor;
 
@@ -175,11 +177,17 @@ public class TestVocabularyCacheService extends PortalTestClass {
                 Assert.fail("Exception whilst waiting for update to finish " + e.getMessage());
             }
 
-            Assert.assertEquals(totalRequestsMade, this.vocabularyCacheService.getVocabularyCache().size());
-            int numberOfTerms = 0;
-            for (Map.Entry<String, Map<String, String>> entry : this.vocabularyCacheService.vocabularyCache.entrySet()) {
-                numberOfTerms +=  entry.getValue().size();
+            Map<String, Model> cache = this.vocabularyCacheService.getVocabularyCache();
+            Selector selector = new SimpleSelector(null, ResourceFactory.createProperty("http://www.w3.org/2004/02/skos/core#prefLabel"), (RDFNode) null);
+
+
+            Assert.assertEquals(totalRequestsMade, cache.size());
+            int numberOfTerms =0;
+            for (Map.Entry<String, Model> entry: cache.entrySet() ) {
+                StmtIterator statements = entry.getValue().listStatements(selector);
+                numberOfTerms += statements.toList().size();
             }
+
             Assert.assertEquals(VOCABULARY_COUNT_TOTAL, numberOfTerms);
             Assert.assertFalse(this.vocabularyCacheService.updateRunning);
         }
@@ -279,10 +287,15 @@ public class TestVocabularyCacheService extends PortalTestClass {
                 Assert.fail("Exception whilst waiting for update to finish " + e.getMessage());
             }
 
-            Assert.assertEquals(CONCURRENT_THREADS_TO_RUN - 1, this.vocabularyCacheService.getVocabularyCache().size());
-            int numberOfTerms = 0;
-            for (Map.Entry<String, Map<String, String>> entry : this.vocabularyCacheService.vocabularyCache.entrySet()) {
-                numberOfTerms += entry.getValue().size();
+            Map<String, Model> cache = this.vocabularyCacheService.getVocabularyCache();
+            Selector selector = new SimpleSelector(null, ResourceFactory.createProperty("http://www.w3.org/2004/02/skos/core#prefLabel"), (RDFNode) null);
+
+
+            Assert.assertEquals(CONCURRENT_THREADS_TO_RUN - 1, cache.size());
+            int numberOfTerms =0;
+            for (Map.Entry<String, Model> entry: cache.entrySet() ) {
+                StmtIterator statements = entry.getValue().listStatements(selector);
+                numberOfTerms += statements.toList().size();
             }
             Assert.assertEquals(VOCABULARY_ERRORS_COUNT_TOTAL, numberOfTerms);
             Assert.assertFalse(this.vocabularyCacheService.updateRunning);
