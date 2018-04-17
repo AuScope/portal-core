@@ -27,14 +27,19 @@ public class VocabularyFilterService {
 
     /**
      * Returns key-value pairs of vocabulary terms for the specified cache ID, filtered by
-     * the queries listed in the selectors.
+     * the queries listed in the selectors. If there are no selectors in the call then it returns
+     * the vocabulary for the unfiltered model.
      *
      * @param vocabularyId Cache ID of vocabulary model
      * @param selectors List of selectors used to query the model
      * @return
      */
-    public Map<String, String> getFilteredVocabularyById(String vocabularyId, Selector... selectors) {
+    public Map<String, String> getVocabularyById(String vocabularyId, Selector... selectors) {
         Model model = this.vocabularyCacheService.getVocabularyCacheById(vocabularyId);
+
+        if (selectors == null || selectors.length == 0) {
+            return  getLabeledVocabulary(model);
+        }
 
         Model filteredModel = ModelFactory.createDefaultModel();
         for (Selector selector : selectors) {
@@ -49,20 +54,6 @@ public class VocabularyFilterService {
 
         return getLabeledVocabulary(filteredModel);
     }
-
-
-    /**
-     * Returns key-value pairs of vocabulary terms for the specified cache ID.
-     *
-     * @param vocabularyId Cache ID of vocabulary model
-     * @return
-     */
-    public Map<String, String> getVocabularyById(String vocabularyId) {
-        Model model = this.vocabularyCacheService.getVocabularyCacheById(vocabularyId);
-
-        return getLabeledVocabulary(model);
-    }
-
 
     /**
      * Returns key-value pairs of vocabulary terms for model. Pairs are prefLabel and URI.
