@@ -352,11 +352,11 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
 
     _parseNotifcationString : function(resources){
 
-        var text = '<p>The portal will make a download request on your behalf and return the results in a ZIP archive.';
-            text += 'Please check back with us later using your email as access token and click on Check Status</p>';
-            text += '<p>We limit the results to 5000 features per access point.';
-            text += 'You can either modify the download filter or alternatively, you can download directly from the WFS service points below</p>';
-            text += "<p>Note: The links below are WFS service endpoints. Read <a href='http://docs.geoserver.org/latest/en/user/services/wfs/reference.html'> here</a> for more information </p>";
+        var text = '<p>The portal will make a download request on your behalf and return the results as a zipped CSV file. ';
+            text += 'To check the progress of your download and retrieve the file, click the "Check Status" button, using the email address that you used to start the download.</p>';
+            text += '<p>We limit the results to 5000 features per access point. ';
+            text += 'If you need more than 5000 features from any one data provider, you can download directly from the WFS service points below, or contact the data provider directly.</p>';
+            text += "<p>Note: The links below are WFS service endpoints. Read <a href='http://docs.geoserver.org/latest/en/user/services/wfs/reference.html'>here</a> for more information </p>";
 
         var wfsResources = portal.csw.OnlineResource.getFilteredFromArray(resources, portal.csw.OnlineResource.WFS);
 
