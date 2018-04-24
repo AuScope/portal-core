@@ -153,13 +153,12 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                         } else {
                             var bboxJson = '';
                             var popup = button.ownerCt.ownerCt;
-                            var radioGroup = popup.down('#klwfs-radio');
 
                             var selected = popup.down('#klwfs-checkbox').getValue();
                             if (selected) {
                                 me._doDownload(layer, downloadFilterer, resources, sEmail, outputFormat);
                             } else {
-                                me._doDownload(layer, downloadFilterer, resources, sEmail, outputFormat);
+                                me._doDownload(layer, renderedFilterer, resources, sEmail, outputFormat);
                             }
 
                             //popup.close();
