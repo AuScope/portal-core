@@ -153,13 +153,12 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                         } else {
                             var bboxJson = '';
                             var popup = button.ownerCt.ownerCt;
-                            var radioGroup = popup.down('#klwfs-radio');
 
                             var selected = popup.down('#klwfs-checkbox').getValue();
                             if (selected) {
                                 me._doDownload(layer, downloadFilterer, resources, sEmail, outputFormat);
                             } else {
-                                me._doDownload(layer, downloadFilterer, resources, sEmail, outputFormat);
+                                me._doDownload(layer, renderedFilterer, resources, sEmail, outputFormat);
                             }
 
                             //popup.close();
@@ -304,7 +303,7 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                 var wfsResource = wfsResources[j];
                 text += '<div style="display:block; height:25px;">';
                 text += '<div style="display:inline-block;width:78%;">'
-                text += this._generateWFSGetCapabilititesUrl(wfsResource.get('url'), cswRecord.get('adminArea'), cswRecord.get('contactOrg'), wfsResource.get('description'));
+                text += this._generateWFSGetCapabilititesUrl(wfsResource.get('url'), cswRecord.get('adminArea'), cswRecord.get('contactOrg'));
                 text += '</div>'
                 if (this.enableFeatureCounts) {
                     text += '<div class="klwfs-featurecount" style="display:inline-block; text-align:center;width:80px;"></div>';
