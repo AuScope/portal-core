@@ -304,7 +304,7 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                 var wfsResource = wfsResources[j];
                 text += '<div style="display:block; height:25px;">';
                 text += '<div style="display:inline-block;width:78%;">'
-                text += this._generateWFSGetCapabilititesUrl(wfsResource.get('url'), cswRecord.get('adminArea'), cswRecord.get('contactOrg'), wfsResource.get('description'));
+                text += this._generateWFSGetCapabilititesUrl(wfsResource.get('url'), cswRecord.get('adminArea'), cswRecord.get('contactOrg'));
                 text += '</div>'
                 if (this.enableFeatureCounts) {
                     text += '<div class="klwfs-featurecount" style="display:inline-block; text-align:center;width:80px;"></div>';
