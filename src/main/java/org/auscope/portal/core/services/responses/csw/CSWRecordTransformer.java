@@ -370,14 +370,26 @@ public class CSWRecordTransformer {
                 "MD_LegalConstraints");
         String[] legalConstraints = record.getConstraints();
         if (legalConstraints != null) {
-            for (String constraint : legalConstraints) {
-            	//added two lines of code below to include tags for gmd:useLimitation and gmd:accessConstraints
-                appendChildCharacterString(dataIdLegalConstraints, nc.getNamespaceURI("gmd"), "useLimitation",
-                        constraint);                
-                appendChildCharacterString(dataIdLegalConstraints, nc.getNamespaceURI("gmd"), "accessConstraints",
-                        constraint);
+            for (String constraint : legalConstraints) {            	
                 appendChildCharacterString(dataIdLegalConstraints, nc.getNamespaceURI("gmd"), "otherConstraints",
                         constraint);
+            }
+        }
+    	//added code to include tag for gmd:useLimitation 
+        String[] useLimitations = record.getUseLimitConstraints();
+        if (useLimitations != null) {
+            for (String useLimitation : useLimitations) {
+
+                appendChildCharacterString(dataIdLegalConstraints, nc.getNamespaceURI("gmd"), "useLimitation",
+                		useLimitation);
+            }
+        }
+       //added code to include tag for gmd:accessConstraints
+        String[] accessConstraints = record.getAccessConstraints();
+        if (accessConstraints != null) {
+            for (String accessConstraint : accessConstraints) {             
+                appendChildCharacterString(dataIdLegalConstraints, nc.getNamespaceURI("gmd"), "accessConstraints",
+                		accessConstraint);
             }
         }
 
