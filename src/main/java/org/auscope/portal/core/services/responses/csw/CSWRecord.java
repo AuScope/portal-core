@@ -59,6 +59,13 @@ public class CSWRecord {
 
     /** The constraints. */
     private String[] constraints;
+    
+    /** The use limit constraints. */
+    private String[] useLimitConstraints;
+    
+    /** The access constraints. */
+    private String[] accessConstraints;
+    
 
     /** The contact. */
     private CSWResponsibleParty contact;
@@ -142,6 +149,8 @@ public class CSWRecord {
         this.descriptiveKeywords = new String[0];
         this.dataSetURIs = new String[0];
         this.constraints = new String[0];
+        this.useLimitConstraints = new String[0];
+        this.accessConstraints = new String[0];
         this.noCache = false;
         this.layerName = layerName;
         logger.trace(this.toString());
@@ -319,6 +328,45 @@ public class CSWRecord {
      */
     public void setConstraints(String[] constraints) {
         this.constraints = constraints;
+    }
+    
+    /**
+     * Gets the use limit constraints.
+     *
+     * @return the useLimitConstraints
+     */
+    public String[] getUseLimitConstraints() {
+        return useLimitConstraints;
+    }
+
+    /**
+     * Sets the use limit constraints.
+     *
+     * @param useLimitConstraints
+     *            the new useLimitConstraints
+     */
+    public void setUseLimitConstraints(String[] useLimitConstraints) {
+        this.useLimitConstraints = useLimitConstraints;
+    }
+    
+    
+    /**
+     * Gets the access constraints.
+     *
+     * @return the accessConstraints
+     */
+    public String[] getAccessConstraints() {
+        return accessConstraints;
+    }
+
+    /**
+     * Sets the access constraints.
+     *
+     * @param accessConstraints
+     *            the new accessConstraints
+     */
+    public void setAccessConstraints(String[] accessConstraints) {
+        this.accessConstraints = accessConstraints;
     }
 
     /**
@@ -556,7 +604,7 @@ public class CSWRecord {
                 + ", dataIdentificationAbstract=" + dataIdentificationAbstract
                 + ", supplementalInformation=" + supplementalInformation
                 + ", language=" + language + ", constraints="
-                + Arrays.toString(constraints) + ", contact=" + contact
+                + Arrays.toString(constraints) + ", use limit constraints="+ Arrays.toString(useLimitConstraints) + ", access constraints=" + Arrays.toString(accessConstraints)+ ", contact=" + contact
                 + ", date=" + date + ", childRecords="
                 + childRecords + ", layerName=" + layerName + "]";
     }
