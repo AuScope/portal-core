@@ -143,8 +143,8 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         childRecordExpectation.put("descriptiveKeywords", Arrays.asList(descriptiveKeyword1_1, descriptiveKeyword2_1));
         childRecordExpectation.put("datasetURIs", Arrays.asList(dataSetURI1_1, dataSetURI2_1));
         childRecordExpectation.put("constraints", Arrays.asList(constraint1_1, constraint2_1));
-        expectation.put("useLimitConstraints", Arrays.asList(uselimitation1_1, uselimitation2_1));
-        expectation.put("accessConstraints", Arrays.asList(accessconstraint1_1, accessconstraint2_1));
+        childRecordExpectation.put("useLimitConstraints", Arrays.asList(uselimitation1_1, uselimitation2_1));
+        childRecordExpectation.put("accessConstraints", Arrays.asList(accessconstraint1_1, accessconstraint2_1));
         childRecordExpectation.put("childRecords", Arrays.asList());
         childRecordExpectation.put("noCache", false);
         childRecordExpectation.put("date", "");
