@@ -721,13 +721,20 @@ public class CSWRecordTransformer {
             Node scaleDenominator;
             for (int j = 0; j < tempNodeList.getLength(); j++) {
                 scaleDenominator = tempNodeList.item(j);
-                scaleRange.add(Double.parseDouble(scaleDenominator.getTextContent()));
+                try {
+                   scaleRange.add(Double.parseDouble(scaleDenominator.getTextContent()));
+                } catch (Exception ex) {
+                    logger.debug(String.format("Unable to parse contact for serviceName='%1$s' %2$s",
+                            record.getServiceName(), ex));
+                }
             }
 
-            if (scaleRange.size() > 1) {
-                record.setMaxScale(Collections.max(scaleRange));
+            if (!scaleRange.isEmpty()) {
+                record.setMinScale(Collections.min(scaleRange));
+                if (scaleRange.size() > 1) {
+                    record.setMaxScale(Collections.max(scaleRange));
+                }
             }
-            record.setMinScale(Collections.min(scaleRange));
         }
         
         return record;
