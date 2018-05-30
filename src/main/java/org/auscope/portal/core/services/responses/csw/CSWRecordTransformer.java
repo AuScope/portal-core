@@ -1,10 +1,7 @@
 package org.auscope.portal.core.services.responses.csw;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -65,6 +62,8 @@ public class CSWRecordTransformer {
     private static final String ACCESSCONSTRAINTSEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_LegalConstraints/gmd:accessConstraints/gmd:MD_RestrictionCode[(text())]/@codeList";    
     private static final String DATAQUALITYSTATEMENTEXPRESSION = "gmd:dataQualityInfo/gmd:DQ_DataQuality/gmd:lineage/gmd:LI_Lineage/gmd:statement/gco:CharacterString";
     private static final String LAYERNAME = "gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource/gmd:name/gco:CharacterString";
+
+    private static final String SCALEDENOMINATOR = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:spatialResolution/gmd:MD_Resolution/gmd:equivalentScale/gmd:MD_RepresentativeFraction/gmd:denominator/gco:Integer";
 
     /**
      * Creates a new instance of this class and generates an empty document that will be used for constructing DOM.
@@ -713,6 +712,22 @@ public class CSWRecordTransformer {
                 accessConstraintsList.add(accessConstraint.getTextContent());
             }
             record.setAccessConstraints(accessConstraintsList.toArray(new String[accessConstraintsList.size()]));
+        }
+
+        tempNodeList = evalXPathNodeList(this.mdMetadataNode, SCALEDENOMINATOR);
+        if (tempNodeList != null && tempNodeList.getLength() > 0) {
+
+            List<Double> scaleRange = new ArrayList<>();
+            Node scaleDenominator;
+            for (int j = 0; j < tempNodeList.getLength(); j++) {
+                scaleDenominator = tempNodeList.item(j);
+                scaleRange.add(Double.parseDouble(scaleDenominator.getTextContent()));
+            }
+
+            if (scaleRange.size() > 1) {
+                record.setMaxScale(Collections.max(scaleRange));
+            }
+            record.setMinScale(Collections.min(scaleRange));
         }
         
         return record;

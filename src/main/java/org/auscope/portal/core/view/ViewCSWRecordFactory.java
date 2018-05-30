@@ -130,6 +130,9 @@ public class ViewCSWRecordFactory {
         }
         obj.put("date", dateString);
 
+        obj.put("minScale", record.getMinScale());
+        obj.put("maxScale", record.getMaxScale());
+
         return obj;
     }
 
