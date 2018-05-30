@@ -92,6 +92,27 @@ public class ViewCSWRecordFactory {
             }
         }
         obj.put("constraints", constraints);
+        
+        //added use limit constraints
+        
+        List<String> useLimitConstraints = new ArrayList<>();
+        if (record.getUseLimitConstraints() != null) {
+            for (String s : record.getUseLimitConstraints()) {
+            	useLimitConstraints.add(s);
+            }
+        }
+        obj.put("useLimitConstraints", useLimitConstraints);
+
+        //added access constraints
+        
+        List<String> accessConstraints = new ArrayList<>();
+        if (record.getAccessConstraints() != null) {
+            for (String s : record.getAccessConstraints()) {
+            	accessConstraints.add(s);
+            }
+        }
+        obj.put("accessConstraints", accessConstraints);
+
 
         List<Map<String, Object>> childRecords = new ArrayList<>();
         if (record.hasChildRecords()) {

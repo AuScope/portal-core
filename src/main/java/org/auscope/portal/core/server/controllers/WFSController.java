@@ -155,10 +155,10 @@ public class WFSController extends BasePortalController {
             throws Exception {
 
         FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxJSONString);
+        response.setContentType("text/csv");
         OutputStream outputStream = response.getOutputStream();
         SimpleBBoxFilter filter = new SimpleBBoxFilter();
         String filterString = null;
-        String srs = null;
         if (bbox == null) {
             filterString = filter.getFilterStringAllRecords();
         } else {
@@ -172,6 +172,8 @@ public class WFSController extends BasePortalController {
             log.warn(String.format("Exception getting '%2$s' from '%1$s': %3$s", serviceUrl, featureType, ex));
             log.debug("Exception: ", ex);           
         }
+        
+        
 
         FileIOUtil.writeInputToOutputStream(result, outputStream, 8 * 1024, true);
         outputStream.close();

@@ -25,9 +25,14 @@
     <distributionManagement>
         <repository>
             <id>deployment</id>
-            <name>Internal nexus</name>
-            <url>https://cgsrv8.arrc.csiro.au/nexus/repository/PortalRelease/</url>
+            <name>cgmaven release</name>
+            <url>https://cgmaven.it.csiro.au/nexus/repository/PortalRelease/</url>
         </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>cgmaven snapshots</name>
+            <url>https://cgmaven.it.csiro.au/nexus/repository/PortalSnapshot/</url>
+        </snapshotRepository>
     </distributionManagement>
 -->
     <distributionManagement>
@@ -41,7 +46,6 @@
             <url>https://nexus.gadevs.ga/repository/maven-snapshots</url>
         </snapshotRepository>
     </distributionManagement>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -117,8 +121,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.18.1</version>
                 <configuration>
-                    <parallel>classes</parallel>
-                    <threadCount>10</threadCount>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <argLine>-Dfile.encoding=UTF-8</argLine>
                 </configuration>
