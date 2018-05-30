@@ -684,4 +684,5 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     public void setOnlineResourceType(String onlineResourceType) {
         this.onlineResourceType = onlineResourceType;
     }
+
 }
