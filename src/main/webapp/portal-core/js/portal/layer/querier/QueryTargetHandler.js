@@ -120,6 +120,7 @@ Ext.define('portal.layer.querier.QueryTargetHandler', {
                 continue;
             }
 
+
             point = Ext.create('portal.map.Point', {
                 latitude : queryTargets[i].get('lat'),
                 longitude : queryTargets[i].get('lng')
@@ -213,7 +214,9 @@ Ext.define('portal.layer.querier.QueryTargetHandler', {
         var explicitTargets = []; // all QueryTarget instances with the explicit flag set
         for (var i = 0; i < queryTargets.length; i++) {
             if (queryTargets[i].get('explicit')) {
-                explicitTargets.push(queryTargets[i]);
+                if (this._queryScaleCheck(mapWrapper, queryTargets[i])) {
+                    explicitTargets.push(queryTargets[i]);
+                }
             }
         }
 
@@ -231,5 +234,34 @@ Ext.define('portal.layer.querier.QueryTargetHandler', {
 
         //Otherwise query everything
         this._handleWithQuery(queryTargets, mapWrapper);
+    },
+
+    /**
+     * Checks whether the map scale is within the query target scale bounds
+     *
+     * @param mapWrapper
+     * @param queryTarget
+     * @returns {boolean}
+     */
+    _queryScaleCheck : function(mapWrapper, queryTarget) {
+
+        var cswRecord = queryTarget.get('cswRecord');
+        if (!cswRecord) {
+            return false
+        }
+
+        var minScale = cswRecord.get('minScale');
+        var maxScale = cswRecord.get('maxScale');
+
+        var mapScale = mapWrapper.map.getScale();
+
+        if (minScale && minScale > mapScale) {
+            return false;
+        }
+        if (maxScale && maxScale < mapScale) {
+            return false;
+        }
+
+        return true;
     }
 });
