@@ -85,6 +85,12 @@ public class CSWRecord {
 
     private String layerName = "";
 
+    /** The maximum scale for the layer to appear */
+    private Double maxScale;
+
+    /** The minimum scale for the layer to appear */
+    private Double minScale;
+
     /**
      * Instantiates a new empty CSWRecord
      *
@@ -742,5 +748,21 @@ public class CSWRecord {
     @Override
     public int hashCode() {
         return this.fileIdentifier.hashCode();
+    }
+
+    public Double getMinScale() {
+        return minScale;
+    }
+
+    public void setMinScale(Double minScale) {
+        this.minScale = minScale;
+    }
+
+    public Double getMaxScale() {
+        return maxScale;
+    }
+
+    public void setMaxScale(Double maxScale) {
+        this.maxScale = maxScale;
     }
 }

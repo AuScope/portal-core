@@ -66,6 +66,9 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         final double bboxEast = 7;
         final double bboxWest = 6;
 
+        final double minScale = 0;
+        final double maxScale = 10000;
+
         //The ModelMap expectation objects for a parent CSWRecord object (mockCSWRecord)
         final ModelMap expectation = new ModelMap();
         final ModelMap onlineResExpectation = new ModelMap();
@@ -89,7 +92,10 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         expectation.put("childRecords", Arrays.asList(childRecordExpectation));
         expectation.put("noCache", false);
         expectation.put("date", "1970-01-01T00:00:00 UTC");
+        expectation.put("minScale", minScale);
+        expectation.put("maxScale", maxScale);
         expectation.put("service", false);
+
 
         onlineResExpectation.put("url", orUrl.toString());
         onlineResExpectation.put("name", orName);
@@ -148,6 +154,8 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         childRecordExpectation.put("childRecords", Arrays.asList());
         childRecordExpectation.put("noCache", false);
         childRecordExpectation.put("date", "");
+        childRecordExpectation.put("minScale", null);
+        childRecordExpectation.put("maxScale", null);
         childRecordExpectation.put("service", false);
 
         onlineResExpectation_1.put("url", orUrl_1.toString());
@@ -193,6 +201,10 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 will(returnValue(new CSWRecord[] {mockCSWChildRecord1}));
                 allowing(mockCSWRecord).getDate();
                 will(returnValue(new Date(0L)));
+                allowing(mockCSWRecord).getMaxScale();
+                will(returnValue(maxScale));
+                allowing(mockCSWRecord).getMinScale();
+                will(returnValue(minScale));
                 allowing(mockCSWRecord).isService();
                 will(returnValue(false));
 
@@ -227,6 +239,10 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 allowing(mockCSWChildRecord1).hasChildRecords();
                 will(returnValue(false));
                 allowing(mockCSWChildRecord1).getDate();
+                will(returnValue(null));
+                allowing(mockCSWChildRecord1).getMaxScale();
+                will(returnValue(null));
+                allowing(mockCSWChildRecord1).getMinScale();
                 will(returnValue(null));
                 allowing(mockCSWChildRecord1).isService();
                 will(returnValue(false));
@@ -312,6 +328,9 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         final double bboxEast = 7;
         final double bboxWest = 6;
 
+        final double minScale = 0;
+        final double maxScale = 10000;
+
         final ModelMap expectation = new ModelMap();
         final ModelMap geoExpectation = new ModelMap();
 
@@ -331,6 +350,8 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         expectation.put("childRecords", new ArrayList<ModelMap>());
         expectation.put("noCache", false);
         expectation.put("date", "1970-01-01T00:00:00 UTC");
+        expectation.put("minScale", minScale);
+        expectation.put("maxScale", maxScale);
         expectation.put("service", true);
         expectation.put("datasetURIs", new ArrayList<String>());
 
@@ -372,6 +393,10 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 will(returnValue(false));
                 allowing(mockCSWRecord).getDate();
                 will(returnValue(new Date(0L)));
+                allowing(mockCSWRecord).getMaxScale();
+                will(returnValue(maxScale));
+                allowing(mockCSWRecord).getMinScale();
+                will(returnValue(minScale));
                 allowing(mockCSWRecord).isService();
                 will(returnValue(true));
                 allowing(mockCSWRecord).getDataSetURIs();
@@ -448,6 +473,9 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         final double bboxEast = 7;
         final double bboxWest = 6;
 
+        final double minScale = 0;
+        final double maxScale = 10000;
+
         final ModelMap expectation = new ModelMap();
         final ModelMap onlineResExpectation = new ModelMap();
         final ModelMap geoExpectation = new ModelMap();
@@ -468,6 +496,8 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         expectation.put("childRecords", new ArrayList<ModelMap>());
         expectation.put("noCache", false);
         expectation.put("date", "1986-10-09T00:00:00 UTC");
+        expectation.put("minScale", minScale);
+        expectation.put("maxScale", maxScale);
         expectation.put("service", false);
         expectation.put("datasetURIs", Arrays.asList("datasetUri1"));
 
@@ -516,6 +546,11 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 will(returnValue(false));
                 allowing(mockCSWRecord).getDate();
                 will(returnValue(new Date(529200000000L)));
+                allowing(mockCSWRecord).getMaxScale();
+                will(returnValue(maxScale));
+                allowing(mockCSWRecord).getMinScale();
+                will(returnValue(minScale));
+
                 allowing(mockCSWRecord).isService();
                 will(returnValue(false));
                 allowing(mockCSWRecord).getDataSetURIs();
