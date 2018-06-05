@@ -8,7 +8,8 @@ import org.auscope.portal.core.uifilter.Predicate;
 
 public class UIDropDownSelectList extends AbstractXPathFilter{
 
-    public final String TYPE ="OPTIONAL.DROPDOWNSELECTLIST";
+    private static final String TYPE ="OPTIONAL.DROPDOWNSELECTLIST";
+
     private List<ImmutablePair<String,String>> options;
 
     public UIDropDownSelectList(String label,String xpath, String value,Predicate predicate, List<ImmutablePair<String,String>> options){
