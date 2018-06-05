@@ -7,7 +7,7 @@ package org.auscope.portal.core.uifilter.mandatory;
  */
 public class UIHiddenResourceAttribute extends AbstractMandatoryParamBinding{
 
-    public final String TYPE ="MANDATORY.UIHiddenResourceAttribute";
+    private static final String TYPE ="MANDATORY.UIHiddenResourceAttribute";
 
     /**
      * The attribute of the resource
