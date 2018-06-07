@@ -90,6 +90,9 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
 
     /** The title. */
     private String title = null;
+    
+    /** File Identifier */
+    private String fileIdentifier = null;
 
     /** The abstract. */
     private String abstract_ = null;
@@ -245,6 +248,10 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
 
             if (title != null && !title.isEmpty()) {
                 fragments.add(this.generatePropertyIsLikeFragment("title", this.title));
+            }
+            
+            if (fileIdentifier != null && !fileIdentifier.isEmpty()) {
+                fragments.add(this.generatePropertyIsLikeFragment("identifier", this.fileIdentifier));
             }
 
             if (titleOrAbstract != null && !titleOrAbstract.isEmpty()) {
@@ -453,6 +460,11 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     public String getTitle() {
         return this.title;
     }
+    
+    /** Gets the file identifier. */
+    public String getFileIdentifier() {
+        return this.fileIdentifier;
+    }
 
     /** Gets the abstract. */
     public String getAbstract() {
@@ -482,6 +494,11 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     /** Sets the title. */
     public void setTitle(String title) {
         this.title = title;
+    }
+    
+    /** Sets the file identifier. */
+    public void setFileIdentifier(String fileIdentifier) {
+        this.fileIdentifier = fileIdentifier;
     }
 
     /** Sets the abstract. */
