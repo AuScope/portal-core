@@ -4,7 +4,7 @@ import org.auscope.portal.core.uifilter.Predicate;
 
 public class UIPolygonBBox extends AbstractXPathFilter {
 
-    public final String TYPE ="OPTIONAL.POLYGONBBOX";
+    private static final String TYPE ="OPTIONAL.POLYGONBBOX";
 
     public UIPolygonBBox(String label,String xpath,String value,Predicate predicate){
         this.setLabel(label);

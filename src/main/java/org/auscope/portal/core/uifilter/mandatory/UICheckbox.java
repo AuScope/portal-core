@@ -2,7 +2,7 @@ package org.auscope.portal.core.uifilter.mandatory;
 
 public class UICheckbox extends AbstractMandatoryParamBinding {
 
-    public final String TYPE ="MANDATORY.CHECKBOX";
+    private static final String TYPE ="MANDATORY.CHECKBOX";
 
     public UICheckbox(String label,String parameter, String value){
         this.setLabel(label);

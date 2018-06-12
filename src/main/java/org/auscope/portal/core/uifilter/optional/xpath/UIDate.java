@@ -7,7 +7,7 @@ import net.sf.json.JSONObject;
 
 public class UIDate extends AbstractXPathFilter{
 
-    public final String TYPE ="OPTIONAL.DATE";
+    private static final String TYPE ="OPTIONAL.DATE";
 
     public UIDate(String label,String xpath,String value,Predicate predicate){
         this.setLabel(label);
