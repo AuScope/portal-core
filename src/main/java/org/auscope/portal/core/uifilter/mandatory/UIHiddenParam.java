@@ -8,7 +8,7 @@ package org.auscope.portal.core.uifilter.mandatory;
  */
 public class UIHiddenParam extends AbstractMandatoryParamBinding{
 
-    public final String TYPE ="MANDATORY.HIDDEN";
+    private static final String TYPE ="MANDATORY.HIDDEN";
 
     public UIHiddenParam(String parameter, String value){
         this.setParameter(parameter);

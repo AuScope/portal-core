@@ -7,7 +7,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 
 public class UIDropDownSelectList extends AbstractMandatoryParamBinding{
 
-    public final String TYPE ="MANDATORY.DROPDOWNSELECTLIST";
+    private static final String TYPE ="MANDATORY.DROPDOWNSELECTLIST";
     private List<ImmutablePair<String,String>> options;
 
     public UIDropDownSelectList(String label,String parameter, String value, List<ImmutablePair<String,String>> options){
