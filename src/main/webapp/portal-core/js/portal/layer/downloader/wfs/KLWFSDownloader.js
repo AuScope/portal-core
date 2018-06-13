@@ -308,9 +308,9 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                 if (this.enableFeatureCounts) {
                     text += '<div class="klwfs-featurecount" style="display:inline-block; text-align:center;width:80px;"></div>';
                 }
+                text += '</div>';
             }
-
-            text += '</div>';
+            
         }
         text += '</div>';
 
