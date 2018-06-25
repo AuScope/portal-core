@@ -22,6 +22,9 @@ Ext.define('portal.map.openlayers.primitives.WMSOverlay', {
         var cswRecord = cfg.layer.getCSWRecordsByResourceURL(cfg.wmsUrl)
         //VT: We work on the assumption that 1 CSW Record == 1 wms layer.         
         var wmsOnlineResources = portal.csw.OnlineResource.getFilteredFromArray(cswRecord[0].get('onlineResources'), portal.csw.OnlineResource.WMS);
+        var wcsOnlineResources = portal.csw.OnlineResource.getFilteredFromArray(cswRecord[0].get('onlineResources'), portal.csw.OnlineResource.WCS);
+
+
         var wmsVersion='1.1.1';//VT:Default to 1.1.1 unless specified
         if(wmsOnlineResources.length > 0 && wmsOnlineResources[0].get('version')){
             wmsVersion = wmsOnlineResources[0].get('version');
@@ -30,7 +33,8 @@ Ext.define('portal.map.openlayers.primitives.WMSOverlay', {
         if(wmsOnlineResources.length > 0 && wmsOnlineResources[0].get('applicationProfile')){
             applicationProfile = wmsOnlineResources[0].get('applicationProfile');
         } 
-        
+
+
         var singleTile = cfg.layer.get('source').get('singleTile');
         
         var cswboundingBox= this._getCSWBoundingBox(cswRecord);        
@@ -60,7 +64,20 @@ Ext.define('portal.map.openlayers.primitives.WMSOverlay', {
         if (applicationProfile !== "Esri:ArcGIS Server") {
         	additionalOptions.tileOptions.maxGetUrlLength = 1500;
         }
-        
+
+
+        /**
+         * MSEXTON:
+         * These parameters are required by THREDDS for transparency. They are vendor
+         * specific and will be ignored by other WCS/WMS vendors
+         */
+        if (wcsOnlineResources.length > 0) {
+            options.belowMinColor = 'transparent';
+            options.aboveMaxColor = 'transparent';
+
+        }
+
+
         if(this.getSld_body() && this.getSld_body().length > 0){            
             options.sld_body = this.getSld_body();
             options.styles = this._getStylesFromSLD(applicationProfile);
