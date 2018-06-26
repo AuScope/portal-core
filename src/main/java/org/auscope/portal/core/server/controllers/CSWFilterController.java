@@ -70,9 +70,9 @@ public class CSWFilterController extends BaseCSWController {
     }
 
     @InitBinder
-    public void initBinder(WebDataBinder binder)
-    {
-        binder.setConversionService(converter);
+    public void initBinder(WebDataBinder binder) {
+    	if(binder.getConversionService() == null)
+    		binder.setConversionService(converter);
     }
 
     /**
@@ -345,6 +345,7 @@ public class CSWFilterController extends BaseCSWController {
         String sensor = parameters.get("sensor");
         String abstrac = parameters.get("abstract");
         String title = parameters.get("title");
+        String fileIdentifier = parameters.get("fileIdentifier");
 
 
         if (parameters.get("keywordMatchType") != null) {
@@ -379,6 +380,8 @@ public class CSWFilterController extends BaseCSWController {
                 publicationDateFrom != null ? stringYearToDate(publicationDateFrom.trim(), false) : null);
         filter.setPublicationDateTo(publicationDateTo != null ? stringYearToDate(publicationDateTo.trim(), true) : null);
         filter.setSortType(SortType.getByStringValue(sortType));
+        
+        filter.setFileIdentifier(fileIdentifier);
 
         log.debug(String.format("filter '%1$s'", filter));
         return filter;
