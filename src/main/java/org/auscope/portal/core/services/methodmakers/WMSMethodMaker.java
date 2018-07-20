@@ -103,7 +103,6 @@ public class WMSMethodMaker extends AbstractMethodMaker implements WMSMethodMake
         existingParam.add(new BasicNameValuePair("version", "1.1.1"));
         existingParam.add(new BasicNameValuePair("format", imageMimeType));
         existingParam.add(new BasicNameValuePair("transparent", "TRUE"));
-        existingParam.add(new BasicNameValuePair("tiled", "TRUE"));
         existingParam.add(new BasicNameValuePair("layers", layer));
         if (styles != null) {
             existingParam.add(new BasicNameValuePair("styles", styles));
@@ -356,7 +355,6 @@ public class WMSMethodMaker extends AbstractMethodMaker implements WMSMethodMake
         existingParam.add(new BasicNameValuePair("LAYERS", layer));
         existingParam.add(new BasicNameValuePair("FORMAT", "image/png"));
         existingParam.add(new BasicNameValuePair("TRANSPARENT", "TRUE"));
-        existingParam.add(new BasicNameValuePair("TILED", "TRUE"));
         existingParam.add(new BasicNameValuePair("SRS", crs));
         existingParam.add(new BasicNameValuePair("BBOX", bbox));
         existingParam.add(new BasicNameValuePair("WIDTH", "256"));
