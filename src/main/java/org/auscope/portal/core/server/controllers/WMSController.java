@@ -420,9 +420,11 @@ public class WMSController extends BaseCSWController {
             @RequestParam(required = false, value = "sldBody") String sldBody,            
             @RequestParam("version") String version,
             @RequestParam("crs") String crs,
+            @RequestParam(required = false, value = "tiled") String tiled,
             HttpServletResponse response,
             HttpServletRequest request)
                     throws Exception ,UnsupportedOperationException{
+        boolean requestCachedTile=false;
         if (sldBody == null && sldUrl == null) {
             throw new Exception("Has to setup sldUrl or sldBody.");
         }
@@ -432,7 +434,8 @@ public class WMSController extends BaseCSWController {
             sldUrl = request.getRequestURL().toString().replace(request.getServletPath(),"").replace("4200", "8080") + sldUrl;  
             sldBody = this.wmsService.getStyle(url, sldUrl, version);            
         }
-        HttpClientInputStream styleStream = this.wmsService.getMap(url, layer, bbox,sldBody, version,crs);
+        if (tiled !=null && tiled.equals("true")) requestCachedTile=true;
+        HttpClientInputStream styleStream = this.wmsService.getMap(url, layer, bbox,sldBody, version,crs, requestCachedTile);
         OutputStream outputStream = response.getOutputStream();
         IOUtils.copy(styleStream,outputStream);
         styleStream.close();
