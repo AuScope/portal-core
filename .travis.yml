@@ -1,3 +1,15 @@
 language: java
 jdk:
-  - oraclejdk8
+- oraclejdk8
+deploy:
+  provider: script
+  script: cp .travis.settings.xml $HOME/.m2/settings.xml && mvn deploy >/dev/null
+    2>&1
+  skip_cleanup: true
+  on:
+    repo: PeterWarren/portal-core
+    branch: master
+env:
+  global:
+  - secure: EdAsYujaVwn6GX7qPFt1f2rhT644vDUdbyndes/Hyf7jgLM2GK2KYcxEXihQ9uJKr2aVTeOo3nK57TIXwBFc/YgYmGJ1CkOSUqw5uNEytO2fk4c0VKNI3zmM/7nVU1+5v/bX9NA/PkVfZv8e8LR1sxbxVAbYyqYx9FbLvCj7EY//n4NIYYkLbbGxEs+rgMP4b7DB7WCiwuy78znL3+zCx73ZmTJufvMEYvj2oq3TFMjCWLgNTwuau7FSB8WQEE11mJGyK1mYaY46L7xBcX1HYNN/I2JBaXrgmnCCnx2dX4hCte/9xRhK+j8+neI/1Hkgi38XYW7BufwRSo7L+y1ygGSYoahFz7pcUZB/xS2vz4JtU1qsrR/9YqDn9gP6N8eN3ATY9tuDFbwbHdeZkoWo9yBT60TxnwvJv0N1FhZe6T0v1OLm6A+jQSVL7rPyxdzgD9FGeiPrZZhYset2nZe9nLJyuzu7UhhW56tsrVE4qwQW/+QkEGtuk0BWSbgjq2QVlGsB7m9X86x8i8/8uh1l939z9tERXeKIj2dVN6ZofnbP1siaRlA+zrTGT/OaG8O9MI1q3GbGuJqLhHT8OoWjGZlTuoScbtEYl/Zy10/tcft7dqHLnmTQudcC2X+NZI7uxbyQp/JaJDspswxGhrJfXO6jPp3mWHFJZmahPu2IOWI=
+  - secure: Jm2KLNGYZ7o13CEQZ5py8lyl5tqksn3eRmODIjmw+HzP/FnSeb824m9DWx53HRoPA7ZxXmrzk+h+ZcDqeFW0b7DHvtPa6AlMEb81l4Zyd74d2/3kLOZnFTMLgfzDhXdXri7OR1qqZbuoeb2gfIMyFgg8bP0Wg7ClVQKrBc8+nidaDlf4D5++aVmcvOGr+qLIrl8Qn0YVH5Vys0famQYJNN5x3fm086fM4l4DfIcEgJykyt+W7MpJYjR4NzSbtJhUuuzsDnKn9qEQBfR6GC/c7iCQMRVvMuVrofMMAarrVum39Ulw7XoS0xXTGaZaufMfP6ADX3hDdz70LmNOlUjeyhCHpcqqCw/y8+DxzaSEAX2Oh3dQO8Xgw8ok4ISp2o9SI5jK0P98r89zOKAlPmP0b3pt6yj4QeuJ1+lyTxnnw5RIkfHOMC7SmDL2mAAUysIeXvm5EK7f7o3vgd3lo5DirX9QVslZmdH2QWvnEmcI1lptPe5BIQIxa4DoO3rZ6qCZ+Lu+qPD01/xII/gi+BKtSmPHX45KqUkMzh+gCI8DARMCKKdBXQ7NHy+sXVehP5aQTFhSIN5b1VK0cvIoEdRCwiVJYInL94iJ2DWfMSFeEwsAHjV6/ciOSKSHULFFJRZkOAQvAcdWbFauQOt0w9MPCx3mNO2IXL1HoH10tlJrdrs=
