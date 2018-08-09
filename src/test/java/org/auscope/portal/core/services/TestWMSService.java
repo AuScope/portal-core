@@ -182,7 +182,7 @@ public class TestWMSService extends PortalTestClass {
 
                 oneOf(mockMethodMaker).getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude,
                         southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat,
-                        pointX, pointY, styles, null, "0");
+                        pointX, pointY, styles, null, "0", null);
                 will(returnValue(mockMethod));
 
                 oneOf(mockServiceCaller).getMethodResponseAsString(mockMethod);
@@ -223,7 +223,7 @@ public class TestWMSService extends PortalTestClass {
 
                 oneOf(mockMethodMaker).getFeatureInfoPost(wmsUrl, format, layer, srs, westBoundLongitude,
                         southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat,
-                        pointX, pointY, styles, null, "0");
+                        pointX, pointY, styles, null, "0", null);
                 will(returnValue(mockMethod));
 
                 oneOf(mockServiceCaller).getMethodResponseAsString(mockMethod);
@@ -261,7 +261,7 @@ public class TestWMSService extends PortalTestClass {
 
                 oneOf(mockMethodMaker).getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude,
                         southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat,
-                        pointX, pointY, styles, null, "0");
+                        pointX, pointY, styles, null, "0", null);
                 will(returnValue(mockMethod));
 
                 oneOf(mockServiceCaller).getMethodResponseAsString(mockMethod);
@@ -302,7 +302,7 @@ public class TestWMSService extends PortalTestClass {
 
                 oneOf(mockMethodMaker).getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude,
                         southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat,
-                        pointX, pointY, styles, null, "0");
+                        pointX, pointY, styles, null, "0", null);
                 will(returnValue(mockMethod));
 
                 oneOf(mockServiceCaller).getMethodResponseAsString(mockMethod);

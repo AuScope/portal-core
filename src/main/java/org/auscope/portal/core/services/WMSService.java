@@ -3,11 +3,13 @@ package org.auscope.portal.core.services;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
 
 import javax.naming.OperationNotSupportedException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
@@ -47,7 +49,7 @@ public class WMSService {
                 return maker;
             }
         }
-        log.debug("WMSService::getsupportedMethodMaker() throwing exception: "+errStr.toString());
+        log.debug("WMSService::getsupportedMethodMaker() throwing exception: " + errStr.toString());
         log.trace("WMSService::getsupportedMethodMaker() END");
         throw new OperationNotSupportedException(errStr.toString());
     }
@@ -55,8 +57,7 @@ public class WMSService {
     /**
      * Request GetCapabilities document from the given service
      *
-     * @param serviceUrl
-     *            Url of WMS service
+     * @param serviceUrl Url of WMS service
      * @return GetCapabilitiesRecord
      */
     public GetCapabilitiesRecord getWmsCapabilities(final String serviceUrl, String version)
@@ -84,44 +85,58 @@ public class WMSService {
     /**
      * Makes a WMS GetFeatureInfo request using the specified parameters. Returns the response as a string
      *
-     * @param wmsUrl
-     *            The WMS endpoint (will have any existing query parameters preserved)
-     * @param format
-     *            The desired mime type of the response
-     * @param layer
-     *            The name of the layer to download
-     * @param srs
-     *            The spatial reference system for the bounding box
-     * @param westBoundLongitude
-     *            The west bound longitude of the bounding box
-     * @param southBoundLatitude
-     *            The south bound latitude of the bounding box
-     * @param eastBoundLongitude
-     *            The east bound longitude of the bounding box
-     * @param northBoundLatitude
-     *            The north bound latitude of the bounding box
-     * @param width
-     *            The desired output image width in pixels
-     * @param height
-     *            The desired output image height in pixels
-     * @param styles
-     *            [Optional] What style should be included
-     * @param pointLng
-     *            Where the user clicked (longitude)
-     * @param pointLat
-     *            Where the user clicked (latitude)
-     * @param pointX
-     *            Where the user clicked in pixel coordinates relative to the GetMap that was used (X direction)
-     * @param pointY
-     *            Where the user clicked in pixel coordinates relative to the GetMap that was used (Y direction)
+     * @param wmsUrl             The WMS endpoint (will have any existing query parameters preserved)
+     * @param format             The desired mime type of the response
+     * @param layer              The name of the layer to download
+     * @param srs                The spatial reference system for the bounding box
+     * @param westBoundLongitude The west bound longitude of the bounding box
+     * @param southBoundLatitude The south bound latitude of the bounding box
+     * @param eastBoundLongitude The east bound longitude of the bounding box
+     * @param northBoundLatitude The north bound latitude of the bounding box
+     * @param width              The desired output image width in pixels
+     * @param height             The desired output image height in pixels
+     * @param styles             [Optional] What style should be included
+     * @param pointLng           Where the user clicked (longitude)
+     * @param pointLat           Where the user clicked (latitude)
+     * @param pointX             Where the user clicked in pixel coordinates relative to the GetMap that was used (X direction)
+     * @param pointY             Where the user clicked in pixel coordinates relative to the GetMap that was used (Y direction)
      * @return
      * @throws PortalServiceException
      */
     public String getFeatureInfo(String wmsUrl, String format, String layer, String srs, double westBoundLongitude,
-            double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height,
-            double pointLng, double pointLat, int pointX, int pointY, String styles, String sldBody,
-            boolean postMethod,
-            String version, String feature_count, boolean attemptOtherVersion) throws PortalServiceException {
+                                 double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height,
+                                 double pointLng, double pointLat, int pointX, int pointY, String styles, String sldBody,
+                                 boolean postMethod,
+                                 String version, String feature_count, boolean attemptOtherVersion) throws PortalServiceException {
+        return getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles, sldBody, postMethod, version, feature_count, attemptOtherVersion, null);
+    }
+
+    /**
+     * @param wmsUrl             The WMS endpoint (will have any existing query parameters preserved)
+     * @param format             The desired mime type of the response
+     * @param layer              The name of the layer to download
+     * @param srs                The spatial reference system for the bounding box
+     * @param westBoundLongitude The west bound longitude of the bounding box
+     * @param southBoundLatitude The south bound latitude of the bounding box
+     * @param eastBoundLongitude The east bound longitude of the bounding box
+     * @param northBoundLatitude The north bound latitude of the bounding box
+     * @param width              The desired output image width in pixels
+     * @param height             The desired output image height in pixels
+     * @param styles             [Optional] What style should be included
+     * @param pointLng           Where the user clicked (longitude)
+     * @param pointLat           Where the user clicked (latitude)
+     * @param pointX             Where the user clicked in pixel coordinates relative to the GetMap that was used (X direction)
+     * @param pointY             Where the user clicked in pixel coordinates relative to the GetMap that was used (Y direction)
+     * @param vendorParams       Non standard parameters that are used by a vendor specific service, eg GeoServer
+     * @return
+     * @throws PortalServiceException
+     */
+    public String getFeatureInfo(String wmsUrl, String format, String layer, String srs, double westBoundLongitude,
+                                 double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height,
+                                 double pointLng, double pointLat, int pointX, int pointY, String styles, String sldBody,
+                                 boolean postMethod,
+                                 String version, String feature_count, boolean attemptOtherVersion, List<NameValuePair> vendorParams) throws PortalServiceException {
+
         // Do the request
         HttpRequestBase method = null;
         WMSMethodMakerInterface methodMaker;
@@ -131,19 +146,19 @@ public class WMSService {
             if (postMethod) {
                 method = methodMaker.getFeatureInfoPost(wmsUrl, format, layer, srs, westBoundLongitude,
                         southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat,
-                        pointX, pointY, styles, sldBody, feature_count);
+                        pointX, pointY, styles, sldBody, feature_count, vendorParams);
             } else {
                 method = methodMaker.getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude,
                         eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY,
-                        styles, sldBody, feature_count);
+                        styles, sldBody, feature_count, vendorParams);
             }
             String response = serviceCaller.getMethodResponseAsString(method);
             //VT: a html response may not be xml valid therefore cannot go through the same validation process.
             //Rely on the service to return meaningful response to the user.
             if (format.toLowerCase().equals("text/html") ||
-                format.toLowerCase().equals("text/plain") ||
-                format.toLowerCase().equals("application/vnd.ogc.gml") ||
-                format.toLowerCase().equals("application/vnd.ogc.gml/3.1.1")) {
+                    format.toLowerCase().equals("text/plain") ||
+                    format.toLowerCase().equals("application/vnd.ogc.gml") ||
+                    format.toLowerCase().equals("application/vnd.ogc.gml/3.1.1")) {
                 return response;
             } else {
                 OWSExceptionParser.checkForExceptionResponse(response);
@@ -177,22 +192,24 @@ public class WMSService {
 
         }
         return "";
+
     }
 
-    public HttpClientInputStream getMap(String url,String layer,String bbox,String sldBody, String version, String crs) throws OperationNotSupportedException, URISyntaxException, IOException{
+
+    public HttpClientInputStream getMap(String url, String layer, String bbox, String sldBody, String version, String crs) throws OperationNotSupportedException, URISyntaxException, IOException {
 
         WMSMethodMakerInterface methodMaker;
         methodMaker = getSupportedMethodMaker(url, version);
-        HttpRequestBase method = methodMaker.getMap(url,layer,bbox, sldBody, crs);
-        HttpClientInputStream  response = serviceCaller.getMethodResponseAsStream(method);
+        HttpRequestBase method = methodMaker.getMap(url, layer, bbox, sldBody, crs);
+        HttpClientInputStream response = serviceCaller.getMethodResponseAsStream(method);
         return response;
 
     }
-    
-    public String getStyle(String url,String sldUrl, String version) throws OperationNotSupportedException, URISyntaxException, IOException{
+
+    public String getStyle(String url, String sldUrl, String version) throws OperationNotSupportedException, URISyntaxException, IOException {
         WMSMethodMakerInterface methodMaker;
         methodMaker = getSupportedMethodMaker(url, version);
         String sldBody = methodMaker.getStyle(sldUrl);
         return sldBody;
-    }    
+    }
 }
