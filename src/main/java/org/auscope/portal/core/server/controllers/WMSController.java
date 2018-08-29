@@ -135,12 +135,14 @@ public class WMSController extends BaseCSWController {
                         onlineResources[0] = new CSWOnlineResourceImpl(new URL(capabilitiesRec.getMapUrl()),
                                 "OGC:WMS-1.3.0-http-get-map",
                                 rec.getName(),
-                                rec.getTitle());
+                                rec.getTitle(),
+                                capabilitiesRec.getApplicationProfile());
                     } else {
                         onlineResources[0] = new CSWOnlineResourceImpl(new URL(capabilitiesRec.getMapUrl()),
                                 "OGC:WMS-1.1.1-http-get-map",
                                 rec.getName(),
-                                rec.getTitle());
+                                rec.getTitle(),
+                                capabilitiesRec.getApplicationProfile());
                     }
 
                     CSWRecord newRecord = new CSWRecord(serviceName, fileId, recordInfoUrl, dataAbstract,
