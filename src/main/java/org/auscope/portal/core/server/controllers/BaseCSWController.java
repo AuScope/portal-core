@@ -104,12 +104,14 @@ public abstract class BaseCSWController extends BasePortalController {
 
             List<ModelMap> viewMappedRecords = new ArrayList<>();
 
-            Set<URL> onlineResourceEndpoints = new HashSet<>();
+            Set<String> onlineResourceEndpoints = new HashSet<>();
             for (CSWRecord rec : knownLayerAndRecords.getBelongingRecords()) {
 
                 if (rec != null) {
                     for (AbstractCSWOnlineResource onlineResource : rec.getOnlineResources()) {
-                        onlineResourceEndpoints.add(onlineResource.getLinkage());
+                        if (onlineResource.getLinkage() != null) {
+                            onlineResourceEndpoints.add(onlineResource.getLinkage().getHost());
+                        }
                     }
                     viewMappedRecords.add(viewCSWRecordFactory.toView(rec));
                 }
@@ -132,13 +134,10 @@ public abstract class BaseCSWController extends BasePortalController {
                     for (Entry<String, List<ServiceStatusResponse>> entry : response.entrySet()) {
                         for (ServiceStatusResponse status : entry.getValue()) {
                             if (status.getStatus() == Status.critical || status.getStatus() == Status.warning) {
-                                for (URL endpoint : onlineResourceEndpoints) {
-                                    if (endpoint.toString() != null && endpoint.toString().contains(entry.getKey())) {
-                                        failingHosts.add(entry.getKey());
-                                        break;
-                                    }
+                                if (onlineResourceEndpoints.contains(entry.getKey())) {
+                                    failingHosts.add(entry.getKey());
+                                    break;
                                 }
-
                             }
                         }
                     }
