@@ -1,5 +1,6 @@
 package org.auscope.portal.core.server.controllers;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -7,6 +8,8 @@ import java.util.List;
 
 import org.auscope.portal.core.services.Nagios4CachedService;
 import org.auscope.portal.core.services.PortalServiceException;
+import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
+import org.auscope.portal.core.services.responses.csw.CSWOnlineResourceImpl;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.services.responses.nagios.ServiceStatusResponse;
 import org.auscope.portal.core.services.responses.nagios.ServiceStatusResponse.Status;
@@ -46,6 +49,16 @@ public class TestBaseCSWController extends PortalTestClass {
      */
     @Test
     public void testNagiosErrorHandling() throws Exception {
+        CSWOnlineResourceImpl or1 = new CSWOnlineResourceImpl(new URL("http://host.name.1"), null, "Host Name 1", null);
+        CSWOnlineResourceImpl or2 = new CSWOnlineResourceImpl(new URL("http://host.name.2"), null, "Host Name 2", null);
+        CSWOnlineResourceImpl or3 = new CSWOnlineResourceImpl(new URL("http://host.name.3"), null, "Host Name 3", null);
+        CSWOnlineResourceImpl or4 = new CSWOnlineResourceImpl(new URL("http://host.name.4"), null, "Host Name 4", null);
+
+
+        CSWRecord mockBelongingRecord = new CSWRecord();
+
+        mockBelongingRecord.setOnlineResources(new AbstractCSWOnlineResource[] {or1, or2, or3, or4});
+
         KnownLayer kl1 = new KnownLayer("kl1", new KnownLayerSelector() {
             @Override
             public RelationType isRelatedRecord(CSWRecord record) {
@@ -74,10 +87,10 @@ public class TestBaseCSWController extends PortalTestClass {
         kl2.setNagiosHostGroup("hg2");
         kl4.setNagiosHostGroup("hg4");
         List<KnownLayerAndRecords> knownLayers = Arrays.asList(
-                new KnownLayerAndRecords(kl1, new ArrayList<CSWRecord>(), new ArrayList<CSWRecord>()),
-                new KnownLayerAndRecords(kl2, new ArrayList<CSWRecord>(), new ArrayList<CSWRecord>()),
-                new KnownLayerAndRecords(kl3, new ArrayList<CSWRecord>(), new ArrayList<CSWRecord>()),
-                new KnownLayerAndRecords(kl4, new ArrayList<CSWRecord>(), new ArrayList<CSWRecord>()));
+                new KnownLayerAndRecords(kl1, Arrays.asList(new CSWRecord[]{mockBelongingRecord}), new ArrayList<CSWRecord>()),
+                new KnownLayerAndRecords(kl2, Arrays.asList(new CSWRecord[]{mockBelongingRecord}), new ArrayList<CSWRecord>()),
+                new KnownLayerAndRecords(kl3, Arrays.asList(new CSWRecord[]{mockBelongingRecord}), new ArrayList<CSWRecord>()),
+                new KnownLayerAndRecords(kl4, Arrays.asList(new CSWRecord[]{mockBelongingRecord}), new ArrayList<CSWRecord>()));
 
         final HashMap<String, List<ServiceStatusResponse>> hg1Response = new HashMap<String, List<ServiceStatusResponse>>();
         final HashMap<String, List<ServiceStatusResponse>> hg2Response = new HashMap<String, List<ServiceStatusResponse>>();
