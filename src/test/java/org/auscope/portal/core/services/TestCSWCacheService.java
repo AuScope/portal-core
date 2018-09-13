@@ -50,7 +50,8 @@ public class TestCSWCacheService extends PortalTestClass {
     static final int RECORD_MATCH_TOTAL = 30;
     static final int RECORD_COUNT_WMS = 2;
     static final int RECORD_COUNT_WFS = 11;
-    static final int RECORD_COUNT_ERMINE_RECORDS = 2;
+    static final int RECORD_COUNT_WCS = 2;
+    static final int RECORD_COUNT_WMS_WCS = 1;
 
     private CSWCacheService cswCacheService;
     private HttpServiceCaller httpServiceCaller = context.mock(HttpServiceCaller.class);
@@ -164,10 +165,13 @@ public class TestCSWCacheService extends PortalTestClass {
             }
 
             // Check our expected responses
-            Assert.assertEquals(totalRequestsMade * RECORD_COUNT_TOTAL, this.cswCacheService.getRecordCache().size());
-            Assert.assertEquals(totalRequestsMade * RECORD_COUNT_WMS, this.cswCacheService.getWMSRecords().size());
-            Assert.assertEquals(totalRequestsMade * RECORD_COUNT_WFS, this.cswCacheService.getWFSRecords().size());
-            Assert.assertEquals(totalRequestsMade * RECORD_COUNT_ERMINE_RECORDS, this.cswCacheService.getWCSRecords()
+            int wMSandWFSrecordCount = RECORD_COUNT_WMS+RECORD_COUNT_WFS;  // Records with WMS and WFS interfaces will be merged 
+            int nonWMSorWFSrecordCount = RECORD_COUNT_TOTAL-wMSandWFSrecordCount;  // Records without WMS and WFS interfaces will be duplicated
+
+            Assert.assertEquals(totalRequestsMade * nonWMSorWFSrecordCount + wMSandWFSrecordCount, this.cswCacheService.getRecordCache().size());
+            Assert.assertEquals(RECORD_COUNT_WMS, this.cswCacheService.getWMSRecords().size());
+            Assert.assertEquals(RECORD_COUNT_WFS, this.cswCacheService.getWFSRecords().size());
+            Assert.assertEquals(totalRequestsMade * (RECORD_COUNT_WCS - RECORD_COUNT_WMS_WCS) + RECORD_COUNT_WMS_WCS, this.cswCacheService.getWCSRecords()
                     .size());
 
             // Ensure that our internal state is set to NOT RUNNING AN UPDATE
@@ -242,10 +246,13 @@ public class TestCSWCacheService extends PortalTestClass {
             }
 
             // Check our expected responses
-            Assert.assertEquals(totalRequestsMade * RECORD_COUNT_TOTAL, this.cswCacheService.getRecordCache().size());
-            Assert.assertEquals(totalRequestsMade * RECORD_COUNT_WMS, this.cswCacheService.getWMSRecords().size());
-            Assert.assertEquals(totalRequestsMade * RECORD_COUNT_WFS, this.cswCacheService.getWFSRecords().size());
-            Assert.assertEquals(totalRequestsMade * RECORD_COUNT_ERMINE_RECORDS, this.cswCacheService.getWCSRecords()
+            int wMSandWFSrecordCount = RECORD_COUNT_WMS+RECORD_COUNT_WFS;  // Records with WMS and WFS interfaces will be merged 
+            int nonWMSorWFSrecordCount = RECORD_COUNT_TOTAL-wMSandWFSrecordCount;  // Records without WMS and WFS interfaces will be duplicated
+
+            Assert.assertEquals(totalRequestsMade * nonWMSorWFSrecordCount + wMSandWFSrecordCount, this.cswCacheService.getRecordCache().size());
+            Assert.assertEquals(RECORD_COUNT_WMS, this.cswCacheService.getWMSRecords().size());
+            Assert.assertEquals(RECORD_COUNT_WFS, this.cswCacheService.getWFSRecords().size());
+            Assert.assertEquals(totalRequestsMade * (RECORD_COUNT_WCS - RECORD_COUNT_WMS_WCS) + RECORD_COUNT_WMS_WCS, this.cswCacheService.getWCSRecords()
                     .size());
 
             // Ensure that our internal state is set to NOT RUNNING AN UPDATE
@@ -410,10 +417,13 @@ public class TestCSWCacheService extends PortalTestClass {
             }
 
             // Check our expected responses
-            Assert.assertEquals(totalRequestsMade * RECORD_COUNT_TOTAL, this.cswCacheService.getRecordCache().size());
-            Assert.assertEquals(totalRequestsMade * RECORD_COUNT_WMS, this.cswCacheService.getWMSRecords().size());
-            Assert.assertEquals(totalRequestsMade * RECORD_COUNT_WFS, this.cswCacheService.getWFSRecords().size());
-            Assert.assertEquals(totalRequestsMade * RECORD_COUNT_ERMINE_RECORDS, this.cswCacheService.getWCSRecords()
+            int wMSandWFSrecordCount = RECORD_COUNT_WMS+RECORD_COUNT_WFS;  // Records with WMS and WFS interfaces will be merged 
+            int nonWMSorWFSrecordCount = RECORD_COUNT_TOTAL-wMSandWFSrecordCount;  // Records without WMS and WFS interfaces will be duplicated
+
+            Assert.assertEquals(totalRequestsMade * nonWMSorWFSrecordCount + wMSandWFSrecordCount, this.cswCacheService.getRecordCache().size());
+            Assert.assertEquals(RECORD_COUNT_WMS, this.cswCacheService.getWMSRecords().size());
+            Assert.assertEquals(RECORD_COUNT_WFS, this.cswCacheService.getWFSRecords().size());
+            Assert.assertEquals(totalRequestsMade * (RECORD_COUNT_WCS - RECORD_COUNT_WMS_WCS) + RECORD_COUNT_WMS_WCS, this.cswCacheService.getWCSRecords()
                     .size());
 
             // Ensure that our internal state is set to NOT RUNNING AN UPDATE
@@ -473,10 +483,13 @@ public class TestCSWCacheService extends PortalTestClass {
             }
 
             // Check our expected responses
-            Assert.assertEquals(totalRequestsMade * RECORD_COUNT_TOTAL, this.cswCacheService.getRecordCache().size());
-            Assert.assertEquals(totalRequestsMade * RECORD_COUNT_WMS, this.cswCacheService.getWMSRecords().size());
-            Assert.assertEquals(totalRequestsMade * RECORD_COUNT_WFS, this.cswCacheService.getWFSRecords().size());
-            Assert.assertEquals(totalRequestsMade * RECORD_COUNT_ERMINE_RECORDS, this.cswCacheService.getWCSRecords()
+            int wMSandWFSrecordCount = RECORD_COUNT_WMS+RECORD_COUNT_WFS;  // Records with WMS and WFS interfaces will be merged 
+            int nonWMSorWFSrecordCount = RECORD_COUNT_TOTAL-wMSandWFSrecordCount;  // Records without WMS and WFS interfaces will be duplicated
+
+            Assert.assertEquals(totalRequestsMade * nonWMSorWFSrecordCount + wMSandWFSrecordCount, this.cswCacheService.getRecordCache().size());
+            Assert.assertEquals(RECORD_COUNT_WMS, this.cswCacheService.getWMSRecords().size());
+            Assert.assertEquals(RECORD_COUNT_WFS, this.cswCacheService.getWFSRecords().size());
+            Assert.assertEquals(totalRequestsMade * (RECORD_COUNT_WCS - RECORD_COUNT_WMS_WCS) + RECORD_COUNT_WMS_WCS, this.cswCacheService.getWCSRecords()
                     .size());
 
             // Ensure that our internal state is set to NOT RUNNING AN UPDATE
@@ -984,10 +997,13 @@ public class TestCSWCacheService extends PortalTestClass {
             }
 
             // Check our expected responses
-            Assert.assertEquals(totalRequestsMade * RECORD_COUNT_TOTAL, this.cswCacheService.getRecordCache().size());
-            Assert.assertEquals(totalRequestsMade * RECORD_COUNT_WMS, this.cswCacheService.getWMSRecords().size());
-            Assert.assertEquals(totalRequestsMade * RECORD_COUNT_WFS, this.cswCacheService.getWFSRecords().size());
-            Assert.assertEquals(totalRequestsMade * RECORD_COUNT_ERMINE_RECORDS, this.cswCacheService.getWCSRecords()
+            int wMSandWFSrecordCount = RECORD_COUNT_WMS+RECORD_COUNT_WFS;  // Records with WMS and WFS interfaces will be merged 
+            int nonWMSorWFSrecordCount = RECORD_COUNT_TOTAL-wMSandWFSrecordCount;  // Records without WMS and WFS interfaces will be duplicated
+
+            Assert.assertEquals(totalRequestsMade * nonWMSorWFSrecordCount + wMSandWFSrecordCount, this.cswCacheService.getRecordCache().size());
+            Assert.assertEquals(RECORD_COUNT_WMS, this.cswCacheService.getWMSRecords().size());
+            Assert.assertEquals(RECORD_COUNT_WFS, this.cswCacheService.getWFSRecords().size());
+            Assert.assertEquals(totalRequestsMade * (RECORD_COUNT_WCS - RECORD_COUNT_WMS_WCS) + RECORD_COUNT_WMS_WCS, this.cswCacheService.getWCSRecords()
                     .size());
 
             // Ensure that our internal state is set to NOT RUNNING AN UPDATE
