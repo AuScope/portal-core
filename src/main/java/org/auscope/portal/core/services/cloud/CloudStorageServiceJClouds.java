@@ -499,7 +499,10 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
         String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
         try {
             BlobStore bs = getBlobStore(arn, clientSecret);
-            bs.deleteDirectory(getBucket(job), jobToBaseKey(job));
+            String bucket = getBucket(job);
+            String baseKey = jobToBaseKey(job);
+            if(bs.blobExists(bucket, baseKey))
+                bs.deleteDirectory(bucket, baseKey);
         } catch (Exception ex) {
             log.error("Error in removing job files or storage key.", ex);
             throw new PortalServiceException(
