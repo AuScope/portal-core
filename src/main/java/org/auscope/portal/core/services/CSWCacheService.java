@@ -518,14 +518,15 @@ public class CSWCacheService {
                         // layer names match. In this case, this record will be discarded after its
                         // content has been merged.
 
-                        // Loop through new records looking for candidates to merge
+                        // Loop through the Online Resources of the new record looking for candidates to merge
                         for (AbstractCSWOnlineResource wXSOnlineRes : record
                                 .getOnlineResourcesByType(OnlineResourceType.WFS, OnlineResourceType.WMS)) {
 
+                            if (StringUtils.isEmpty(record.getLayerName())) break;
+                            
                             // Skip null or empty urls and layernames
                             if (wXSOnlineRes.getLinkage() == null
-                                    || StringUtils.isEmpty(wXSOnlineRes.getLinkage().toString())
-                                    || StringUtils.isEmpty(record.getLayerName()))
+                                    || StringUtils.isEmpty(wXSOnlineRes.getLinkage().toString()))
                                 continue;
                             String recURL = wXSOnlineRes.getLinkage().toString();
                             // trim interface name from url for comparison
@@ -534,32 +535,37 @@ public class CSWCacheService {
                             // loop through existing records
                             for (CSWRecord existingRec : newRecordCache) {
                                 // loop through online resources of each record
+                                if (StringUtils.isEmpty(existingRec.getLayerName())) continue;
+
+                                String existingRecLayerName = existingRec.getLayerName();
+                                String recLayerName = record.getLayerName();
+ 
+                                // MapServer uses layer names without namespaces in WMS getcaps. So, if either
+                                // the new or existing record's layername doesn't include a namepaces then we
+                                // trim all namespaces for comparison.
+                                if (!existingRecLayerName.contains(":") || !recLayerName.contains(":")) {
+                                    recLayerName = recLayerName.substring(recLayerName.indexOf(':') + 1,
+                                            recLayerName.length());
+                                    existingRecLayerName = existingRecLayerName.substring(
+                                            existingRecLayerName.indexOf(':') + 1, existingRecLayerName.length());
+                                }
+
+                                if (!recLayerName.equals(existingRecLayerName)) continue;
+
                                 for (AbstractCSWOnlineResource existingRes : existingRec
                                         .getOnlineResourcesByType(OnlineResourceType.WFS, OnlineResourceType.WMS)) {
                                     // Skip null or empty urls and layernames
                                     if (existingRes.getLinkage() == null
-                                            || StringUtils.isEmpty(existingRes.getLinkage().toString())
-                                            || StringUtils.isEmpty(existingRec.getLayerName()))
+                                            || StringUtils.isEmpty(existingRes.getLinkage().toString()))
                                         continue;
 
                                     String existingURL = existingRes.getLinkage().toString();
-                                    String existingRecLayerName = existingRec.getLayerName();
-
+                                    
                                     // trim interface name from url for comparison
                                     existingURL = StringUtils.substring(existingURL, 0, existingURL.lastIndexOf('/'));
-                                    String recLayerName = record.getLayerName();
-
-                                    // MapServer uses layer names without namespaces in WMS getcaps. So, if either
-                                    // the new or existing record's layername doesn't include a namepaces then we
-                                    // trim all namespaces for comparison.
-                                    if (!existingRecLayerName.contains(":") || !recLayerName.contains(":")) {
-                                        recLayerName = recLayerName.substring(recLayerName.indexOf(':') + 1,
-                                                recLayerName.length());
-                                        existingRecLayerName = existingRecLayerName.substring(
-                                                existingRecLayerName.indexOf(':') + 1, existingRecLayerName.length());
-                                    }
+                                    
                                     // compare Layer Names and URLs
-                                    if (recLayerName.equals(existingRecLayerName) && recURL.equals(existingURL)) {
+                                    if (recURL.equals(existingURL)) {
                                         threadLog.debug("Merging CSW records " + record.getRecordInfoUrl() + " and "
                                                 + existingRec.getRecordInfoUrl());
                                         mergeRecords(endpoint, existingRec, record, newKeywordCache,
