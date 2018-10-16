@@ -1,12 +1,13 @@
 package org.auscope.portal.core.server.controllers;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.net.URL;
+import java.util.*;
 import java.util.Map.Entry;
 
 import org.auscope.portal.core.services.Nagios4CachedService;
 import org.auscope.portal.core.services.PortalServiceException;
+import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
+import org.auscope.portal.core.services.responses.csw.CSWOnlineResourceImpl;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.services.responses.nagios.ServiceStatusResponse;
 import org.auscope.portal.core.services.responses.nagios.ServiceStatusResponse.Status;
@@ -102,8 +103,16 @@ public abstract class BaseCSWController extends BasePortalController {
             ModelMap viewKnownLayer = viewKnownLayerFactory.toView(knownLayerAndRecords.getKnownLayer());
 
             List<ModelMap> viewMappedRecords = new ArrayList<>();
+
+            Set<String> onlineResourceEndpoints = new HashSet<>();
             for (CSWRecord rec : knownLayerAndRecords.getBelongingRecords()) {
+
                 if (rec != null) {
+                    for (AbstractCSWOnlineResource onlineResource : rec.getOnlineResources()) {
+                        if (onlineResource.getLinkage() != null) {
+                            onlineResourceEndpoints.add(onlineResource.getLinkage().getHost());
+                        }
+                    }
                     viewMappedRecords.add(viewCSWRecordFactory.toView(rec));
                 }
             }
@@ -125,8 +134,10 @@ public abstract class BaseCSWController extends BasePortalController {
                     for (Entry<String, List<ServiceStatusResponse>> entry : response.entrySet()) {
                         for (ServiceStatusResponse status : entry.getValue()) {
                             if (status.getStatus() == Status.critical || status.getStatus() == Status.warning) {
-                                failingHosts.add(entry.getKey());
-                                break;
+                                if (onlineResourceEndpoints.contains(entry.getKey())) {
+                                    failingHosts.add(entry.getKey());
+                                    break;
+                                }
                             }
                         }
                     }
