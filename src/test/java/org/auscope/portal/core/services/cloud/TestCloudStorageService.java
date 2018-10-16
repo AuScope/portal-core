@@ -349,6 +349,8 @@ public class TestCloudStorageService extends PortalTestClass {
             {
                 allowing(mockBlobStoreContext).getBlobStore();
                 will(returnValue(mockBlobStore));
+                oneOf(mockBlobStore).blobExists(bucket, jobStorageBaseKey);
+                will(returnValue(true));
                 oneOf(mockBlobStore).deleteDirectory(bucket, jobStorageBaseKey);
                 oneOf(mockBlobStoreContext).close();
             }
