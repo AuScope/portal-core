@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
@@ -513,26 +514,73 @@ public class CSWCacheService {
                     for (CSWRecord record : cswRecordMap.values()) {
                         boolean recordMerged = false;
 
-                        //Firstly we may possibly merge this
-                        //record into an existing record IF particular keywords
-                        //are present. In this case, record will be discarded (its contents
-                        //already found their way into an existing record)
-                        //Hence we need to perform this step first
-                        for (String keyword : record.getDescriptiveKeywords()) {
-                            if (keyword == null || keyword.isEmpty()) {
-                                continue;
-                            }
+                        // We will merge WMS or WFS records into an existing record if the endpoint urls and
+                        // layer names match. In this case, this record will be discarded after its
+                        // content has been merged.
 
-                            //If we have an 'association keyword', look for existing records
-                            //to merge this record's contents in to.
-                            if (keyword.startsWith(KEYWORD_MERGE_PREFIX)) {
-                                Set<CSWRecord> existingRecs = newKeywordCache.get(keyword);
-                                if (existingRecs != null && !existingRecs.isEmpty()) {
-                                    mergeRecords(endpoint, existingRecs.iterator().next(), record, newKeywordCache, newKeywordByEndpointCache);
-                                    recordMerged = true;
+                        // Loop through the Online Resources of the new record looking for candidates to merge
+                        for (AbstractCSWOnlineResource wXSOnlineRes : record
+                                .getOnlineResourcesByType(OnlineResourceType.WFS, OnlineResourceType.WMS)) {
+
+                            if (StringUtils.isEmpty(record.getLayerName())) break;
+                            
+                            // Skip null or empty urls and layernames
+                            if (wXSOnlineRes.getLinkage() == null
+                                    || StringUtils.isEmpty(wXSOnlineRes.getLinkage().toString()))
+                                continue;
+                            String recURL = wXSOnlineRes.getLinkage().toString();
+                            // trim interface name from url for comparison
+                            recURL = StringUtils.substring(recURL, 0, recURL.lastIndexOf('/'));
+
+                            // loop through existing records
+                            for (CSWRecord existingRec : newRecordCache) {
+                                // loop through online resources of each record
+                                if (StringUtils.isEmpty(existingRec.getLayerName())) continue;
+
+                                String existingRecLayerName = existingRec.getLayerName();
+                                String recLayerName = record.getLayerName();
+ 
+                                // MapServer uses layer names without namespaces in WMS getcaps. So, if either
+                                // the new or existing record's layername doesn't include a namepaces then we
+                                // trim all namespaces for comparison.
+                                if (!existingRecLayerName.contains(":") || !recLayerName.contains(":")) {
+                                    recLayerName = recLayerName.substring(recLayerName.indexOf(':') + 1,
+                                            recLayerName.length());
+                                    existingRecLayerName = existingRecLayerName.substring(
+                                            existingRecLayerName.indexOf(':') + 1, existingRecLayerName.length());
                                 }
+
+                                if (!recLayerName.equals(existingRecLayerName)) continue;
+
+                                for (AbstractCSWOnlineResource existingRes : existingRec
+                                        .getOnlineResourcesByType(OnlineResourceType.WFS, OnlineResourceType.WMS)) {
+                                    // Skip null or empty urls and layernames
+                                    if (existingRes.getLinkage() == null
+                                            || StringUtils.isEmpty(existingRes.getLinkage().toString()))
+                                        continue;
+
+                                    String existingURL = existingRes.getLinkage().toString();
+                                    
+                                    // trim interface name from url for comparison
+                                    existingURL = StringUtils.substring(existingURL, 0, existingURL.lastIndexOf('/'));
+                                    
+                                    // compare Layer Names and URLs
+                                    if (recURL.equals(existingURL)) {
+                                        threadLog.debug("Merging CSW records " + record.getRecordInfoUrl() + " and "
+                                                + existingRec.getRecordInfoUrl());
+                                        mergeRecords(endpoint, existingRec, record, newKeywordCache,
+                                                newKeywordByEndpointCache);
+                                        recordMerged = true;
+                                        break;
+                                    }
+                                }
+                                if (recordMerged == true)
+                                    break;
                             }
+                            if (recordMerged == true)
+                                break;
                         }
+
 
                         //If the record was NOT merged into an existing record we then update the record cache
                         if (!recordMerged) {
