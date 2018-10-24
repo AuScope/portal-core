@@ -2,7 +2,9 @@ package org.auscope.portal.core.services.methodmakers;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.List;
 
+import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord;
 
@@ -148,6 +150,8 @@ public interface WMSMethodMakerInterface {
             int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles, String sld,
             String feature_count) throws URISyntaxException;
 
+    HttpRequestBase getFeatureInfo(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles, String sldBody, String feature_count, List<NameValuePair> vendorParams) throws URISyntaxException;
+
     /**
      * Generates a WMS request for downloading information about a user click on a particular GetMap request via the post method.
      *
@@ -191,6 +195,9 @@ public interface WMSMethodMakerInterface {
             int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles, String sld,
             String feature_count) throws URISyntaxException;
 
+    HttpRequestBase getFeatureInfoPost(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles, String sldBody, String feature_count, List<NameValuePair> vendorParams) throws URISyntaxException;
+
+
     /**
      * WMS get map
      * @throws URISyntaxException
@@ -209,6 +216,6 @@ public interface WMSMethodMakerInterface {
      * @throws URISyntaxException
      * @throws IOException
      */
-    public String getStyle(String sldUrl) throws URISyntaxException, IOException;    
+    public String getStyle(String sldUrl) throws URISyntaxException, IOException;
 
 }
