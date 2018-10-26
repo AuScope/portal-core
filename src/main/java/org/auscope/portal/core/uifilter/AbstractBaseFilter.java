@@ -8,7 +8,7 @@ public abstract class AbstractBaseFilter {
 
     private String label;
 
-
+    private String toolTip;
 
 
 
@@ -36,5 +36,11 @@ public abstract class AbstractBaseFilter {
     public abstract String getType();
 
 
+    public String getToolTip() {
+        return toolTip;
+    }
 
+    public void setToolTip(String toolTip) {
+        this.toolTip = toolTip;
+    }
 }
