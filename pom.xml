@@ -337,7 +337,7 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk</artifactId>
-            <version>1.11.277</version>
+            <version>1.11.396</version>
         </dependency>
         <dependency>
             <groupId>taglibs</groupId>
