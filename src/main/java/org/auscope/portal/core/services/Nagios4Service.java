@@ -60,17 +60,18 @@ public class Nagios4Service {
     /**
      * Gets a (possibly filtered) view of all services, keyed by their host name.
      * @param hostGroup If not null, results will be filtered to services belonging to this host group
+     * @param serviceGroup If not null, results will be filtered to services belonging to this service group
      * @param hostName
      * @return
      * @throws PortalServiceException
      */
-    public Map<String, List<ServiceStatusResponse>> getStatuses(String hostGroup) throws PortalServiceException {
+    public Map<String, List<ServiceStatusResponse>> getStatuses(String hostGroup, String serviceGroup) throws PortalServiceException {
 
         //Make our request
         HttpRequestBase method = null;
         String responseString = null;
         try {
-            method = methodMaker.statusServiceListJSON(serviceUrl, hostGroup, null);
+            method = methodMaker.statusServiceListJSON(serviceUrl, hostGroup, serviceGroup, null);
             responseString = serviceCaller.getMethodResponseAsString(method, generateCredentials());
         } catch (Exception ex) {
             throw new PortalServiceException(method, "Unable to access remote Nagios4 service", ex);

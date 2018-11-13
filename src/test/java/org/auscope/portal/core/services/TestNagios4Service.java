@@ -53,11 +53,12 @@ public class TestNagios4Service extends PortalTestClass {
     @Test
     public void testSuccessfulResponsePassword() throws Exception {
         final String hostGroup = "foo";
+        final String serviceGroup = "bar";
         final String responseString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/nagios/nagios4-status-servicelist-success.json");
 
         context.checking(new Expectations() {
             {
-                oneOf(mockMethodMaker).statusServiceListJSON(serviceUrl, hostGroup, null);
+                oneOf(mockMethodMaker).statusServiceListJSON(serviceUrl, hostGroup, serviceGroup, null);
                 will(returnValue(mockMethod));
 
                 oneOf(mockServiceCaller).getMethodResponseAsString(with(mockMethod), with(any(CredentialsProvider.class)));
@@ -69,18 +70,19 @@ public class TestNagios4Service extends PortalTestClass {
         service.setPassword(password);
 
         //Do main result parsing in testSuccessfulResponseNoPassword
-        Map<String, List<ServiceStatusResponse>> result = service.getStatuses(hostGroup);
+        Map<String, List<ServiceStatusResponse>> result = service.getStatuses(hostGroup, serviceGroup);
         Assert.assertNotNull(result);
     }
 
     @Test
     public void testSuccessfulResponseNoPassword() throws Exception {
         final String hostGroup = "foo";
+        final String serviceGroup = "bar";
         final String responseString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/nagios/nagios4-status-servicelist-success.json");
 
         context.checking(new Expectations() {
             {
-                oneOf(mockMethodMaker).statusServiceListJSON(serviceUrl, hostGroup, null);
+                oneOf(mockMethodMaker).statusServiceListJSON(serviceUrl, hostGroup, serviceGroup, null);
                 will(returnValue(mockMethod));
 
                 oneOf(mockServiceCaller).getMethodResponseAsString(mockMethod, (CredentialsProvider) null);
@@ -88,7 +90,7 @@ public class TestNagios4Service extends PortalTestClass {
             }
         });
 
-        Map<String, List<ServiceStatusResponse>> result = service.getStatuses(hostGroup);
+        Map<String, List<ServiceStatusResponse>> result = service.getStatuses(hostGroup, serviceGroup);
         Assert.assertNotNull(result);
         Assert.assertEquals(2, result.size());
 
@@ -113,10 +115,11 @@ public class TestNagios4Service extends PortalTestClass {
     @Test(expected=PortalServiceException.class)
     public void testConnectionError() throws Exception {
         final String hostGroup = "foo";
+        final String serviceGroup = "bar";
 
         context.checking(new Expectations() {
             {
-                oneOf(mockMethodMaker).statusServiceListJSON(serviceUrl, hostGroup, null);
+                oneOf(mockMethodMaker).statusServiceListJSON(serviceUrl, hostGroup, serviceGroup, null);
                 will(returnValue(mockMethod));
 
                 oneOf(mockServiceCaller).getMethodResponseAsString(mockMethod, (CredentialsProvider)null);
@@ -124,17 +127,18 @@ public class TestNagios4Service extends PortalTestClass {
             }
         });
 
-        service.getStatuses(hostGroup);
+        service.getStatuses(hostGroup, serviceGroup);
     }
 
     @Test(expected=PortalServiceException.class)
     public void testFailureResponse() throws Exception {
         final String hostGroup = "foo";
+        final String serviceGroup = "bar";
         final String responseString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/nagios/nagios4-status-servicelist-failure.json");
 
         context.checking(new Expectations() {
             {
-                oneOf(mockMethodMaker).statusServiceListJSON(serviceUrl, hostGroup, null);
+                oneOf(mockMethodMaker).statusServiceListJSON(serviceUrl, hostGroup, serviceGroup, null);
                 will(returnValue(mockMethod));
 
                 oneOf(mockServiceCaller).getMethodResponseAsString(mockMethod, (CredentialsProvider) null);
@@ -142,6 +146,6 @@ public class TestNagios4Service extends PortalTestClass {
             }
         });
 
-        service.getStatuses(hostGroup);
+        service.getStatuses(hostGroup, serviceGroup);
     }
 }
