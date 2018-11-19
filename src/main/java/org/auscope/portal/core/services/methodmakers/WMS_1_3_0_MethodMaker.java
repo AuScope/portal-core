@@ -375,12 +375,14 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
 
 
     @Override
+
     public HttpRequestBase getMap(String url,String layer,String bbox, String sldBody, String crs) throws URISyntaxException, IOException {
         return this.getMap(url, layer, bbox, sldBody, crs, false);
     }
 	
     @Override
     public HttpRequestBase getMap(String url,String layer,String bbox, String sldBody, String crs, boolean requestCachedTile) throws URISyntaxException, IOException {
+
 
         List<NameValuePair> existingParam = this.extractQueryParams(url); //preserve any existing query params
 

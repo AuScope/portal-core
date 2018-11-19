@@ -1,15 +1,18 @@
 language: java
+script: "[ ${TRAVIS_PULL_REQUEST} = 'false' ] && mvn clean deploy --settings travis/settings.xml || mvn clean verify --settings travis/settings.xml"
+cache:
+  directories:
+    - $HOME/.m2
+branches:
+        only:              
+                - master-ga2
 jdk:
-- oraclejdk8
-deploy:
-  provider: script
-  script: cp .travis.settings.xml $HOME/.m2/settings.xml && mvn deploy >/dev/null
-    2>&1
-  skip_cleanup: true
-  on:
-    repo: AuScope/portal-core
-    branch: master
+  - oraclejdk8
 env:
-  global:
-  - secure: Nj1oM0hXLe+qn5Oc8zGK3p/p6zi2skzF2W9tYyhyWmWB30isWbV9FV1lEjZgB8ociV46c62CxSFBvIMdEZHDT4hGra4YxFYaHSQQ7QO4bH3G6VfGQd7AFMS2ygWVjtOc452Ac1ZjW87zm28XK64tSIEh3u8KloBfaNGxcB2Al3k=
-  - secure: hkoTy9RAEYcm2km1xZMRjUA9FtV0v6irfIe2efd86FHx1nIl000K8B+68zLUCOZukNY7h4jF2/1j1Zrfpz1WxjT5U4nNYwARUDree05o+xfufjE0hWvQsqgArKiVUt/5VprWTzOYecLJzna8hajCS0dGaILWszKZJRhoY/sOkWU=
+        global:
+                - secure: "MmAJ3GI23mR8ynBICBC/T3h/80m3gN2Twjvu/ODU9aYtfS0tgOBpvY6I4j7Fx/T+wXyJItDR5dGV0aDsnalJe9k3Ye19FHi8FSqojGAKB2Sk+L19kT6MxOMEpvTDbQRq1s1WZ6GiZrhWJvUgsigD2IEPaW2sIu6ZiPnUxTinLpw="
+                - secure: "rVmDdrGb3RfvIcW6XIENBG0cd1biCGsoyT8HhUykZxMVMUeQMntBeespjOhrHGWbtKTyo0DIvPRjLbaDCBkWi2qs5YE9TE7AOhDALRcCBnHC5iPjWdBTinNJPjA3yHccWXpx6ti+WIOQwMWHip59qZ4r9VmfJNA5BdbJcQVlIwo="
+notifications:
+        slack:
+                rooms:
+                        secure: "pLqB+3uMHDEOIvMNKRArNgD/Vwamz3rNnAVg/VtHtdgtQ6b8tylNQs5DNn0uJ8XIC9qUjYg/s8hr+8/ruIqLsG8o+qIeV8jX9A+cjwKNjysmUvFs3rSXjvr9RV3X1BmRpgnvFuyYhf2stBoCATF2ScVimsw5coBC3X28K6GLH6Y="

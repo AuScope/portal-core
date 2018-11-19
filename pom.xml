@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.auscope.portal</groupId>
     <artifactId>portal-core</artifactId>
@@ -17,10 +16,12 @@
         <url>https://cgsrv8.arrc.csiro.au/jenkins</url>
     </ciManagement>
     <scm>
-        <connection>scm:git:https://github.com/AuScope/portal-core.git</connection>
-        <developerConnection>scm:git:https://github.com/AuScope/portal-core.git</developerConnection>
-        <url>https://github.com/AuScope/portal-core</url>
-    </scm>
+        <connection>scm:git:git@github.com:GeoscienceAustralia/portal-core.git</connection>
+        <developerConnection>scm:git:git@github.com:GeoscienceAustralia/portal-core.git</developerConnection>
+        <url>https://github.com/GeoscienceAustralia/portal-core</url>
+      <tag>HEAD</tag>
+  </scm>
+<!--
     <distributionManagement>
         <repository>
             <id>deployment</id>
@@ -33,6 +34,42 @@
             <url>https://cgmaven.it.csiro.au/nexus/repository/PortalSnapshot/</url>
         </snapshotRepository>
     </distributionManagement>
+-->
+<!--    <distributionManagement>
+        <repository>
+            <id>nexus.gadevs.releases</id>
+            <name>Internal nexus</name>
+            <url>https://nexus.gadevs.ga/repository/maven-releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus.gadevs.snapshots</id>
+            <url>https://nexus.gadevs.ga/repository/maven-snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>-->
+
+    <distributionManagement>
+        <repository>
+            <id>nexus.gadevs.releases</id>
+            <name>Internal nexus</name>
+            <url>http://rhe-repo-prod01.prod.lan:8080/nexus/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus.gadevs.snapshots</id>
+            <url>http://rhe-repo-prod01.prod.lan:8080/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+<!--   <distributionManagement>
+        <repository>
+            <id>nexus.gadevs.releases</id>
+            <name>Internal nexus</name>
+            <url>http://maven-int.ga.gov.au/nexus/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus.gadevs.snapshots</id>
+            <url>http://maven-int.ga.gov.au/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>-->
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -165,6 +202,17 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+            <artifactId>maven-release-plugin</artifactId>
+            <version>2.5.2</version>
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.maven.scm</groupId>
+                    <artifactId>maven-scm-provider-gitexe</artifactId>
+                    <version>1.8.1</version>
+                </dependency>
+            </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
