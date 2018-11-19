@@ -375,7 +375,14 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
 
 
     @Override
-    public HttpRequestBase getMap(String url, String layer, String bbox, String sldBody, String crs) throws URISyntaxException, IOException {
+
+    public HttpRequestBase getMap(String url,String layer,String bbox, String sldBody, String crs) throws URISyntaxException, IOException {
+        return this.getMap(url, layer, bbox, sldBody, crs, false);
+    }
+	
+    @Override
+    public HttpRequestBase getMap(String url,String layer,String bbox, String sldBody, String crs, boolean requestCachedTile) throws URISyntaxException, IOException {
+
 
         List<NameValuePair> existingParam = this.extractQueryParams(url); //preserve any existing query params
 
@@ -390,6 +397,7 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
         existingParam.add(new BasicNameValuePair("LAYERS", layer));
         existingParam.add(new BasicNameValuePair("FORMAT", "image/png"));
         existingParam.add(new BasicNameValuePair("TRANSPARENT", "TRUE"));
+        if (requestCachedTile) existingParam.add(new BasicNameValuePair("tiled","true"));
         existingParam.add(new BasicNameValuePair("CRS", crs));
         existingParam.add(new BasicNameValuePair("BBOX", bbox));
         existingParam.add(new BasicNameValuePair("WIDTH", "256"));

@@ -1,5 +1,6 @@
 package org.auscope.portal.core.services.methodmakers;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 
 import org.apache.http.client.methods.HttpPost;
@@ -22,18 +23,24 @@ public class TestWMSMethodMaker extends PortalTestClass {
      * @throws URISyntaxException
      */
     @Test
-    public void testParamParsing_NoParams() throws URISyntaxException {
+    public void testParamParsing_NoParams() throws URISyntaxException, IOException {
         WMSMethodMaker mm = new WMSMethodMaker(null);
         HttpRequestBase getCapMethod = mm.getCapabilitiesMethod("http://example.com");
         HttpRequestBase getFeatureMethod = mm.getFeatureInfo("http://example.com", "format", "layer", "EPSG:4326", 1.0,
                 2.0, 3.0, 4.0, 100, 200, 6.0, 7.0, 20, 30, "styles", null, "0");
         HttpRequestBase getMapMethod = mm.getMapMethod("http://example.com", "layer", "imageMimeType", "srs", 1.0, 2.0,
                 3.0, 4.0, 100, 200, "styles", "styleBody");
+        HttpRequestBase getMapPost = mm.getMap("http://example.com", "layer","0,0,1,1", null, "srs");
+        HttpRequestBase getMapPostwithTiled = mm.getMap("http://example.com", "layer","0,0,1,1", null, "srs", true);
         HttpRequestBase getLegendMethod = mm.getLegendGraphic("http://example.com", "layerName", 100, 200, "styles");
         HttpRequestBase getFeatureMethodPost = mm.getFeatureInfoPost("http://example.com", "format", "layer",
                 "EPSG:4326", 1.0, 2.0, 3.0, 4.0, 100, 200, 6.0, 7.0, 20, 30, "styles", null, "0");
 
         Assert.assertTrue(getFeatureMethodPost instanceof HttpPost);
+
+        Assert.assertTrue(getMapPost instanceof HttpPost);
+
+        Assert.assertTrue(getMapPostwithTiled instanceof HttpPost);
 
         Assert.assertTrue(getCapMethod.getURI().getQuery().contains("service=WMS"));
         Assert.assertTrue(getCapMethod.getURI().getQuery().contains("request=GetCapabilities"));
@@ -91,18 +98,24 @@ public class TestWMSMethodMaker extends PortalTestClass {
      * @throws URISyntaxException
      */
     @Test
-    public void test_1_3_0_ParamParsing_NoParams() throws URISyntaxException {
+    public void test_1_3_0_ParamParsing_NoParams() throws URISyntaxException, IOException {
         WMS_1_3_0_MethodMaker mm = new WMS_1_3_0_MethodMaker(null);
         HttpRequestBase getCapMethod = mm.getCapabilitiesMethod("http://example.com");
         HttpRequestBase getFeatureMethod = mm.getFeatureInfo("http://example.com", "format", "layer", "EPSG:4326", 1.0,
                 2.0, 3.0, 4.0, 100, 200, 6.0, 7.0, 20, 30, "styles", null, "0");
         HttpRequestBase getMapMethod = mm.getMapMethod("http://example.com", "layer", "imageMimeType", "srs", 1.0, 2.0,
                 3.0, 4.0, 100, 200, "styles", "styleBody");
+        HttpRequestBase getMapPost = mm.getMap("http://example.com", "layer","0,0,1,1", null, "srs");
+        HttpRequestBase getMapPostwithTiled = mm.getMap("http://example.com", "layer","0,0,1,1", null, "srs", true);
         HttpRequestBase getLegendMethod = mm.getLegendGraphic("http://example.com", "layerName", 100, 200, "styles");
         HttpRequestBase getFeatureMethodPost = mm.getFeatureInfoPost("http://example.com", "format", "layer",
                 "EPSG:4326", 1.0, 2.0, 3.0, 4.0, 100, 200, 6.0, 7.0, 20, 30, "styles", null, "0");
 
         Assert.assertTrue(getFeatureMethodPost instanceof HttpPost);
+
+        Assert.assertTrue(getMapPost instanceof HttpPost);
+
+        Assert.assertTrue(getMapPostwithTiled instanceof HttpPost);
 
         Assert.assertTrue(getCapMethod.getURI().getQuery().contains("service=WMS"));
         Assert.assertTrue(getCapMethod.getURI().getQuery().contains("request=GetCapabilities"));
