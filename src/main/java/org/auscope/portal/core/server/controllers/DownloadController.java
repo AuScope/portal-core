@@ -3,9 +3,11 @@ package org.auscope.portal.core.server.controllers;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
@@ -57,8 +59,25 @@ public class DownloadController extends BasePortalController {
         Progression progress = downloadTracker.getProgress();
         if (progress == Progression.COMPLETED) {
             response.setContentType("application/zip");
-            response.setHeader("Content-Disposition",
+
+            boolean csvSign = false;
+            ZipFile downloadZip = new ZipFile(downloadTracker.getFileHandle().getAbsolutePath());
+            Enumeration zipEntries = downloadZip.entries();
+            while (zipEntries.hasMoreElements()) {
+                String fileName = ((ZipEntry) zipEntries.nextElement()).getName();
+                if (fileName.contains("csv"))
+                {
+                    csvSign = true;
+                    break;
+                }
+            }
+
+            if (csvSign == false)
+                response.setHeader("Content-Disposition",
                     "inline; filename=GMLDownload.zip;");
+            else
+                response.setHeader("Content-Disposition",
+                    "inline; filename=CSVDownload.zip;");
             FileIOUtil.writeInputToOutputStream(downloadTracker.getFile(), response.getOutputStream(), 1024, true);
         }
 
