@@ -1,6 +1,6 @@
 package org.auscope.portal.core.services;
 
-import com.hp.hpl.jena.rdf.model.*;
+import org.apache.jena.rdf.model.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.services.VocabularyCacheService;
