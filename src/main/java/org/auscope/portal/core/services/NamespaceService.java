@@ -73,7 +73,7 @@ public class NamespaceService {
     /**
      *  Updates the namespace cache for all cached service URLs
      */
-    private void updateNamespaces() {
+    public void updateNamespaces() {
             Set<String> serviceUrls = this.namespaceCache.keySet();
                 for (String serviceUrl : serviceUrls) {
                 updateNamespace(serviceUrl);
