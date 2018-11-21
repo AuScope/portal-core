@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang.NotImplementedException;
 
 /**
@@ -68,6 +69,7 @@ public abstract class IterableNamespace implements NamespaceContext {
      * 
      * @return
      */
+    @JsonIgnore
     public Iterator<String> getPrefixIterator() {
         return map.keySet().iterator();
     }
