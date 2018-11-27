@@ -3,6 +3,7 @@ package org.auscope.portal.core.services;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.utils.URIBuilder;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker;
 import org.auscope.portal.core.services.namespaces.ServiceNamespaceContext;
@@ -15,6 +16,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 
 import javax.xml.namespace.NamespaceContext;
+import java.net.URI;
 import java.util.Date;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -73,7 +75,7 @@ public class NamespaceService {
     /**
      *  Updates the namespace cache for all cached service URLs
      */
-    private void updateNamespaces() {
+    public void updateNamespaces() {
             Set<String> serviceUrls = this.namespaceCache.keySet();
                 for (String serviceUrl : serviceUrls) {
                 updateNamespace(serviceUrl);
@@ -104,7 +106,19 @@ public class NamespaceService {
         HttpRequestBase method = null;
         ServiceNamespaceContext namespace = new ServiceNamespaceContext();
         try {
-            method = wfsMethodMaker.makeGetCapabilitiesMethod(serviceUrl);
+
+            /**
+             * The below is to deal with the situation where a WMS url of the form http://service.url/ows?SERVICE=WMS
+             * is passed to the portal. The @{@link WFSGetFeatureMethodMaker} class adds the parameter 'service' to
+             * the GetCapabiltities request, but this does not overwrite the uppercase parameter
+             *
+             */
+            URIBuilder builder = new URIBuilder(serviceUrl);
+            builder.clearParameters();
+            String wfsUrl = builder.toString();
+
+
+            method = wfsMethodMaker.makeGetCapabilitiesMethod(wfsUrl);
             String responseString = httpServiceCaller.getMethodResponseAsString(method);
             Document responseDoc = DOMUtil.buildDomFromString(responseString);
             Element elem = responseDoc.getDocumentElement();
