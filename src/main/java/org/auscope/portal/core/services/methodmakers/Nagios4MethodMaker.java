@@ -17,11 +17,12 @@ public class Nagios4MethodMaker extends AbstractMethodMaker {
      * Generates a servicelist query for status information that can be optionally filtered
      * @param serviceUrl The base Nagios 4 URL
      * @param hostGroup If not null, will filter all services to those within the named host group
+     * @param serviceGroup If not null, will filter all services to those within the named service group
      * @param hostName If not null, will filter all services to those belonging to the named host
      * @return
      * @throws URISyntaxException
      */
-    public HttpRequestBase statusServiceListJSON(String serviceUrl, String hostGroup, String hostName) throws URISyntaxException {
+    public HttpRequestBase statusServiceListJSON(String serviceUrl, String hostGroup, String serviceGroup, String hostName) throws URISyntaxException {
         String queryUrl = urlPathConcat(serviceUrl, "cgi-bin/statusjson.cgi");
 
         URIBuilder builder = new URIBuilder(queryUrl);
@@ -29,6 +30,9 @@ public class Nagios4MethodMaker extends AbstractMethodMaker {
         builder.addParameter("formatoptions", "enumerate");
         if (StringUtils.isNotEmpty(hostGroup)) {
             builder.addParameter("hostgroup", hostGroup);
+        }
+        if (StringUtils.isNotEmpty(serviceGroup)) {
+            builder.addParameter("servicegroup", serviceGroup);
         }
         if (StringUtils.isNotEmpty(hostName)) {
             builder.addParameter("hostname", hostName);

@@ -83,6 +83,9 @@ public class KnownLayer implements Serializable {
     /** If specified, the name/id of a Nagios host group whose status reflects the availability of this known layer */
     private String nagiosHostGroup;
 
+    /** If specified, the name/id of a Nagios host group whose status reflects the availability of this known layer */
+    private String nagiosServiceGroup;
+
     private FilterCollection filterCollection;
     /**
      * Creates a new KnownLayer
@@ -400,6 +403,14 @@ public class KnownLayer implements Serializable {
 
     public void setNagiosHostGroup(String nagiosHostGroup) {
         this.nagiosHostGroup = nagiosHostGroup;
+    }
+
+    public String getNagiosServiceGroup() {
+        return nagiosServiceGroup;
+    }
+
+    public void setNagiosServiceGroup(String nagiosServiceGroup) {
+        this.nagiosServiceGroup = nagiosServiceGroup;
     }
 
     /* (non-Javadoc)
