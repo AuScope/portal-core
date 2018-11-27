@@ -35,7 +35,7 @@
         </snapshotRepository>
     </distributionManagement>
 -->
-<!--    <distributionManagement>
+    <distributionManagement>
         <repository>
             <id>nexus.gadevs.releases</id>
             <name>Internal nexus</name>
@@ -45,9 +45,9 @@
             <id>nexus.gadevs.snapshots</id>
             <url>https://nexus.gadevs.ga/repository/maven-snapshots</url>
         </snapshotRepository>
-    </distributionManagement>-->
+    </distributionManagement>
 
-    <distributionManagement>
+<!--    <distributionManagement>
         <repository>
             <id>nexus.gadevs.releases</id>
             <name>Internal nexus</name>
@@ -57,7 +57,7 @@
             <id>nexus.gadevs.snapshots</id>
             <url>http://rhe-repo-prod01.prod.lan:8080/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
-    </distributionManagement>
+    </distributionManagement> -->
 
 <!--   <distributionManagement>
         <repository>
