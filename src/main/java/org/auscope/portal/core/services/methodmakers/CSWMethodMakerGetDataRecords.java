@@ -67,6 +67,9 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
      */
     public HttpRequestBase makeMethod(String serviceUrl, CSWGetDataRecordsFilter filter, ResultType resultType,
             int maxRecords, int startPosition, String cqlText) {
+    	
+    	//serviceUrl += "&request=GetRecords&typeNames=gmd:MD_Metadata";
+    	//serviceUrl = "http://yaud.it.csiro.au:8180/geoserver/csw";
         HttpPost httpMethod = new HttpPost(serviceUrl);
 
         String filterString = null;
@@ -77,7 +80,7 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
         // We should be using a library for this call...
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        sb.append("<csw:GetRecords xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" service=\"CSW\" version=\"2.0.2\" constraint_language_version=\"1.1.0\" outputFormat=\"application/xml\" outputSchema=\"http://www.isotc211.org/2005/gmd\" typeNames=\"gmd:MD_Metadata\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:gml=\"http://www.opengis.net/gml\"");
+        sb.append("<csw:GetRecords xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" service=\"CSW\" version=\"2.0.2\" outputFormat=\"application/xml\" outputSchema=\"http://www.isotc211.org/2005/gmd\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:gml=\"http://www.opengis.net/gml\"");
         sb.append(String.format(" maxRecords=\"%1$s\"", maxRecords));
         if (resultType != null) {
             switch (resultType) {
@@ -97,7 +100,7 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
             sb.append(" startPosition=\"" + startPosition + "\"");
         }
         sb.append(">");
-        sb.append("<csw:Query typeNames=\"gmd:MD_Metadata\">");
+        sb.append("<csw:Query typeNames=\"gmd:MD_Metadata\"  xmlns:gmd=\"http://www.isotc211.org/2005/gmd\" >");
         sb.append("<csw:ElementSetName>full</csw:ElementSetName>");
 
         boolean hasFilter = filterString != null && filterString.length() > 0;
@@ -137,7 +140,8 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
         sb.append("</csw:Query>");
         sb.append("</csw:GetRecords>");
 
-        log.trace("CSW GetRecords Request: " + sb.toString());
+        log.info("--------CSWMakerGetDataRecords makeMethod POST Request: " + sb.toString());
+        //log.trace("CSW GetRecords Request: " + sb.toString());
 
         // If this does not work, try params: "text/xml; charset=ISO-8859-1"
         httpMethod.setEntity(new StringEntity(sb.toString(), ContentType.create("text/xml", "ISO-8859-1")));
@@ -161,10 +165,10 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
         builder.setParameter("constraint_language_version", "1.1.0");
         builder.setParameter("request", "GetRecords");
         builder.setParameter("version", "2.0.2");
-        builder.setParameter("outputSchema", "csw:IsoRecord");
+        builder.setParameter("outputSchema", "http://www.isotc211.org/2005/gmd");
         builder.setParameter("typeNames", "gmd:MD_Metadata");
-        builder.setParameter("constraintLanguage", "FILTER");
-        builder.setParameter("namespace", "csw:http://www.opengis.net/cat/csw");
+        //builder.setParameter("constraintLanguage", "FILTER");
+        //builder.setParameter("namespace", "csw:http://www.opengis.net/cat/csw");
         builder.setParameter("elementSetName", "full");
         builder.setParameter("startPosition", Integer.toString(startPosition));
         builder.setParameter("maxRecords", Integer.toString(maxRecords));
