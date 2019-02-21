@@ -552,32 +552,6 @@ public class CSWRecordTransformer {
 
         return resources;
     }
-/*
-    public List<CSWRecord> transformToCSWRecords() throws XPathExpressionException {
-    	LinkedList<CSWRecord> recordList = new LinkedList<CSWRecord>();
-    	NodeList tempNodeList = evalXPathNodeList(this.mdMetadataNode, ONLINERESOURCES);
-    	AbstractCSWOnlineResource[] acors = new AbstractCSWOnlineResource[0];
-    	CSWGeographicElement[] cges = new CSWGeographicElement[0];
-    	
-        for (int i = 0; i < tempNodeList.getLength(); i++) {
-            try {
-                Node onlineNode = tempNodeList.item(i);
-                CSWRecord record = new CSWRecord("", "", "", "", acors, cges);
-                recordList.add(record);
-                //populateCSWRecordOnlineResource(record, onlineNode);
-            }catch (IllegalArgumentException ex) {
-            }
-        }
-    	return recordList;
-    }
-    private void populateCSWRecordOnlineResource(CSWRecord record, Node onlineResourceNode) throws XPathExpressionException {
-		// name, Link-URL, protocol/type
-    	record.setServiceName(evalXPathString(onlineResourceNode, ONLINERESOURCES_Name));
-        //private static final String ONLINERESOURCES_Name = "gmd:name/gco:CharacterString";
-        //private static final String ONLINERESOURCES_Protocol = "gmd:protocol/gco:CharacterString";
-        //private static final String ONLINERESOURCES_Linkage = "gmd:linkage/gmd:URL";
-	}
-*/
     
 	/**
      * Creates a new CSWRecord instance parsed from the internal template of this class
@@ -646,16 +620,13 @@ public class CSWRecordTransformer {
         }
         
         //There can be multiple gmd:onLine elements (which contain a number of fields we want)
-        tempNodeList = evalXPathNodeList(this.mdMetadataNode, ONLINERESOURCES);
+        tempNodeList = evalXPathNodeList(this.mdMetadataNode, ONLINETRANSFERSEXPRESSION);
         //logger.info("---- transformToCSWRecord onlineResource #= " + tempNodeList.getLength());
         List<AbstractCSWOnlineResource> resources = new ArrayList<>();
         for (int i = 0; i < tempNodeList.getLength(); i++) {
             try {
                 Node onlineNode = tempNodeList.item(i);
-                AbstractCSWOnlineResource acor = CSWOnlineResourceFactory.parseFromNode(onlineNode);
-                //logger.info(String.format("---- transformToCSWRecord - AbstractCSWOnlineResource, name = %s, url = %s, protocol = %s", 
-                //			acor.getName(), acor.getLinkage().toString(), acor.getType()));
-                resources.add(acor);
+                resources.add(CSWOnlineResourceFactory.parseFromNode(onlineNode));
             } catch (IllegalArgumentException ex) {
                 logger.debug(String.format("Unable to parse online resource for serviceName='%1$s' %2$s",
                         record.getServiceName(), ex));
