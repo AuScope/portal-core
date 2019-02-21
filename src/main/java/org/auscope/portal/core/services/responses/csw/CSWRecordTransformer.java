@@ -65,11 +65,6 @@ public class CSWRecordTransformer {
 
     private static final String SCALEDENOMINATOR = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:spatialResolution/gmd:MD_Resolution/gmd:equivalentScale/gmd:MD_RepresentativeFraction/gmd:denominator/gco:Integer";
 
-    private static final String ONLINERESOURCES = "gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource";
-    private static final String SERVICENAMEPATH = "gmd:identificationInfo/gmd:AbstractMD_Identification/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString";
-    
-    
-    
     /**
      * Creates a new instance of this class and generates an empty document that will be used for constructing DOM.
      * @throws ParserConfigurationException 
@@ -552,8 +547,8 @@ public class CSWRecordTransformer {
 
         return resources;
     }
-    
-	/**
+
+    /**
      * Creates a new CSWRecord instance parsed from the internal template of this class
      *
      * Throws an exception if the internal template cannot be parsed correctly
@@ -580,9 +575,7 @@ public class CSWRecordTransformer {
         //Parse our simple strings
         Node scopeNode = evalXPathNode(this.mdMetadataNode, SCOPEEXPRESSION);
         String recordType = scopeNode != null ? scopeNode.getNodeValue() : null;
-        	// http://purl.org/dc/dcmitype/Dataset
-        //logger.info("---- transformToCSWRecord recordType= " + recordType);
-        
+
         String identificationPath = null;
         if (Scope.service.toString().equals(recordType)) {
             identificationPath = SERVICEIDENTIFICATIONPATH;
@@ -591,8 +584,7 @@ public class CSWRecordTransformer {
             identificationPath = DATAIDENTIFICATIONPATH;
         }
 
-        record.setServiceName(evalXPathString(this.mdMetadataNode, SERVICENAMEPATH));
-        
+        record.setServiceName(evalXPathString(this.mdMetadataNode, identificationPath + TITLEEXPRESSION));
         record.setDataIdentificationAbstract(evalXPathString(this.mdMetadataNode, identificationPath + ABSTRACTEXPRESSION));
 
         record.setFileIdentifier(evalXPathString(this.mdMetadataNode, FILEIDENTIFIEREXPRESSION));
@@ -618,10 +610,9 @@ public class CSWRecordTransformer {
                         ex));
             }
         }
-        
+
         //There can be multiple gmd:onLine elements (which contain a number of fields we want)
         tempNodeList = evalXPathNodeList(this.mdMetadataNode, ONLINETRANSFERSEXPRESSION);
-        //logger.info("---- transformToCSWRecord onlineResource #= " + tempNodeList.getLength());
         List<AbstractCSWOnlineResource> resources = new ArrayList<>();
         for (int i = 0; i < tempNodeList.getLength(); i++) {
             try {
@@ -633,9 +624,7 @@ public class CSWRecordTransformer {
             }
         }
         removeDuplicateOnlineResources(resources);
-        //logger.info(String.format("---- transformToCSWRecord after removeDuplicate resources # = %d", resources.size()));
         record.setOnlineResources(resources.toArray(new AbstractCSWOnlineResource[resources.size()]));
-        //logger.info(String.format("---- transformToCSWRecord after setting resources # = %d", record.getOnlineResources().length));
 
         //Parse our bounding boxes (if they exist). If any are unparsable, don't worry and just continue
         tempNodeList = evalXPathNodeList(this.mdMetadataNode, BBOXEXPRESSION);
@@ -751,3 +740,4 @@ public class CSWRecordTransformer {
         return record;
     }
 }
+
