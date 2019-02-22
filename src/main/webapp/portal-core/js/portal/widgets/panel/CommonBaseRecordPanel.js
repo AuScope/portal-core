@@ -24,6 +24,7 @@ Ext.define('portal.widgets.panel.CommonBaseRecordPanel', {
     menuFactory : null,
     onlineResourcePanelType : null,
     serviceInformationIcon : null,
+    nagiosErrorIcon: null,
     mapExtentIcon : null,
     
     
@@ -38,6 +39,7 @@ Ext.define('portal.widgets.panel.CommonBaseRecordPanel', {
         me.menuFactory = cfg.menuFactory;
         me.onlineResourcePanelType = cfg.onlineResourcePanelType;
         me.serviceInformationIcon = cfg.serviceInformationIcon;
+        me.nagiosErrorIcon = Ext.isEmpty(cfg.nagiosErrorIcon) ? 'portal-core/img/warning.png' : cfg.nagiosErrorIcon;
         me.mapExtentIcon = cfg.mapExtentIcon;
         me.listeners = Object.extend(me.listenersHere, cfg.listeners);
 
@@ -145,10 +147,14 @@ Ext.define('portal.widgets.panel.CommonBaseRecordPanel', {
         var containsImageService = serviceType.containsImageService;
 
         // default iconPath where there is no service info available
-        var iconPath = 'portal-core/img/warning.png';
+        var iconPath = 'portal-core/img/exclamation.png';
 
-        // check whether the portal has overridden the icons 
-        if (this.serviceInformationIcon && (containsDataService || containsImageService)) {
+        if ((containsDataService || containsImageService) && 
+            (record instanceof portal.knownlayer.KnownLayer) &&
+            record.containsNagiosFailures()) {
+            iconPath = this.nagiosErrorIcon;
+        } else if (this.serviceInformationIcon && (containsDataService || containsImageService)) {
+            // check whether the portal has overridden the icons
             iconPath = this.serviceInformationIcon;
         } else {        
             if (containsDataService) {            
@@ -352,6 +358,7 @@ Ext.define('portal.widgets.panel.CommonBaseRecordPanel', {
             height: 200,
             width: 500,
             layout: 'fit',
+            modal: true,
             items: {  // Let's put an empty grid in just to illustrate fit layout
                 xtype: 'panel',
                 autoScroll : true,                

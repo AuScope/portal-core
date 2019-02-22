@@ -233,4 +233,16 @@ public class TestCloudComputeService extends PortalTestClass {
 
         service.getJobStatus(job);
     }
+
+    @Test
+    public void testGetJobStatus_ReturnNull() throws PortalServiceException {
+        job.setComputeInstanceId("i-running");
+
+        context.checking(new Expectations() {{
+            oneOf(mockComputeService).getNodeMetadata("i-running");
+            will(returnValue(null));
+        }});
+
+        Assert.assertEquals(InstanceStatus.Missing, service.getJobStatus(job));
+    }
 }

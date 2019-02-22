@@ -9,6 +9,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -27,7 +28,7 @@ import org.xml.sax.SAXException;
 
 /**
  * A service class that provides high level interactions with Geonetwork
- * 
+ *
  * @author Josh Vote
  *
  */
@@ -61,7 +62,7 @@ public class GeonetworkService {
 
     /**
      * Helper method for transforming an arbitrary CSWRecord into a <gmd:MD_Metadata> representation
-     * 
+     *
      * @param record
      * @return
      * @throws ParserConfigurationException 
@@ -75,7 +76,7 @@ public class GeonetworkService {
 
     /**
      * Returns the record id from the response of an insert operation (or empty string if N/A)
-     * 
+     *
      * @param gnResponse
      *            A response from a CSWInsert operation
      * @return
@@ -137,7 +138,7 @@ public class GeonetworkService {
      * Attempts to insert the specified CSWRecord into Geonetwork. The record will be made publicly viewable.
      *
      * If successful the URL of the newly created record will be returned
-     * 
+     *
      * @param record
      * @return
      * @throws PortalServiceException 
@@ -160,7 +161,7 @@ public class GeonetworkService {
             throw new PortalServiceException(e.getMessage(),e);
         }
         try (HttpClientResponse gnResponse = serviceCaller.getMethodResponseAsHttpResponse(methodLogin)) {
-            gnResponseString = serviceCaller.responseToString(gnResponse);
+            gnResponseString = IOUtils.toString(gnResponse.getEntity().getContent());
             logger.debug(String.format("GN Login response: %1$s", gnResponseString));
             if (!gnResponseString.contains("<ok />")) {
                 throw new PortalServiceException("Geonetwork login failed");

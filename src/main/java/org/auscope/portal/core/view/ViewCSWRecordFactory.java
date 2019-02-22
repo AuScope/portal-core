@@ -92,6 +92,27 @@ public class ViewCSWRecordFactory {
             }
         }
         obj.put("constraints", constraints);
+        
+        //added use limit constraints
+        
+        List<String> useLimitConstraints = new ArrayList<>();
+        if (record.getUseLimitConstraints() != null) {
+            for (String s : record.getUseLimitConstraints()) {
+            	useLimitConstraints.add(s);
+            }
+        }
+        obj.put("useLimitConstraints", useLimitConstraints);
+
+        //added access constraints
+        
+        List<String> accessConstraints = new ArrayList<>();
+        if (record.getAccessConstraints() != null) {
+            for (String s : record.getAccessConstraints()) {
+            	accessConstraints.add(s);
+            }
+        }
+        obj.put("accessConstraints", accessConstraints);
+
 
         List<Map<String, Object>> childRecords = new ArrayList<>();
         if (record.hasChildRecords()) {
@@ -109,6 +130,9 @@ public class ViewCSWRecordFactory {
         }
         obj.put("date", dateString);
 
+        obj.put("minScale", record.getMinScale());
+        obj.put("maxScale", record.getMaxScale());
+
         return obj;
     }
 
@@ -124,7 +148,7 @@ public class ViewCSWRecordFactory {
         obj.put("url", res.getLinkage().toString());
         obj.put("type", res.getType().name());
         obj.put("name", res.getName());
-        obj.put("description", res.getDescription().toString());
+        obj.put("description", res.getDescription());
         obj.put("version", res.getVersion());
         obj.put("applicationProfile", res.getApplicationProfile());
         return obj;

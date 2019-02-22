@@ -76,6 +76,13 @@ public interface GetCapabilitiesRecord {
 
     public String getVersion();
 
+    /**
+     * Returns the vendor of the service if known
+     *
+     * @return
+     */
+    public String getApplicationProfile();
+
     // ------------------------------------------------------ Protected Methods
 
 }

@@ -12,6 +12,7 @@
 <!-- patches -->
 <!-- script type="text/javascript" src="portal-core/js/extjs-patches/5.1.0/ExtPatch.js?v=${buildTimestamp}"></script-->
 <script type="text/javascript" src="portal-core/js/openlayers-patches/2.13.1/OpenLayers_patch.js?v=${buildTimestamp}"></script>
+<script src="portal-core/js/extjs-patches/5.1.1/ExtPatch.js?v=${buildTimestamp}" type="text/javascript"></script>
 
 <link rel="stylesheet" href="portal-core/js/extjs-ux-externals/form/plugin/FieldHelpText.css">
 <script src="portal-core/js/extjs-ux-externals/form/plugin/FieldHelpText.js?v=${buildTimestamp}" type="text/javascript"></script>
@@ -87,6 +88,7 @@
 <script src="portal-core/js/portal/layer/legend/Legend.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/layer/legend/wfs/WFSLegend.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/layer/legend/wms/WMSLegend.js?v=${buildTimestamp}" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/legend/csw/CSWLegend.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/layer/legend/wms/WMSLegendForm.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/layer/querier/BaseComponent.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/layer/querier/Querier.js?v=${buildTimestamp}" type="text/javascript"></script>
@@ -107,7 +109,6 @@
 <script src="portal-core/js/portal/layer/querier/wms/WMSQuerier.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/layer/querier/wms/WMSXMLFormatQuerier.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/layer/querier/coverage/WCSQuerier.js?v=${buildTimestamp}" type="text/javascript"></script>
-<script src="portal-core/js/portal/layer/querier/wms/GeotransectQuerier.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/layer/querier/wms/WMSMultipleTabDisplayQuerier.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/layer/renderer/RenderDebuggerData.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/layer/renderer/Renderer.js?v=${buildTimestamp}" type="text/javascript"></script>
@@ -158,6 +159,7 @@
 <script src="portal-core/js/portal/widgets/panel/OnlineResourcesPanel.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/widgets/plugins/ClickableImage.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/widgets/plugins/CollapsedAccordianLayout.js?v=${buildTimestamp}" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/plugins/HeaderIcons.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/widgets/tab/ActivePreRenderTabPanel.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/widgets/window/CSWRecordConstraintsWindow.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/widgets/window/CSWSelectionWindow.js?v=${buildTimestamp}" type="text/javascript"></script>

@@ -86,6 +86,7 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
         this.store.on({
             update: this.onStoreUpdate,
             load: this.onStoreLoad,
+            clear: this.onStoreLoad, //The load handler will perform a full clear for us
             beforeload: this.onStoreBeforeLoad,
             filterchange: this.onStoreFilterChange,
             add: this.onStoreAdd,
@@ -107,6 +108,11 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
                 }
             });
         }
+        
+        this.on({
+            show: this.onComponentShow,
+            scope: this
+        });
 
         //If our store is already loaded - fill panel with existing contents
         if (this.store.getCount()) {
@@ -510,7 +516,8 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
     },
     
     /**
-     * Updates the empty text hidden/visible status depending on whether any records are showing.
+     * Updates the empty text hidden/visible status depending on whether any records are showing. Will
+     * ALWAYS show empty text if this component is hidden.
      */
     _updateEmptyText: function() {
         var visibleItems = 0;
@@ -532,6 +539,13 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
         this.down('#emptytext').setHidden(visibleItems !== 0);
     },
 
+    onComponentShow: function(recordPanel) {
+        //Update our empty text visibility if the component is shown. Empty text visibility
+        //does NOT properly work when the component is hidden hence we are forced to check this
+        //every time the component is returned from hiding - See AUS-2811
+        this._updateEmptyText();
+    },
+    
     /**
      * Handle updating renderers/tips for the modified fields
      */
@@ -619,9 +633,10 @@ Ext.define('portal.widgets.panel.recordpanel.RecordPanel', {
     },
 
     /**
-     * When we receive a new set of records, update all items in the display
+     * When we receive a new set of records, update all items in the display from the
+     * specified store. Any existing displaying records will be cleared first.
      */
-    onStoreLoad: function(store, records, successful) {
+    onStoreLoad: function(store) {
         if (this.loadMask) {
             this.loadMask.hide();
         }

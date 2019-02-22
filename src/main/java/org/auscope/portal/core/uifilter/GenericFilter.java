@@ -73,6 +73,21 @@ public abstract class GenericFilter extends AbstractFilter {
 
     }
 
+    private String parsePolygonBBox(JSONObject obj){   	
+        if(Predicate.valueOf(obj.getString("predicate")) == (Predicate.ISEQUAL)){
+        	String polygonString = "<ogc:Intersects>" +
+        	"<ogc:PropertyName>" +
+        	obj.getString("xpath") +
+        	"</ogc:PropertyName>" +
+        	"<Literal>" +
+        	obj.getString("value") +
+        	"</Literal>" +
+        	"</ogc:Intersects>";        	
+            return polygonString;
+        }else throw new UnsupportedOperationException("Unable to parse polygonBBox string fragment.");
+
+    }
+    
     public List<String> generateParameterFragments(){
         List<String> results=new ArrayList<String>();
         final String unInitializedXPathFiltersMessage = "xPathFilters has not been properly initialized. Make sure you have initialized via the constructor.";
@@ -84,7 +99,7 @@ public abstract class GenericFilter extends AbstractFilter {
         JSONArray jArray = (JSONArray) JSONSerializer.toJSON("["+this.getxPathFilters()+"]");
 
         if(jArray.isEmpty()){
-            throw new IllegalStateException(unInitializedXPathFiltersMessage);
+            return results;
         }
 
         if(jArray.isArray()){
@@ -93,6 +108,8 @@ public abstract class GenericFilter extends AbstractFilter {
                     JSONObject jobj=(JSONObject)jArray.get(i);
                     if(jobj.getString("type").equals("OPTIONAL.DATE")){
                         results.add(parseDateType(jobj));
+                    }else if (jobj.getString("type").equals("OPTIONAL.POLYGONBBOX")) {
+                    	results.add(parsePolygonBBox(jobj));                    	
                     }else if(jobj.getString("type").contains("OPTIONAL") && !jobj.getString("type").equals("OPTIONAL.PROVIDER")){
                         results.add(parseTextType(jobj));
                     }
@@ -106,7 +123,7 @@ public abstract class GenericFilter extends AbstractFilter {
     }
 
 
-    @Override
+    
     public String getFilterStringAllRecords() {
         return this.generateFilter(this.generateFilterFragment());
     }

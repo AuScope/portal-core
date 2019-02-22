@@ -2,7 +2,9 @@ package org.auscope.portal.core.services.methodmakers;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.List;
 
+import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord;
 
@@ -16,7 +18,7 @@ public interface WMSMethodMakerInterface {
 
     /**
      * Generates a WMS method for making a GetCapabilities request
-     * 
+     *
      * @param wmsUrl
      *            The WMS endpoint (will have any existing query parameters preserved)
      * @return
@@ -29,17 +31,17 @@ public interface WMSMethodMakerInterface {
     /**
      * Test whether wms 1.3.0 is accepted. Not sure if there is a better way of testing though.
      * @param wmsUrl
-     *             The WMS endpoint 
+     *             The WMS endpoint
      * @param version
-     *             If supplied will return 'true' iff this version is supported 
+     *             If supplied will return 'true' iff this version is supported
      * @param errStr
      *             Contains an error message iff returns false
      * @return
      *             Returns true iff WMS URL and its response can be accepted
      */
     public boolean accepts(String wmsUrl, String version, StringBuilder errStr );
-    
-    /** 
+
+    /**
      * Same as accepts() above, but included for backward compatibility.
      * Does not return an error message, only true/false.
      *
@@ -54,7 +56,7 @@ public interface WMSMethodMakerInterface {
 
     /**
      * Generates a WMS request for downloading part of a map layer as an image
-     * 
+     *
      * @param wmsUrl
      *            The WMS endpoint (will have any existing query parameters preserved)
      * @param layer
@@ -88,7 +90,7 @@ public interface WMSMethodMakerInterface {
 
     /**
      * Returns a method for requesting a legend/key image for a particular layer
-     * 
+     *
      * @param wmsUrl
      *            The WMS endpoint (will have any existing query parameters preserved)
      * @param layerName
@@ -107,7 +109,7 @@ public interface WMSMethodMakerInterface {
 
     /**
      * Generates a WMS request for downloading information about a user click on a particular GetMap request.
-     * 
+     *
      * @param wmsUrl
      *            The WMS endpoint (will have any existing query parameters preserved)
      * @param format
@@ -148,9 +150,11 @@ public interface WMSMethodMakerInterface {
             int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles, String sld,
             String feature_count) throws URISyntaxException;
 
+    HttpRequestBase getFeatureInfo(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles, String sldBody, String feature_count, List<NameValuePair> vendorParams) throws URISyntaxException;
+
     /**
      * Generates a WMS request for downloading information about a user click on a particular GetMap request via the post method.
-     * 
+     *
      * @param wmsUrl
      *            The WMS endpoint (will have any existing query parameters preserved)
      * @param format
@@ -190,5 +194,28 @@ public interface WMSMethodMakerInterface {
             double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude,
             int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles, String sld,
             String feature_count) throws URISyntaxException;
+
+    HttpRequestBase getFeatureInfoPost(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles, String sldBody, String feature_count, List<NameValuePair> vendorParams) throws URISyntaxException;
+
+
+    /**
+     * WMS get map
+     * @throws URISyntaxException
+     * @throws IOException
+     */
+    public HttpRequestBase getMap(String url,String layer,String bbox, String sldBody, String crs) throws URISyntaxException, IOException;
+	
+    /**
+     * WMS get map
+     * @throws URISyntaxException
+     * @throws IOException
+     */
+    public HttpRequestBase getMap(String url,String layer,String bbox, String sldBody, String crs, boolean requstCachedTile) throws URISyntaxException, IOException;
+    /**
+     * get style
+     * @throws URISyntaxException
+     * @throws IOException
+     */
+    public String getStyle(String sldUrl) throws URISyntaxException, IOException;
 
 }

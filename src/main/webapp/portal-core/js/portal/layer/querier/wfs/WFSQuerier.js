@@ -47,6 +47,7 @@ Ext.define('portal.layer.querier.wfs.WFSQuerier', {
         var layer = queryTarget.get('layer');
         var typeName = onlineResource.get('name');
         var wfsUrl = onlineResource.get('url');
+        var applicationProfile = queryTarget.get('onlineResource').get('applicationProfile');
 
         //we need to get a reference to the parent known layer (if it is a known layer)
         var knownLayer = null;
@@ -64,7 +65,7 @@ Ext.define('portal.layer.querier.wfs.WFSQuerier', {
 
             //Parse our response into a number of GUI components, pass those along to the callback
             var allComponents = [];
-            allComponents.push(me.parser.parseNode(wfsResponseRoot, onlineResource.get('url')));
+            allComponents.push(me.parser.parseNode(wfsResponseRoot, onlineResource.get('url'), applicationProfile));
             if (knownLayer && me.knownLayerParser.canParseKnownLayerFeature(queryTarget.get('id'), knownLayer, onlineResource, layer)) {
                 var knownLayerFeature = me.knownLayerParser.parseKnownLayerFeature(queryTarget.get('id'), knownLayer, onlineResource, layer);
                 if(knownLayerFeature){

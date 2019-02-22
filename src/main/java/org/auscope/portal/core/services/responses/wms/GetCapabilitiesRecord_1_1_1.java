@@ -11,10 +11,7 @@ import javax.xml.xpath.XPathExpressionException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.util.DOMUtil;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 /**
@@ -38,6 +35,11 @@ public class GetCapabilitiesRecord_1_1_1 implements GetCapabilitiesRecord {
 
     /** The metadata url. */
     private String metadataUrl = "";
+
+    /**
+     * The vendor of the service
+     */
+    private String applicationProfile = "";
 
     private String[] getMapFormats = new String[] {};
 
@@ -64,6 +66,8 @@ public class GetCapabilitiesRecord_1_1_1 implements GetCapabilitiesRecord {
     /** The MetadataURL expression. */
     private static final String METADATAURLREXPRESSION = "/WMS_Capabilities/Capability/Layer/MetadataURL/OnlineResource";
 
+
+
     /**
      * Constructor.
      *
@@ -82,6 +86,7 @@ public class GetCapabilitiesRecord_1_1_1 implements GetCapabilitiesRecord {
             this.getMapUrl = getGetMapUrl(doc);
             this.metadataUrl = getMetadataUrl(doc);
             this.layerSRS = getWMSLayerSRS(doc);
+            this.applicationProfile = getApplicationProfile(doc);
             this.getMapFormats = getWMSGetMapFormats(doc);
             if (isWMS()) {
                 this.layers = getWMSLayers(doc);
@@ -196,6 +201,11 @@ public class GetCapabilitiesRecord_1_1_1 implements GetCapabilitiesRecord {
     @Override
     public String[] getGetMapFormats() {
         return getMapFormats;
+    }
+
+
+    public String getApplicationProfile() {
+        return this.applicationProfile;
     }
 
     // ------------------------------------------------------ Protected Methods
@@ -377,8 +387,41 @@ public class GetCapabilitiesRecord_1_1_1 implements GetCapabilitiesRecord {
         return formatList;
     }
 
+    /**
+     * Parses the GetCapabilities document to determine the vendor of the service if possible
+     *
+     * @param doc The GetCapabilities document
+     * @return The vendor name as an applicationProfile
+     */
+    private String getApplicationProfile(Document doc) {
+        Node root = doc.getDocumentElement();
+        NamedNodeMap attributes = root.getAttributes();
+        if (attributes == null) {
+            return "OSGeo:GeoServer";
+        }
+        for (int i =0 ; i < attributes.getLength(); i++) {
+            Node attribute = attributes.item(i);
+            if (attribute.getNodeType() == Node.ATTRIBUTE_NODE) {
+                String nameSpace = attribute.getNodeValue();
+                switch(nameSpace) {
+                    case "http://www.esri.com/wms":
+                        return "Esri:ArcGIS Server";
+                    case "http://mapserver.gis.umn.edu/mapserver":
+                        return "OSGeo:MapServer";
+                    default:
+                        return "OSGeo:GeoServer";
+
+                }
+
+            }
+        }
+        return "OSGeo:GeoServer";
+    }
+
     @Override
     public String getVersion() {
         return "1.1.1";
     }
+
+
 }

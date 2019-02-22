@@ -4,7 +4,7 @@
     <groupId>org.auscope.portal</groupId>
     <artifactId>portal-core</artifactId>
     <packaging>jar</packaging>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>2.1.0-SNAPSHOT</version>
     <name>Portal-Core</name>
     <description>Core functionality common to various AuScope portals.</description>
     <url>http://portal.auscope.org</url>
@@ -24,11 +24,15 @@
     <distributionManagement>
         <repository>
             <id>deployment</id>
-            <name>Internal nexus</name>
-            <url>https://cgsrv8.arrc.csiro.au/nexus/content/repositories/PortalRelease/</url>
+            <name>cgmaven release</name>
+            <url>https://cgmaven.it.csiro.au/nexus/repository/PortalRelease/</url>
         </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>cgmaven snapshots</name>
+            <url>https://cgmaven.it.csiro.au/nexus/repository/PortalSnapshot/</url>
+        </snapshotRepository>
     </distributionManagement>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -104,9 +108,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.18.1</version>
                 <configuration>
-                    <parallel>methods</parallel>
-                    <threadCount>10</threadCount>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                    <argLine>-Dfile.encoding=UTF-8</argLine>
                 </configuration>
             </plugin>
             <plugin>
@@ -147,6 +150,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.0</version>
                 <executions>
                     <execution>
                         <goals>
@@ -273,7 +277,7 @@
                             </goals>
                         </pluginExecutionFilter>
                         <action>
-                            <ignore />
+                            <ignore/>
                         </action>
                     </pluginExecution>
                 </pluginExecutions>
@@ -311,10 +315,12 @@
         </repository>
         <!-- This is for AuScope specific builds of packages that arent in Maven central -->
         <repository>
-            <id>cgsrv8.arrc.csiro.au</id>
-            <name>AuScope Nexus - PortalRepo</name>
-            <url>http://cgsrv8.arrc.csiro.au/nexus/content/groups/PortalRepository/</url>
+            <id>cgmaven.it.csiro.au</id>
+            <name>AuScope Nexus - New PortalRepo</name>
+            <url>https://cgmaven.it.csiro.au/nexus/repository/PortalRepository/</url>
         </repository>
+        <!-- This is for AuScope specific snapshot builds of packages that arent in Maven central -->
+        
     </repositories>
     <!-- Dependencies -->
     <dependencies>
@@ -331,7 +337,7 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk</artifactId>
-            <version>1.10.48</version>
+            <version>1.11.396</version>
         </dependency>
         <dependency>
             <groupId>taglibs</groupId>
@@ -341,7 +347,7 @@
         <dependency>
             <groupId>xerces</groupId>
             <artifactId>xercesImpl</artifactId>
-            <version>2.11.0</version>
+            <version>2.12.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -390,8 +396,8 @@
         </dependency>
         <dependency>
             <groupId>net.sf.saxon</groupId>
-            <artifactId>saxon-xom</artifactId>
-            <version>8.7</version>
+            <artifactId>Saxon-HE</artifactId>
+            <version>9.7.0-18</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -475,19 +481,8 @@
         <dependency>
             <groupId>edu.ucar</groupId>
             <artifactId>netcdf</artifactId>
-            <version>4.2</version>
-            <optional>false</optional>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.saxon</groupId>
-            <artifactId>saxon-xpath</artifactId>
-            <version>8.7</version>
-            <optional>false</optional>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.saxon</groupId>
-            <artifactId>saxon-dom</artifactId>
-            <version>8.7</version>
+            <version>4.3.16</version>
+        <!--     <version>4.3.22</version>  -->
             <optional>false</optional>
         </dependency>
         <dependency>
@@ -514,7 +509,7 @@
         <dependency>
           <groupId>org.apache.jena</groupId>
           <artifactId>jena-arq</artifactId>
-          <version>2.9.4</version>
+          <version>3.9.0</version>
           <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -537,5 +532,10 @@
             <artifactId>commons-csv</artifactId>
             <version>1.1</version>
         </dependency>
+        <dependency>
+	        <groupId>com.esotericsoftware</groupId>
+	        <artifactId>kryo</artifactId>
+	        <version>4.0.1</version>
+	    </dependency>
     </dependencies>
 </project>

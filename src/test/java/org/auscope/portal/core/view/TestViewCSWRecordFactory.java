@@ -47,6 +47,12 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         final String dataSetURI2 = "ds2";
         final String constraint1 = "c1";
         final String constraint2 = "c2";
+        //added code for use limitation and access constraints
+        final String uselimitation1 = "use1";
+        final String uselimitation2 = "use2";
+        final String accessconstraint1 = "acess1";
+        final String accessconstraint2 = "acess2";
+        
         final String version = "1.1.1";
 
         final URL orUrl = new URL("http://hah.com");
@@ -59,6 +65,9 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         final double bboxSouth = 5;
         final double bboxEast = 7;
         final double bboxWest = 6;
+
+        final double minScale = 0;
+        final double maxScale = 10000;
 
         //The ModelMap expectation objects for a parent CSWRecord object (mockCSWRecord)
         final ModelMap expectation = new ModelMap();
@@ -78,10 +87,15 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         expectation.put("descriptiveKeywords", Arrays.asList(descriptiveKeyword1, descriptiveKeyword2));
         expectation.put("datasetURIs", Arrays.asList(dataSetURI1, dataSetURI2));
         expectation.put("constraints", Arrays.asList(constraint1, constraint2));
+        expectation.put("useLimitConstraints", Arrays.asList(uselimitation1, uselimitation2));
+        expectation.put("accessConstraints", Arrays.asList(accessconstraint1, accessconstraint2));
         expectation.put("childRecords", Arrays.asList(childRecordExpectation));
         expectation.put("noCache", false);
         expectation.put("date", "1970-01-01T00:00:00 UTC");
+        expectation.put("minScale", minScale);
+        expectation.put("maxScale", maxScale);
         expectation.put("service", false);
+
 
         onlineResExpectation.put("url", orUrl.toString());
         onlineResExpectation.put("name", orName);
@@ -109,6 +123,11 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         final String dataSetURI2_1 = "ds2_1";
         final String constraint1_1 = "c1_1";
         final String constraint2_1 = "c2_1";
+      //added code for use limitation and access constraints
+        final String uselimitation1_1 = "use1_1";
+        final String uselimitation2_1 = "use2_1";
+        final String accessconstraint1_1 = "acess1_1";
+        final String accessconstraint2_1 = "acess2_1";
 
         final URL orUrl_1 = new URL("http://hah_1.com");
         final String orName_1 = "ascom_1";
@@ -130,9 +149,13 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         childRecordExpectation.put("descriptiveKeywords", Arrays.asList(descriptiveKeyword1_1, descriptiveKeyword2_1));
         childRecordExpectation.put("datasetURIs", Arrays.asList(dataSetURI1_1, dataSetURI2_1));
         childRecordExpectation.put("constraints", Arrays.asList(constraint1_1, constraint2_1));
+        childRecordExpectation.put("useLimitConstraints", Arrays.asList(uselimitation1_1, uselimitation2_1));
+        childRecordExpectation.put("accessConstraints", Arrays.asList(accessconstraint1_1, accessconstraint2_1));
         childRecordExpectation.put("childRecords", Arrays.asList());
         childRecordExpectation.put("noCache", false);
         childRecordExpectation.put("date", "");
+        childRecordExpectation.put("minScale", null);
+        childRecordExpectation.put("maxScale", null);
         childRecordExpectation.put("service", false);
 
         onlineResExpectation_1.put("url", orUrl_1.toString());
@@ -167,13 +190,21 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 allowing(mockCSWRecord).getDataSetURIs();
                 will(returnValue(new String[] {dataSetURI1, dataSetURI2}));
                 allowing(mockCSWRecord).getConstraints();
-                will(returnValue(new String[] {constraint1, constraint2}));
+                will(returnValue(new String[] {constraint1, constraint2}));                
+                allowing(mockCSWRecord).getUseLimitConstraints();
+                will(returnValue(new String[] {uselimitation1, uselimitation2}));                
+                allowing(mockCSWRecord).getAccessConstraints();
+                will(returnValue(new String[] {accessconstraint1, accessconstraint2}));                
                 allowing(mockCSWRecord).hasChildRecords();
                 will(returnValue(true));
                 allowing(mockCSWRecord).getChildRecords();
                 will(returnValue(new CSWRecord[] {mockCSWChildRecord1}));
                 allowing(mockCSWRecord).getDate();
                 will(returnValue(new Date(0L)));
+                allowing(mockCSWRecord).getMaxScale();
+                will(returnValue(maxScale));
+                allowing(mockCSWRecord).getMinScale();
+                will(returnValue(minScale));
                 allowing(mockCSWRecord).isService();
                 will(returnValue(false));
 
@@ -200,10 +231,18 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 allowing(mockCSWChildRecord1).getDataSetURIs();
                 will(returnValue(new String[] {dataSetURI1_1, dataSetURI2_1}));
                 allowing(mockCSWChildRecord1).getConstraints();
-                will(returnValue(new String[] {constraint1_1, constraint2_1}));
+                will(returnValue(new String[] {constraint1_1, constraint2_1}));                
+                allowing(mockCSWChildRecord1).getUseLimitConstraints();
+                will(returnValue(new String[] {uselimitation1_1, uselimitation2_1}));                
+                allowing(mockCSWChildRecord1).getAccessConstraints();
+                will(returnValue(new String[] {accessconstraint1_1, accessconstraint2_1}));                
                 allowing(mockCSWChildRecord1).hasChildRecords();
                 will(returnValue(false));
                 allowing(mockCSWChildRecord1).getDate();
+                will(returnValue(null));
+                allowing(mockCSWChildRecord1).getMaxScale();
+                will(returnValue(null));
+                allowing(mockCSWChildRecord1).getMinScale();
                 will(returnValue(null));
                 allowing(mockCSWChildRecord1).isService();
                 will(returnValue(false));
@@ -272,6 +311,11 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         final String descriptiveKeyword2 = "kw1";
         final String constraint1 = "c1";
         final String constraint2 = "c2";
+        //added code for use limitation and access constraints
+        final String uselimitation1 = "use1";
+        final String uselimitation2 = "use2";
+        final String accessconstraint1 = "acess1";
+        final String accessconstraint2 = "acess2";
 
         final URL orUrl = null;
         final String orName = "ascom";
@@ -283,6 +327,9 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         final double bboxSouth = 5;
         final double bboxEast = 7;
         final double bboxWest = 6;
+
+        final double minScale = 0;
+        final double maxScale = 10000;
 
         final ModelMap expectation = new ModelMap();
         final ModelMap geoExpectation = new ModelMap();
@@ -298,9 +345,13 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         expectation.put("geographicElements", Arrays.asList(geoExpectation));
         expectation.put("descriptiveKeywords", Arrays.asList(descriptiveKeyword1, descriptiveKeyword2));
         expectation.put("constraints", Arrays.asList(constraint1, constraint2));
+        expectation.put("useLimitConstraints", Arrays.asList(uselimitation1, uselimitation2));
+        expectation.put("accessConstraints", Arrays.asList(accessconstraint1, accessconstraint2));        
         expectation.put("childRecords", new ArrayList<ModelMap>());
         expectation.put("noCache", false);
         expectation.put("date", "1970-01-01T00:00:00 UTC");
+        expectation.put("minScale", minScale);
+        expectation.put("maxScale", maxScale);
         expectation.put("service", true);
         expectation.put("datasetURIs", new ArrayList<String>());
 
@@ -334,10 +385,18 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 will(returnValue(new String[] {descriptiveKeyword1, descriptiveKeyword2}));
                 allowing(mockCSWRecord).getConstraints();
                 will(returnValue(new String[] {constraint1, constraint2}));
+                allowing(mockCSWRecord).getUseLimitConstraints();
+                will(returnValue(new String[] {uselimitation1, uselimitation2}));                
+                allowing(mockCSWRecord).getAccessConstraints();
+                will(returnValue(new String[] {accessconstraint1, accessconstraint2}));                
                 allowing(mockCSWRecord).hasChildRecords();
                 will(returnValue(false));
                 allowing(mockCSWRecord).getDate();
                 will(returnValue(new Date(0L)));
+                allowing(mockCSWRecord).getMaxScale();
+                will(returnValue(maxScale));
+                allowing(mockCSWRecord).getMinScale();
+                will(returnValue(minScale));
                 allowing(mockCSWRecord).isService();
                 will(returnValue(true));
                 allowing(mockCSWRecord).getDataSetURIs();
@@ -395,6 +454,12 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         final String descriptiveKeyword2 = "kw1";
         final String constraint1 = "c1";
         final String constraint2 = "c2";
+       //added code for use limitation and access constraints
+        final String uselimitation1 = "use1";
+        final String uselimitation2 = "use2";
+        final String accessconstraint1 = "acess1";
+        final String accessconstraint2 = "acess2";        
+        
 
         final URL orUrl = new URL("http://hah.com");
         final String version = "1.3.0";
@@ -407,6 +472,9 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         final double bboxSouth = 5;
         final double bboxEast = 7;
         final double bboxWest = 6;
+
+        final double minScale = 0;
+        final double maxScale = 10000;
 
         final ModelMap expectation = new ModelMap();
         final ModelMap onlineResExpectation = new ModelMap();
@@ -423,9 +491,13 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         expectation.put("geographicElements", Arrays.asList(geoExpectation));
         expectation.put("descriptiveKeywords", Arrays.asList(descriptiveKeyword1, descriptiveKeyword2));
         expectation.put("constraints", Arrays.asList(constraint1, constraint2));
+        expectation.put("useLimitConstraints", Arrays.asList(uselimitation1, uselimitation2));
+        expectation.put("accessConstraints", Arrays.asList(accessconstraint1, accessconstraint2));
         expectation.put("childRecords", new ArrayList<ModelMap>());
         expectation.put("noCache", false);
         expectation.put("date", "1986-10-09T00:00:00 UTC");
+        expectation.put("minScale", minScale);
+        expectation.put("maxScale", maxScale);
         expectation.put("service", false);
         expectation.put("datasetURIs", Arrays.asList("datasetUri1"));
 
@@ -466,10 +538,19 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 will(returnValue(new String[] {descriptiveKeyword1, descriptiveKeyword2}));
                 allowing(mockCSWRecord).getConstraints();
                 will(returnValue(new String[] {constraint1, constraint2}));
+                allowing(mockCSWRecord).getUseLimitConstraints();
+                will(returnValue(new String[] {uselimitation1, uselimitation2}));                
+                allowing(mockCSWRecord).getAccessConstraints();
+                will(returnValue(new String[] {accessconstraint1, accessconstraint2}));                
                 allowing(mockCSWRecord).hasChildRecords();
                 will(returnValue(false));
                 allowing(mockCSWRecord).getDate();
                 will(returnValue(new Date(529200000000L)));
+                allowing(mockCSWRecord).getMaxScale();
+                will(returnValue(maxScale));
+                allowing(mockCSWRecord).getMinScale();
+                will(returnValue(minScale));
+
                 allowing(mockCSWRecord).isService();
                 will(returnValue(false));
                 allowing(mockCSWRecord).getDataSetURIs();

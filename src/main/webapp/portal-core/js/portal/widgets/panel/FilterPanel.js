@@ -17,6 +17,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
     filterForm : null,
     
     constraintShown : false,
+    nagiosAlertShown: false,
     
     optionsButtonIsHidden : false,
     
@@ -171,6 +172,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
                             layout      : 'fit',
                             width       : 200,
                             height      : 300,
+                            modal : true,
                             items: form
                         });
                         return win.show();
@@ -256,6 +258,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
             handler : function(){
                 var layer = me.filterForm.layer; 
                 ActiveLayerManager.removeLayer(layer);
+                me.menuFactory.layerRemoveHandler(layer);
             }
         });
         
@@ -306,11 +309,39 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         ActiveLayerManager.addLayer(layer);
         
         this._showConstraintWindow(layer);
+        this._showNagiosAlerts(layer);
+        this.menuFactory.layerAddHandler(layer);
 
         //VT: Tracking
-        portal.util.PiwikAnalytic.trackevent('Add:' + layer.get('sourceType'), 'Layer:' + layer.get('name'),'Filter:' + Ext.encode(filterer.getParameters())); 
+        
+        portal.util.GoogleAnalytic.trackevent('Add:' + layer.get('sourceType'), 'Layer:' + layer.get('name'),'Filter:' + Ext.encode(filterer.getParameters())); 
         
     },   
+    
+    _showNagiosAlerts : function(layer){
+        if(this.nagiosAlertShown){
+            return;
+        }
+        
+        if (layer.get('sourceType') === portal.layer.Layer.KNOWN_LAYER &&
+            layer.get('source').containsNagiosFailures()) {
+            var failingHosts = layer.get('source').get('nagiosFailingHosts');
+            
+            var message = 'Please be aware that some of the services underpinning this layer have recently been reported as being unstable. The unstable hosts will be not be queried. The hosts reported to be experiencing problems are:<br><ul>';
+            Ext.each(failingHosts, function(host) {
+                message += '<li><b>' + host + '</b></li>';
+            });
+            message += '</ul>';
+            
+            Ext.MessageBox.show({
+                title: 'Service Problems',
+                message: message,
+                icon: Ext.Msg.WARNING
+            });
+        }
+        
+        this.nagiosAlertShown = true;
+    },
     
     _showConstraintWindow : function(layer){
         if(this.constraintShown){

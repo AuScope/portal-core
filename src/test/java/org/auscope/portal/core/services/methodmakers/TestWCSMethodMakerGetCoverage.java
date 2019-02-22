@@ -95,12 +95,12 @@ public class TestWCSMethodMakerGetCoverage extends PortalTestClass {
         Assert.assertTrue(queryString.contains("time=thetimeis"));
     }
 
-    private void runOptionTest(String notToContain, String mustContain, String serviceURL, String layerName,
+    private void runOptionTest(String notToContain, String mustContain, String serviceUrl, String layerName,
             String format, String outputCrs, Dimension outputSize,
             Resolution outputResolution, String inputCrs, CSWGeographicBoundingBox bbox, TimeConstraint timeConstraint,
             Map<String, String> customParams) throws URISyntaxException {
 
-        HttpRequestBase method = methodMaker.getCoverageMethod(serviceURL, layerName, format, outputCrs, outputSize,
+        HttpRequestBase method = methodMaker.getCoverageMethod(serviceUrl, layerName, format, outputCrs, outputSize,
                 outputResolution, inputCrs, bbox, timeConstraint, customParams);
         Assert.assertNotNull(method);
 

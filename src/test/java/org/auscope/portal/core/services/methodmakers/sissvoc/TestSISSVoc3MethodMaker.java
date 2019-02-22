@@ -4,6 +4,7 @@ import java.net.URISyntaxException;
 
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.services.methodmakers.sissvoc.SISSVoc3MethodMaker.Format;
+import org.auscope.portal.core.services.methodmakers.sissvoc.SISSVoc3MethodMaker.View;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,15 +19,19 @@ public class TestSISSVoc3MethodMaker extends PortalTestClass {
     }
 
     /**
-     * Tests that the optional params for various methods don't generate exceptions
-     * @throws URISyntaxException 
+     * Tests that the optional params for various methods don't generate
+     * exceptions
+     * 
+     * @throws URISyntaxException
      */
     @Test
-    public void testOptionalParamErrors() throws URISyntaxException  {
+    public void testOptionalParamErrors() throws URISyntaxException {
         final String url = "http://example.org/vocab";
         final String repository = "repo";
+        final String schemeUrl = "http://example.org/classifier/repository/vocabulary-scheme";
 
         Assert.assertNotNull(mm.getAllConcepts(url, repository, null, null, null));
+        Assert.assertNotNull(mm.getAllConceptsInScheme(url, repository, schemeUrl, null, null, null, null));
         Assert.assertNotNull(mm.getConceptsWithLabel(url, repository, "label", null, null, null));
         Assert.assertNotNull(mm.getResourceByUri(url, repository, "uri", null));
         Assert.assertNotNull(mm.getBroaderConcepts(url, repository, "uri", null, null, null));
@@ -35,12 +40,14 @@ public class TestSISSVoc3MethodMaker extends PortalTestClass {
 
     /**
      * Ensures getAllConcepts encodes the method correctly
-     * @throws URISyntaxException 
+     * 
+     * @throws URISyntaxException
      */
     @Test
-    public void testGetAllConcepts() throws URISyntaxException  {
+    public void testGetAllConcepts() throws URISyntaxException {
         final String url = "http://sissvoc.example.org./";
         final String repository = "repo";
+
         final Format format = Format.Html;
         final Integer pageSize = 23;
         final Integer page = 2;
@@ -55,11 +62,39 @@ public class TestSISSVoc3MethodMaker extends PortalTestClass {
     }
 
     /**
-     * Ensures getAllConcepts encodes the method correctly
-     * @throws URISyntaxException 
+     * Ensures getAllConceptsInScheme encodes the method correctly
+     * 
+     * @throws URISyntaxException
      */
     @Test
-    public void testGetConceptsWithLabel() throws URISyntaxException  {
+    public void testGetAllConceptsInScheme() throws URISyntaxException {
+        final String url = "http://sissvoc.example.org./";
+        final String repository = "repo";
+        final String schemeUrl = "http://example.org/classifier/repository/vocabulary-scheme";
+
+        final Format format = Format.Html;
+        final View view = View.basic;
+        final Integer pageSize = 23;
+        final Integer page = 2;
+
+        HttpRequestBase method = mm.getAllConceptsInScheme(url, repository, schemeUrl, format, view, pageSize, page);
+
+        String queryString = method.getURI().getQuery();
+        String path = method.getURI().getPath();
+
+        Assert.assertEquals("/repo/concept.html", path);
+        Assert.assertTrue(queryString.contains(String.format("_page=%1$s", page)));
+        Assert.assertTrue(queryString.contains(String.format("_pageSize=%1$s", pageSize)));
+        Assert.assertTrue(queryString.contains(String.format("_view=%1$s", view.name())));
+    }
+
+    /**
+     * Ensures getAllConcepts encodes the method correctly
+     * 
+     * @throws URISyntaxException
+     */
+    @Test
+    public void testGetConceptsWithLabel() throws URISyntaxException {
         final String url = "http://sissvoc.example.org./";
         final String repository = "repo";
         final String label = "label";
@@ -79,7 +114,8 @@ public class TestSISSVoc3MethodMaker extends PortalTestClass {
 
     /**
      * Ensures getResourceByUri encodes the method correctly
-     * @throws URISyntaxException 
+     * 
+     * @throws URISyntaxException
      */
     @Test
     public void testGetConceptsByUri() throws URISyntaxException {
@@ -98,7 +134,8 @@ public class TestSISSVoc3MethodMaker extends PortalTestClass {
 
     /**
      * Ensures getBroaderConcepts encodes the method correctly
-     * @throws URISyntaxException 
+     * 
+     * @throws URISyntaxException
      */
     @Test
     public void testGetBroaderConcepts() throws URISyntaxException {
@@ -121,7 +158,8 @@ public class TestSISSVoc3MethodMaker extends PortalTestClass {
 
     /**
      * Ensures testGetNarrowerConcepts encodes the method correctly
-     * @throws URISyntaxException 
+     * 
+     * @throws URISyntaxException
      */
     @Test
     public void testGetNarrowerConcepts() throws URISyntaxException {

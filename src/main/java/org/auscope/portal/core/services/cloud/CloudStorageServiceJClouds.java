@@ -224,7 +224,7 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
             try (STSApi api = builder.buildApi(STSApi.class)) {
                 AssumeRoleOptions assumeRoleOptions = new AssumeRoleOptions().durationSeconds(3600)
                         .externalId(clientSecret);
-                final UserAndSessionCredentials credentials = api.assumeRole(arn, "anvgl", assumeRoleOptions);
+                final UserAndSessionCredentials credentials = api.assumeRole(arn, "vgl", assumeRoleOptions);
 
                 Supplier<Credentials> credentialsSupplier = new Supplier<Credentials>() {
                     @Override
@@ -454,6 +454,38 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
         }
     }
 
+    @Override
+    public void uploadJobFile(CloudFileOwner job, String fileName, InputStream data) throws PortalServiceException {
+        String arn = job.getProperty(CloudJob.PROPERTY_STS_ARN);
+        String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
+
+        try {
+            BlobStore bs = getBlobStore(arn, clientSecret);
+            String bucketName = getBucket(job);
+            bs.createContainerInLocation(null, bucketName);
+
+            Blob newBlob = bs.blobBuilder(keyForJobFile(job, fileName))
+                    .payload(data)
+                    .build();
+            bs.putBlob(bucketName, newBlob);
+
+            log.debug(fileName + " uploaded to '" + bucketName + "' container");
+
+        } catch (AuthorizationException ex) {
+            log.error("Storage credentials are not valid for job: " + job, ex);
+            throw new PortalServiceException("Storage credentials are not valid.",
+                    "Please provide valid storage credentials.");
+        } catch (KeyNotFoundException ex) {
+            log.error("Storage container does not exist for job: " + job, ex);
+            throw new PortalServiceException("Storage container does not exist.",
+                    "Please provide a valid storage container.");
+        } catch (Exception ex) {
+            log.error("Unable to upload files for job: " + job, ex);
+            throw new PortalServiceException("An unexpected error has occurred while uploading file(s) to storage.",
+                    "Please report it to " + getAdminEmail()+".");
+        }
+    }
+
     /**
      * Deletes all files including the container or directory for the specified job
      *
@@ -467,7 +499,10 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
         String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
         try {
             BlobStore bs = getBlobStore(arn, clientSecret);
-            bs.deleteDirectory(getBucket(job), jobToBaseKey(job));
+            String bucket = getBucket(job);
+            String baseKey = jobToBaseKey(job);
+            if(bs.blobExists(bucket, baseKey))
+                bs.deleteDirectory(bucket, baseKey);
         } catch (Exception ex) {
             log.error("Error in removing job files or storage key.", ex);
             throw new PortalServiceException(

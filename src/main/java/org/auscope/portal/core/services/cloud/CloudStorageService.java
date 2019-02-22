@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.auscope.portal.core.services.cloud;
 
@@ -29,6 +29,8 @@ public abstract class CloudStorageService {
     abstract public void deleteJobFiles(CloudFileOwner job) throws PortalServiceException;
 
     abstract public void uploadJobFiles(CloudFileOwner curJob, File[] files) throws PortalServiceException;
+
+    abstract public void uploadJobFile(CloudFileOwner curJob, String fileName, InputStream data) throws PortalServiceException;
 
     abstract public CloudFileInformation getJobFileMetadata(CloudFileOwner job, String fileName) throws PortalServiceException;
 
@@ -77,7 +79,7 @@ public abstract class CloudStorageService {
     public String getSecretKey() {
         return secretKey;
     }
-    
+
     /**
      * @param secretKey the secretKey to set
      */
@@ -138,7 +140,7 @@ public abstract class CloudStorageService {
         this.endpoint = endpoint;
         this.provider = provider;
         this.regionName= regionName;
-        
+
         try {
             this.jobPrefix = "job-" + InetAddress.getLocalHost().getHostName() + "-";
         } catch (UnknownHostException e) {
@@ -223,7 +225,7 @@ public abstract class CloudStorageService {
 
     /**
      * Utility for accessing the correct bucket based on owner's configuration
-     * 
+     *
      * @param owner
      * @return
      */
@@ -300,8 +302,13 @@ public abstract class CloudStorageService {
      * @param s
      * @return
      */
-    private static String sanitise(String s) {
-        return s.replaceAll("[^a-zA-Z0-9_\\-]", "_");
+    private static String sanitise(String s, boolean allowDot) {
+        if (allowDot) {
+            return s.replaceAll("[^a-zA-Z0-9_\\-\\.]", "_");
+        } else {
+            return s.replaceAll("[^a-zA-Z0-9_\\-]", "_");
+        }
+
     }
 
     /**
@@ -313,7 +320,7 @@ public abstract class CloudStorageService {
      */
     public String generateBaseKey(CloudFileOwner job) {
         String baseKey = String.format("%1$s%2$s-%3$010d", jobPrefix, job.getUser(), job.getId());
-        return sanitise(baseKey);
+        return sanitise(baseKey, false);
     }
 
     /**
@@ -326,7 +333,7 @@ public abstract class CloudStorageService {
      * @return
      */
     public String keyForJobFile(CloudFileOwner job, String key) {
-        return String.format("%1$s/%2$s", jobToBaseKey(job), key);
+        return String.format("%1$s/%2$s", jobToBaseKey(job), sanitise(key, true));
     }
 
     /**

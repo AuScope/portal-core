@@ -1,5 +1,8 @@
 package org.auscope.portal.core.services;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +17,7 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
@@ -24,6 +28,12 @@ import org.auscope.portal.core.services.responses.csw.CSWGetRecordResponse;
 import org.auscope.portal.core.services.responses.csw.CSWOnlineResourceImpl;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.services.responses.csw.CSWRecordTransformerFactory;
+import org.auscope.portal.core.util.FileIOUtil;
+import org.objenesis.strategy.StdInstantiatorStrategy;
+
+import com.esotericsoftware.kryo.Kryo;
+
+
 
 /**
  * A service for creating a cache of all keywords at a CSW.
@@ -64,6 +74,14 @@ public class CSWCacheService {
     protected Map<String, Set<String>> keywordsByRegistry;
     /** A list of records representing the most recent snapshot of all CSW's */
     protected List<CSWRecord> recordCache;
+
+    /**
+     * A cache of records from each csw endpoint, to be used in case of failures.
+     *
+     * Map of endpoint id to csw records.
+     */
+    protected Map<String, Map<String, CSWRecord>> cswRecordCache;
+
     protected HttpServiceCaller serviceCaller;
     protected Executor executor;
     protected CSWServiceItem[] cswServiceList;
@@ -114,6 +132,7 @@ public class CSWCacheService {
         this.keywordCache = new HashMap<>();
         this.keywordsByRegistry = new HashMap<String, Set<String>>();
         this.recordCache = new ArrayList<>();
+        this.cswRecordCache = new HashMap<String, Map<String, CSWRecord>>();
         this.transformerFactory = transformerFactory;
         this.cswServiceList = new CSWServiceItem[cswServiceList.size()];
         for (int i = 0; i < cswServiceList.size(); i++) {
@@ -265,9 +284,17 @@ public class CSWCacheService {
         //Create our worker threads (ensure they are all aware of each other)
         CSWCacheUpdateThread[] updateThreads = new CSWCacheUpdateThread[cswServiceList.length];
         for (int i = 0; i < updateThreads.length; i++) {
-            updateThreads[i] = new CSWCacheUpdateThread(this, updateThreads, cswServiceList[i],
-                    newKeywordCache, newKeywordByEndpointCache, newRecordCache, serviceCaller, connectionAttempts,
-                    timeBtwConnectionAttempts);
+            updateThreads[i] =
+                new CSWCacheUpdateThread(this,
+                                         updateThreads,
+                                         cswServiceList[i],
+                                         newKeywordCache,
+                                         newKeywordByEndpointCache,
+                                         newRecordCache,
+                                         this.cswRecordCache,
+                                         serviceCaller,
+                                         connectionAttempts,
+                                         timeBtwConnectionAttempts);
         }
 
         //Fire off our worker threads, the last one to finish will update the
@@ -343,11 +370,18 @@ public class CSWCacheService {
         private CSWService cswService;
         private int connectionAttempts;
         private long timeBtwConnectionAttempts;
+        private Map<String, Map<String, CSWRecord>> cswRecordsCache;
 
         public CSWCacheUpdateThread(CSWCacheService parent,
-                CSWCacheUpdateThread[] siblings, CSWServiceItem endpoint,
-                Map<String, Set<CSWRecord>> newKeywordCache, Map<String, Set<String>> newKeywordByEndpointCache, List<CSWRecord> newRecordCache,
-                HttpServiceCaller serviceCaller, int connectionAttempts, long timeBtwConnectionAttempts) {
+                                    CSWCacheUpdateThread[] siblings,
+                                    CSWServiceItem endpoint,
+                                    Map<String, Set<CSWRecord>> newKeywordCache,
+                                    Map<String, Set<String>> newKeywordByEndpointCache,
+                                    List<CSWRecord> newRecordCache,
+                                    Map<String, Map<String, CSWRecord>> cswRecordsCache,
+                                    HttpServiceCaller serviceCaller,
+                                    int connectionAttempts,
+                                    long timeBtwConnectionAttempts) {
             super();
             this.parent = parent;
             this.siblings = siblings;
@@ -355,6 +389,7 @@ public class CSWCacheService {
             this.newKeywordCache = newKeywordCache;
             this.newKeywordByEndpointCache = newKeywordByEndpointCache;
             this.newRecordCache = newRecordCache;
+            this.cswRecordsCache = cswRecordsCache;
             this.finishedExecution = false;
             this.connectionAttempts = connectionAttempts;
             this.timeBtwConnectionAttempts = timeBtwConnectionAttempts;
@@ -465,8 +500,125 @@ public class CSWCacheService {
             }
         }
 
+
+
+
+        /*
+         * After retrieving the current set of records from the endpoint, this
+         * will update the application cache.
+         */
+        private void updateAppCache(Map<String, CSWRecord> cswRecordMap) {
+            //After parent/children have been linked, begin the keyword merging and extraction
+            synchronized (newKeywordCache) {
+                synchronized (newRecordCache) {
+                    for (CSWRecord record : cswRecordMap.values()) {
+                        boolean recordMerged = false;
+
+                        // We will merge WMS or WFS records into an existing record if the endpoint urls and
+                        // layer names match. In this case, this record will be discarded after its
+                        // content has been merged.
+
+                        // Loop through the Online Resources of the new record looking for candidates to merge
+                        for (AbstractCSWOnlineResource wXSOnlineRes : record
+                                .getOnlineResourcesByType(OnlineResourceType.WFS, OnlineResourceType.WMS)) {
+
+                            if (StringUtils.isEmpty(record.getLayerName())) break;
+                            
+                            // Skip null or empty urls and layernames
+                            if (wXSOnlineRes.getLinkage() == null
+                                    || StringUtils.isEmpty(wXSOnlineRes.getLinkage().toString()))
+                                continue;
+                            String recURL = wXSOnlineRes.getLinkage().toString();
+                            // trim interface name from url for comparison
+                            recURL = StringUtils.substring(recURL, 0, recURL.lastIndexOf('/'));
+
+                            // loop through existing records
+                            for (CSWRecord existingRec : newRecordCache) {
+                                // loop through online resources of each record
+                                if (StringUtils.isEmpty(existingRec.getLayerName())) continue;
+
+                                String existingRecLayerName = existingRec.getLayerName();
+                                String recLayerName = record.getLayerName();
+ 
+                                // MapServer uses layer names without namespaces in WMS getcaps. So, if either
+                                // the new or existing record's layername doesn't include a namepaces then we
+                                // trim all namespaces for comparison.
+                                if (!existingRecLayerName.contains(":") || !recLayerName.contains(":")) {
+                                    recLayerName = recLayerName.substring(recLayerName.indexOf(':') + 1,
+                                            recLayerName.length());
+                                    existingRecLayerName = existingRecLayerName.substring(
+                                            existingRecLayerName.indexOf(':') + 1, existingRecLayerName.length());
+                                }
+
+                                if (!recLayerName.equals(existingRecLayerName)) continue;
+
+                                for (AbstractCSWOnlineResource existingRes : existingRec
+                                        .getOnlineResourcesByType(OnlineResourceType.WFS, OnlineResourceType.WMS)) {
+                                    // Skip null or empty urls and layernames
+                                    if (existingRes.getLinkage() == null
+                                            || StringUtils.isEmpty(existingRes.getLinkage().toString()))
+                                        continue;
+
+                                    String existingURL = existingRes.getLinkage().toString();
+                                    
+                                    // trim interface name from url for comparison
+                                    existingURL = StringUtils.substring(existingURL, 0, existingURL.lastIndexOf('/'));
+                                    
+                                    // compare Layer Names and URLs
+                                    if (recURL.equals(existingURL)) {
+                                        threadLog.debug("Merging CSW records " + record.getRecordInfoUrl() + " and "
+                                                + existingRec.getRecordInfoUrl());
+                                        mergeRecords(endpoint, existingRec, record, newKeywordCache,
+                                                newKeywordByEndpointCache);
+                                        recordMerged = true;
+                                        break;
+                                    }
+                                }
+                                if (recordMerged == true)
+                                    break;
+                            }
+                            if (recordMerged == true)
+                                break;
+                        }
+
+
+                        //If the record was NOT merged into an existing record we then update the record cache
+                        if (!recordMerged) {
+                            //Update the keyword cache
+                            for (String keyword : record.getDescriptiveKeywords()) {
+                                addToKeywordCache(endpoint, keyword, record, newKeywordCache, newKeywordByEndpointCache);
+                            }
+
+                            //Add record to record list
+                            newRecordCache.add(record);
+                        }
+                    }
+                }
+            }
+        }
+
         @Override
         public void run() {
+
+            // Before querying the endpoint, see if there is a serialised cache of endpoint
+            // saved to disk, deserialise it and retain in memory in case there is a failure.
+            Map<String, CSWRecord> serialisedCSWRecordMap = new HashMap<>();
+            if(new File(FileIOUtil.getTempDirURL() + endpoint.getId() +".ser").exists()) {
+                Kryo kryo = new Kryo();
+                kryo.setInstantiatorStrategy(new Kryo.DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
+                com.esotericsoftware.kryo.io.Input input = null;
+                try {
+                    input = new com.esotericsoftware.kryo.io.Input(new FileInputStream(FileIOUtil.getTempDirURL() + endpoint.getId() + ".ser"));
+                    serialisedCSWRecordMap = kryo.readObject(input, HashMap.class);
+                    input.close();
+                } catch (Exception e) {
+                    threadLog.warn(String.format("Failed deserialising cached registry: %1$s, %2$s", FileIOUtil.getTempDirURL(), endpoint.getId() + ".ser"), e);
+                }
+            } else {
+                threadLog.warn(String.format("No saved registry found on disk on: %1$s, %2$s", FileIOUtil.getTempDirURL(), endpoint.getId() + ".ser"));
+            }
+
+            //Query the endpoint and cache
             try {
                 String cswServiceUrl = this.endpoint.getServiceUrl();
 
@@ -537,55 +689,43 @@ public class CSWCacheService {
                         }
                     }
 
-                    //After parent/children have been linked, begin the keyword merging and extraction
-                    synchronized (newKeywordCache) {
-                        synchronized (newRecordCache) {
-                            for (CSWRecord record : cswRecordMap.values()) {
-                                boolean recordMerged = false;
+                    // Cache the contents for this endpoint so we can use it in
+                    // case of errors later.
+                    synchronized(this.cswRecordsCache) {
+                        this.cswRecordsCache.put(endpoint.getId(), cswRecordMap);
 
-                                //Firstly we may possibly merge this
-                                //record into an existing record IF particular keywords
-                                //are present. In this case, record will be discarded (its contents
-                                //already found their way into an existing record)
-                                //Hence we need to perform this step first
-                                for (String keyword : record.getDescriptiveKeywords()) {
-                                    if (keyword == null || keyword.isEmpty()) {
-                                        continue;
-                                    }
-
-                                    //If we have an 'association keyword', look for existing records
-                                    //to merge this record's contents in to.
-                                    if (keyword.startsWith(KEYWORD_MERGE_PREFIX)) {
-                                        Set<CSWRecord> existingRecs = newKeywordCache.get(keyword);
-                                        if (existingRecs != null && !existingRecs.isEmpty()) {
-                                            mergeRecords(endpoint, existingRecs.iterator().next(), record, newKeywordCache, newKeywordByEndpointCache);
-                                            recordMerged = true;
-                                        }
-                                    }
-                                }
-
-                                //If the record was NOT merged into an existing record we then update the record cache
-                                if (!recordMerged) {
-                                    //Update the keyword cache
-                                    for (String keyword : record.getDescriptiveKeywords()) {
-                                        addToKeywordCache(endpoint, keyword, record, newKeywordCache, newKeywordByEndpointCache);
-                                    }
-
-                                    //Add record to record list
-                                    newRecordCache.add(record);
-                                }
-                            }
+                        // If there are records returned, serialise the cache and saved it to disk
+                        if (cswRecordMap.size() > 0) {
+	                        Kryo kryo = new Kryo();
+	                        com.esotericsoftware.kryo.io.Output output = new com.esotericsoftware.kryo.io.Output(new FileOutputStream( FileIOUtil.getTempDirURL() + endpoint.getId() +".ser"));
+	                        kryo.writeObject(output, cswRecordMap);
+	                        output.close();
+	                        threadLog.info(endpoint.getServiceUrl() + " has been serialized.");
                         }
                     }
-
                 }
             } catch (Exception ex) {
                 threadLog.warn(String.format("Error updating keyword cache for '%1$s': %2$s", this.endpoint.getServiceUrl(),
                         ex));
                 threadLog.warn("Exception: ", ex);
+                threadLog.info("Falling back on cached results for this endpoint.");
             } finally {
+                // Update the cache using the new records, if successfully
+                // retrieved, or the cached version if not.
+                Map<String, CSWRecord> cswRecordMap = this.cswRecordsCache.get(endpoint.getId());
+                if (cswRecordMap != null) {
+                    updateAppCache(cswRecordMap);
+                } else if (serialisedCSWRecordMap != null) {
+                    threadLog.info(String.format("Endpoint failed for CSW %1$s, falling back to saved cached on disk:" + FileIOUtil.getTempDirURL() + endpoint.getId() + ".ser", this.endpoint.getServiceUrl()));
+                    updateAppCache(serialisedCSWRecordMap);
+                } else {
+                    threadLog.warn(String.format("No cached results available for failed CSW %1$s", this.endpoint.getServiceUrl()));
+                }
+
+                // Finish up
                 attemptCleanup();
             }
         }
     }
+    
 }

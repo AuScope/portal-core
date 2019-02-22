@@ -90,6 +90,9 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
 
     /** The title. */
     private String title = null;
+    
+    /** File Identifier */
+    private String fileIdentifier = null;
 
     /** The abstract. */
     private String abstract_ = null;
@@ -99,6 +102,9 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
 
     /** The Author's surname */
     private String authorSurname = null;
+    
+    /** The type of online resource - WFS or WMS */
+    private String onlineResourceType = null;
 
     /** Date on which the record was created or updated within the catalogue. */
     private DateTime modifiedDateFrom = null;
@@ -136,6 +142,8 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     /** The sensor. */
     private String sensor;
 
+    private String alternateIdentifier;
+    
     /** The keyword match type. */
     private KeywordMatchType keywordMatchType;
 
@@ -144,7 +152,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     private SortType sortType;
 
     private String basicSearchTerm;
-
+    
     /**
      * Default constructor for creating a filter in a factory method manner.
      * Create an empty filter and set the fields manually.
@@ -241,6 +249,10 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
             if (title != null && !title.isEmpty()) {
                 fragments.add(this.generatePropertyIsLikeFragment("title", this.title));
             }
+            
+            if (fileIdentifier != null && !fileIdentifier.isEmpty()) {
+                fragments.add(this.generatePropertyIsLikeFragment("identifier", this.fileIdentifier));
+            }
 
             if (titleOrAbstract != null && !titleOrAbstract.isEmpty()) {
                 fragments.add(generateOrComparisonFragment(
@@ -251,6 +263,11 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
             if (authorSurname != null && !authorSurname.isEmpty()) {
                 fragments.add(generateAndComparisonFragment(
                         this.generatePropertyIsLikeFragment("authorSurname", "*" + authorSurname + "*")));
+            }
+            
+            if (onlineResourceType != null && !onlineResourceType.isEmpty()) {
+                fragments.add(generateAndComparisonFragment(
+                        this.generatePropertyIsLikeFragment("onlineResourceType", "OGC:" + onlineResourceType + "*")));
             }
 
             if (publicationDateFrom != null) {
@@ -305,6 +322,10 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
 
             if (sensor != null && !sensor.isEmpty()) {
                 fragments.add(this.generatePropertyIsEqualToFragment("sensor", sensor));
+            }
+            
+            if (alternateIdentifier != null && !alternateIdentifier.isEmpty()) {
+                fragments.add(this.generatePropertyIsEqualToFragment("AlternateIdentifier", alternateIdentifier));
             }
 
             if (temporalExtentFrom != null) {
@@ -439,6 +460,11 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     public String getTitle() {
         return this.title;
     }
+    
+    /** Gets the file identifier. */
+    public String getFileIdentifier() {
+        return this.fileIdentifier;
+    }
 
     /** Gets the abstract. */
     public String getAbstract() {
@@ -468,6 +494,11 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     /** Sets the title. */
     public void setTitle(String title) {
         this.title = title;
+    }
+    
+    /** Sets the file identifier. */
+    public void setFileIdentifier(String fileIdentifier) {
+        this.fileIdentifier = fileIdentifier;
     }
 
     /** Sets the abstract. */
@@ -653,5 +684,21 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
 
     public void setBasicSearchTerm(String basicSearchTerm) {
         this.basicSearchTerm = basicSearchTerm;
+    }
+
+    public String getAlternateIdentifier() {
+        return alternateIdentifier;
+    }
+
+    public void setAlternateIdentifier(String alternateIdentifier) {
+        this.alternateIdentifier = alternateIdentifier;
+    }
+    
+    public String getOnlineResourceType() {
+        return onlineResourceType;
+    }
+    
+    public void setOnlineResourceType(String onlineResourceType) {
+        this.onlineResourceType = onlineResourceType;
     }
 }

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wfs:FeatureCollection numberOfFeatures="2" timeStamp="2010-11-16T08:07:22.597+08:00" xsi:schemaLocation="urn:cgi:xmlns:GGIC:EarthResource:1.1 http://www.earthresourceml.org/earthresourceml/1.1/xsd/earthResource.xsd http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd" xmlns:er="urn:cgi:xmlns:GGIC:EarthResource:1.1" xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gsml="urn:cgi:xmlns:CGI:GeoSciML:2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ows="http://www.opengis.net/ows" xmlns:wfs="http://www.opengis.net/wfs">
+	<gml:featureMembers>
+		<er:MiningFeatureOccurrence gml:id="er.miningfeatureoccurrence.mine.95">
+			<gml:description>PITS EXTEND 3KMS ALONG CREEK</gml:description>
+			<gml:name codeSpace="http://www.ietf.org/rfc/rfc2616">http://services-test.auscope.org/resource/feature/pirsa/miningfeatureoccurrence/mine/95</gml:name>
+			<er:observationMethod>
+				<gsml:CGI_TermValue>
+					<gsml:value codeSpace="urn:cgi:classifierScheme:PIRSA:ObservationMethod">(DISUSED) Map Plot</gsml:value>
+				</gsml:CGI_TermValue>
+			</er:observationMethod>
+			<er:positionalAccuracy>
+				<gsml:CGI_TermValue>
+					<gsml:value codeSpace="http://urn.opengis.net/">urn:ogc:def:nil:OGC::missing</gsml:value>
+				</gsml:CGI_TermValue>
+			</er:positionalAccuracy>
+			<er:specification>
+				<er:Mine gml:id="er.mine.95">
+					<gml:name codeSpace="http://www.ietf.org/rfc/rfc2616">http://services-test.auscope.org/resource/feature/pirsa/mine/95</gml:name>
+					<gml:name codeSpace="http://www.pir.sa.gov.au/minerals">WOOLDRIDGE CREEK WORKINGS</gml:name>
+					<er:occurrence xlink:href="http://services-test.auscope.org/resource/feature/pirsa/miningfeatureoccurrence/mine/95"/>
+					<er:mineName>
+						<er:MineName>
+							<er:isPreferred>true</er:isPreferred>
+							<er:mineName>WOOLDRIDGE CREEK WORKINGS</er:mineName>
+						</er:MineName>
+					</er:mineName>
+					<er:status>abandoned</er:status>
+					<er:relatedActivity>
+						<er:MiningActivity gml:id="er.miningactivity.4">
+							<gml:name codeSpace="http://www.ietf.org/rfc/rfc2616">http://services-test.auscope.org/resource/feature/pirsa/miningactivity/4</gml:name>
+							<er:activityDuration>
+								<gml:TimePeriod>
+									<gml:begin xlink:href="urn:ogc:def:nil:OGC::missing"/>
+									<gml:end xlink:href="urn:ogc:def:nil:OGC::missing"/>
+								</gml:TimePeriod>
+							</er:activityDuration>
+							<er:activityType>unspecified</er:activityType>
+							<er:oreProcessed>
+								<gsml:CGI_NumericValue>
+									<gsml:principalValue uom="urn:ogc:def:uom:UCUM::t">103.0</gsml:principalValue>
+								</gsml:CGI_NumericValue>
+							</er:oreProcessed>
+							<er:associatedMine xlink:href="http://services-test.auscope.org/resource/feature/pirsa/mine/95"/>
+							<er:deposit xlink:href="http://services-test.auscope.org/resource/feature/pirsa/mineraloccurrence/95deposit"/>
+							<er:producedMaterial>
+								<er:Product gml:id="er.product.4">
+									<er:productName>
+										<gsml:CGI_TermValue>
+											<gsml:value codeSpace="http://www.pir.sa.gov.au/minerals">Celestite</gsml:value>
+										</gsml:CGI_TermValue>
+									</er:productName>
+									<er:sourceReference xlink:href="http://www.opengis.net/def/nil/OGC/0/unknown" xlink:title="Unknown"/>
+									<er:grade>
+										<gsml:CGI_NumericValue>
+											<gsml:principalValue uom="urn:ogc:def:nil:OGC::missing">0.0</gsml:principalValue>
+										</gsml:CGI_NumericValue>
+									</er:grade>
+									<er:production>
+										<gsml:CGI_NumericValue>
+											<gsml:principalValue uom="urn:ogc:def:uom:UCUM::t">103.0</gsml:principalValue>
+										</gsml:CGI_NumericValue>
+									</er:production>
+									<er:sourceCommodity xlink:href="urn:ogc:def:nil:OGC::missing"/>
+								</er:Product>
+							</er:producedMaterial>
+						</er:MiningActivity>
+					</er:relatedActivity>
+				</er:Mine>
+			</er:specification>
+			<er:location>
+				<gml:Point srsDimension="2">
+					<gml:pos>135.1068262 -27.3076358</gml:pos>
+				</gml:Point>
+			</er:location>
+		</er:MiningFeatureOccurrence>
+		<er:MiningFeatureOccurrence gml:id="er.miningfeatureoccurrence.mine.217">
+			<gml:description>urn:ogc:def:nil:OGC::missing</gml:description>
+			<gml:name codeSpace="http://www.ietf.org/rfc/rfc2616">http://services-test.auscope.org/resource/feature/pirsa/miningfeatureoccurrence/mine/217</gml:name>
+			<er:observationMethod>
+				<gsml:CGI_TermValue>
+					<gsml:value codeSpace="urn:cgi:classifierScheme:PIRSA:ObservationMethod">Sourced from documents (PLANS, ENV, RB,etc)</gsml:value>
+				</gsml:CGI_TermValue>
+			</er:observationMethod>
+			<er:positionalAccuracy>
+				<gsml:CGI_NumericValue>
+					<gsml:principalValue uom="urn:ogc:def:nil:OGC::missing">100.0</gsml:principalValue>
+				</gsml:CGI_NumericValue>
+			</er:positionalAccuracy>
+			<er:specification>
+				<er:Mine gml:id="er.mine.217">
+					<gml:name codeSpace="http://www.ietf.org/rfc/rfc2616">http://services-test.auscope.org/resource/feature/pirsa/mine/217</gml:name>
+					<gml:name codeSpace="http://www.pir.sa.gov.au/minerals">HALL MAGNESITE MINE</gml:name>
+					<er:occurrence xlink:href="http://services-test.auscope.org/resource/feature/pirsa/miningfeatureoccurrence/mine/217"/>
+					<er:mineName>
+						<er:MineName>
+							<er:isPreferred>true</er:isPreferred>
+							<er:mineName>HALL MAGNESITE MINE</er:mineName>
+						</er:MineName>
+					</er:mineName>
+					<er:status>abandoned</er:status>
+					<er:relatedActivity>
+						<er:MiningActivity gml:id="er.miningactivity.13">
+							<gml:name codeSpace="http://www.ietf.org/rfc/rfc2616">http://services-test.auscope.org/resource/feature/pirsa/miningactivity/13</gml:name>
+							<er:activityDuration>
+								<gml:TimePeriod>
+									<gml:begin xlink:href="urn:ogc:def:nil:OGC::missing"/>
+									<gml:end xlink:href="urn:ogc:def:nil:OGC::missing"/>
+								</gml:TimePeriod>
+							</er:activityDuration>
+							<er:activityType>unspecified</er:activityType>
+							<er:oreProcessed>
+								<gsml:CGI_NumericValue>
+									<gsml:principalValue uom="urn:ogc:def:uom:UCUM::t">279.413</gsml:principalValue>
+								</gsml:CGI_NumericValue>
+							</er:oreProcessed>
+							<er:associatedMine xlink:href="http://services-test.auscope.org/resource/feature/pirsa/mine/217"/>
+							<er:deposit xlink:href="http://services-test.auscope.org/resource/feature/pirsa/mineraloccurrence/217deposit"/>
+							<er:producedMaterial>
+								<er:Product gml:id="er.product.13">
+									<er:productName>
+										<gsml:CGI_TermValue>
+											<gsml:value codeSpace="http://www.pir.sa.gov.au/minerals">Magnesite</gsml:value>
+										</gsml:CGI_TermValue>
+									</er:productName>
+									<er:sourceReference xlink:href="http://www.opengis.net/def/nil/OGC/0/unknown" xlink:title="Unknown"/>
+									<er:grade>
+										<gsml:CGI_NumericValue>
+											<gsml:principalValue uom="urn:ogc:def:nil:OGC::missing">0.0</gsml:principalValue>
+										</gsml:CGI_NumericValue>
+									</er:grade>
+									<er:production>
+										<gsml:CGI_NumericValue>
+											<gsml:principalValue uom="urn:ogc:def:uom:UCUM::t">279.413</gsml:principalValue>
+										</gsml:CGI_NumericValue>
+									</er:production>
+									<er:sourceCommodity xlink:href="urn:ogc:def:nil:OGC::missing"/>
+								</er:Product>
+							</er:producedMaterial>
+						</er:MiningActivity>
+					</er:relatedActivity>
+				</er:Mine>
+			</er:specification>
+			<er:location>
+				<gml:Point srsDimension="2">
+					<gml:pos>135.8198574 -34.3511832</gml:pos>
+				</gml:Point>
+			</er:location>
+		</er:MiningFeatureOccurrence>
+	</gml:featureMembers>
+</wfs:FeatureCollection>

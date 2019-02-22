@@ -293,6 +293,7 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                                     height: 200,
                                     width: 600,
                                     layout: 'fit',
+                                    modal: true,
                                     items: [CustomRegistryTreeGridPanel]
                                 }).show();
                             }

@@ -108,7 +108,11 @@ public class KnownLayerService {
                         mappedRecordIDs.put(record.getFileIdentifier(), null);
                         break;
                     default:
-                        break;
+                        // Ignore metadata CSW records - they have no named online resources and no geographic element BBOXes
+                        // To ignore we must add it to the mapped record ids, so it does not get counted as an unmapped record
+                        if (!record.hasNamedOnlineResources() && !record.hasGeographicElements()) {
+                            mappedRecordIDs.put(record.getFileIdentifier(), null);
+                        }
                     }
                 } catch (PortalServiceException e) {
                     logger.error("Expecting data to line up", e);

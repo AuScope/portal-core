@@ -1,10 +1,7 @@
 package org.auscope.portal.core.services.responses.csw;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -60,9 +57,13 @@ public class CSWRecordTransformer {
     private static final String DATASETURIEXPRESSION = "gmd:dataSetURI/gco:CharacterString";
     private static final String SUPPLEMENTALINFOEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:supplementalInformation/gco:CharacterString";
     private static final String LANGUAGEEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:language/gco:CharacterString";
-    private static final String OTHERCONSTRAINTSEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_LegalConstraints/gmd:otherConstraints/gco:CharacterString";
+    private static final String OTHERCONSTRAINTSEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_LegalConstraints/(gmd:otherConstraints/gco:CharacterString | gmd:useLimitation/gco:CharacterString | gmd:accessConstraints/gmd:MD_RestrictionCode[(text())]/@codeList | gmd:reference/gmd:CI_Citation/gmd:title/gco:CharacterString)";  
+    private static final String USELIMITCONSTRAINTSEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_LegalConstraints/gmd:useLimitation/gco:CharacterString";
+    private static final String ACCESSCONSTRAINTSEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_LegalConstraints/gmd:accessConstraints/gmd:MD_RestrictionCode[(text())]/@codeList";    
     private static final String DATAQUALITYSTATEMENTEXPRESSION = "gmd:dataQualityInfo/gmd:DQ_DataQuality/gmd:lineage/gmd:LI_Lineage/gmd:statement/gco:CharacterString";
     private static final String LAYERNAME = "gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource/gmd:name/gco:CharacterString";
+
+    private static final String SCALEDENOMINATOR = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:spatialResolution/gmd:MD_Resolution/gmd:equivalentScale/gmd:MD_RepresentativeFraction/gmd:denominator/gco:Integer";
 
     /**
      * Creates a new instance of this class and generates an empty document that will be used for constructing DOM.
@@ -368,9 +369,26 @@ public class CSWRecordTransformer {
                 "MD_LegalConstraints");
         String[] legalConstraints = record.getConstraints();
         if (legalConstraints != null) {
-            for (String constraint : legalConstraints) {
+            for (String constraint : legalConstraints) {            	
                 appendChildCharacterString(dataIdLegalConstraints, nc.getNamespaceURI("gmd"), "otherConstraints",
                         constraint);
+            }
+        }
+    	//added code to include tag for gmd:useLimitation 
+        String[] useLimitations = record.getUseLimitConstraints();
+        if (useLimitations != null) {
+            for (String useLimitation : useLimitations) {
+
+                appendChildCharacterString(dataIdLegalConstraints, nc.getNamespaceURI("gmd"), "useLimitation",
+                		useLimitation);
+            }
+        }
+       //added code to include tag for gmd:accessConstraints
+        String[] accessConstraints = record.getAccessConstraints();
+        if (accessConstraints != null) {
+            for (String accessConstraint : accessConstraints) {             
+                appendChildCharacterString(dataIdLegalConstraints, nc.getNamespaceURI("gmd"), "accessConstraints",
+                		accessConstraint);
             }
         }
 
@@ -671,7 +689,54 @@ public class CSWRecordTransformer {
             }
             record.setConstraints(constraintsList.toArray(new String[constraintsList.size()]));
         }
+        
+        // added code to parse use limit constraints
+        tempNodeList = evalXPathNodeList(this.mdMetadataNode, USELIMITCONSTRAINTSEXPRESSION);
+        if (tempNodeList != null && tempNodeList.getLength() > 0) {
+            List<String> useLimitConstraintsList = new ArrayList<>();
+            Node useLimitConstraint;
+            for (int j = 0; j < tempNodeList.getLength(); j++) {
+            	useLimitConstraint = tempNodeList.item(j);
+                useLimitConstraintsList.add(useLimitConstraint.getTextContent());
+            }
+            record.setUseLimitConstraints(useLimitConstraintsList.toArray(new String[useLimitConstraintsList.size()]));
+        }
+        
+       //added code to parse access constraints
+        tempNodeList = evalXPathNodeList(this.mdMetadataNode, ACCESSCONSTRAINTSEXPRESSION);
+        if (tempNodeList != null && tempNodeList.getLength() > 0) {
+            List<String> accessConstraintsList = new ArrayList<>();
+            Node accessConstraint;
+            for (int j = 0; j < tempNodeList.getLength(); j++) {
+            	accessConstraint = tempNodeList.item(j);
+                accessConstraintsList.add(accessConstraint.getTextContent());
+            }
+            record.setAccessConstraints(accessConstraintsList.toArray(new String[accessConstraintsList.size()]));
+        }
 
+        tempNodeList = evalXPathNodeList(this.mdMetadataNode, SCALEDENOMINATOR);
+        if (tempNodeList != null && tempNodeList.getLength() > 0) {
+
+            List<Double> scaleRange = new ArrayList<>();
+            Node scaleDenominator;
+            for (int j = 0; j < tempNodeList.getLength(); j++) {
+                scaleDenominator = tempNodeList.item(j);
+                try {
+                   scaleRange.add(Double.parseDouble(scaleDenominator.getTextContent()));
+                } catch (Exception ex) {
+                    logger.debug(String.format("Unable to parse scale denominator for serviceName='%1$s' %2$s",
+                            record.getServiceName(), ex));
+                }
+            }
+
+            if (!scaleRange.isEmpty()) {
+                record.setMinScale(Collections.min(scaleRange));
+                if (scaleRange.size() > 1) {
+                    record.setMaxScale(Collections.max(scaleRange));
+                }
+            }
+        }
+        
         return record;
     }
 }

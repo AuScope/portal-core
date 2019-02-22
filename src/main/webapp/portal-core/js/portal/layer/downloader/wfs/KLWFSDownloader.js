@@ -8,28 +8,19 @@
 Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
     extend: 'portal.layer.downloader.Downloader',
 
-    statics : {
-        DOWNLOAD_CURRENTLY_VISIBLE : 1,
-        DOWNLOAD_ORIGINALLY_VISIBLE : 2,
-        DOWNLOAD_ALL : 3
-    },
-
     currentTooltip : null,
     featureCountUrl : null,
     enableFeatureCounts : false,
-    enableFormatSelection : false,
 
     /**
      * Adds the following config options
      * 
      * featureCountUrl : String - URL where feature counts will be looked up if proxy URL DNE. 
      * enableFeatureCounts : Boolean - Set to true to use feature counting in the popup.   
-     * enableFormatSelection : Boolean - Set to true to allow download format selection
      */
     constructor : function(cfg) {
         this.featureCountUrl = cfg.featureCountUrl ? cfg.featureCountUrl : null;
         this.enableFeatureCounts = cfg.enableFeatureCounts ? true : false;
-        this.enableFormatSelection = cfg.enableFormatSelection ? true : false;
         this.callParent(arguments);
     },
 
@@ -45,31 +36,24 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
      */
     downloadData : function(layer, resources, renderedFilterer, currentFilterer) {
         var me = this;
-        var isDifferentBBox = false;
-        var originallyVisibleBBox = null;
+
         var currentlyVisibleBBox = null;
 
-        originallyVisibleBBox = renderedFilterer.getSpatialParam();
         currentlyVisibleBBox = currentFilterer.getSpatialParam();
-        isDifferentBBox = originallyVisibleBBox && currentlyVisibleBBox &&
-                          !originallyVisibleBBox.equals(currentlyVisibleBBox);
 
-        //Hardcode this for now as GetCap responses aren't always accurate
-        //For instance - Geoserver Complex WFS doesn't work with many formats other than gml/csv
-        var formatStore = Ext.data.Store({
-            fields: [{name: 'name'}, {name: 'mime'}],
-            data: [{name:'GML 3.0', mime: 'gml3'},
-                   {name:'GML 3.2', mime: 'gml32'},
-                   {name:'CSV', mime: 'csv'}]
-        });
-        
+        var downloadFilterer = Ext.create('portal.layer.filterer.Filterer', {});
+
+        downloadFilterer.setSpatialParam(currentlyVisibleBBox, true);
+        downloadFilterer.setParameters(renderedFilterer.getParameters(), true);
+
+        var cswRecords = layer.get('cswRecords');
         //Create a popup showing our options
         Ext.create('Ext.Window', {
             title : 'Download Options',
             buttonAlign : 'right',
             modal : true,
             border : '1 1 0 1',
-            width : 570,
+            width : 400,
             layout : {
                 type : 'anchor'
                 //align : 'stretch'
@@ -85,7 +69,7 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                     xtype : 'label',
                     style : 'font-size: 12px;',
                     itemId: 'klwfs-htmllabel',
-                    html : this._parseNotifcationString(resources)
+                    html : this._parseNotifcationString(cswRecords)
                 }]
             },{
                 xtype : 'fieldset',
@@ -94,61 +78,17 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                 border : false,
                 items : [{
                     //Our radiogroup can see its item list vary according to the presence of bounding boxes
-                    xtype : 'radiogroup',
-                    //Forced to use fixed width columns
-                    //see: http://www.sencha.com/forum/showthread.php?187933-Ext-4.1-beta-3-Incorrect-layout-on-Radiogroup-with-columns
-                    //columns : [0.99, 18],
-                    columns : [500, 18],
-                    itemId: 'klwfs-radio',
-                    listeners : {
-                        change : Ext.bind(this._handleRadioChange, this, [currentlyVisibleBBox, originallyVisibleBBox, resources, layer], true)
-                    },
+                    xtype : 'fieldcontainer',
+                    defaultType: 'checkboxfield',
+
                     items : [{
                         boxLabel : 'Filter my download using the current visible map bounds.',
-                        name : 'wfs-download-radio',
-                        inputValue : portal.layer.downloader.wfs.WFSDownloader.DOWNLOAD_CURRENTLY_VISIBLE,
-                        hidden : !isDifferentBBox,
-                        checked : isDifferentBBox
+                        itemId: 'klwfs-checkbox',
+                        checked : true,
+                        listeners : {
+                            change : Ext.bind(this._handleRadioChange, this, [currentlyVisibleBBox, resources, layer], true)
+                        }
 
-                    },{
-                        xtype : 'box',
-                        autoEl : {
-                            tag : 'img',
-                            src : 'portal-core/img/magglass.gif',
-                            qtip : 'Click to display the spatial bounds, double click to pan the map so they are visible.'
-                        },
-                        width : 18,
-                        height : 21,
-                        hidden : !isDifferentBBox,
-                        style : 'padding:3px 0px 0px 0px;',
-                        listeners : {
-                            render : Ext.bind(this._configureImageClickHandlers, this, [currentlyVisibleBBox], true)
-                        }
-                    },{
-                        boxLabel : 'Filter my download using the original bounds that were used to load the layer.',
-                        name : 'wfs-download-radio',
-                        inputValue : portal.layer.downloader.wfs.WFSDownloader.DOWNLOAD_ORIGINALLY_VISIBLE,
-                        checked : !isDifferentBBox && originallyVisibleBBox !== null,
-                        hidden : originallyVisibleBBox === null
-                    },{
-                        xtype : 'box',
-                        autoEl : {
-                            tag : 'img',
-                            src : 'portal-core/img/magglass.gif',
-                            qtip : 'Click to display the spatial bounds, double click to pan the map so they are visible.'
-                        },
-                        width : 18,
-                        height : 21,
-                        style : 'padding:3px 0px 0px 0px;',
-                        hidden : originallyVisibleBBox === null,
-                        listeners : {
-                            render : Ext.bind(this._configureImageClickHandlers, this, [originallyVisibleBBox], true)
-                        }
-                    },{
-                        boxLabel : 'Don\'t filter my download. Return all available data.',
-                        name : 'wfs-download-radio',
-                        inputValue : portal.layer.downloader.wfs.WFSDownloader.DOWNLOAD_ALL,
-                        checked : !isDifferentBBox && originallyVisibleBBox === null
                     }]
                 },{
 
@@ -167,19 +107,6 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                         allowBlank      : false,
                         blankText       : 'This field is required',
                         anchor          : '-50'
-                    },{
-                        xtype: 'combo',
-                        fieldLabel: 'Format',
-                        hidden: !me.enableFormatSelection,
-                        store: formatStore,
-                        name: 'outputFormat',
-                        itemId: 'outputFormat',
-                        typeAhead: false,
-                        queryMode: 'local',
-                        forceSelection: true,
-                        anchor: '-50',
-                        displayField: 'name',
-                        valueField: 'mime'
                     }]
 
                 }]
@@ -218,30 +145,20 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                     handler : function(button) {
                         var popup = button.up('window');
                         var sEmail = popup.down('#downloadToken').getValue();
-                        var outputFormat = me.enableFormatSelection ? popup.down('#outputFormat').getValue() : '';
+                        var outputFormat = "csv";
                         if ( sEmail === '' && sEmail.length < 4) {
                             Ext.MessageBox.alert('Unable to submit request...','Please enter a valid email address');
                             popup.down('#downloadToken').markInvalid();
                             return;
-                        } else if (me.enableFormatSelection && !outputFormat) {
-                            Ext.MessageBox.alert('Unable to submit request...','Please select an output format');
-                            popup.down('#outputFormat').markInvalid();
                         } else {
                             var bboxJson = '';
                             var popup = button.ownerCt.ownerCt;
-                            var radioGroup = popup.down('#klwfs-radio');
-                            var checkedRadio = radioGroup.getChecked()[0]; //there should always be a checked radio
 
-                            switch(checkedRadio.inputValue) {
-                            case portal.layer.downloader.wfs.WFSDownloader.DOWNLOAD_CURRENTLY_VISIBLE:
-                                me._doDownload(layer, currentFilterer, resources, sEmail, outputFormat);
-                                break;
-                            case portal.layer.downloader.wfs.WFSDownloader.DOWNLOAD_ORIGINALLY_VISIBLE:
+                            var selected = popup.down('#klwfs-checkbox').getValue();
+                            if (selected) {
+                                me._doDownload(layer, downloadFilterer, resources, sEmail, outputFormat);
+                            } else {
                                 me._doDownload(layer, renderedFilterer, resources, sEmail, outputFormat);
-                                break;
-                            default:
-                                me._doDownload(layer, renderedFilterer, resources, sEmail, outputFormat);
-                                break;
                             }
 
                             //popup.close();
@@ -254,17 +171,11 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                 //After rendering - start the feature count loading
                 afterrender: function(popup) {
                     if (me.enableFeatureCounts) {
-                        var selection = popup.down('#klwfs-radio').getChecked()[0].inputValue;
-                        switch(selection) {
-                        case portal.layer.downloader.wfs.WFSDownloader.DOWNLOAD_CURRENTLY_VISIBLE:
+                        var selected = popup.down('#klwfs-checkbox').getValue();
+                        if (selected) {
                             me._updateFeatureCounts(layer, popup, resources, currentlyVisibleBBox);
-                            break;
-                        case portal.layer.downloader.wfs.WFSDownloader.DOWNLOAD_ORIGINALLY_VISIBLE:
-                            me._updateFeatureCounts(layer, popup, resources, originallyVisibleBBox);
-                            break;
-                        default:
+                        } else {
                             me._updateFeatureCounts(layer, popup, resources, null);
-                            break;
                         }
                     }
                 }
@@ -285,21 +196,14 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
         c.getEl().on('dblclick', Ext.bind(fireScroll, this, [bbox], false), c);
     },
 
-    _handleRadioChange : function(radioGroup, newValue, oldValue, eOpts, currentBounds, originalBounds, resources, layer) {
+    _handleRadioChange : function(radioGroup, newValue, oldValue, eOpts, currentBounds, resources, layer) {
         var popup = radioGroup.up('window');
         
-        switch(newValue['wfs-download-radio']) {
-        case portal.layer.downloader.wfs.WFSDownloader.DOWNLOAD_CURRENTLY_VISIBLE:
+        if (newValue) {
             this.map.scrollToBounds(currentBounds);
             this._updateFeatureCounts(layer, popup, resources, currentBounds);
-            break;
-        case portal.layer.downloader.wfs.WFSDownloader.DOWNLOAD_ORIGINALLY_VISIBLE:
-            this.map.scrollToBounds(originalBounds);
-            this._updateFeatureCounts(layer, popup, resources, originalBounds);
-            break;
-        default:
+        } else {
             this._updateFeatureCounts(layer, popup, resources, null);
-            break;
         }
     },
 
@@ -375,32 +279,40 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
         }
     },
 
-    _parseNotifcationString : function(resources){
+    _parseNotifcationString : function(cswRecords){
 
-        var text = '<p>The portal will make a download request on your behalf and return the results in a ZIP archive.';
-            text += 'Please check back with us later using your email as access token and click on Check Status</p>';
-            text += '<p>We limit the results to 5000 features per access point.';
-            text += 'You can either modify the download filter or alternatively, you can download directly from the WFS service points below</p>';
-            text += "<p>Note:The links below are WFS service endpoints. Read <a href='http://docs.geoserver.org/latest/en/user/services/wfs/reference.html'> here</a> for more information </p>";
+        var text = '<p>The portal will make a download request on your behalf and return the results as a zipped CSV file. ';
+            text += 'To check the progress of your download and retrieve the file, click the "Check Status" button, using the email address that you used to start the download.</p>';
+            text += '<p>We limit the results to 5000 features per access point. ';
+            text += 'If you need more than 5000 features from any one data provider, you can download directly from the WFS service points below, or contact the data provider directly.</p>';
+            text += "<p>Note: The links below are WFS service endpoints. Read <a href='http://docs.geoserver.org/latest/en/user/services/wfs/reference.html'>here</a> for more information </p>";
 
-        var wfsResources = portal.csw.OnlineResource.getFilteredFromArray(resources, portal.csw.OnlineResource.WFS);
+
+
 
         text += '<div style="display:block;">';
         if (this.enableFeatureCounts) {
             text += '<div style="text-align:right;text-decoration:underline;">Total Features</div>';
         }
-        
-        for (var i = 0; i < wfsResources.length; i++) {
-            text += '<div style="display:block;">';
-            text += '<div style="display:inline-block;width:85%;"><a href="' + wfsResources[i].get('url') +'">' + wfsResources[i].get('url') + '</a></div>';
-            if (this.enableFeatureCounts) {
-                text += '<div class="klwfs-featurecount" style="display:inline-block;text-align:center;width:80px;"></div>';
+
+        for (var i = 0; i < cswRecords.length; i++) {
+            var cswRecord = cswRecords[i];
+            var resources = cswRecord.get('onlineResources');
+            var wfsResources = portal.csw.OnlineResource.getFilteredFromArray(resources, portal.csw.OnlineResource.WFS);
+            for (var j = 0; j < wfsResources.length; j++) {
+                var wfsResource = wfsResources[j];
+                text += '<div style="display:block; height:25px;">';
+                text += '<div style="display:inline-block;width:78%;">'
+                text += this._generateWFSGetCapabilititesUrl(wfsResource.get('url'), cswRecord.get('adminArea'), cswRecord.get('contactOrg'));
+                text += '</div>'
+                if (this.enableFeatureCounts) {
+                    text += '<div class="klwfs-featurecount" style="display:inline-block; text-align:center;width:80px;"></div>';
+                }
+                text += '</div>';
             }
-            text += '</div>';
+            
         }
         text += '</div>';
-
-        text += '<br>How would you like the portal to filter your download?';
 
         return text;
 
@@ -421,9 +333,9 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
         var downloadUrl=layer.get('source').get('proxyDownloadUrl');
         var proxyUrl = renderer.getProxyUrl();
 
-        if(downloadUrl && downloadUrl.length>0){
+        if(downloadUrl && downloadUrl.length > 0){
             proxyUrl = downloadUrl;
-        }else{
+        } else {
             proxyUrl = (proxyUrl && proxyUrl.length > 0) ? proxyUrl : 'getAllFeatures.do';
         }
 
@@ -444,24 +356,23 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
         //multiple requests and zipping the responses into a single stream for the user to download.
         var wfsResources = portal.csw.OnlineResource.getFilteredFromArray(resources, portal.csw.OnlineResource.WFS);
         for (var i = 0; i < wfsResources.length; i++) {
+        	
+        	//VT: if there is a service provider filter we only want to download from the service provider specified
+        	if(filterer.parameters.serviceFilter && filterer.parameters.serviceFilter.length > 0
+        			&& wfsResources[i].get('url')!= filterer.parameters.serviceFilter[0]){
+        		continue;
+        	}
             //Create a copy of the last set of filter parameters
             var url = wfsResources[i].get('url');
-
-            if(filterer.getParameters().serviceFilter &&
-                    url != filterer.getParameters().serviceFilter[0]){
-                continue;
-            }
             var typeName = wfsResources[i].get('name');
             var filterParameters = filterer.getParameters();
-
-
 
             filterParameters.serviceUrl = url;
             filterParameters.typeName = typeName;
             filterParameters.maxFeatures = 5000;
             filterParameters.outputFormat = outputFormat;
             
-            portal.util.PiwikAnalytic.trackevent('KLWFSDownloader', 'Url:' + url,'parameters:' + Ext.encode(filterer.getParameters()));
+            portal.util.GoogleAnalytic.trackevent('KLWFSDownloader', 'Url:' + url,'parameters:' + Ext.encode(filterer.getParameters()));
 
 
             sUrl += '&serviceUrls=' + escape(Ext.urlEncode(filterParameters, prefixUrl));
@@ -489,5 +400,20 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
         winDwld.show();
 
 
+    },
+
+    _generateWFSGetCapabilititesUrl : function(url, adminArea, contactOrg) {
+        var provider = adminArea;
+        if (adminArea == 'ACT') {
+            provider = contactOrg;
+        }
+        var params = {
+            "request" : "GetCapabilities",
+            "version" : "1.1.0",
+            "service" : "WFS"
+        };
+        url = Ext.urlAppend(url, Ext.Object.toQueryString(params));
+        return '<a href="' + url +'">' + provider + '</a>';
     }
+
 });

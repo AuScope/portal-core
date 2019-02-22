@@ -64,6 +64,9 @@ public class KnownLayer implements Serializable {
     /** This is the size of point icon in pixels */
     private Dimension iconSize;
 
+    /** The server side styles parameter, used in the WMS GetMap as STYLES */
+    private String mapStyles;
+
     private int feature_count;
 
     /** Set an order - defaults to name */
@@ -77,6 +80,11 @@ public class KnownLayer implements Serializable {
     /** A URL to use to grab a canned legend graphic for the layer (optional). */
     private String staticLegendUrl;
 
+    /** If specified, the name/id of a Nagios host group whose status reflects the availability of this known layer */
+    private String nagiosHostGroup;
+
+    /** If specified, the name/id of a Nagios host group whose status reflects the availability of this known layer */
+    private String nagiosServiceGroup;
 
     private FilterCollection filterCollection;
     /**
@@ -123,7 +131,7 @@ public class KnownLayer implements Serializable {
     /**
      * Sets the human readable name/title of this layer.
      *
-     * @param title
+     * @param name
      *            the title to set
      */
     public void setName(String name) {
@@ -234,7 +242,7 @@ public class KnownLayer implements Serializable {
     /**
      * Sets the URL to proxy style requests through
      *
-     * @param proxyUrl
+     * @param proxyStyleUrl
      */
     public void setProxyStyleUrl(String proxyStyleUrl) {
         this.proxyStyleUrl = proxyStyleUrl;
@@ -252,7 +260,7 @@ public class KnownLayer implements Serializable {
     /**
      * Sets the URL to proxy download requests through
      *
-     * @param proxyUrl
+     * @param proxyDownloadUrl
      */
     public void setProxyDownloadUrl(String proxyDownloadUrl) {
         this.proxyDownloadUrl = proxyDownloadUrl;
@@ -315,7 +323,7 @@ public class KnownLayer implements Serializable {
     /**
      * Sets the color of a polygon used to mark any polygon geometries
      *
-     * @param iconUrl
+     * @param polygonColor
      */
     public void setPolygonColor(String polygonColor) {
         this.polygonColor = polygonColor;
@@ -389,6 +397,22 @@ public class KnownLayer implements Serializable {
         this.staticLegendUrl = staticLegendUrl;
     }
 
+    public String getNagiosHostGroup() {
+        return nagiosHostGroup;
+    }
+
+    public void setNagiosHostGroup(String nagiosHostGroup) {
+        this.nagiosHostGroup = nagiosHostGroup;
+    }
+
+    public String getNagiosServiceGroup() {
+        return nagiosServiceGroup;
+    }
+
+    public void setNagiosServiceGroup(String nagiosServiceGroup) {
+        this.nagiosServiceGroup = nagiosServiceGroup;
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
@@ -398,7 +422,7 @@ public class KnownLayer implements Serializable {
                 + ", group=" + group + ", proxyUrl=" + proxyUrl + ", proxyCountUrl=" + proxyCountUrl
                 + ", proxyStyleUrl=" + proxyStyleUrl + ", proxyDownloadUrl=" + proxyDownloadUrl
                 + ", knownLayerSelector=" + knownLayerSelector + ", iconUrl=" + iconUrl + ", polygonColor="
-                + polygonColor + ", iconAnchor=" + iconAnchor + ", iconSize=" + iconSize + ", feature_count="
+                + polygonColor + ", iconAnchor=" + iconAnchor + ", iconSize=" + iconSize + ", styles=" + mapStyles +", feature_count="
                 + feature_count + ", order=" + order + ", singleTile=" + singleTile + ", staticLegendUrl=" + staticLegendUrl + "]";
     }
 
@@ -408,5 +432,21 @@ public class KnownLayer implements Serializable {
 
     public void setFilterCollection(FilterCollection filterCollection) {
         this.filterCollection = filterCollection;
+    }
+
+    /**
+     * @return the server side predefined style
+     */
+    public String getMapStyles() {
+        return mapStyles;
+    }
+
+    /**
+     * Sets the server side predefined style
+     *
+     * @param mapStyles
+     */
+    public void setMapStyles(String mapStyles) {
+        this.mapStyles = mapStyles;
     }
 }

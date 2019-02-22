@@ -22,19 +22,6 @@ Ext.define('portal.widgets.panel.CSWMetadataPanel', {
         this.cswRecord = cfg.cswRecord;
 
         var source = this.cswRecord.get('recordInfoUrl');
-
-        if (typeof(cfg.extraItems) === 'undefined') {
-
-            if (source.indexOf('eos-test.ga.gov.au') !== -1 || source.indexOf('eos.ga.gov.au') !== -1) {
-                this.extraItems = {
-                        xtype : 'displayfield',
-                        fieldLabel : 'Notes',
-                        anchor : '100%',
-                        value : 'You will require a userid and password to download the data. You can apply for this by filling in the Terms and Conditions for the utilisation of the European Space Agency&apos;s Earth Observation Data v11/05/11 available in the link <a href="https://earth.esa.int/pi/esa?type=file&amp;ts=1127284911811&amp;table=aotarget&amp;cmd=image&amp;id=122">https://earth.esa.int/pi/esa?type=file&amp;ts=1127284911811&amp;table=aotarget&amp;cmd=image&amp;id=122</a>.<br />Forward a scan of the completed document to <a href="mailto:InSAR@ga.gov.au?subject=AuScope Portal - Data Request">InSAR@ga.gov.au</a> to obtain a userid and password.'
-                    };
-            }
-        }
-
         var keywordsString = "";
         var keywords = this.cswRecord.get('descriptiveKeywords');
         for (var i = 0; i < keywords.length; i++) {
@@ -83,6 +70,15 @@ Ext.define('portal.widgets.panel.CSWMetadataPanel', {
         anchor : '100%',
         value : this.cswRecord.get('contactOrg')
       }];
+      if (this.cswRecord.get('constraints') != null && this.cswRecord.get('constraints').length > 0) {
+    	  items.push({
+    		  xtype : 'textarea',
+    		  fieldLabel : 'Constraints',
+    		  anchor : '100%',
+    		  value : this.cswRecord.get('constraints'),
+    		  readOnly : true
+    	  });
+      }
       items = items.concat(this.extraItems);
       if (this.cswRecord!=null) {
           items = items.concat({

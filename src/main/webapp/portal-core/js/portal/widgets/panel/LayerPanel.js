@@ -250,6 +250,7 @@ Ext.define('portal.widgets.panel.LayerPanel', {
             autoScroll : true,
             width : 500,
             height : 300,
+            modal : true,
             html : debugData.renderHtml()
         });
 
@@ -310,6 +311,7 @@ Ext.define('portal.widgets.panel.LayerPanel', {
                 var win = Ext.create('Ext.window.Window', {
                     title       : 'Legend: '+ layer.get('name'),
                     layout      : 'fit',
+                    modal : true,
                     items: form
                 });
                 return win.show();

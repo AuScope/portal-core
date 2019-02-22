@@ -46,6 +46,7 @@ public class ViewKnownLayerFactory {
             obj.put("iconSize", toView(k.getIconSize()));
         }
 
+        obj.put("mapStyles", k.getMapStyles());
         obj.put("feature_count", k.getFeature_count());
         obj.put("order", k.getOrder());
         obj.put("singleTile", k.getSingleTile());
@@ -72,6 +73,10 @@ public class ViewKnownLayerFactory {
 
         if(k.getFilterCollection()!=null){
             obj.put("filterCollection",k.getFilterCollection());
+        }
+
+        if (k.getNagiosHostGroup() != null) {
+            obj.put("nagiosHostGroup", k.getNagiosHostGroup());
         }
 
         return obj;

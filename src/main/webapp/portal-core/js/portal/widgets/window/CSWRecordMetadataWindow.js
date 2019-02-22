@@ -29,6 +29,7 @@ CSWRecordMetadataWindow = Ext.extend(Ext.Window, {
         //Build our configuration object
         Ext.apply(cfg, {
             layout : 'auto',
+            modal : true,
             height : height,
             autoScroll : true,
             autoHeight : autoHeight,

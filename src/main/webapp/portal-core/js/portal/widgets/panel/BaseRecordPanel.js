@@ -82,7 +82,10 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 field: 'serviceInformation',
                 stopEvent: true,
                 clickHandler: Ext.bind(me._serviceInformationClickHandler, me),
-                tipRenderer: function(layer, tip) {
+                tipRenderer: function(value, record, tip) {
+                    if ((record instanceof portal.knownlayer.KnownLayer) && record.containsNagiosFailures()) {
+                        return 'One or more of the services used by this layer are reported to be experiencing issues at the moment. Some aspects of this layer may not load/work.';
+                    }
                     return 'Click for detailed information about the web services this layer utilises.';
                 },
                 iconRenderer: Ext.bind(me._serviceInformationRenderer, me)
@@ -320,6 +323,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         var layer = record.get('layer');
         if(layer && record.get('active')){
             ActiveLayerManager.removeLayer(layer);
+            this.menuFactory.layerRemoveHandler(layer);
             this.fireEvent('cellclick',this,undefined,undefined,layer,undefined,undefined);
         }
     },
@@ -339,9 +343,9 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 var errorCount = this._statusListErrorCount(listOfStatus);
                 var sizeOfList = Ext.Object.getSize(listOfStatus);
                 if(errorCount > 0 && errorCount == sizeOfList){
-                    return 'portal-core/img/exclamation.png';
-                }else if(errorCount > 0 && errorCount < sizeOfList){
                     return 'portal-core/img/warning.png';
+                }else if(errorCount > 0 && errorCount < sizeOfList){
+                    return 'portal-core/img/exclamation.png';
                 }else{
                     return 'portal-core/img/tick.png';
                 }
@@ -407,6 +411,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             height: 200,
             width: 500,
             layout: 'fit',
+            modal : true,
             items: {  // Let's put an empty grid in just to illustrate fit layout
                 xtype: 'panel',
                 autoScroll : true,                

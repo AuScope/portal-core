@@ -4,7 +4,7 @@ import org.auscope.portal.core.uifilter.Predicate;
 
 public class UIDropDownRemote extends AbstractXPathFilter{
 
-    public final String TYPE ="OPTIONAL.DROPDOWNREMOTE";
+    private static final String TYPE ="OPTIONAL.DROPDOWNREMOTE";
 
     private String url;
 

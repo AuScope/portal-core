@@ -5,7 +5,7 @@ import java.util.List;
 public class ServiceConfiguration {
 
     List<ServiceConfigurationItem> serviceConfigurationItems;
-
+    
     public ServiceConfiguration(List<ServiceConfigurationItem> serviceConfigurationItems) {
         this.serviceConfigurationItems = serviceConfigurationItems;
     }
