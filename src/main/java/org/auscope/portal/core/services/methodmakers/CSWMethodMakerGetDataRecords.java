@@ -162,7 +162,7 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
         //builder.setParameter("constraint_language_version", "1.1.0");
         builder.setParameter("request", "GetRecords");
         builder.setParameter("version", "2.0.2");
-        //builder.setParameter("outputSchema", "http://www.isotc211.org/2005/gmd");
+        builder.setParameter("outputSchema", "http://www.isotc211.org/2005/gmd");
         builder.setParameter("typeNames", "gmd:MD_Metadata");
         builder.setParameter("constraintLanguage", "FILTER");
         //builder.setParameter("namespace", "csw:http://www.opengis.net/cat/csw");
@@ -192,7 +192,7 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
                 + " query sent to GeoNetwork: \n\t"
                 + serviceUrl + "?" + method.getURI().getQuery();
 
-        log.debug(queryStr);
+        //log.debug(queryStr);
 
         return method;
     }
