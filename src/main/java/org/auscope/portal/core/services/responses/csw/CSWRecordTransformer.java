@@ -575,6 +575,7 @@ public class CSWRecordTransformer {
         //Parse our simple strings
         Node scopeNode = evalXPathNode(this.mdMetadataNode, SCOPEEXPRESSION);
         String recordType = scopeNode != null ? scopeNode.getNodeValue() : null;
+        logger.info("--------- CSWRecord, recordType = " + recordType );
 
         String identificationPath = null;
         if (Scope.service.toString().equals(recordType)) {
@@ -583,15 +584,20 @@ public class CSWRecordTransformer {
         } else {
             identificationPath = DATAIDENTIFICATIONPATH;
         }
-
         record.setServiceName(evalXPathString(this.mdMetadataNode, identificationPath + TITLEEXPRESSION));
+        
         record.setDataIdentificationAbstract(evalXPathString(this.mdMetadataNode, identificationPath + ABSTRACTEXPRESSION));
 
-        record.setFileIdentifier(evalXPathString(this.mdMetadataNode, FILEIDENTIFIEREXPRESSION));
+        record.setFileIdentifier(evalXPathString(this.mdMetadataNode, FILEIDENTIFIEREXPRESSION)); 
+        
         record.setParentIdentifier(evalXPathString(this.mdMetadataNode, PARENTIDENTIFIEREXPRESSION));
+        
         record.setSupplementalInformation(evalXPathString(this.mdMetadataNode, SUPPLEMENTALINFOEXPRESSION));
+
         record.setLanguage(evalXPathString(this.mdMetadataNode, LANGUAGEEXPRESSION));
+        
         record.setDataQualityStatement(evalXPathString(this.mdMetadataNode, DATAQUALITYSTATEMENTEXPRESSION));
+        
         record.setLayerName(evalXPathString(this.mdMetadataNode, LAYERNAME));
 
         String resourceProvider = evalXPathString(this.mdMetadataNode, RESOURCEPROVIDEREXPRESSION);
@@ -625,6 +631,8 @@ public class CSWRecordTransformer {
         }
         removeDuplicateOnlineResources(resources);
         record.setOnlineResources(resources.toArray(new AbstractCSWOnlineResource[resources.size()]));
+        logger.info("--------- CSWRecord, OnlineResources path = " + ONLINETRANSFERSEXPRESSION);
+        logger.info("--------- CSWRecord, OnlineResources amount = " + resources.size() );
 
         //Parse our bounding boxes (if they exist). If any are unparsable, don't worry and just continue
         tempNodeList = evalXPathNodeList(this.mdMetadataNode, BBOXEXPRESSION);
@@ -652,7 +660,7 @@ public class CSWRecordTransformer {
                 keyword = tempNodeList.item(j);
                 keywords.add(keyword.getTextContent());
             }
-            record.setDescriptiveKeywords(keywords.toArray(new String[keywords.size()]));
+            record.setDescriptiveKeywords(keywords.toArray(new String[keywords.size()])); // correct!
         }
 
         //Parse the dataset URIs

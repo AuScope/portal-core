@@ -7,6 +7,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.services.namespaces.CSWNamespaceContext;
 import org.auscope.portal.core.util.DOMUtil;
 import org.w3c.dom.Node;
@@ -15,7 +17,9 @@ import org.w3c.dom.Node;
  * A factory for creating CSWOnlineResource objects.
  */
 public abstract class CSWOnlineResourceFactory {
-
+    
+	protected static final Log logger = LogFactory.getLog(CSWOnlineResourceFactory.class);
+    
     /**
      * Parses a Node into its appropriate CSWOnlineResource representation.
      *
@@ -60,7 +64,9 @@ public abstract class CSWOnlineResourceFactory {
         name = (String) nameXpath.evaluate(node, XPathConstants.STRING);
         description = (String) descriptionXpath.evaluate(node, XPathConstants.STRING);
         applicationProfile = (String) applicationProfileXpath.evaluate(node, XPathConstants.STRING);
-
+        
+        logger.info( String.format("--------- CSWOnlineResource, protocol = %s, name = %s, description = %s, profile = %s  ", protocol, name, description, applicationProfile  ));
+        
         return new CSWOnlineResourceImpl(url, protocol, name, description, applicationProfile);
     }
 }
