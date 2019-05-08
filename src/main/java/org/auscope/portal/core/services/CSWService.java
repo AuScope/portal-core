@@ -161,7 +161,7 @@ public class CSWService {
         	}
         	
         	CSWGetRecordResponse grr  = new CSWGetRecordResponse(this.endpoint, responseDocument, transformerFactory);
-        	return null;
+        	return grr;
         } catch (ParserConfigurationException | SAXException | XPathExpressionException e) {
             throw new IOException(e.getMessage(), e);
         }
