@@ -32,7 +32,8 @@ public class CSWRecordTransformer {
     protected Document document;
     protected Node mdMetadataNode;
 
-    protected static final String DATEFORMATSTRING = "yyyy-MM-dd'T'HH:mm:ss";
+    protected static final String DATETIMEFORMATSTRING = "yyyy-MM-dd'T'HH:mm:ss";
+    protected static final String DATEFORMATSTRING = "yyyy-MM-dd";
 
     protected enum Scope {
         service, dataset
@@ -43,7 +44,8 @@ public class CSWRecordTransformer {
     private static final String DATAIDENTIFICATIONPATH = "gmd:identificationInfo/gmd:MD_DataIdentification";
     private static final String TITLEEXPRESSION = "/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString";
 
-    private static final String DATESTAMPEXPRESSION = "gmd:dateStamp/gco:DateTime";
+    private static final String DATESTAMPEXPRESSION = "gmd:dateStamp/gco:Date";
+    private static final String DATETIMESTAMPEXPRESSION = "gmd:dateStamp/gco:DateTime";
     private static final String SCOPEEXPRESSION = "gmd:hierarchyLevel/gmd:MD_ScopeCode/@codeListValue";
     private static final String ABSTRACTEXPRESSION = "/gmd:abstract/gco:CharacterString";
 
@@ -51,7 +53,8 @@ public class CSWRecordTransformer {
     private static final String RESOURCEPROVIDEREXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty[./gmd:role[./gmd:CI_RoleCode[@codeListValue = 'resourceProvider']]]/gmd:organisationName/gco:CharacterString";
     private static final String FILEIDENTIFIEREXPRESSION = "gmd:fileIdentifier/gco:CharacterString";
     private static final String PARENTIDENTIFIEREXPRESSION = "gmd:parentIdentifier/gco:CharacterString";
-    private static final String ONLINETRANSFERSEXPRESSION = "gmd:distributionInfo/gmd:MD_Distribution/descendant::gmd:onLine";
+    //private static final String ONLINETRANSFERSEXPRESSION = "gmd:distributionInfo/gmd:MD_Distribution/descendant::gmd:onLine";
+    private static final String ONLINETRANSFERSEXPRESSION = "gmd:identificationInfo/srv:SV_ServiceIdentification/descendant::srv:connectPoint";
     private static final String BBOXEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox";
     private static final String KEYWORDLISTEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:descriptiveKeywords/gmd:MD_Keywords/gmd:keyword/gco:CharacterString";
     private static final String DATASETURIEXPRESSION = "gmd:dataSetURI/gco:CharacterString";
@@ -62,6 +65,7 @@ public class CSWRecordTransformer {
     private static final String ACCESSCONSTRAINTSEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_LegalConstraints/gmd:accessConstraints/gmd:MD_RestrictionCode[(text())]/@codeList";    
     private static final String DATAQUALITYSTATEMENTEXPRESSION = "gmd:dataQualityInfo/gmd:DQ_DataQuality/gmd:lineage/gmd:LI_Lineage/gmd:statement/gco:CharacterString";
     private static final String LAYERNAME = "gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource/gmd:name/gco:CharacterString";
+    //private static final String LAYERNAME = "gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorTransferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource/gmd:name/gco:CharacterString";
 
     private static final String SCALEDENOMINATOR = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:spatialResolution/gmd:MD_Resolution/gmd:equivalentScale/gmd:MD_RepresentativeFraction/gmd:denominator/gco:Integer";
 
@@ -561,6 +565,31 @@ public class CSWRecordTransformer {
                 new CSWGeographicElement[0]));
     }
 
+    protected void transformDate(CSWRecord record) throws XPathExpressionException {
+        String dateStampString = evalXPathString(this.mdMetadataNode, DATETIMESTAMPEXPRESSION);
+        if (dateStampString != null && !dateStampString.isEmpty()) {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat(DATETIMEFORMATSTRING);
+                record.setDate(sdf.parse(dateStampString));
+            } catch (Exception ex) {
+                logger.debug(String.format("Unable to parse date for serviceName='%1$s' %2$s", record.getServiceName(),
+                        ex));
+            }
+        } else {
+        	dateStampString = evalXPathString(this.mdMetadataNode, DATESTAMPEXPRESSION);
+        	if (dateStampString != null && !dateStampString.isEmpty()) {
+                try {
+                    SimpleDateFormat sdf = new SimpleDateFormat(DATEFORMATSTRING);
+                    record.setDate(sdf.parse(dateStampString));
+                } catch (Exception ex) {
+                    logger.debug(String.format("Unable to parse date for serviceName='%1$s' %2$s", record.getServiceName(),
+                            ex));
+                }
+            } 
+        }    	
+        logger.info("--------- CSWRecord, stamp string date = " + record.getDate() );
+    }
+
     /**
      * Writes to an existing CSWRecord instance with data parsed from the internal template of this class
      *
@@ -606,16 +635,7 @@ public class CSWRecordTransformer {
         }
         record.setResourceProvider(resourceProvider);
 
-        String dateStampString = evalXPathString(this.mdMetadataNode, DATESTAMPEXPRESSION);
-        if (dateStampString != null && !dateStampString.isEmpty()) {
-            try {
-                SimpleDateFormat sdf = new SimpleDateFormat(DATEFORMATSTRING);
-                record.setDate(sdf.parse(dateStampString));
-            } catch (Exception ex) {
-                logger.debug(String.format("Unable to parse date for serviceName='%1$s' %2$s", record.getServiceName(),
-                        ex));
-            }
-        }
+        transformDate(record);
 
         //There can be multiple gmd:onLine elements (which contain a number of fields we want)
         tempNodeList = evalXPathNodeList(this.mdMetadataNode, ONLINETRANSFERSEXPRESSION);

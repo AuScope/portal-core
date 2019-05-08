@@ -155,11 +155,6 @@ public class CSWService {
             OWSExceptionParser.checkForExceptionResponse(responseDocument);
             
         	String url = this.endpoint.getServiceUrl();
-        	String target = "http://veal-demo.it.csiro.au:8080/api";
-        	if (url.compareTo(target) ==0) {
-        		log.info("---------------- "  + getStringFromDocument(responseDocument));
-        	}
-        	
         	CSWGetRecordResponse grr  = new CSWGetRecordResponse(this.endpoint, responseDocument, transformerFactory);
         	return grr;
         } catch (ParserConfigurationException | SAXException | XPathExpressionException e) {
