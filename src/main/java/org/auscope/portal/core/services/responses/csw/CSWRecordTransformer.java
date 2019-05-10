@@ -618,7 +618,6 @@ public class CSWRecordTransformer {
         //Parse our simple strings
         Node scopeNode = evalXPathNode(this.mdMetadataNode, SCOPEEXPRESSION);
         String recordType = scopeNode != null ? scopeNode.getNodeValue() : null;
-        logger.info("--------- CSWRecord, recordType = " + recordType );
 
         String identificationPath = null;
         if (Scope.service.toString().equals(recordType)) {

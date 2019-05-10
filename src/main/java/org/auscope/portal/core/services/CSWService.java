@@ -137,13 +137,11 @@ public class CSWService {
         // If cqlText is not null means we want to perform filter on the query
         if (this.forceGetMethods && this.endpoint.getCqlText() == null && filter == null) {
             try {
-                log.info(String.format("%1$s - make Get Method", cswServiceUrl));
                 method = this.methodMaker.makeGetMethod(cswServiceUrl, ResultType.Results, maxQueryLength, startPosition);
             } catch (URISyntaxException e) {
                 throw new IOException(e.getMessage(), e);
             }
         } else {
-            log.info(String.format("%1$s - make Post Method", cswServiceUrl));
             method = this.methodMaker.makeMethod(cswServiceUrl, filter, ResultType.Results, maxQueryLength,
                     startPosition, this.endpoint.getCqlText());
         }

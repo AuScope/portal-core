@@ -96,7 +96,7 @@ public class CSWGetRecordResponse {
             CSWRecord newRecord = transformer.transformToCSWRecord();
             newRecord.setRecordInfoUrl(String.format(origin.getRecordInformationUrl(), newRecord.getFileIdentifier()));
             records.add(newRecord);
-            log.info("GN layer " + (i + 1) + " : " + newRecord.toString());
+            //log.info("GN layer " + (i + 1) + " : " + newRecord.toString());
         }
     }
 

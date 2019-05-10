@@ -65,8 +65,6 @@ public abstract class CSWOnlineResourceFactory {
         description = (String) descriptionXpath.evaluate(node, XPathConstants.STRING);
         applicationProfile = (String) applicationProfileXpath.evaluate(node, XPathConstants.STRING);
         
-        logger.info( String.format("--------- CSWOnlineResource, protocol = %s, name = %s, description = %s, profile = %s  ", protocol, name, description, applicationProfile  ));
-        
         return new CSWOnlineResourceImpl(url, protocol, name, description, applicationProfile);
     }
 }
