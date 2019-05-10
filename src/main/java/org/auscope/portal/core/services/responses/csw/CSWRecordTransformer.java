@@ -53,7 +53,7 @@ public class CSWRecordTransformer {
     private static final String RESOURCEPROVIDEREXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty[./gmd:role[./gmd:CI_RoleCode[@codeListValue = 'resourceProvider']]]/gmd:organisationName/gco:CharacterString";
     private static final String FILEIDENTIFIEREXPRESSION = "gmd:fileIdentifier/gco:CharacterString";
     private static final String PARENTIDENTIFIEREXPRESSION = "gmd:parentIdentifier/gco:CharacterString";
-    //private static final String ONLINETRANSFERSEXPRESSION = "gmd:distributionInfo/gmd:MD_Distribution/descendant::gmd:onLine";
+    private static final String ONLINEDATASETTRANSFERSEXPRESSION = "gmd:distributionInfo/gmd:MD_Distribution/descendant::gmd:onLine";
     private static final String ONLINETRANSFERSEXPRESSION = "gmd:identificationInfo/srv:SV_ServiceIdentification/descendant::srv:connectPoint";
     private static final String BBOXEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox";
     private static final String KEYWORDLISTEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:descriptiveKeywords/gmd:MD_Keywords/gmd:keyword/gco:CharacterString";
@@ -587,9 +587,23 @@ public class CSWRecordTransformer {
                 }
             } 
         }    	
-        logger.info("--------- CSWRecord, stamp string date = " + record.getDate() );
     }
 
+    protected List<AbstractCSWOnlineResource> transformSrvNodes(CSWRecord record, String expression) throws XPathExpressionException{
+    	NodeList  tempNodeList = evalXPathNodeList(this.mdMetadataNode, expression);
+        List<AbstractCSWOnlineResource> resources = new ArrayList<>();
+        for (int i = 0; i < tempNodeList.getLength(); i++) {
+            try {
+                Node onlineNode = tempNodeList.item(i);
+                resources.add(CSWOnlineResourceFactory.parseFromNode(onlineNode));
+            } catch (IllegalArgumentException ex) {
+                logger.debug(String.format("Unable to parse online resource for serviceName='%1$s' %2$s",
+                        record.getServiceName(), ex));
+            }
+        }
+        return resources;
+    }
+    
     /**
      * Writes to an existing CSWRecord instance with data parsed from the internal template of this class
      *
@@ -638,21 +652,11 @@ public class CSWRecordTransformer {
         transformDate(record);
 
         //There can be multiple gmd:onLine elements (which contain a number of fields we want)
-        tempNodeList = evalXPathNodeList(this.mdMetadataNode, ONLINETRANSFERSEXPRESSION);
-        List<AbstractCSWOnlineResource> resources = new ArrayList<>();
-        for (int i = 0; i < tempNodeList.getLength(); i++) {
-            try {
-                Node onlineNode = tempNodeList.item(i);
-                resources.add(CSWOnlineResourceFactory.parseFromNode(onlineNode));
-            } catch (IllegalArgumentException ex) {
-                logger.debug(String.format("Unable to parse online resource for serviceName='%1$s' %2$s",
-                        record.getServiceName(), ex));
-            }
-        }
-        removeDuplicateOnlineResources(resources);
-        record.setOnlineResources(resources.toArray(new AbstractCSWOnlineResource[resources.size()]));
-        logger.info("--------- CSWRecord, OnlineResources path = " + ONLINETRANSFERSEXPRESSION);
-        logger.info("--------- CSWRecord, OnlineResources amount = " + resources.size() );
+        List<AbstractCSWOnlineResource> srvlist = transformSrvNodes(record, ONLINETRANSFERSEXPRESSION);
+        List<AbstractCSWOnlineResource> datasetlist = transformSrvNodes(record, ONLINEDATASETTRANSFERSEXPRESSION);
+        srvlist.addAll(datasetlist);
+        removeDuplicateOnlineResources(srvlist);
+        record.setOnlineResources(srvlist.toArray(new AbstractCSWOnlineResource[srvlist.size()]));
 
         //Parse our bounding boxes (if they exist). If any are unparsable, don't worry and just continue
         tempNodeList = evalXPathNodeList(this.mdMetadataNode, BBOXEXPRESSION);
