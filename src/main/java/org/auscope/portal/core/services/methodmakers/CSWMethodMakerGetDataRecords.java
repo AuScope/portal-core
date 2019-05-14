@@ -67,9 +67,6 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
      */
     public HttpRequestBase makeMethod(String serviceUrl, CSWGetDataRecordsFilter filter, ResultType resultType,
             int maxRecords, int startPosition, String cqlText) {
-    	
-    	//serviceUrl += "&request=GetRecords&typeNames=gmd:MD_Metadata";
-    	//serviceUrl = "http://yaud.it.csiro.au:8180/geoserver/csw";
         HttpPost httpMethod = new HttpPost(serviceUrl);
 
         String filterString = null;
@@ -140,8 +137,7 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
         sb.append("</csw:Query>");
         sb.append("</csw:GetRecords>");
 
-        log.info("--------CSWMakerGetDataRecords makeMethod POST Request: " + sb.toString());
-        //log.trace("CSW GetRecords Request: " + sb.toString());
+        log.info("CSW GetRecords Request: " + sb.toString());
 
         // If this does not work, try params: "text/xml; charset=ISO-8859-1"
         httpMethod.setEntity(new StringEntity(sb.toString(), ContentType.create("text/xml", "ISO-8859-1")));
@@ -160,18 +156,20 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
         HttpGet method = new HttpGet();
 
         URIBuilder builder = new URIBuilder(serviceUrl);
-
+        // http://bomac-ep:8080/api? resultType=results
+        
         builder.setParameter("service", "CSW");
-        builder.setParameter("constraint_language_version", "1.1.0");
+        //builder.setParameter("constraint_language_version", "1.1.0");
         builder.setParameter("request", "GetRecords");
         builder.setParameter("version", "2.0.2");
         builder.setParameter("outputSchema", "http://www.isotc211.org/2005/gmd");
         builder.setParameter("typeNames", "gmd:MD_Metadata");
-        //builder.setParameter("constraintLanguage", "FILTER");
+        builder.setParameter("constraintLanguage", "FILTER");
         //builder.setParameter("namespace", "csw:http://www.opengis.net/cat/csw");
         builder.setParameter("elementSetName", "full");
         builder.setParameter("startPosition", Integer.toString(startPosition));
         builder.setParameter("maxRecords", Integer.toString(maxRecords));
+        builder.setParameter("resultType", "results");
 
         if (resultType != null) {
             switch (resultType) {
@@ -194,7 +192,7 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
                 + " query sent to GeoNetwork: \n\t"
                 + serviceUrl + "?" + method.getURI().getQuery();
 
-        log.debug(queryStr);
+        //log.debug(queryStr);
 
         return method;
     }
