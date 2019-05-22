@@ -28,6 +28,7 @@ import org.w3c.dom.NodeList;
 public class CSWRecordTransformer {
     public static final String TEMPLATE_FILE = "MD_MetadataTemplate.xml";
     protected final Log logger = LogFactory.getLog(getClass());
+    protected static final String[] FIXED_DIMENSION_NAMES = {"time", "longitude", "latitude"}; 
 
     protected Document document;
     protected Node mdMetadataNode;
@@ -65,6 +66,7 @@ public class CSWRecordTransformer {
     private static final String ACCESSCONSTRAINTSEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_LegalConstraints/gmd:accessConstraints/gmd:MD_RestrictionCode[(text())]/@codeList";    
     private static final String DATAQUALITYSTATEMENTEXPRESSION = "gmd:dataQualityInfo/gmd:DQ_DataQuality/gmd:lineage/gmd:LI_Lineage/gmd:statement/gco:CharacterString";
     private static final String LAYERNAME = "gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource/gmd:name/gco:CharacterString";
+    private static final String THREDDSLAYERNAME = "gmd:contentInfo/gmi:MI_CoverageDescription/gmd:dimension/gmd:MD_Band/gmd:sequenceIdentifier/gco:MemberName/gco:aName/gco:CharacterString";
     //private static final String LAYERNAME = "gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorTransferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource/gmd:name/gco:CharacterString";
 
     private static final String SCALEDENOMINATOR = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:spatialResolution/gmd:MD_Resolution/gmd:equivalentScale/gmd:MD_RepresentativeFraction/gmd:denominator/gco:Integer";
@@ -589,13 +591,14 @@ public class CSWRecordTransformer {
         }    	
     }
 
-    protected List<AbstractCSWOnlineResource> transformSrvNodes(CSWRecord record, String expression) throws XPathExpressionException{
+    protected List<AbstractCSWOnlineResource> transformSrvNodes(CSWRecord record, String expression, String threddsLayerName) 
+    					throws XPathExpressionException{
     	NodeList  tempNodeList = evalXPathNodeList(this.mdMetadataNode, expression);
         List<AbstractCSWOnlineResource> resources = new ArrayList<>();
         for (int i = 0; i < tempNodeList.getLength(); i++) {
             try {
                 Node onlineNode = tempNodeList.item(i);
-                resources.add(CSWOnlineResourceFactory.parseFromNode(onlineNode));
+                resources.add(CSWOnlineResourceFactory.parseFromNode(onlineNode, threddsLayerName));
             } catch (IllegalArgumentException ex) {
                 logger.debug(String.format("Unable to parse online resource for serviceName='%1$s' %2$s",
                         record.getServiceName(), ex));
@@ -650,9 +653,11 @@ public class CSWRecordTransformer {
 
         transformDate(record);
 
+        String tlname = getThreddsLayerName();
+        
         //There can be multiple gmd:onLine elements (which contain a number of fields we want)
-        List<AbstractCSWOnlineResource> srvlist = transformSrvNodes(record, ONLINETRANSFERSEXPRESSION);
-        List<AbstractCSWOnlineResource> datasetlist = transformSrvNodes(record, ONLINEDATASETTRANSFERSEXPRESSION);
+        List<AbstractCSWOnlineResource> srvlist = transformSrvNodes(record, ONLINETRANSFERSEXPRESSION, tlname);
+        List<AbstractCSWOnlineResource> datasetlist = transformSrvNodes(record, ONLINEDATASETTRANSFERSEXPRESSION, tlname);
         srvlist.addAll(datasetlist);
         removeDuplicateOnlineResources(srvlist);
         record.setOnlineResources(srvlist.toArray(new AbstractCSWOnlineResource[srvlist.size()]));
@@ -769,6 +774,28 @@ public class CSWRecordTransformer {
         }
         
         return record;
+    }
+    
+    protected static boolean isFixedLayerName(String lname) {
+    	for (int i= 0; i < FIXED_DIMENSION_NAMES.length; i++) {
+			if (FIXED_DIMENSION_NAMES[i].compareTo(lname) == 0 ) {
+				return true;
+			}
+		}
+    	return false;
+    }
+    
+    protected String getThreddsLayerName() throws XPathExpressionException {
+    	NodeList tempNodeList = evalXPathNodeList(this.mdMetadataNode, THREDDSLAYERNAME);
+    	if (tempNodeList != null && tempNodeList.getLength() > 0) {
+    		for (int i = 0; i < tempNodeList.getLength(); i++) {
+    			String name = tempNodeList.item(i).getTextContent();
+    			if (!isFixedLayerName(name)) {
+    				return name;
+    			}
+    		}
+    	} 
+    	return null;
     }
 }
 

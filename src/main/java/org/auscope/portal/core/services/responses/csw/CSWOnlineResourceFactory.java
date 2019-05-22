@@ -29,7 +29,7 @@ public abstract class CSWOnlineResourceFactory {
      * @throws XPathExpressionException
      *             the x path expression exception
      */
-    public static AbstractCSWOnlineResource parseFromNode(Node node) throws XPathExpressionException {
+    public static AbstractCSWOnlineResource parseFromNode(Node node, String threddsLayerName) throws XPathExpressionException {
         String urlString = null;
         String name = "";
         String description = "";
@@ -61,10 +61,14 @@ public abstract class CSWOnlineResourceFactory {
         }
 
         protocol = (String) protocolXpath.evaluate(node, XPathConstants.STRING);
-        name = (String) nameXpath.evaluate(node, XPathConstants.STRING);
+        if (threddsLayerName != null && threddsLayerName.length() > 0) {
+        	name = threddsLayerName;
+        }
+        else {
+            name = (String) nameXpath.evaluate(node, XPathConstants.STRING);
+        }
         description = (String) descriptionXpath.evaluate(node, XPathConstants.STRING);
         applicationProfile = (String) applicationProfileXpath.evaluate(node, XPathConstants.STRING);
-        
         return new CSWOnlineResourceImpl(url, protocol, name, description, applicationProfile);
     }
 }
