@@ -98,7 +98,7 @@ public class CSWContactFactory {
 
         field = (Node) DOMUtil.compileXPathExpr(XPATHONLINERESOURCE, nc).evaluate(node, XPathConstants.NODE);
         if (field != null) {
-            AbstractCSWOnlineResource resource = CSWOnlineResourceFactory.parseFromNode(field);
+            AbstractCSWOnlineResource resource = CSWOnlineResourceFactory.parseFromNode(field, null);
             contact.setOnlineResource(resource);
         }
 

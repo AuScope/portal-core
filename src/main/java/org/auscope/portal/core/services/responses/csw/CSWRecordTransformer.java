@@ -28,11 +28,13 @@ import org.w3c.dom.NodeList;
 public class CSWRecordTransformer {
     public static final String TEMPLATE_FILE = "MD_MetadataTemplate.xml";
     protected final Log logger = LogFactory.getLog(getClass());
+    protected static final String[] FIXED_DIMENSION_NAMES = {"time", "longitude", "latitude"}; 
 
     protected Document document;
     protected Node mdMetadataNode;
 
-    protected static final String DATEFORMATSTRING = "yyyy-MM-dd'T'HH:mm:ss";
+    protected static final String DATETIMEFORMATSTRING = "yyyy-MM-dd'T'HH:mm:ss";
+    protected static final String DATEFORMATSTRING = "yyyy-MM-dd";
 
     protected enum Scope {
         service, dataset
@@ -43,7 +45,8 @@ public class CSWRecordTransformer {
     private static final String DATAIDENTIFICATIONPATH = "gmd:identificationInfo/gmd:MD_DataIdentification";
     private static final String TITLEEXPRESSION = "/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString";
 
-    private static final String DATESTAMPEXPRESSION = "gmd:dateStamp/gco:DateTime";
+    private static final String DATESTAMPEXPRESSION = "gmd:dateStamp/gco:Date";
+    private static final String DATETIMESTAMPEXPRESSION = "gmd:dateStamp/gco:DateTime";
     private static final String SCOPEEXPRESSION = "gmd:hierarchyLevel/gmd:MD_ScopeCode/@codeListValue";
     private static final String ABSTRACTEXPRESSION = "/gmd:abstract/gco:CharacterString";
 
@@ -51,7 +54,8 @@ public class CSWRecordTransformer {
     private static final String RESOURCEPROVIDEREXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty[./gmd:role[./gmd:CI_RoleCode[@codeListValue = 'resourceProvider']]]/gmd:organisationName/gco:CharacterString";
     private static final String FILEIDENTIFIEREXPRESSION = "gmd:fileIdentifier/gco:CharacterString";
     private static final String PARENTIDENTIFIEREXPRESSION = "gmd:parentIdentifier/gco:CharacterString";
-    private static final String ONLINETRANSFERSEXPRESSION = "gmd:distributionInfo/gmd:MD_Distribution/descendant::gmd:onLine";
+    private static final String ONLINEDATASETTRANSFERSEXPRESSION = "gmd:distributionInfo/gmd:MD_Distribution/descendant::gmd:onLine";
+    private static final String ONLINETRANSFERSEXPRESSION = "gmd:identificationInfo/srv:SV_ServiceIdentification/descendant::srv:connectPoint";
     private static final String BBOXEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox";
     private static final String KEYWORDLISTEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:descriptiveKeywords/gmd:MD_Keywords/gmd:keyword/gco:CharacterString";
     private static final String DATASETURIEXPRESSION = "gmd:dataSetURI/gco:CharacterString";
@@ -62,14 +66,11 @@ public class CSWRecordTransformer {
     private static final String ACCESSCONSTRAINTSEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_LegalConstraints/gmd:accessConstraints/gmd:MD_RestrictionCode[(text())]/@codeList";    
     private static final String DATAQUALITYSTATEMENTEXPRESSION = "gmd:dataQualityInfo/gmd:DQ_DataQuality/gmd:lineage/gmd:LI_Lineage/gmd:statement/gco:CharacterString";
     private static final String LAYERNAME = "gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource/gmd:name/gco:CharacterString";
+    private static final String THREDDSLAYERNAME = "gmd:contentInfo/gmi:MI_CoverageDescription/gmd:dimension/gmd:MD_Band/gmd:sequenceIdentifier/gco:MemberName/gco:aName/gco:CharacterString";
+    //private static final String LAYERNAME = "gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorTransferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource/gmd:name/gco:CharacterString";
 
     private static final String SCALEDENOMINATOR = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:spatialResolution/gmd:MD_Resolution/gmd:equivalentScale/gmd:MD_RepresentativeFraction/gmd:denominator/gco:Integer";
 
-    private static final String ONLINERESOURCES = "gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource";
-    private static final String SERVICENAMEPATH = "gmd:identificationInfo/gmd:AbstractMD_Identification/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString";
-    
-    
-    
     /**
      * Creates a new instance of this class and generates an empty document that will be used for constructing DOM.
      * @throws ParserConfigurationException 
@@ -552,34 +553,8 @@ public class CSWRecordTransformer {
 
         return resources;
     }
-/*
-    public List<CSWRecord> transformToCSWRecords() throws XPathExpressionException {
-    	LinkedList<CSWRecord> recordList = new LinkedList<CSWRecord>();
-    	NodeList tempNodeList = evalXPathNodeList(this.mdMetadataNode, ONLINERESOURCES);
-    	AbstractCSWOnlineResource[] acors = new AbstractCSWOnlineResource[0];
-    	CSWGeographicElement[] cges = new CSWGeographicElement[0];
-    	
-        for (int i = 0; i < tempNodeList.getLength(); i++) {
-            try {
-                Node onlineNode = tempNodeList.item(i);
-                CSWRecord record = new CSWRecord("", "", "", "", acors, cges);
-                recordList.add(record);
-                //populateCSWRecordOnlineResource(record, onlineNode);
-            }catch (IllegalArgumentException ex) {
-            }
-        }
-    	return recordList;
-    }
-    private void populateCSWRecordOnlineResource(CSWRecord record, Node onlineResourceNode) throws XPathExpressionException {
-		// name, Link-URL, protocol/type
-    	record.setServiceName(evalXPathString(onlineResourceNode, ONLINERESOURCES_Name));
-        //private static final String ONLINERESOURCES_Name = "gmd:name/gco:CharacterString";
-        //private static final String ONLINERESOURCES_Protocol = "gmd:protocol/gco:CharacterString";
-        //private static final String ONLINERESOURCES_Linkage = "gmd:linkage/gmd:URL";
-	}
-*/
-    
-	/**
+
+    /**
      * Creates a new CSWRecord instance parsed from the internal template of this class
      *
      * Throws an exception if the internal template cannot be parsed correctly
@@ -592,6 +567,46 @@ public class CSWRecordTransformer {
                 new CSWGeographicElement[0]));
     }
 
+    protected void transformDate(CSWRecord record) throws XPathExpressionException {
+        String dateStampString = evalXPathString(this.mdMetadataNode, DATETIMESTAMPEXPRESSION);
+        if (dateStampString != null && !dateStampString.isEmpty()) {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat(DATETIMEFORMATSTRING);
+                record.setDate(sdf.parse(dateStampString));
+            } catch (Exception ex) {
+                logger.debug(String.format("Unable to parse date for serviceName='%1$s' %2$s", record.getServiceName(),
+                        ex));
+            }
+        } else {
+        	dateStampString = evalXPathString(this.mdMetadataNode, DATESTAMPEXPRESSION);
+        	if (dateStampString != null && !dateStampString.isEmpty()) {
+                try {
+                    SimpleDateFormat sdf = new SimpleDateFormat(DATEFORMATSTRING);
+                    record.setDate(sdf.parse(dateStampString));
+                } catch (Exception ex) {
+                    logger.debug(String.format("Unable to parse date for serviceName='%1$s' %2$s", record.getServiceName(),
+                            ex));
+                }
+            } 
+        }    	
+    }
+
+    protected List<AbstractCSWOnlineResource> transformSrvNodes(CSWRecord record, String expression, String threddsLayerName) 
+    					throws XPathExpressionException{
+    	NodeList  tempNodeList = evalXPathNodeList(this.mdMetadataNode, expression);
+        List<AbstractCSWOnlineResource> resources = new ArrayList<>();
+        for (int i = 0; i < tempNodeList.getLength(); i++) {
+            try {
+                Node onlineNode = tempNodeList.item(i);
+                resources.add(CSWOnlineResourceFactory.parseFromNode(onlineNode, threddsLayerName));
+            } catch (IllegalArgumentException ex) {
+                logger.debug(String.format("Unable to parse online resource for serviceName='%1$s' %2$s",
+                        record.getServiceName(), ex));
+            }
+        }
+        return resources;
+    }
+    
     /**
      * Writes to an existing CSWRecord instance with data parsed from the internal template of this class
      *
@@ -606,9 +621,7 @@ public class CSWRecordTransformer {
         //Parse our simple strings
         Node scopeNode = evalXPathNode(this.mdMetadataNode, SCOPEEXPRESSION);
         String recordType = scopeNode != null ? scopeNode.getNodeValue() : null;
-        	// http://purl.org/dc/dcmitype/Dataset
-        //logger.info("---- transformToCSWRecord recordType= " + recordType);
-        
+
         String identificationPath = null;
         if (Scope.service.toString().equals(recordType)) {
             identificationPath = SERVICEIDENTIFICATIONPATH;
@@ -616,16 +629,20 @@ public class CSWRecordTransformer {
         } else {
             identificationPath = DATAIDENTIFICATIONPATH;
         }
-
-        record.setServiceName(evalXPathString(this.mdMetadataNode, SERVICENAMEPATH));
+        record.setServiceName(evalXPathString(this.mdMetadataNode, identificationPath + TITLEEXPRESSION));
         
         record.setDataIdentificationAbstract(evalXPathString(this.mdMetadataNode, identificationPath + ABSTRACTEXPRESSION));
 
-        record.setFileIdentifier(evalXPathString(this.mdMetadataNode, FILEIDENTIFIEREXPRESSION));
+        record.setFileIdentifier(evalXPathString(this.mdMetadataNode, FILEIDENTIFIEREXPRESSION)); 
+        
         record.setParentIdentifier(evalXPathString(this.mdMetadataNode, PARENTIDENTIFIEREXPRESSION));
+        
         record.setSupplementalInformation(evalXPathString(this.mdMetadataNode, SUPPLEMENTALINFOEXPRESSION));
+
         record.setLanguage(evalXPathString(this.mdMetadataNode, LANGUAGEEXPRESSION));
+        
         record.setDataQualityStatement(evalXPathString(this.mdMetadataNode, DATAQUALITYSTATEMENTEXPRESSION));
+        
         record.setLayerName(evalXPathString(this.mdMetadataNode, LAYERNAME));
 
         String resourceProvider = evalXPathString(this.mdMetadataNode, RESOURCEPROVIDEREXPRESSION);
@@ -634,37 +651,16 @@ public class CSWRecordTransformer {
         }
         record.setResourceProvider(resourceProvider);
 
-        String dateStampString = evalXPathString(this.mdMetadataNode, DATESTAMPEXPRESSION);
-        if (dateStampString != null && !dateStampString.isEmpty()) {
-            try {
-                SimpleDateFormat sdf = new SimpleDateFormat(DATEFORMATSTRING);
-                record.setDate(sdf.parse(dateStampString));
-            } catch (Exception ex) {
-                logger.debug(String.format("Unable to parse date for serviceName='%1$s' %2$s", record.getServiceName(),
-                        ex));
-            }
-        }
+        transformDate(record);
+
+        String tlname = getThreddsLayerName();
         
         //There can be multiple gmd:onLine elements (which contain a number of fields we want)
-        tempNodeList = evalXPathNodeList(this.mdMetadataNode, ONLINERESOURCES);
-        //logger.info("---- transformToCSWRecord onlineResource #= " + tempNodeList.getLength());
-        List<AbstractCSWOnlineResource> resources = new ArrayList<>();
-        for (int i = 0; i < tempNodeList.getLength(); i++) {
-            try {
-                Node onlineNode = tempNodeList.item(i);
-                AbstractCSWOnlineResource acor = CSWOnlineResourceFactory.parseFromNode(onlineNode);
-                //logger.info(String.format("---- transformToCSWRecord - AbstractCSWOnlineResource, name = %s, url = %s, protocol = %s", 
-                //			acor.getName(), acor.getLinkage().toString(), acor.getType()));
-                resources.add(acor);
-            } catch (IllegalArgumentException ex) {
-                logger.debug(String.format("Unable to parse online resource for serviceName='%1$s' %2$s",
-                        record.getServiceName(), ex));
-            }
-        }
-        removeDuplicateOnlineResources(resources);
-        //logger.info(String.format("---- transformToCSWRecord after removeDuplicate resources # = %d", resources.size()));
-        record.setOnlineResources(resources.toArray(new AbstractCSWOnlineResource[resources.size()]));
-        //logger.info(String.format("---- transformToCSWRecord after setting resources # = %d", record.getOnlineResources().length));
+        List<AbstractCSWOnlineResource> srvlist = transformSrvNodes(record, ONLINETRANSFERSEXPRESSION, tlname);
+        List<AbstractCSWOnlineResource> datasetlist = transformSrvNodes(record, ONLINEDATASETTRANSFERSEXPRESSION, tlname);
+        srvlist.addAll(datasetlist);
+        removeDuplicateOnlineResources(srvlist);
+        record.setOnlineResources(srvlist.toArray(new AbstractCSWOnlineResource[srvlist.size()]));
 
         //Parse our bounding boxes (if they exist). If any are unparsable, don't worry and just continue
         tempNodeList = evalXPathNodeList(this.mdMetadataNode, BBOXEXPRESSION);
@@ -692,7 +688,7 @@ public class CSWRecordTransformer {
                 keyword = tempNodeList.item(j);
                 keywords.add(keyword.getTextContent());
             }
-            record.setDescriptiveKeywords(keywords.toArray(new String[keywords.size()]));
+            record.setDescriptiveKeywords(keywords.toArray(new String[keywords.size()])); // correct!
         }
 
         //Parse the dataset URIs
@@ -779,4 +775,27 @@ public class CSWRecordTransformer {
         
         return record;
     }
+    
+    protected static boolean isFixedLayerName(String lname) {
+    	for (int i= 0; i < FIXED_DIMENSION_NAMES.length; i++) {
+			if (FIXED_DIMENSION_NAMES[i].compareTo(lname) == 0 ) {
+				return true;
+			}
+		}
+    	return false;
+    }
+    
+    protected String getThreddsLayerName() throws XPathExpressionException {
+    	NodeList tempNodeList = evalXPathNodeList(this.mdMetadataNode, THREDDSLAYERNAME);
+    	if (tempNodeList != null && tempNodeList.getLength() > 0) {
+    		for (int i = 0; i < tempNodeList.getLength(); i++) {
+    			String name = tempNodeList.item(i).getTextContent();
+    			if (!isFixedLayerName(name)) {
+    				return name;
+    			}
+    		}
+    	} 
+    	return null;
+    }
 }
+
