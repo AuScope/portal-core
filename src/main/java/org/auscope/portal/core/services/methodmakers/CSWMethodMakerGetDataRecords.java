@@ -97,7 +97,7 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
             sb.append(" startPosition=\"" + startPosition + "\"");
         }
         sb.append(">");
-        sb.append("<csw:Query typeNames=\"gmd:MD_Metadata\"  xmlns:gmd=\"http://www.isotc211.org/2005/gmd\" >");
+        sb.append("<csw:Query typeNames=\"csw:Record\" >");
         sb.append("<csw:ElementSetName>full</csw:ElementSetName>");
 
         boolean hasFilter = filterString != null && filterString.length() > 0;
@@ -138,7 +138,7 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
         sb.append("</csw:GetRecords>");
 
         log.info("CSW GetRecords Request: " + sb.toString());
-
+        log.info("CSW GetRecords Url: " + serviceUrl);
         // If this does not work, try params: "text/xml; charset=ISO-8859-1"
         httpMethod.setEntity(new StringEntity(sb.toString(), ContentType.create("text/xml", "ISO-8859-1")));
 
