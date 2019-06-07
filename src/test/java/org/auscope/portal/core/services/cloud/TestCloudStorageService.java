@@ -33,7 +33,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.common.io.ByteSource;
+import com.shaded.google.common.io.ByteSource;
+
 
 public class TestCloudStorageService extends PortalTestClass {
     private final String bucket = "bucket-name";

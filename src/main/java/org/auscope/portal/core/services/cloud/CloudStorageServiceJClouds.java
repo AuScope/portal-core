@@ -33,8 +33,9 @@ import org.jclouds.sts.STSApi;
 import org.jclouds.sts.domain.UserAndSessionCredentials;
 import org.jclouds.sts.options.AssumeRoleOptions;
 
-import com.google.common.base.Supplier;
-import com.google.common.io.Files;
+import com.shaded.google.common.base.Supplier;
+import com.shaded.google.common.io.Files;
+
 
 /**
  * Service for providing storage of objects (blobs) in a cloud using the JClouds library
