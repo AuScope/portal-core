@@ -14,7 +14,7 @@ public class MockCloudStorageService extends CloudStorageServiceJClouds {
     private BlobStoreContext mockBlobStoreContext;
 
     public MockCloudStorageService(BlobStoreContext mockBlobStoreContext) {
-        super(null,null,null);
+        super();
         this.mockBlobStoreContext=mockBlobStoreContext;
     }
 

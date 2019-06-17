@@ -15,6 +15,7 @@ import org.auscope.portal.core.cloud.CloudJob;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.util.TextUtil;
 import org.jclouds.ContextBuilder;
+import org.jclouds.aws.domain.SessionCredentials;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.KeyNotFoundException;
@@ -34,6 +35,7 @@ import org.jclouds.sts.domain.UserAndSessionCredentials;
 import org.jclouds.sts.options.AssumeRoleOptions;
 
 import com.shaded.google.common.base.Supplier;
+import com.shaded.google.common.base.Suppliers;
 import com.shaded.google.common.io.Files;
 
 
@@ -81,8 +83,8 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
      * @param secretKey
      *            Password credentials for accessing the storage service
      */
-    public CloudStorageServiceJClouds(String provider, String accessKey, String secretKey) {
-        this(null, provider, accessKey, secretKey, null, false);
+    public CloudStorageServiceJClouds(String provider, String accessKey, String secretKey, String sessionKey) {
+        this(null, provider, accessKey, secretKey, sessionKey, null, false);
     }
 
     /**
@@ -97,8 +99,8 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
      * @param secretKey
      *            Password credentials for accessing the storage service
      */
-    public CloudStorageServiceJClouds(String endpoint, String provider, String accessKey, String secretKey) {
-        this(endpoint, provider, accessKey, secretKey, null, false);
+    public CloudStorageServiceJClouds(String endpoint, String provider, String accessKey, String secretKey, String sessionKey) {
+        this(endpoint, provider, accessKey, secretKey, sessionKey, null, false);
     }
 
     /**
@@ -115,9 +117,9 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
      * @param relaxHostName
      *            Whether security certs are required to strictly match the host
      */
-    public CloudStorageServiceJClouds(String endpoint, String provider, String accessKey, String secretKey,
+    public CloudStorageServiceJClouds(String endpoint, String provider, String accessKey, String secretKey, String sessionKey,
             boolean relaxHostName) {
-        this(endpoint, provider, accessKey, secretKey, null, relaxHostName);
+        this(endpoint, provider, accessKey, secretKey, sessionKey, null, relaxHostName);
     }
 
     /**
@@ -134,8 +136,8 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
      * @param regionName
      *            The region identifier string for this service (if any). Can be null/empty.
      */
-    public CloudStorageServiceJClouds(String endpoint, String provider, String accessKey, String secretKey, String regionName) {
-        this(endpoint, provider, accessKey, secretKey, regionName, false);
+    public CloudStorageServiceJClouds(String endpoint, String provider, String accessKey, String secretKey, String sessionKey, String regionName) {
+        this(endpoint, provider, accessKey, secretKey, sessionKey, regionName, false);
     }
 
     /**
@@ -154,9 +156,9 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
      * @param relaxHostName
      *            Whether security certs are required to strictly match the host
      */
-    public CloudStorageServiceJClouds(String endpoint, String provider, String accessKey, String secretKey, String regionName,
+    public CloudStorageServiceJClouds(String endpoint, String provider, String accessKey, String secretKey, String sessionKey, String regionName,
             boolean relaxHostName) {
-        this(endpoint, provider, accessKey, secretKey, regionName, relaxHostName, false);
+        this(endpoint, provider, accessKey, secretKey, sessionKey, regionName, relaxHostName, false);
     }
 
     /**
@@ -177,7 +179,7 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
      * @param stripExpectHeader
      *            Whether to remove HTTP Expect header from requests; set to true for blobstores that do not support 100-Continue
      */
-    public CloudStorageServiceJClouds(String endpoint, String provider, String accessKey, String secretKey, String regionName,
+    public CloudStorageServiceJClouds(String endpoint, String provider, String accessKey, String secretKey, String sessionKey, String regionName,
             boolean relaxHostName, boolean stripExpectHeader) {
         super(endpoint, provider, regionName);
 
@@ -186,9 +188,17 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
 
         this.setAccessKey(accessKey);
         this.setSecretKey(secretKey);
+        this.setSessionKey(sessionKey);
     }
 
-    private BlobStore getBlobStore(String arn, String clientSecret) throws PortalServiceException {
+    /***
+     * For unit testing only
+     */
+    public CloudStorageServiceJClouds() {
+		super(null, null, null);
+	}
+
+	private BlobStore getBlobStore(String arn, String clientSecret) throws PortalServiceException {
         try (BlobStoreContext ctx = getBlobStoreContext(arn, clientSecret)) {
             if (getRegionName() != null && ctx instanceof RegionScopedBlobStoreContext) {
                 return ((RegionScopedBlobStoreContext) ctx).getBlobStore(getRegionName());
@@ -219,8 +229,19 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
 
         if(! TextUtil.isNullOrEmpty(arn)) {
             ContextBuilder builder = ContextBuilder.newBuilder("sts");
-            if(getAccessKey()!=null && getSecretKey()!=null)
-                builder.credentials(getAccessKey(), getSecretKey());
+            if(getAccessKey()!=null && getSecretKey()!=null) {
+            	if(! TextUtil.isNullOrEmpty(getSessionKey())) {
+            		SessionCredentials credentials = SessionCredentials.builder()
+            			    .accessKeyId(getAccessKey())
+            			    .secretAccessKey(getSecretKey())
+            			    .sessionToken(getSessionKey())
+            			    .build();
+
+            		builder.credentialsSupplier(Suppliers.ofInstance(credentials));
+            	} else {
+            		builder.credentials(getAccessKey(), getSecretKey());
+            	}
+            }
 
             try (STSApi api = builder.buildApi(STSApi.class)) {
                 AssumeRoleOptions assumeRoleOptions = new AssumeRoleOptions().durationSeconds(3600)

@@ -411,7 +411,7 @@ public class TestCloudStorageService extends PortalTestClass {
 
     @Test(expected=PortalServiceException.class)
     public void testStsRequired() throws PortalServiceException {
-        CloudStorageServiceJClouds stsService = new CloudStorageServiceJClouds("dummy1", "dummy2", "dummy3");
+        CloudStorageServiceJClouds stsService = new CloudStorageServiceJClouds();
         stsService.setStsRequirement(STSRequirement.Mandatory);
         stsService.getBlobStoreContext(null, null);
     }
