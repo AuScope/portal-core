@@ -102,9 +102,9 @@ public class TestBaseCSWController extends PortalTestClass {
         hg2Response.put("host.name.4", Arrays.asList(new ServiceStatusResponse(Status.critical, "hg2.serv3"), new ServiceStatusResponse(Status.critical, "hg2.serv4")));
 
         context.checking(new Expectations() {{
-            oneOf(mockNagiosService).getStatuses("hg1");will(returnValue(hg1Response));
-            oneOf(mockNagiosService).getStatuses("hg2");will(returnValue(hg2Response));
-            oneOf(mockNagiosService).getStatuses("hg4");will(throwException(new PortalServiceException("hg4 error")));
+            oneOf(mockNagiosService).getStatuses("hg1", null);will(returnValue(hg1Response));
+            oneOf(mockNagiosService).getStatuses("hg2", null);will(returnValue(hg2Response));
+            oneOf(mockNagiosService).getStatuses("hg4", null);will(throwException(new PortalServiceException("hg4 error")));
         }});
 
         ModelAndView mav = baseController.generateKnownLayerResponse(knownLayers, mockNagiosService);

@@ -46,7 +46,7 @@ public class Nagios4CachedService extends Nagios4Service {
      * @see Nagios4Service.getStatuses
      */
     @Override
-    public synchronized Map<String, List<ServiceStatusResponse>> getStatuses(String hostGroup) throws PortalServiceException {
+    public synchronized Map<String, List<ServiceStatusResponse>> getStatuses(String hostGroup, String serviceGroup) throws PortalServiceException {
         CacheEntry cacheEntry = cache.get(hostGroup);
 
         if (cacheEntry != null) {
@@ -64,7 +64,7 @@ public class Nagios4CachedService extends Nagios4Service {
         // but I feel that's over engineering it
         Map<String, List<ServiceStatusResponse>> response = null;
         try{
-        	response = super.getStatuses(hostGroup);
+        	response = super.getStatuses(hostGroup,serviceGroup);
         } catch(PortalServiceException pse){
         	cacheEntry = new CacheEntry(new Date(), pse); // This could potentially recycle the CacheEntry objects instead
             cache.put(hostGroup, cacheEntry);

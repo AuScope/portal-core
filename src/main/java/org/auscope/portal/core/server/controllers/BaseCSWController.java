@@ -127,9 +127,9 @@ public abstract class BaseCSWController extends BasePortalController {
             viewKnownLayer.put("cswRecords", viewMappedRecords);
             viewKnownLayer.put("relatedRecords", viewRelatedRecords);
 
-            if (nagiosService != null && kl.getNagiosHostGroup() != null) {
+            if (nagiosService != null && (kl.getNagiosHostGroup() != null || kl.getNagiosServiceGroup() != null)) {
                 try {
-                    Map<String, List<ServiceStatusResponse>> response = nagiosService.getStatuses(kl.getNagiosHostGroup());
+                    Map<String, List<ServiceStatusResponse>> response = nagiosService.getStatuses(kl.getNagiosHostGroup(),kl.getNagiosServiceGroup());
                     List<String> failingHosts = new ArrayList<String>();
                     for (Entry<String, List<ServiceStatusResponse>> entry : response.entrySet()) {
                         for (ServiceStatusResponse status : entry.getValue()) {
