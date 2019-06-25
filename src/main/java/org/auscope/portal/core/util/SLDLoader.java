@@ -1,30 +1,33 @@
 package org.auscope.portal.core.util;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Hashtable;
+import org.auscope.portal.core.test.ResourceUtil;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import java.io.*;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.io.IOUtils;
-import org.auscope.portal.core.test.ResourceUtil;
-
 public class SLDLoader {
 
+    private static final String RULE_XPATH = "/StyledLayerDescriptor/NamedLayer/UserStyle/FeatureTypeStyle/Rule";
+
+
     public static String loadSLD(String filename, Map<String,String> valueMap, boolean preserveformat) throws IOException{
-        InputStream inputStream = null;
-
-        try{
-            inputStream = SLDLoader.class.getResourceAsStream(filename);
-
-        }catch(Exception e){
-            inputStream = null;
-        }
-        if(inputStream == null){
-            inputStream = ResourceUtil.loadResourceAsStream(filename);
-        }
+        InputStream inputStream = loadStreamFromClass(filename);
 
 
         String newLine = System.getProperty("line.separator");
@@ -54,4 +57,76 @@ public class SLDLoader {
 
     }
 
+    public static String loadSLDWithFilter(String filename, String filterString, String prefix, String namespace) throws IOException, ParserConfigurationException, XPathExpressionException, TransformerException, SAXException {
+
+
+        InputStream inputStream = loadStreamFromClass(filename);
+
+        Document doc = DOMUtil.buildDomFromStream(inputStream, false);
+
+        if (prefix != null && namespace != null) {
+          doc.getDocumentElement().setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:"+prefix, namespace);
+        }
+
+        try {
+
+            DocumentBuilderFactory documentBuilderFactory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+
+
+            DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
+            Document filter = builder.parse(new ByteArrayInputStream(filterString.getBytes()));
+
+            Node filterNode = doc.importNode(filter.getDocumentElement(), true);
+
+            NodeList nodes = (NodeList) DOMUtil.compileXPathExpr(RULE_XPATH).evaluate(doc, XPathConstants.NODESET);
+
+            for (int i = 0; i < nodes.getLength(); i++) {
+                Node node = nodes.item(i);
+                node.insertBefore(filterNode.cloneNode(true), node.getFirstChild());
+            }
+        } catch (SAXException sxe) {
+
+        }
+
+
+        doc.normalizeDocument();
+
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer transformer = tf.newTransformer();
+        StringWriter writer = new StringWriter();
+        transformer.setOutputProperty(OutputKeys.INDENT, "no");
+        transformer.transform(new DOMSource(doc), new StreamResult(writer));
+        String output = writer.getBuffer().toString();
+
+        BufferedReader reader = new BufferedReader(new StringReader(output));
+        StringBuilder result = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+                result.append(line.trim());
+
+        }
+
+        return result.toString();
+    }
+
+
+    private static InputStream loadStreamFromClass(String filename) throws IOException {
+        InputStream inputStream = null;
+        try{
+            inputStream = SLDLoader.class.getResourceAsStream(filename);
+
+        }catch(Exception e){
+            inputStream = null;
+        }
+
+        if(inputStream == null){
+            inputStream = ResourceUtil.loadResourceAsStream(filename);
+        }
+
+        return inputStream;
+    }
+
+    public static String loadSLDWithFilter(String filename, String filter) throws ParserConfigurationException, TransformerException, SAXException, XPathExpressionException, IOException {
+        return loadSLDWithFilter(filename, filter, null, null);
+    }
 }
