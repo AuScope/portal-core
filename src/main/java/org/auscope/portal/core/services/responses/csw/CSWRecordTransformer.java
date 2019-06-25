@@ -28,7 +28,7 @@ import org.w3c.dom.NodeList;
 public class CSWRecordTransformer {
     public static final String TEMPLATE_FILE = "MD_MetadataTemplate.xml";
     protected final Log logger = LogFactory.getLog(getClass());
-    protected static final String[] FIXED_DIMENSION_NAMES = {"time", "longitude", "latitude"}; 
+    protected static final String[] FIXED_DIMENSION_NAMES = {"time", "longitude", "lon", "latitude", "lat", "transverse_mercator", "crs"}; 
 
     protected Document document;
     protected Node mdMetadataNode;
