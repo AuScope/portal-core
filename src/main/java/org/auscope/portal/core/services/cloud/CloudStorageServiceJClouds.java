@@ -229,7 +229,8 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
 
         if(! TextUtil.isNullOrEmpty(arn)) {
             ContextBuilder builder = ContextBuilder.newBuilder("sts");
-            if(getAccessKey()!=null && getSecretKey()!=null) {
+            if(  (! TextUtil.isNullOrEmpty(getAccessKey())) && 
+            		(! TextUtil.isNullOrEmpty(getSecretKey()))) {
             	if(! TextUtil.isNullOrEmpty(getSessionKey())) {
             		SessionCredentials credentials = SessionCredentials.builder()
             			    .accessKeyId(getAccessKey())
@@ -273,7 +274,9 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
 
             ContextBuilder builder = ContextBuilder.newBuilder(getProvider()).overrides(properties);
 
-            if (getAccessKey() != null && getSecretKey() != null) {
+//            if (getAccessKey() != null && getSecretKey() != null) {
+            if(  (! TextUtil.isNullOrEmpty(getAccessKey())) && 
+            		(! TextUtil.isNullOrEmpty(getSecretKey()))) {
             	if(! TextUtil.isNullOrEmpty(getSessionKey())) {
             		SessionCredentials credentials = SessionCredentials.builder()
             			    .accessKeyId(getAccessKey())
