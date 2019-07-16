@@ -72,7 +72,7 @@ public class CSWGetRecordResponse {
         XPathExpression exprNextRecord = DOMUtil.compileXPathExpr(
                 "/csw:GetRecordsResponse/csw:SearchResults/@nextRecord", nc);
         XPathExpression exprRecordMetadata = DOMUtil.compileXPathExpr(
-                "/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata", nc);
+                "/csw:GetRecordsResponse/csw:SearchResults/(gmd:MD_Metadata|gmi:MI_Metadata)", nc);
 
         Node node = (Node) exprRecordsMatched.evaluate(getRecordResponse, XPathConstants.NODE);
         if (node != null) {

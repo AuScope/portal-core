@@ -72,6 +72,24 @@ public class CloudComputeServiceAws extends CloudComputeService {
 
     private STSRequirement stsRequirement  = STSRequirement.Permissable;
 
+	private String devSessionKey;
+
+    /**
+     * Creates a new instance with the specified credentials (no endpoint
+     * specified - ensure provider type has a fixed endpoint)
+     *
+     * @param accessKey
+     *            The Compute Access key (user name)
+     * @param secretKey
+     *            The Compute Secret key (password)
+     * @param sessionKey
+     *            The Compute Session key (password)
+     *
+     */
+    public CloudComputeServiceAws(String accessKey, String secretKey, String sessionKey) {
+        this(null, accessKey, secretKey, null, sessionKey);
+    }
+
     /**
      * Creates a new instance with the specified credentials (no endpoint
      * specified - ensure provider type has a fixed endpoint)
@@ -83,7 +101,7 @@ public class CloudComputeServiceAws extends CloudComputeService {
      *
      */
     public CloudComputeServiceAws(String accessKey, String secretKey) {
-        this(null, accessKey, secretKey, null);
+        this(null, accessKey, secretKey, null, null);
     }
 
     private static String getJaxpImplementationInfo(String componentName, Class<?> componentClass) {
@@ -104,10 +122,11 @@ public class CloudComputeServiceAws extends CloudComputeService {
      * @param apiVersion
      *            The API version
      */
-    public CloudComputeServiceAws(String endpoint, String accessKey, String secretKey, String apiVersion) {
+    public CloudComputeServiceAws(String endpoint, String accessKey, String secretKey, String apiVersion, String sessionKey) {
         super(ProviderType.AWSEc2, endpoint, apiVersion);
         this.devAccessKey = accessKey;
         this.devSecretKey = secretKey;
+        this.devSessionKey = sessionKey;
 
         logger.debug(
                 getJaxpImplementationInfo("DocumentBuilderFactory", DocumentBuilderFactory.newInstance().getClass()));
@@ -146,7 +165,13 @@ public class CloudComputeServiceAws extends CloudComputeService {
             AWSSecurityTokenServiceClient stsClient;
 
             if (!TextUtil.isAnyNullOrEmpty(devAccessKey, devSecretKey)) {
-                BasicAWSCredentials awsCredentials = new BasicAWSCredentials(devAccessKey, devSecretKey);
+            	AWSCredentials awsCredentials;
+                
+                if(!TextUtil.isAnyNullOrEmpty(devSessionKey)) {
+                	awsCredentials = new BasicSessionCredentials(devAccessKey, devSecretKey, devSessionKey);                
+                } else {
+                	awsCredentials = new BasicAWSCredentials(devAccessKey, devSecretKey);
+                }
                 stsClient = new AWSSecurityTokenServiceClient(awsCredentials);
             } else {
                 stsClient = new AWSSecurityTokenServiceClient();
@@ -166,7 +191,11 @@ public class CloudComputeServiceAws extends CloudComputeService {
         } else if (stsRequirement == STSRequirement.Mandatory) {
             throw new PortalServiceException("AWS cross account authorization required, but not configured");
         } else if (!TextUtil.isAnyNullOrEmpty(devAccessKey, devSecretKey)) {
-            return new BasicAWSCredentials(devAccessKey, devSecretKey);
+        	if(!TextUtil.isAnyNullOrEmpty(devSessionKey)) {
+        		return new BasicSessionCredentials(devAccessKey, devSecretKey, devSessionKey);
+        	} else {
+        		return new BasicAWSCredentials(devAccessKey, devSecretKey);
+        	}
         }
         return null;
     }
@@ -236,7 +265,8 @@ public class CloudComputeServiceAws extends CloudComputeService {
                 .withInstanceInitiatedShutdownBehavior("terminate").withUserData(userDataString);
 
         String instanceProfileArn = job.getProperty(CloudJob.PROPERTY_S3_ROLE);
-        if (!TextUtil.isNullOrEmpty(instanceProfileArn)) {
+        if ( (stsRequirement != STSRequirement.ForceNone) && 
+        		(!TextUtil.isNullOrEmpty(instanceProfileArn))) {
             IamInstanceProfileSpecification iamInstanceProfile = new IamInstanceProfileSpecification()
                     .withArn(instanceProfileArn);
             runInstancesRequest = runInstancesRequest.withIamInstanceProfile(iamInstanceProfile);
