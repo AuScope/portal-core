@@ -30,16 +30,16 @@ import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.options.TemplateOptions;
+import org.jclouds.openstack.keystone.config.KeystoneProperties;
 import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.compute.options.NovaTemplateOptions;
 import org.jclouds.openstack.nova.v2_0.domain.Image;
 import org.jclouds.openstack.nova.v2_0.features.ImageApi;
-import org.openstack4j.api.OSClient;
+import org.openstack4j.api.OSClient.OSClientV3;
 import org.openstack4j.openstack.OSFactory;
 
 import com.shaded.google.common.base.Predicate;
 import com.shaded.google.common.base.Predicates;
-
 
 
 /**
@@ -153,15 +153,27 @@ public class CloudComputeServiceNectar extends CloudComputeService {
         super(ProviderType.NovaKeystone, endpoint, apiVersion);
         this.accessKey = accessKey;
         this.secretKey = secretKey;
-
-        Properties overrides = new Properties();
-
+        
+        String[] accessParts = this.accessKey.split(":");        
+        String projectName = accessParts[0];
+        String userName = accessParts[1];
         String typeString = "openstack-nova";
 
-        builder = ContextBuilder.newBuilder(typeString).overrides(overrides);
+        Properties overrides = new Properties();
+        overrides.put(KeystoneProperties.KEYSTONE_VERSION, "3");
+        overrides.put(KeystoneProperties.SCOPE, "project:" + projectName);
+        
+        // Logging
+        //Iterable<Module> modules = ImmutableSet.<Module>of(new SLF4JLoggingModule());        
 
+        this.builder = ContextBuilder.newBuilder(typeString)
+                //.endpoint(endpoint)
+            	//.credentials("default:" + userName, secretKey)
+            	//.modules(modules)
+                .overrides(overrides);
+        
         if(accessKey!=null && secretKey!=null)
-            builder.credentials(accessKey, secretKey);
+        	builder.credentials("default:"+userName, secretKey);
 
         if (getApiVersion() != null) {
             builder.apiVersion(getApiVersion());
@@ -170,16 +182,15 @@ public class CloudComputeServiceNectar extends CloudComputeService {
         if (endpoint != null) {
             builder.endpoint(endpoint);
         }
-
+        
         this.novaApi = builder.buildApi(NovaApi.class);
 
         Set<String> regions = novaApi.getConfiguredRegions();
         String region = null;
-        if(! regions.isEmpty())
+        if(!regions.isEmpty())
             region = regions.iterator().next();
         
-        this.imageApi = novaApi.getImageApi(region);
-        
+        this.imageApi = novaApi.getImageApi(region);        
         this.context = builder.buildView(ComputeServiceContext.class);
         this.computeService = this.context.getComputeService();
         this.terminateFilter = Predicates.and(not(TERMINATED), not(RUNNING), inGroup(getGroupName()));
@@ -356,15 +367,12 @@ public class CloudComputeServiceNectar extends CloudComputeService {
         try {
             String[] accessParts = this.accessKey.split(":");
             String[] idParts = computeInstanceId.split("/");
-
             //JClouds has no support (currently) for tailing server console output. Our current workaround
             //is to offload this to openstack4j.
-            OSClient os = OSFactory.builder()
-                    .endpoint(endpoint)
-                    .credentials(accessParts[1], secretKey)
-                    .tenantName(accessParts[0])
+            OSClientV3 os = OSFactory.builderV3()
+            		.endpoint(endpoint)
+                    .credentials("default:" + accessParts[1], secretKey)
                     .authenticate();
-
             return os.compute().servers().getConsoleOutput(idParts[1], numLines);
         } catch (Exception ex) {
             logger.error("Unable to retrieve console logs for " + computeInstanceId, ex);
