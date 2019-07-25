@@ -12,6 +12,15 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class CSWServiceItem {
 
+	/**
+	 * The CSW server application type
+	 */
+	public enum ServerType {
+	    DEFAULT, // targeting geonetwork.
+	    GEOSERVER,
+	    PYCSW
+	}
+	
     private String id;
     private String title;
     private String serviceUrl;
@@ -22,6 +31,7 @@ public class CSWServiceItem {
     private String cqlText;
     private String defaultAnyTextFilter;
     private String[] defaultConstraints;
+    private ServerType serverType = ServerType.DEFAULT;
     private boolean noCache = false;
     private boolean hideFromCatalogue = false;
 
@@ -58,10 +68,25 @@ public class CSWServiceItem {
      * @param title
      */
     public CSWServiceItem(String id, String serviceUrl, String recordInformationUrl, String title) {
+        this(id, serviceUrl, recordInformationUrl, "", ServerType.DEFAULT);
+    }
+    
+    /**
+     * Creates a new service item with ServerType
+     * 
+     * @param id
+     *            Must be unique per service
+     * @param serviceUrl
+     * @param recordInformationUrl
+     * @param title
+     * @param serverType
+     */
+    public CSWServiceItem(String id, String serviceUrl, String recordInformationUrl, String title, ServerType serverType) {
         this.id = id;
         this.serviceUrl = serviceUrl;
         this.recordInformationUrl = recordInformationUrl;
         this.title = title;
+        this.serverType = serverType;
     }
     
     /**
@@ -98,6 +123,7 @@ public class CSWServiceItem {
         for (Object role : restrictedRoleList) {
             this.restrictedRoleList[i++] = role.toString();
         }
+        
     }
 
     /**
@@ -336,5 +362,23 @@ public class CSWServiceItem {
 
     public void setHideFromCatalogue(boolean hideFromCatalogue) {
         this.hideFromCatalogue = hideFromCatalogue;
+    }
+    
+    /**
+     * Get serverType for the CSW service
+     * 
+     * @return String
+     */
+    public ServerType getServerType() {
+        return serverType;
+    }
+
+    /**
+     * Set serverType for the CSW service
+     * 
+     * @return
+     */
+    public void setServerType(ServerType serverType) {
+        this.serverType = serverType;
     }
 }
