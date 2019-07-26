@@ -101,7 +101,7 @@ public class AdminService {
 
             CSWMethodMakerGetDataRecords methodMaker = new CSWMethodMakerGetDataRecords();
             HttpRequestBase method = methodMaker.makeMethod(item.getServiceUrl(), null, ResultType.Results,
-                    numRecordsToRequest);
+                    numRecordsToRequest, item.getServerType());
 
             try (InputStream responseStream = serviceCaller.getMethodResponseAsStream(method)) {
                 Document responseDoc = DOMUtil.buildDomFromStream(responseStream);

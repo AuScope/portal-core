@@ -107,7 +107,7 @@ public class CSWFilterService {
                 maxRecords, resultType, filter));
         CSWMethodMakerGetDataRecords methodMaker = new CSWMethodMakerGetDataRecords();
         HttpRequestBase method = methodMaker.makeMethod(serviceItem.getServiceUrl(), filter, resultType, maxRecords, startIndex,
-                    null);
+                    null, serviceItem.getServerType());
 
         try (InputStream responseStream = serviceCaller.getMethodResponseAsStream(method)) {
             Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
@@ -143,7 +143,7 @@ public class CSWFilterService {
                     serviceItem, maxRecords, resultType, filter));
             CSWMethodMakerGetDataRecords methodMaker = new CSWMethodMakerGetDataRecords();
             requestMethods.add(methodMaker.makeMethod(serviceItem.getServiceUrl(), filter, resultType, maxRecords,
-                    startIndex, null));
+                    startIndex, null, serviceItem.getServerType()));
             additionalInfo.add(serviceItem);
         }
 

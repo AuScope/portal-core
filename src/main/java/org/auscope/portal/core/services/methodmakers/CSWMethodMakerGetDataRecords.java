@@ -11,6 +11,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter;
 import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter.SortType;
 
@@ -40,8 +41,8 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
      * 
      * @return
      */
-    public HttpRequestBase makeMethod(String serviceUrl) {
-        return this.makeMethod(serviceUrl, null, ResultType.Results, 1000, 1, null);
+    public HttpRequestBase makeMethod(String serviceUrl, CSWServiceItem.ServerType serverType) {
+        return this.makeMethod(serviceUrl, null, ResultType.Results, 1000, 1, null, serverType);
     }
 
     /**
@@ -52,8 +53,8 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
      * @return
      */
     public HttpRequestBase makeMethod(String serviceUrl, CSWGetDataRecordsFilter filter, ResultType resultType,
-            int maxRecords) {
-        return this.makeMethod(serviceUrl, filter, resultType, maxRecords, 1, null);
+            int maxRecords, CSWServiceItem.ServerType serverType) {
+        return this.makeMethod(serviceUrl, filter, resultType, maxRecords, 1, null, serverType);
     }
 
     /**
@@ -66,7 +67,7 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
      *             If the PostMethod body cannot be encoded ISO-8859-1
      */
     public HttpRequestBase makeMethod(String serviceUrl, CSWGetDataRecordsFilter filter, ResultType resultType,
-            int maxRecords, int startPosition, String cqlText) {
+            int maxRecords, int startPosition, String cqlText, CSWServiceItem.ServerType serverType) {
         HttpPost httpMethod = new HttpPost(serviceUrl);
 
         String filterString = null;
@@ -154,7 +155,7 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
      * @return
      * @throws URISyntaxException
      */
-    public HttpRequestBase makeGetMethod(String serviceUrl, ResultType resultType, int maxRecords, int startPosition)
+    public HttpRequestBase makeGetMethod(String serviceUrl, ResultType resultType, int maxRecords, int startPosition, CSWServiceItem.ServerType serverType)
             throws URISyntaxException {
         HttpGet method = new HttpGet();
 
