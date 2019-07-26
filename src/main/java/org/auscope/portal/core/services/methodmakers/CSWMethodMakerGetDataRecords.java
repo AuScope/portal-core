@@ -57,6 +57,15 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
         return this.makeMethod(serviceUrl, filter, resultType, maxRecords, 1, null, serverType);
     }
 
+    private String getCSWQueryElement(CSWServiceItem.ServerType serverType) {
+        switch (serverType) {
+        case PYCSW:
+            return "<csw:Query typeNames=\"csw:Record\" >";
+        default:
+        	return 	"<csw:Query typeNames=\"gmd:MD_Metadata\"  xmlns:gmd=\"http://www.isotc211.org/2005/gmd\" >";
+        }
+    	
+    }
     /**
      * Generates a method that performs a CSW GetRecords request with the specified filter
      *
@@ -98,10 +107,8 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
             sb.append(" startPosition=\"" + startPosition + "\"");
         }
         sb.append(">");
+        sb.append(getCSWQueryElement(serverType));
 
-        sb.append("<csw:Query typeNames=\"csw:Record\" >");
-// Carsten 17/06/2019: Why is this different in VGL and DCDP?
-//        sb.append("<csw:Query typeNames=\"gmd:MD_Metadata\"  xmlns:gmd=\"http://www.isotc211.org/2005/gmd\" >");
         sb.append("<csw:ElementSetName>full</csw:ElementSetName>");
 
         boolean hasFilter = filterString != null && filterString.length() > 0;
@@ -160,16 +167,16 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
         HttpGet method = new HttpGet();
 
         URIBuilder builder = new URIBuilder(serviceUrl);
-        // http://bomac-ep:8080/api? resultType=results
         
         builder.setParameter("service", "CSW");
-        //builder.setParameter("constraint_language_version", "1.1.0");
+        if (serverType != CSWServiceItem.ServerType.PYCSW ) {
+        	builder.setParameter("constraint_language_version", "1.1.0");
+        }
         builder.setParameter("request", "GetRecords");
         builder.setParameter("version", "2.0.2");
         builder.setParameter("outputSchema", "http://www.isotc211.org/2005/gmd");
         builder.setParameter("typeNames", "gmd:MD_Metadata");
         builder.setParameter("constraintLanguage", "FILTER");
-        //builder.setParameter("namespace", "csw:http://www.opengis.net/cat/csw");
         builder.setParameter("elementSetName", "full");
         builder.setParameter("startPosition", Integer.toString(startPosition));
         builder.setParameter("maxRecords", Integer.toString(maxRecords));
