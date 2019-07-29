@@ -92,7 +92,7 @@ public class CSWGetRecordResponse {
 
         for (int i = 0; i < nodes.getLength(); i++) {
             Node metadataNode = nodes.item(i);
-            CSWRecordTransformer transformer = cswRecordTransformerFactory.newCSWRecordTransformer(metadataNode);
+            CSWRecordTransformer transformer = cswRecordTransformerFactory.newCSWRecordTransformer(metadataNode, origin.getServerType());
             CSWRecord newRecord = transformer.transformToCSWRecord();
             newRecord.setRecordInfoUrl(String.format(origin.getRecordInformationUrl(), newRecord.getFileIdentifier()));
             records.add(newRecord);

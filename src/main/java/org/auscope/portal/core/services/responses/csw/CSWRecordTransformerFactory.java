@@ -3,6 +3,7 @@ package org.auscope.portal.core.services.responses.csw;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.auscope.portal.core.services.PortalServiceException;
+import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.w3c.dom.Node;
 
 /**
@@ -19,7 +20,25 @@ public class CSWRecordTransformerFactory {
      * @return
      */
     public CSWRecordTransformer newCSWRecordTransformer(Node mdMetadataNode) {
-        return new CSWRecordTransformer(mdMetadataNode);
+    	return new CSWRecordTransformer(mdMetadataNode);
+    }
+    
+    /**
+     * Creates a new instance of CSWRecordTransformer with CSW server type
+     * 
+     * @param mdMetadataNode
+     * @param serverType
+     * @return
+     */
+    public CSWRecordTransformer newCSWRecordTransformer(Node mdMetadataNode, CSWServiceItem.ServerType serverType) {
+    	switch (serverType) {
+    	case PYCSW:
+    		return new PyCSWRecordTransformer(mdMetadataNode);
+    	case GEOSERVER:
+    		return new GeoserverCSWRecordTransformer(mdMetadataNode);
+    	default:
+    		return new CSWRecordTransformer(mdMetadataNode);
+    	}
     }
 
     /**
