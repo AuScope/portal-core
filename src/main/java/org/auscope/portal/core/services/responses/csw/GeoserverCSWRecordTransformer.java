@@ -9,21 +9,9 @@ import javax.xml.xpath.XPathExpressionException;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 
 public class GeoserverCSWRecordTransformer extends CSWRecordTransformer {
-
-    public static final String TEMPLATE_FILE = "MD_MetadataTemplate.xml";
-    protected final Log logger = LogFactory.getLog(getClass());
-
-    protected static final String DATETIMEFORMATSTRING = "yyyy-MM-dd'T'HH:mm:ss";
-    protected static final String DATEFORMATSTRING = "yyyy-MM-dd";
-
-    protected enum Scope {
-        service, dataset
-    }
 
     private static final String SERVICEIDENTIFICATIONPATH = "gmd:identificationInfo/srv:SV_ServiceIdentification";
     private static final String DATAIDENTIFICATIONPATH = "gmd:identificationInfo/gmd:MD_DataIdentification";

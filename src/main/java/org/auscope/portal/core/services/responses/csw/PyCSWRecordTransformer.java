@@ -6,8 +6,6 @@ import java.util.List;
 
 import javax.xml.xpath.XPathExpressionException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.namespaces.CSWNamespaceContext;
 import org.w3c.dom.Node;
@@ -15,16 +13,7 @@ import org.w3c.dom.NodeList;
 
 public class PyCSWRecordTransformer extends CSWRecordTransformer{
 
-    public static final String TEMPLATE_FILE = "MD_MetadataTemplate.xml";
-    protected final Log logger = LogFactory.getLog(getClass());
     protected static final String[] FIXED_DIMENSION_NAMES = {"time", "longitude", "lon", "latitude", "lat", "transverse_mercator", "crs"}; 
-
-    protected static final String DATETIMEFORMATSTRING = "yyyy-MM-dd'T'HH:mm:ss";
-    protected static final String DATEFORMATSTRING = "yyyy-MM-dd";
-
-    protected enum Scope {
-        service, dataset
-    }
 
     protected static final CSWNamespaceContext nc = new CSWNamespaceContext();
     private static final String SERVICEIDENTIFICATIONPATH = "gmd:identificationInfo/srv:SV_ServiceIdentification";
