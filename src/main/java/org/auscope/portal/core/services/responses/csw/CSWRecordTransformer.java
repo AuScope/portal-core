@@ -528,7 +528,7 @@ public class CSWRecordTransformer {
      * Iterates through the record's online resource list and removes any pairs of online resources that match on: 1) URL (sans query string) 2) name 3)
      * protocol
      */
-    private static List<AbstractCSWOnlineResource> removeDuplicateOnlineResources(List<AbstractCSWOnlineResource> resources) {
+    protected static List<AbstractCSWOnlineResource> removeDuplicateOnlineResources(List<AbstractCSWOnlineResource> resources) {
         for (int i = 0; i < resources.size(); i++) {
             AbstractCSWOnlineResource resource = resources.get(i);
             boolean foundMatching = false;
@@ -591,14 +591,13 @@ public class CSWRecordTransformer {
         }    	
     }
 
-    protected List<AbstractCSWOnlineResource> transformSrvNodes(CSWRecord record, String expression, String threddsLayerName) 
-    					throws XPathExpressionException{
+    protected List<AbstractCSWOnlineResource> transformSrvNodes(CSWRecord record, String expression) throws XPathExpressionException{
     	NodeList  tempNodeList = evalXPathNodeList(this.mdMetadataNode, expression);
         List<AbstractCSWOnlineResource> resources = new ArrayList<>();
         for (int i = 0; i < tempNodeList.getLength(); i++) {
             try {
                 Node onlineNode = tempNodeList.item(i);
-                resources.add(CSWOnlineResourceFactory.parseFromNode(onlineNode, threddsLayerName));
+                resources.add(CSWOnlineResourceFactory.parseFromNode(onlineNode, null)); // no name extracted from Thredds layer info
             } catch (IllegalArgumentException ex) {
                 logger.debug(String.format("Unable to parse online resource for serviceName='%1$s' %2$s",
                         record.getServiceName(), ex));
@@ -606,7 +605,7 @@ public class CSWRecordTransformer {
         }
         return resources;
     }
-    
+        
     /**
      * Writes to an existing CSWRecord instance with data parsed from the internal template of this class
      *
@@ -629,20 +628,15 @@ public class CSWRecordTransformer {
         } else {
             identificationPath = DATAIDENTIFICATIONPATH;
         }
+
         record.setServiceName(evalXPathString(this.mdMetadataNode, identificationPath + TITLEEXPRESSION));
-        
         record.setDataIdentificationAbstract(evalXPathString(this.mdMetadataNode, identificationPath + ABSTRACTEXPRESSION));
 
-        record.setFileIdentifier(evalXPathString(this.mdMetadataNode, FILEIDENTIFIEREXPRESSION)); 
-        
+        record.setFileIdentifier(evalXPathString(this.mdMetadataNode, FILEIDENTIFIEREXPRESSION));
         record.setParentIdentifier(evalXPathString(this.mdMetadataNode, PARENTIDENTIFIEREXPRESSION));
-        
         record.setSupplementalInformation(evalXPathString(this.mdMetadataNode, SUPPLEMENTALINFOEXPRESSION));
-
         record.setLanguage(evalXPathString(this.mdMetadataNode, LANGUAGEEXPRESSION));
-        
         record.setDataQualityStatement(evalXPathString(this.mdMetadataNode, DATAQUALITYSTATEMENTEXPRESSION));
-        
         record.setLayerName(evalXPathString(this.mdMetadataNode, LAYERNAME));
 
         String resourceProvider = evalXPathString(this.mdMetadataNode, RESOURCEPROVIDEREXPRESSION);
@@ -651,16 +645,31 @@ public class CSWRecordTransformer {
         }
         record.setResourceProvider(resourceProvider);
 
-        transformDate(record);
+        String dateStampString = evalXPathString(this.mdMetadataNode, DATESTAMPEXPRESSION);
+        if (dateStampString != null && !dateStampString.isEmpty()) {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat(DATEFORMATSTRING);
+                record.setDate(sdf.parse(dateStampString));
+            } catch (Exception ex) {
+                logger.debug(String.format("Unable to parse date for serviceName='%1$s' %2$s", record.getServiceName(),
+                        ex));
+            }
+        }
 
-        String tlname = getThreddsLayerName();
-        
         //There can be multiple gmd:onLine elements (which contain a number of fields we want)
-        List<AbstractCSWOnlineResource> srvlist = transformSrvNodes(record, ONLINETRANSFERSEXPRESSION, tlname);
-        List<AbstractCSWOnlineResource> datasetlist = transformSrvNodes(record, ONLINEDATASETTRANSFERSEXPRESSION, tlname);
-        srvlist.addAll(datasetlist);
-        removeDuplicateOnlineResources(srvlist);
-        record.setOnlineResources(srvlist.toArray(new AbstractCSWOnlineResource[srvlist.size()]));
+        tempNodeList = evalXPathNodeList(this.mdMetadataNode, ONLINETRANSFERSEXPRESSION);
+        List<AbstractCSWOnlineResource> resources = new ArrayList<>();
+        for (int i = 0; i < tempNodeList.getLength(); i++) {
+            try {
+                Node onlineNode = tempNodeList.item(i);
+                resources.add(CSWOnlineResourceFactory.parseFromNode(onlineNode, null)); // no name extracted from Thredds layer info
+            } catch (IllegalArgumentException ex) {
+                logger.debug(String.format("Unable to parse online resource for serviceName='%1$s' %2$s",
+                        record.getServiceName(), ex));
+            }
+        }
+        removeDuplicateOnlineResources(resources);
+        record.setOnlineResources(resources.toArray(new AbstractCSWOnlineResource[resources.size()]));
 
         //Parse our bounding boxes (if they exist). If any are unparsable, don't worry and just continue
         tempNodeList = evalXPathNodeList(this.mdMetadataNode, BBOXEXPRESSION);
@@ -688,7 +697,7 @@ public class CSWRecordTransformer {
                 keyword = tempNodeList.item(j);
                 keywords.add(keyword.getTextContent());
             }
-            record.setDescriptiveKeywords(keywords.toArray(new String[keywords.size()])); // correct!
+            record.setDescriptiveKeywords(keywords.toArray(new String[keywords.size()]));
         }
 
         //Parse the dataset URIs
@@ -776,26 +785,6 @@ public class CSWRecordTransformer {
         return record;
     }
     
-    protected static boolean isFixedLayerName(String lname) {
-    	for (int i= 0; i < FIXED_DIMENSION_NAMES.length; i++) {
-			if (FIXED_DIMENSION_NAMES[i].compareTo(lname) == 0 ) {
-				return true;
-			}
-		}
-    	return false;
-    }
-    
-    protected String getThreddsLayerName() throws XPathExpressionException {
-    	NodeList tempNodeList = evalXPathNodeList(this.mdMetadataNode, THREDDSLAYERNAME);
-    	if (tempNodeList != null && tempNodeList.getLength() > 0) {
-    		for (int i = 0; i < tempNodeList.getLength(); i++) {
-    			String name = tempNodeList.item(i).getTextContent();
-    			if (!isFixedLayerName(name)) {
-    				return name;
-    			}
-    		}
-    	} 
-    	return null;
-    }
+
 }
 
