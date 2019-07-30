@@ -619,7 +619,7 @@ public class CSWRecordTransformer {
         for (int i = 0; i < tempNodeList.getLength(); i++) {
             try {
                 Node onlineNode = tempNodeList.item(i);
-                resources.add(CSWOnlineResourceFactory.parseFromNode(onlineNode));
+                resources.add(CSWOnlineResourceFactory.parseFromNode(onlineNode, null)); // no layer name found only from Thredds server.
             } catch (IllegalArgumentException ex) {
                 logger.debug(String.format("Unable to parse online resource for serviceName='%1$s' %2$s",
                         record.getServiceName(), ex));
