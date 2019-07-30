@@ -602,7 +602,7 @@ public class CSWRecordTransformer {
         }
         record.setResourceProvider(resourceProvider);
 
-        String dateStampString = evalXPathString(this.mdMetadataNode, DATESTAMPEXPRESSION);
+        String dateStampString = evalXPathString(this.mdMetadataNode, DATETIMESTAMPEXPRESSION);
         if (dateStampString != null && !dateStampString.isEmpty()) {
             try {
                 SimpleDateFormat sdf = new SimpleDateFormat(DATEFORMATSTRING);
