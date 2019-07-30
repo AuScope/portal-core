@@ -658,7 +658,7 @@ public class CSWRecordTransformer {
         for (int i = 0; i < tempNodeList.getLength(); i++) {
             try {
                 Node onlineNode = tempNodeList.item(i);
-                resources.add(CSWOnlineResourceFactory.parseFromNode(onlineNode, null)); // no name extracted from Thredds layer info
+                resources.add(CSWOnlineResourceFactory.parseFromNode(onlineNode));
             } catch (IllegalArgumentException ex) {
                 logger.debug(String.format("Unable to parse online resource for serviceName='%1$s' %2$s",
                         record.getServiceName(), ex));
