@@ -191,7 +191,11 @@ public class CloudComputeServiceAws extends CloudComputeService {
         } else if (stsRequirement == STSRequirement.Mandatory) {
             throw new PortalServiceException("AWS cross account authorization required, but not configured");
         } else if (!TextUtil.isAnyNullOrEmpty(devAccessKey, devSecretKey)) {
-            return new BasicAWSCredentials(devAccessKey, devSecretKey);
+        	if(!TextUtil.isAnyNullOrEmpty(devSessionKey)) {
+        		return new BasicSessionCredentials(devAccessKey, devSecretKey, devSessionKey);
+        	} else {
+        		return new BasicAWSCredentials(devAccessKey, devSecretKey);
+        	}
         }
         return null;
     }
@@ -261,7 +265,8 @@ public class CloudComputeServiceAws extends CloudComputeService {
                 .withInstanceInitiatedShutdownBehavior("terminate").withUserData(userDataString);
 
         String instanceProfileArn = job.getProperty(CloudJob.PROPERTY_S3_ROLE);
-        if (!TextUtil.isNullOrEmpty(instanceProfileArn)) {
+        if ( (stsRequirement != STSRequirement.ForceNone) && 
+        		(!TextUtil.isNullOrEmpty(instanceProfileArn))) {
             IamInstanceProfileSpecification iamInstanceProfile = new IamInstanceProfileSpecification()
                     .withArn(instanceProfileArn);
             runInstancesRequest = runInstancesRequest.withIamInstanceProfile(iamInstanceProfile);

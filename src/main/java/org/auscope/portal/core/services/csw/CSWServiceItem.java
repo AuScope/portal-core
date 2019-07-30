@@ -26,6 +26,13 @@ public class CSWServiceItem {
     private boolean hideFromCatalogue = false;
 
     /**
+     * No arg constructor necessary for binding
+     */
+    public CSWServiceItem() {
+    	super();
+    }
+    
+    /**
      * Creates a new service item with NO role restrictions
      * 
      * @param id
@@ -108,6 +115,15 @@ public class CSWServiceItem {
     public String getServiceUrl() {
         return this.serviceUrl;
     }
+    
+    /**
+     * Set service URL
+     * 
+     * @param serviceUrl
+     */
+    public void setServiceUrl(String serviceUrl) {
+    	this.serviceUrl = serviceUrl;
+    }
 
     /**
      * The list of roles that a user must have at least one of to be authorised to see records from the CSW Service
@@ -119,6 +135,15 @@ public class CSWServiceItem {
     public String[] getRestrictedRoleList() {
         return this.restrictedRoleList;
     }
+    
+    /**
+     * Set restriced role list
+     * 
+     * @param restrictedRoleList
+     */
+    public void setRestrictedRoleList(String[] restrictedRoleList) {
+    	this.restrictedRoleList = restrictedRoleList;
+    }
 
     /**
      * Gets the descriptive title of this service item
@@ -128,6 +153,15 @@ public class CSWServiceItem {
     public String getTitle() {
         return this.title;
     }
+    
+    /**
+     * Set title
+     * 
+     * @param title
+     */
+    public void setTitle(String title) {
+    	this.title = title;
+    }
 
     /**
      * Gets the unique ID of this service item
@@ -136,6 +170,15 @@ public class CSWServiceItem {
      */
     public String getId() {
         return this.id;
+    }
+    
+    /**
+     * Set ID
+     * 
+     * @param id
+     */
+    public void setId(String id) {
+    	this.id = id;
     }
 
     /**
@@ -166,6 +209,15 @@ public class CSWServiceItem {
      */
     public String getRecordInformationUrl() {
         return recordInformationUrl;
+    }
+    
+    /**
+     * Set record information URL
+     * 
+     * @param recordInformationUrl
+     */
+    public void setRecordInformationUrl(String recordInformationUrl) {
+    	this.recordInformationUrl = recordInformationUrl;
     }
 
     @Override
@@ -307,6 +359,11 @@ public class CSWServiceItem {
         return this.noCache;
     }
 
+    /**
+     * Get default constraints
+     * 
+     * @return
+     */
     public String[] getDefaultConstraints() {
         return this.defaultConstraints;
     }
