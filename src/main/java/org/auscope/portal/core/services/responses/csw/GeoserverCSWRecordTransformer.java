@@ -1,5 +1,6 @@
 package org.auscope.portal.core.services.responses.csw;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,8 +18,6 @@ public class GeoserverCSWRecordTransformer extends CSWRecordTransformer {
     private static final String DATAIDENTIFICATIONPATH = "gmd:identificationInfo/gmd:MD_DataIdentification";
     private static final String TITLEEXPRESSION = "/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString";
 
-    private static final String DATESTAMPEXPRESSION = "gmd:dateStamp/gco:Date";
-    private static final String DATETIMESTAMPEXPRESSION = "gmd:dateStamp/gco:DateTime";
     private static final String SCOPEEXPRESSION = "gmd:hierarchyLevel/gmd:MD_ScopeCode/@codeListValue";
     private static final String ABSTRACTEXPRESSION = "/gmd:abstract/gco:CharacterString";
 
@@ -208,5 +207,45 @@ public class GeoserverCSWRecordTransformer extends CSWRecordTransformer {
         }
         
         return record;
+    }
+    
+
+    protected void transformDate(CSWRecord record) throws XPathExpressionException {
+        String dateStampString = evalXPathString(this.mdMetadataNode, DATETIMESTAMPEXPRESSION);
+        if (dateStampString != null && !dateStampString.isEmpty()) {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat(DATETIMEFORMATSTRING);
+                record.setDate(sdf.parse(dateStampString));
+            } catch (Exception ex) {
+                logger.debug(String.format("Unable to parse date for serviceName='%1$s' %2$s", record.getServiceName(),
+                        ex));
+            }
+        } else {
+        	dateStampString = evalXPathString(this.mdMetadataNode, DATESTAMPEXPRESSION);
+        	if (dateStampString != null && !dateStampString.isEmpty()) {
+                try {
+                    SimpleDateFormat sdf = new SimpleDateFormat(DATEFORMATSTRING);
+                    record.setDate(sdf.parse(dateStampString));
+                } catch (Exception ex) {
+                    logger.debug(String.format("Unable to parse date for serviceName='%1$s' %2$s", record.getServiceName(),
+                            ex));
+                }
+            } 
+        }    	
+    }
+    
+    protected List<AbstractCSWOnlineResource> transformSrvNodes(CSWRecord record, String expression) throws XPathExpressionException{
+    	NodeList  tempNodeList = evalXPathNodeList(this.mdMetadataNode, expression);
+        List<AbstractCSWOnlineResource> resources = new ArrayList<>();
+        for (int i = 0; i < tempNodeList.getLength(); i++) {
+            try {
+                Node onlineNode = tempNodeList.item(i);
+                resources.add(CSWOnlineResourceFactory.parseFromNode(onlineNode, null)); // no name extracted from Thredds layer info
+            } catch (IllegalArgumentException ex) {
+                logger.debug(String.format("Unable to parse online resource for serviceName='%1$s' %2$s",
+                        record.getServiceName(), ex));
+            }
+        }
+        return resources;
     }
 }
