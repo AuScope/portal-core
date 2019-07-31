@@ -19,6 +19,12 @@ Ext.define('portal.map.primitives.BaseWMSPrimitive', {
          */
         getWmsUrl : function(serviceUrl, layer, bbox, width, height, imageFormat) {
 
+        	console.log("------- BasePrimitive - getWmsUrl - layer =" + layer);
+        	
+            serviceUrl = this.replaceUrlParamCaseInsensitive(serviceUrl, 'REQUEST' , 'GetMap');
+            serviceUrl = this.replaceUrlParamCaseInsensitive(serviceUrl, 'SERVICE' , 'WMS');
+            serviceUrl = this.replaceUrlParamCaseInsensitive(serviceUrl, 'VERSION' , '1.1.1');
+        	
             var bbox_3857=bbox.transform(bbox,'EPSG:3857');
 
             var bboxString = Ext.util.Format.format('{0},{1},{2},{3}',
@@ -28,13 +34,10 @@ Ext.define('portal.map.primitives.BaseWMSPrimitive', {
                     bbox_3857.northBoundLatitude);
 
             var params = {
-                'REQUEST' : 'GetMap',
-                'SERVICE' : 'WMS',
-                'VERSION' : '1.1.1',
                 'FORMAT' : imageFormat ? imageFormat : 'image/png',
                 'BGCOLOR' : '0xFFFFFF',
                 'TRANSPARENT' : 'TRUE',
-                'LAYERS' : layer,
+                'LAYERS' : layer, //"qtot_avg",// 
                 'SRS' :bbox_3857.crs,
                 'BBOX' : bboxString,
                 'WIDTH' : width,
@@ -58,6 +61,7 @@ Ext.define('portal.map.primitives.BaseWMSPrimitive', {
          */
         getWms_130_Url : function(serviceUrl, layer, bbox, width, height, imageFormat) {
 
+        	console.log("------- BasePrimitive - getWmsUrl - 130");
             var bbox_3857=bbox.transform(bbox,'EPSG:3857');
 
             var bboxString = Ext.util.Format.format('{0},{1},{2},{3}',
@@ -84,6 +88,28 @@ Ext.define('portal.map.primitives.BaseWMSPrimitive', {
 
             var queryString = Ext.Object.toQueryString(params);
             return Ext.urlAppend(serviceUrl, queryString);
+        },
+        
+        replaceUrlParamCaseInsensitive: function (url, paramName, paramValue) 
+        {
+        	var lower = paramName.toLowerCase();
+        	if (url.includes(lower)) {
+        		return this.replaceUrlParam(url, lower, paramValue);
+        	}
+        	return this.replaceUrlParam(url, paramName, paramValue);
+        },
+        
+        replaceUrlParam: function (url, paramName, paramValue)
+        {
+            if (paramValue == null) {
+                paramValue = '';
+            }
+            var pattern = new RegExp('\\b('+paramName+'=).*?(&|#|$)');
+            if (url.search(pattern)>=0) {
+                return url.replace(pattern,'$1' + paramValue + '$2');
+            }
+            url = url.replace(/[?#]$/,'');
+            return url + (url.indexOf('?')>0 ? '&' : '?') + paramName + '=' + paramValue;
         }
     },
 

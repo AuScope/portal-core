@@ -106,7 +106,18 @@ public abstract class CloudStorageService {
     /** Password credentials for accessing the storage service */
     private String secretKey;
 
-    /** The bucket name used when no bucket is specified */
+    /** Session token for accessing the storage service */
+    private String sessionKey;
+    
+    public String getSessionKey() {
+		return sessionKey;
+	}
+
+	public void setSessionKey(String sessionKey) {
+		this.sessionKey = sessionKey;
+	}
+
+	/** The bucket name used when no bucket is specified */
     public static final String DEFAULT_BUCKET = "vgl";
 
     /**
