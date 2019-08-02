@@ -15,7 +15,7 @@ import org.w3c.dom.NodeList;
 
 public class GeoserverCSWRecordTransformer extends CSWRecordTransformer {
 
-    private static final String ONLINEDATASETTRANSFERSEXPRESSION = "gmd:distributionInfo/gmd:MD_Distribution/descendant::gmd:onLine";
+    public static final String ONLINEDATASETTRANSFERSEXPRESSION = "gmd:distributionInfo/gmd:MD_Distribution/descendant::gmd:onLine";
     private static final String ONLINETRANSFERSEXPRESSION = "gmd:identificationInfo/srv:SV_ServiceIdentification/descendant::srv:connectPoint";
 
 	public GeoserverCSWRecordTransformer() throws PortalServiceException {

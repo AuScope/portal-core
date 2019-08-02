@@ -16,7 +16,6 @@ public class PyCSWRecordTransformer extends CSWRecordTransformer{
 
 	private static final String[] FIXED_DIMENSION_NAMES = {"time", "longitude", "lon", "latitude", "lat", "transverse_mercator", "crs"}; 
     
-    private static final String ONLINEDATASETTRANSFERSEXPRESSION = "gmd:distributionInfo/gmd:MD_Distribution/descendant::gmd:onLine";
     private static final String THREDDSLAYERNAME = "gmd:contentInfo/gmi:MI_CoverageDescription/gmd:dimension/gmd:MD_Band/gmd:sequenceIdentifier/gco:MemberName/gco:aName/gco:CharacterString";
     
 	public PyCSWRecordTransformer() throws PortalServiceException {
@@ -78,7 +77,8 @@ public class PyCSWRecordTransformer extends CSWRecordTransformer{
         
         //There can be multiple gmd:onLine elements (which contain a number of fields we want)
         List<AbstractCSWOnlineResource> srvlist = transformSrvNodes(record, ONLINETRANSFERSEXPRESSION, tlname);
-        List<AbstractCSWOnlineResource> datasetlist = transformSrvNodes(record, ONLINEDATASETTRANSFERSEXPRESSION, tlname);
+        List<AbstractCSWOnlineResource> datasetlist = transformSrvNodes(record, 
+        			GeoserverCSWRecordTransformer.ONLINEDATASETTRANSFERSEXPRESSION, tlname);
         
         srvlist.addAll(datasetlist);
         removeDuplicateOnlineResources(srvlist);
