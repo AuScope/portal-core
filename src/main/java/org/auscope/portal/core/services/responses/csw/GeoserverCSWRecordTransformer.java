@@ -16,7 +16,7 @@ import org.w3c.dom.NodeList;
 public class GeoserverCSWRecordTransformer extends CSWRecordTransformer {
 
     public static final String ONLINEDATASETTRANSFERSEXPRESSION = "gmd:distributionInfo/gmd:MD_Distribution/descendant::gmd:onLine";
-    private static final String ONLINETRANSFERSEXPRESSION = "gmd:identificationInfo/srv:SV_ServiceIdentification/descendant::srv:connectPoint";
+    public static final String GEOSERVER_ONLINETRANSFERSEXPRESSION = "gmd:identificationInfo/srv:SV_ServiceIdentification/descendant::srv:connectPoint";
 
 	public GeoserverCSWRecordTransformer() throws PortalServiceException {
 		super();
@@ -66,7 +66,7 @@ public class GeoserverCSWRecordTransformer extends CSWRecordTransformer {
         transformDate(record, this.mdMetadataNode, this.logger);
 
         //There can be multiple gmd:onLine elements (which contain a number of fields we want)
-        List<AbstractCSWOnlineResource> srvlist = transformSrvNodes(record, ONLINETRANSFERSEXPRESSION);
+        List<AbstractCSWOnlineResource> srvlist = transformSrvNodes(record, GEOSERVER_ONLINETRANSFERSEXPRESSION);
         List<AbstractCSWOnlineResource> datasetlist = transformSrvNodes(record, ONLINEDATASETTRANSFERSEXPRESSION);
         srvlist.addAll(datasetlist);
         removeDuplicateOnlineResources(srvlist);

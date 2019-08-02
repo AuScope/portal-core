@@ -76,7 +76,8 @@ public class PyCSWRecordTransformer extends CSWRecordTransformer{
         String tlname = getThreddsLayerName();
         
         //There can be multiple gmd:onLine elements (which contain a number of fields we want)
-        List<AbstractCSWOnlineResource> srvlist = transformSrvNodes(record, ONLINETRANSFERSEXPRESSION, tlname);
+        List<AbstractCSWOnlineResource> srvlist = transformSrvNodes(record, 
+        			GeoserverCSWRecordTransformer.GEOSERVER_ONLINETRANSFERSEXPRESSION, tlname);
         List<AbstractCSWOnlineResource> datasetlist = transformSrvNodes(record, 
         			GeoserverCSWRecordTransformer.ONLINEDATASETTRANSFERSEXPRESSION, tlname);
         
