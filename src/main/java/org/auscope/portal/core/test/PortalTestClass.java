@@ -309,9 +309,26 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
      * @throws ParserConfigurationException
      */
     protected boolean xmlStringEquals(String xml1, String xml2, boolean namespaceAware) throws ParserConfigurationException, IOException, SAXException {
+        return xmlStringEquals(xml1, xml2, namespaceAware, false);
+    }
+
+    /**
+     * Compares two strings by parsing them into XML and ensuring all elements/attributes match.
+     * @param xml1
+     * @param xml2
+     * @param namespaceAware
+     * @param ignoreWhitespace
+     * @return
+     * @throws SAXException
+     * @throws IOException
+     * @throws ParserConfigurationException
+     */
+    protected boolean xmlStringEquals(String xml1, String xml2, boolean namespaceAware, boolean ignoreWhitespace) throws ParserConfigurationException, IOException, SAXException {
+
         Document d1 = DOMUtil.buildDomFromString(xml1, namespaceAware);
         Document d2 = DOMUtil.buildDomFromString(xml2, namespaceAware);
 
+        XMLUnit.setIgnoreWhitespace(ignoreWhitespace);
         Diff diff = XMLUnit.compareXML(d1, d2);
         return diff.identical();
     }
