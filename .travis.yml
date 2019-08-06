@@ -1,5 +1,6 @@
 language: java
 script: "[ ${TRAVIS_PULL_REQUEST} = 'false' ] && mvn clean deploy --settings travis/settings.xml || mvn clean verify --settings travis/settings.xml"
+dist: trusty
 cache:
   directories:
     - $HOME/.m2
@@ -12,7 +13,3 @@ env:
         global:
                 - secure: "MmAJ3GI23mR8ynBICBC/T3h/80m3gN2Twjvu/ODU9aYtfS0tgOBpvY6I4j7Fx/T+wXyJItDR5dGV0aDsnalJe9k3Ye19FHi8FSqojGAKB2Sk+L19kT6MxOMEpvTDbQRq1s1WZ6GiZrhWJvUgsigD2IEPaW2sIu6ZiPnUxTinLpw="
                 - secure: "rVmDdrGb3RfvIcW6XIENBG0cd1biCGsoyT8HhUykZxMVMUeQMntBeespjOhrHGWbtKTyo0DIvPRjLbaDCBkWi2qs5YE9TE7AOhDALRcCBnHC5iPjWdBTinNJPjA3yHccWXpx6ti+WIOQwMWHip59qZ4r9VmfJNA5BdbJcQVlIwo="
-notifications:
-        slack:
-                rooms:
-                        secure: "pLqB+3uMHDEOIvMNKRArNgD/Vwamz3rNnAVg/VtHtdgtQ6b8tylNQs5DNn0uJ8XIC9qUjYg/s8hr+8/ruIqLsG8o+qIeV8jX9A+cjwKNjysmUvFs3rSXjvr9RV3X1BmRpgnvFuyYhf2stBoCATF2ScVimsw5coBC3X28K6GLH6Y="
