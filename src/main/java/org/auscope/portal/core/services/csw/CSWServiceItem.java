@@ -5,21 +5,14 @@ import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.auscope.portal.core.server.OgcServiceProviderType;
+
 /**
  * A simple class that stores the URL of a CSW service along with extra security / misc information
  *
  * @author Josh Vote
  */
 public class CSWServiceItem {
-
-	/**
-	 * The CSW server application type
-	 */
-	public enum ServerType {
-	    DEFAULT, // targeting geonetwork.
-	    GEOSERVER,
-	    PYCSW
-	}
 	
     private String id;
     private String title;
@@ -31,7 +24,7 @@ public class CSWServiceItem {
     private String cqlText;
     private String defaultAnyTextFilter;
     private String[] defaultConstraints;
-    private ServerType serverType = ServerType.DEFAULT;
+    private OgcServiceProviderType serverType = OgcServiceProviderType.Default;
     private boolean noCache = false;
     private boolean hideFromCatalogue = false;
 
@@ -68,7 +61,7 @@ public class CSWServiceItem {
      * @param title
      */
     public CSWServiceItem(String id, String serviceUrl, String recordInformationUrl, String title) {
-        this(id, serviceUrl, recordInformationUrl, "", ServerType.DEFAULT);
+        this(id, serviceUrl, recordInformationUrl, "", OgcServiceProviderType.Default);
     }
     
     /**
@@ -81,7 +74,7 @@ public class CSWServiceItem {
      * @param title
      * @param serverType
      */
-    public CSWServiceItem(String id, String serviceUrl, String recordInformationUrl, String title, ServerType serverType) {
+    public CSWServiceItem(String id, String serviceUrl, String recordInformationUrl, String title, OgcServiceProviderType serverType) {
         this.id = id;
         this.serviceUrl = serviceUrl;
         this.recordInformationUrl = recordInformationUrl;
@@ -369,7 +362,7 @@ public class CSWServiceItem {
      * 
      * @return String
      */
-    public ServerType getServerType() {
+    public OgcServiceProviderType getServerType() {
         return serverType;
     }
 
@@ -378,7 +371,7 @@ public class CSWServiceItem {
      * 
      * @return
      */
-    public void setServerType(ServerType serverType) {
+    public void setServerType(OgcServiceProviderType serverType) {
         this.serverType = serverType;
     }
 }

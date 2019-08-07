@@ -11,7 +11,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.auscope.portal.core.services.csw.CSWServiceItem;
+import org.auscope.portal.core.server.OgcServiceProviderType;
 import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter;
 import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter.SortType;
 
@@ -41,7 +41,7 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
      * 
      * @return
      */
-    public HttpRequestBase makeMethod(String serviceUrl, CSWServiceItem.ServerType serverType) {
+    public HttpRequestBase makeMethod(String serviceUrl, OgcServiceProviderType serverType) {
         return this.makeMethod(serviceUrl, null, ResultType.Results, 1000, 1, null, serverType);
     }
 
@@ -53,13 +53,13 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
      * @return
      */
     public HttpRequestBase makeMethod(String serviceUrl, CSWGetDataRecordsFilter filter, ResultType resultType,
-            int maxRecords, CSWServiceItem.ServerType serverType) {
+            int maxRecords, OgcServiceProviderType serverType) {
         return this.makeMethod(serviceUrl, filter, resultType, maxRecords, 1, null, serverType);
     }
 
-    private String getCSWQueryElement(CSWServiceItem.ServerType serverType) {
+    private String getCSWQueryElement(OgcServiceProviderType serverType) {
         switch (serverType) {
-        case PYCSW:
+        case PyCSW:
             return "<csw:Query typeNames=\"csw:Record\" >";
         default:
         	return 	"<csw:Query typeNames=\"gmd:MD_Metadata\"  xmlns:gmd=\"http://www.isotc211.org/2005/gmd\" >";
@@ -76,7 +76,7 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
      *             If the PostMethod body cannot be encoded ISO-8859-1
      */
     public HttpRequestBase makeMethod(String serviceUrl, CSWGetDataRecordsFilter filter, ResultType resultType,
-            int maxRecords, int startPosition, String cqlText, CSWServiceItem.ServerType serverType) {
+            int maxRecords, int startPosition, String cqlText, OgcServiceProviderType serverType) {
         HttpPost httpMethod = new HttpPost(serviceUrl);
 
         String filterString = null;
@@ -162,14 +162,14 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
      * @return
      * @throws URISyntaxException
      */
-    public HttpRequestBase makeGetMethod(String serviceUrl, ResultType resultType, int maxRecords, int startPosition, CSWServiceItem.ServerType serverType)
+    public HttpRequestBase makeGetMethod(String serviceUrl, ResultType resultType, int maxRecords, int startPosition, OgcServiceProviderType serverType)
             throws URISyntaxException {
         HttpGet method = new HttpGet();
 
         URIBuilder builder = new URIBuilder(serviceUrl);
         
         builder.setParameter("service", "CSW");
-        if (serverType != CSWServiceItem.ServerType.PYCSW ) {
+        if (serverType != OgcServiceProviderType.PyCSW ) {
         	builder.setParameter("constraint_language_version", "1.1.0");
         }
         builder.setParameter("request", "GetRecords");
