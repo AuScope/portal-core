@@ -12,8 +12,10 @@ import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.auscope.portal.core.server.OgcServiceProviderType;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.namespaces.CSWNamespaceContext;
+import org.auscope.portal.core.services.responses.csw.CSWRecordTransformer.Scope;
 import org.auscope.portal.core.util.DOMUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -31,6 +33,7 @@ public class CSWRecordTransformer {
 
     protected Document document;
     protected Node mdMetadataNode;
+    protected OgcServiceProviderType serverType = OgcServiceProviderType.Default;
 
     protected static final String DATETIMEFORMATSTRING = "yyyy-MM-dd'T'HH:mm:ss";
     protected static final String DATEFORMATSTRING = "yyyy-MM-dd";
@@ -67,6 +70,8 @@ public class CSWRecordTransformer {
 
     protected static final String SCALEDENOMINATOR = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:spatialResolution/gmd:MD_Resolution/gmd:equivalentScale/gmd:MD_RepresentativeFraction/gmd:denominator/gco:Integer";
 
+    private static final String ONLINEDATASETTRANSFERSEXPRESSION = "gmd:distributionInfo/gmd:MD_Distribution/descendant::gmd:onLine";
+    
     /**
      * Creates a new instance of this class and generates an empty document that will be used for constructing DOM.
      * @throws ParserConfigurationException 
@@ -99,7 +104,7 @@ public class CSWRecordTransformer {
      *
      * @param rootNode
      */
-    public CSWRecordTransformer(Node mdMetadataNode) {
+    public CSWRecordTransformer(Node mdMetadataNode,OgcServiceProviderType serverType) {
         this.document = mdMetadataNode.getOwnerDocument();
         this.mdMetadataNode = mdMetadataNode;
     }
@@ -572,6 +577,11 @@ public class CSWRecordTransformer {
      * @throws XPathExpressionException
      */
     protected CSWRecord transformToCSWRecord(CSWRecord record) throws XPathExpressionException {
+    	if (this.serverType == OgcServiceProviderType.PyCSW) {
+    		return new PyCSWHelper().transform(record);
+    	} else if (this.serverType == OgcServiceProviderType.GeoServer) {
+    		return new GeoServerHelper().transform(record);
+    	}
         NodeList tempNodeList = null;
 
         //Parse our simple strings
@@ -742,6 +752,417 @@ public class CSWRecordTransformer {
         return record;
     }
     
+    private class PyCSWHelper {
+    	private final String[] FIXED_DIMENSION_NAMES = {"time", "longitude", "lon", "latitude", "lat", "transverse_mercator", "crs"}; 
+        private final String THREDDSLAYERNAME = "gmd:contentInfo/gmi:MI_CoverageDescription/gmd:dimension/gmd:MD_Band/gmd:sequenceIdentifier/gco:MemberName/gco:aName/gco:CharacterString";
+        private final String PYCSW_ONLINETRANSFERSEXPRESSION = "gmd:identificationInfo/srv:SV_ServiceIdentification/descendant::srv:connectPoint";
+        
+        public CSWRecord transform(CSWRecord record) throws XPathExpressionException {
+            NodeList tempNodeList = null;
 
+            //Parse our simple strings
+            Node scopeNode = evalXPathNode(mdMetadataNode, SCOPEEXPRESSION);
+            String recordType = scopeNode != null ? scopeNode.getNodeValue() : null;
+
+            String identificationPath = null;
+            if (Scope.service.toString().equals(recordType)) {
+                identificationPath = SERVICEIDENTIFICATIONPATH;
+                record.setService(true);
+            } else {
+                identificationPath = DATAIDENTIFICATIONPATH;
+            }
+            record.setServiceName(evalXPathString(mdMetadataNode, identificationPath + TITLEEXPRESSION));
+            
+            record.setDataIdentificationAbstract(evalXPathString(mdMetadataNode, identificationPath + ABSTRACTEXPRESSION));
+
+            record.setFileIdentifier(evalXPathString(mdMetadataNode, FILEIDENTIFIEREXPRESSION)); 
+            
+            record.setParentIdentifier(evalXPathString(mdMetadataNode, PARENTIDENTIFIEREXPRESSION));
+            
+            record.setSupplementalInformation(evalXPathString(mdMetadataNode, SUPPLEMENTALINFOEXPRESSION));
+
+            record.setLanguage(evalXPathString(mdMetadataNode, LANGUAGEEXPRESSION));
+            
+            record.setDataQualityStatement(evalXPathString(mdMetadataNode, DATAQUALITYSTATEMENTEXPRESSION));
+            
+            record.setLayerName(evalXPathString(mdMetadataNode, LAYERNAME));
+
+            String resourceProvider = evalXPathString(mdMetadataNode, RESOURCEPROVIDEREXPRESSION);
+            if (resourceProvider == null || resourceProvider.isEmpty()) {
+                resourceProvider = "Unknown";
+            }
+            record.setResourceProvider(resourceProvider);
+
+            transformDate(record, mdMetadataNode, logger);
+
+            String tlname = getThreddsLayerName();
+            
+            //There can be multiple gmd:onLine elements (which contain a number of fields we want)
+            List<AbstractCSWOnlineResource> srvlist = transformSrvNodes(record, 
+            			PYCSW_ONLINETRANSFERSEXPRESSION, tlname);
+            List<AbstractCSWOnlineResource> datasetlist = transformSrvNodes(record, 
+            			ONLINEDATASETTRANSFERSEXPRESSION, tlname);
+            
+            srvlist.addAll(datasetlist);
+            removeDuplicateOnlineResources(srvlist);
+            record.setOnlineResources(srvlist.toArray(new AbstractCSWOnlineResource[srvlist.size()]));
+
+            //Parse our bounding boxes (if they exist). If any are unparsable, don't worry and just continue
+            tempNodeList = evalXPathNodeList(mdMetadataNode, BBOXEXPRESSION);
+            if (tempNodeList != null && tempNodeList.getLength() > 0) {
+                List<CSWGeographicElement> elList = new ArrayList<>();
+                for (int i = 0; i < tempNodeList.getLength(); i++) {
+                    try {
+                        Node geographyNode = tempNodeList.item(i);
+                        elList.add(CSWGeographicBoundingBox.fromGeographicBoundingBoxNode(geographyNode));
+                    } catch (Exception ex) {
+                        logger.debug(String.format(
+                                "Unable to parse CSWGeographicBoundingBox resource for serviceName='%1$s' %2$s",
+                                record.getServiceName(), ex));
+                    }
+                }
+                record.setCSWGeographicElements(elList.toArray(new CSWGeographicElement[elList.size()]));
+            }
+
+            //Parse the descriptive keywords
+            tempNodeList = evalXPathNodeList(mdMetadataNode, KEYWORDLISTEXPRESSION);
+            if (tempNodeList != null && tempNodeList.getLength() > 0) {
+                List<String> keywords = new ArrayList<>();
+                Node keyword;
+                for (int j = 0; j < tempNodeList.getLength(); j++) {
+                    keyword = tempNodeList.item(j);
+                    keywords.add(keyword.getTextContent());
+                }
+                record.setDescriptiveKeywords(keywords.toArray(new String[keywords.size()])); // correct!
+            }
+
+            //Parse the dataset URIs
+            tempNodeList = evalXPathNodeList(mdMetadataNode, DATASETURIEXPRESSION);
+            if (tempNodeList != null && tempNodeList.getLength() > 0) {
+                List<String> datasetURIs = new ArrayList<>();
+                Node datasetURI;
+                for (int j = 0; j < tempNodeList.getLength(); j++) {
+                    datasetURI = tempNodeList.item(j);
+                    datasetURIs.add(datasetURI.getTextContent());
+                }
+                record.setDataSetURIs(datasetURIs.toArray(new String[datasetURIs.size()]));
+            }
+
+            Node tempNode = evalXPathNode(mdMetadataNode, CONTACTEXPRESSION);
+            if (tempNode != null) {
+                try {
+                    CSWResponsibleParty respParty = CSWResponsiblePartyFactory.generateResponsiblePartyFromNode(tempNode);
+                    record.setContact(respParty);
+                } catch (Exception ex) {
+                    logger.debug(String.format("Unable to parse contact for serviceName='%1$s' %2$s",
+                            record.getServiceName(), ex));
+                }
+            }
+
+            //Parse any legal constraints
+            tempNodeList = evalXPathNodeList(mdMetadataNode, OTHERCONSTRAINTSEXPRESSION);
+            if (tempNodeList != null && tempNodeList.getLength() > 0) {
+                List<String> constraintsList = new ArrayList<>();
+                Node constraint;
+                for (int j = 0; j < tempNodeList.getLength(); j++) {
+                    constraint = tempNodeList.item(j);
+                    constraintsList.add(constraint.getTextContent());
+                }
+                record.setConstraints(constraintsList.toArray(new String[constraintsList.size()]));
+            }
+            
+            // added code to parse use limit constraints
+            tempNodeList = evalXPathNodeList(mdMetadataNode, USELIMITCONSTRAINTSEXPRESSION);
+            if (tempNodeList != null && tempNodeList.getLength() > 0) {
+                List<String> useLimitConstraintsList = new ArrayList<>();
+                Node useLimitConstraint;
+                for (int j = 0; j < tempNodeList.getLength(); j++) {
+                	useLimitConstraint = tempNodeList.item(j);
+                    useLimitConstraintsList.add(useLimitConstraint.getTextContent());
+                }
+                record.setUseLimitConstraints(useLimitConstraintsList.toArray(new String[useLimitConstraintsList.size()]));
+            }
+            
+           //added code to parse access constraints
+            tempNodeList = evalXPathNodeList(mdMetadataNode, ACCESSCONSTRAINTSEXPRESSION);
+            if (tempNodeList != null && tempNodeList.getLength() > 0) {
+                List<String> accessConstraintsList = new ArrayList<>();
+                Node accessConstraint;
+                for (int j = 0; j < tempNodeList.getLength(); j++) {
+                	accessConstraint = tempNodeList.item(j);
+                    accessConstraintsList.add(accessConstraint.getTextContent());
+                }
+                record.setAccessConstraints(accessConstraintsList.toArray(new String[accessConstraintsList.size()]));
+            }
+
+            tempNodeList = evalXPathNodeList(mdMetadataNode, SCALEDENOMINATOR);
+            if (tempNodeList != null && tempNodeList.getLength() > 0) {
+
+                List<Double> scaleRange = new ArrayList<>();
+                Node scaleDenominator;
+                for (int j = 0; j < tempNodeList.getLength(); j++) {
+                    scaleDenominator = tempNodeList.item(j);
+                    try {
+                       scaleRange.add(Double.parseDouble(scaleDenominator.getTextContent()));
+                    } catch (Exception ex) {
+                        logger.debug(String.format("Unable to parse scale denominator for serviceName='%1$s' %2$s",
+                                record.getServiceName(), ex));
+                    }
+                }
+
+                if (!scaleRange.isEmpty()) {
+                    record.setMinScale(Collections.min(scaleRange));
+                    if (scaleRange.size() > 1) {
+                        record.setMaxScale(Collections.max(scaleRange));
+                    }
+                }
+            }
+            
+            return record;
+        }
+        
+        private List<AbstractCSWOnlineResource> transformSrvNodes(CSWRecord record, String expression, String threddsLayerName) 
+    			throws XPathExpressionException{
+        	NodeList  tempNodeList = evalXPathNodeList(mdMetadataNode, expression);
+        	List<AbstractCSWOnlineResource> resources = new ArrayList<>();
+        	for (int i = 0; i < tempNodeList.getLength(); i++) {
+        		try {
+        			Node onlineNode = tempNodeList.item(i);
+        			resources.add(CSWOnlineResourceFactory.parseFromNode(onlineNode, threddsLayerName));
+        		} catch (IllegalArgumentException ex) {
+        			logger.debug(String.format("Unable to parse online resource for serviceName='%1$s' %2$s",
+        					record.getServiceName(), ex));
+        		}
+        	}
+        	return resources;
+        }
+
+        private boolean isFixedLayerName(String lname) {
+        	for (int i= 0; i < FIXED_DIMENSION_NAMES.length; i++) {
+    			if (FIXED_DIMENSION_NAMES[i].compareTo(lname) == 0 ) {
+    				return true;
+    			}
+    		}
+        	return false;
+        }
+        
+        private String getThreddsLayerName() throws XPathExpressionException {
+        	NodeList tempNodeList = evalXPathNodeList(mdMetadataNode, THREDDSLAYERNAME);
+        	if (tempNodeList != null && tempNodeList.getLength() > 0) {
+        		for (int i = 0; i < tempNodeList.getLength(); i++) {
+        			String name = tempNodeList.item(i).getTextContent();
+        			if (!isFixedLayerName(name)) {
+        				return name;
+        			}
+        		}
+        	} 
+        	return null;
+        }
+
+    }
+    
+
+    private class GeoServerHelper {
+        private final String GEOSERVER_ONLINETRANSFERSEXPRESSION = "gmd:identificationInfo/srv:SV_ServiceIdentification/descendant::srv:connectPoint";
+        
+        public CSWRecord transform(CSWRecord record) throws XPathExpressionException {
+            NodeList tempNodeList = null;
+
+            //Parse our simple strings
+            Node scopeNode = evalXPathNode(mdMetadataNode, SCOPEEXPRESSION);
+            String recordType = scopeNode != null ? scopeNode.getNodeValue() : null;
+
+            String identificationPath = null;
+            if (Scope.service.toString().equals(recordType)) {
+                identificationPath = SERVICEIDENTIFICATIONPATH;
+                record.setService(true);
+            } else {
+                identificationPath = DATAIDENTIFICATIONPATH;
+            }
+            record.setServiceName(evalXPathString(mdMetadataNode, identificationPath + TITLEEXPRESSION));
+            
+            record.setDataIdentificationAbstract(evalXPathString(mdMetadataNode, identificationPath + ABSTRACTEXPRESSION));
+
+            record.setFileIdentifier(evalXPathString(mdMetadataNode, FILEIDENTIFIEREXPRESSION)); 
+            
+            record.setParentIdentifier(evalXPathString(mdMetadataNode, PARENTIDENTIFIEREXPRESSION));
+            
+            record.setSupplementalInformation(evalXPathString(mdMetadataNode, SUPPLEMENTALINFOEXPRESSION));
+
+            record.setLanguage(evalXPathString(mdMetadataNode, LANGUAGEEXPRESSION));
+            
+            record.setDataQualityStatement(evalXPathString(mdMetadataNode, DATAQUALITYSTATEMENTEXPRESSION));
+            
+            record.setLayerName(evalXPathString(mdMetadataNode, LAYERNAME));
+
+            String resourceProvider = evalXPathString(mdMetadataNode, RESOURCEPROVIDEREXPRESSION);
+            if (resourceProvider == null || resourceProvider.isEmpty()) {
+                resourceProvider = "Unknown";
+            }
+            record.setResourceProvider(resourceProvider);
+
+            transformDate(record, mdMetadataNode, logger);
+
+            //There can be multiple gmd:onLine elements (which contain a number of fields we want)
+            List<AbstractCSWOnlineResource> srvlist = transformSrvNodes(record, GEOSERVER_ONLINETRANSFERSEXPRESSION);
+            List<AbstractCSWOnlineResource> datasetlist = transformSrvNodes(record, ONLINEDATASETTRANSFERSEXPRESSION);
+            srvlist.addAll(datasetlist);
+            removeDuplicateOnlineResources(srvlist);
+            record.setOnlineResources(srvlist.toArray(new AbstractCSWOnlineResource[srvlist.size()]));
+
+            //Parse our bounding boxes (if they exist). If any are unparsable, don't worry and just continue
+            tempNodeList = evalXPathNodeList(mdMetadataNode, BBOXEXPRESSION);
+            if (tempNodeList != null && tempNodeList.getLength() > 0) {
+                List<CSWGeographicElement> elList = new ArrayList<>();
+                for (int i = 0; i < tempNodeList.getLength(); i++) {
+                    try {
+                        Node geographyNode = tempNodeList.item(i);
+                        elList.add(CSWGeographicBoundingBox.fromGeographicBoundingBoxNode(geographyNode));
+                    } catch (Exception ex) {
+                        logger.debug(String.format(
+                                "Unable to parse CSWGeographicBoundingBox resource for serviceName='%1$s' %2$s",
+                                record.getServiceName(), ex));
+                    }
+                }
+                record.setCSWGeographicElements(elList.toArray(new CSWGeographicElement[elList.size()]));
+            }
+
+            //Parse the descriptive keywords
+            tempNodeList = evalXPathNodeList(mdMetadataNode, KEYWORDLISTEXPRESSION);
+            if (tempNodeList != null && tempNodeList.getLength() > 0) {
+                List<String> keywords = new ArrayList<>();
+                Node keyword;
+                for (int j = 0; j < tempNodeList.getLength(); j++) {
+                    keyword = tempNodeList.item(j);
+                    keywords.add(keyword.getTextContent());
+                }
+                record.setDescriptiveKeywords(keywords.toArray(new String[keywords.size()])); // correct!
+            }
+
+            //Parse the dataset URIs
+            tempNodeList = evalXPathNodeList(mdMetadataNode, DATASETURIEXPRESSION);
+            if (tempNodeList != null && tempNodeList.getLength() > 0) {
+                List<String> datasetURIs = new ArrayList<>();
+                Node datasetURI;
+                for (int j = 0; j < tempNodeList.getLength(); j++) {
+                    datasetURI = tempNodeList.item(j);
+                    datasetURIs.add(datasetURI.getTextContent());
+                }
+                record.setDataSetURIs(datasetURIs.toArray(new String[datasetURIs.size()]));
+            }
+
+            Node tempNode = evalXPathNode(mdMetadataNode, CONTACTEXPRESSION);
+            if (tempNode != null) {
+                try {
+                    CSWResponsibleParty respParty = CSWResponsiblePartyFactory.generateResponsiblePartyFromNode(tempNode);
+                    record.setContact(respParty);
+                } catch (Exception ex) {
+                    logger.debug(String.format("Unable to parse contact for serviceName='%1$s' %2$s",
+                            record.getServiceName(), ex));
+                }
+            }
+
+            //Parse any legal constraints
+            tempNodeList = evalXPathNodeList(mdMetadataNode, OTHERCONSTRAINTSEXPRESSION);
+            if (tempNodeList != null && tempNodeList.getLength() > 0) {
+                List<String> constraintsList = new ArrayList<>();
+                Node constraint;
+                for (int j = 0; j < tempNodeList.getLength(); j++) {
+                    constraint = tempNodeList.item(j);
+                    constraintsList.add(constraint.getTextContent());
+                }
+                record.setConstraints(constraintsList.toArray(new String[constraintsList.size()]));
+            }
+            
+            // added code to parse use limit constraints
+            tempNodeList = evalXPathNodeList(mdMetadataNode, USELIMITCONSTRAINTSEXPRESSION);
+            if (tempNodeList != null && tempNodeList.getLength() > 0) {
+                List<String> useLimitConstraintsList = new ArrayList<>();
+                Node useLimitConstraint;
+                for (int j = 0; j < tempNodeList.getLength(); j++) {
+                	useLimitConstraint = tempNodeList.item(j);
+                    useLimitConstraintsList.add(useLimitConstraint.getTextContent());
+                }
+                record.setUseLimitConstraints(useLimitConstraintsList.toArray(new String[useLimitConstraintsList.size()]));
+            }
+            
+           //added code to parse access constraints
+            tempNodeList = evalXPathNodeList(mdMetadataNode, ACCESSCONSTRAINTSEXPRESSION);
+            if (tempNodeList != null && tempNodeList.getLength() > 0) {
+                List<String> accessConstraintsList = new ArrayList<>();
+                Node accessConstraint;
+                for (int j = 0; j < tempNodeList.getLength(); j++) {
+                	accessConstraint = tempNodeList.item(j);
+                    accessConstraintsList.add(accessConstraint.getTextContent());
+                }
+                record.setAccessConstraints(accessConstraintsList.toArray(new String[accessConstraintsList.size()]));
+            }
+
+            tempNodeList = evalXPathNodeList(mdMetadataNode, SCALEDENOMINATOR);
+            if (tempNodeList != null && tempNodeList.getLength() > 0) {
+
+                List<Double> scaleRange = new ArrayList<>();
+                Node scaleDenominator;
+                for (int j = 0; j < tempNodeList.getLength(); j++) {
+                    scaleDenominator = tempNodeList.item(j);
+                    try {
+                       scaleRange.add(Double.parseDouble(scaleDenominator.getTextContent()));
+                    } catch (Exception ex) {
+                        logger.debug(String.format("Unable to parse scale denominator for serviceName='%1$s' %2$s",
+                                record.getServiceName(), ex));
+                    }
+                }
+
+                if (!scaleRange.isEmpty()) {
+                    record.setMinScale(Collections.min(scaleRange));
+                    if (scaleRange.size() > 1) {
+                        record.setMaxScale(Collections.max(scaleRange));
+                    }
+                }
+            }
+            
+            return record;
+        }
+        
+        private List<AbstractCSWOnlineResource> transformSrvNodes(CSWRecord record, String expression) throws XPathExpressionException{
+        	NodeList  tempNodeList = evalXPathNodeList(mdMetadataNode, expression);
+            List<AbstractCSWOnlineResource> resources = new ArrayList<>();
+            for (int i = 0; i < tempNodeList.getLength(); i++) {
+                try {
+                    Node onlineNode = tempNodeList.item(i);
+                    resources.add(CSWOnlineResourceFactory.parseFromNode(onlineNode, null)); // no name extracted from Thredds layer info
+                } catch (IllegalArgumentException ex) {
+                    logger.debug(String.format("Unable to parse online resource for serviceName='%1$s' %2$s",
+                            record.getServiceName(), ex));
+                }
+            }
+            return resources;
+        }
+    	
+    }
+    
+    public static void transformDate(CSWRecord record, Node metaNode, Log logger) throws XPathExpressionException {
+        String dateStampString = evalXPathString(metaNode, DATETIMESTAMPEXPRESSION);
+        if (dateStampString != null && !dateStampString.isEmpty()) {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat(DATETIMEFORMATSTRING);
+                record.setDate(sdf.parse(dateStampString));
+            } catch (Exception ex) {
+                logger.debug(String.format("Unable to parse date for serviceName='%1$s' %2$s", record.getServiceName(),
+                        ex));
+            }
+        } else {
+        	dateStampString = evalXPathString(metaNode, DATESTAMPEXPRESSION);
+        	if (dateStampString != null && !dateStampString.isEmpty()) {
+                try {
+                    SimpleDateFormat sdf = new SimpleDateFormat(DATEFORMATSTRING);
+                    record.setDate(sdf.parse(dateStampString));
+                } catch (Exception ex) {
+                    logger.debug(String.format("Unable to parse date for serviceName='%1$s' %2$s", record.getServiceName(),
+                            ex));
+                }
+            } 
+        }    	
+    }
 }
 

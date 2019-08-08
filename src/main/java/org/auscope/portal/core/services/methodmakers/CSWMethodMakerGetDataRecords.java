@@ -117,6 +117,7 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
         if (hasFilter || hasCql) {
             sb.append("<csw:Constraint version=\"1.1.0\">");
             if (hasFilter) {
+            	log.debug("filterString=" + filterString);
                 sb.append(filterString);
             }
             if (hasCql) {
