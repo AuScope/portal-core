@@ -107,6 +107,7 @@ public class CSWRecordTransformer {
     public CSWRecordTransformer(Node mdMetadataNode,OgcServiceProviderType serverType) {
         this.document = mdMetadataNode.getOwnerDocument();
         this.mdMetadataNode = mdMetadataNode;
+        this.serverType = serverType;
     }
 
     /**
@@ -564,6 +565,8 @@ public class CSWRecordTransformer {
      * @throws XPathExpressionException
      */
     public CSWRecord transformToCSWRecord() throws XPathExpressionException {
+        logger.info("------- calling transformToCSWRecord from CSWRecordTransformer");
+
         return transformToCSWRecord(new CSWRecord("", "", "", "", new AbstractCSWOnlineResource[0],
                 new CSWGeographicElement[0]));
     }
@@ -582,6 +585,8 @@ public class CSWRecordTransformer {
     	} else if (this.serverType == OgcServiceProviderType.GeoServer) {
     		return new GeoServerHelper().transform(record);
     	}
+        logger.info("--------- start Normal.transform ");
+   	
         NodeList tempNodeList = null;
 
         //Parse our simple strings
@@ -758,6 +763,8 @@ public class CSWRecordTransformer {
         private final String PYCSW_ONLINETRANSFERSEXPRESSION = "gmd:identificationInfo/srv:SV_ServiceIdentification/descendant::srv:connectPoint";
         
         public CSWRecord transform(CSWRecord record) throws XPathExpressionException {
+            logger.info("--------- start PyCSWHelper.transform ");
+        	
             NodeList tempNodeList = null;
 
             //Parse our simple strings
@@ -816,7 +823,7 @@ public class CSWRecordTransformer {
                         Node geographyNode = tempNodeList.item(i);
                         elList.add(CSWGeographicBoundingBox.fromGeographicBoundingBoxNode(geographyNode));
                     } catch (Exception ex) {
-                        logger.debug(String.format(
+                        logger.info(String.format(
                                 "Unable to parse CSWGeographicBoundingBox resource for serviceName='%1$s' %2$s",
                                 record.getServiceName(), ex));
                     }
