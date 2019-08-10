@@ -66,6 +66,16 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
         }
     	
     }
+    
+    private static String decorateFilterString(String filter, OgcServiceProviderType serverType) {
+    	if (serverType == OgcServiceProviderType.GeoServer ) {
+    		return filter.replace("<ogc:PropertyName>ows:BoundingBox</ogc:PropertyName>", "<ogc:PropertyName>BoundingBox</ogc:PropertyName>");
+    	} 
+    	if (serverType == OgcServiceProviderType.PyCSW ) {
+    		return filter.replace("<gml:Envelope srsName=\"WGS:84\">", "<gml:Envelope srsName=\"urn:ogc:def:crs:OGC:1.3:CRS84\">");
+    	} 
+    	return filter;
+    }
     /**
      * Generates a method that performs a CSW GetRecords request with the specified filter
      *
@@ -82,6 +92,8 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
         String filterString = null;
         if (filter != null) {
             filterString = filter.getFilterStringAllRecords();
+            if (filterString != null) 
+            	filterString = decorateFilterString(filterString, serverType);
         }
 
         // We should be using a library for this call...
