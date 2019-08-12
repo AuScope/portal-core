@@ -61,7 +61,7 @@ public class CSWServiceItem {
      * @param title
      */
     public CSWServiceItem(String id, String serviceUrl, String recordInformationUrl, String title) {
-        this(id, serviceUrl, recordInformationUrl, "", OgcServiceProviderType.Default);
+        this(id, serviceUrl, recordInformationUrl, title, OgcServiceProviderType.Default);
     }
     
     /**
