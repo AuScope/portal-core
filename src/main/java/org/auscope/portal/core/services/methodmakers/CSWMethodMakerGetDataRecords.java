@@ -11,6 +11,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.auscope.portal.core.server.OgcServiceProviderType;
 import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter;
 import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter.SortType;
 
@@ -40,8 +41,8 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
      * 
      * @return
      */
-    public HttpRequestBase makeMethod(String serviceUrl) {
-        return this.makeMethod(serviceUrl, null, ResultType.Results, 1000, 1, null);
+    public HttpRequestBase makeMethod(String serviceUrl, OgcServiceProviderType serverType) {
+        return this.makeMethod(serviceUrl, null, ResultType.Results, 1000, 1, null, serverType);
     }
 
     /**
@@ -52,10 +53,29 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
      * @return
      */
     public HttpRequestBase makeMethod(String serviceUrl, CSWGetDataRecordsFilter filter, ResultType resultType,
-            int maxRecords) {
-        return this.makeMethod(serviceUrl, filter, resultType, maxRecords, 1, null);
+            int maxRecords, OgcServiceProviderType serverType) {
+        return this.makeMethod(serviceUrl, filter, resultType, maxRecords, 1, null, serverType);
     }
 
+    private String getCSWQueryElement(OgcServiceProviderType serverType) {
+        switch (serverType) {
+        case PyCSW:
+            return "<csw:Query typeNames=\"csw:Record\" >";
+        default:
+        	return 	"<csw:Query typeNames=\"gmd:MD_Metadata\"  xmlns:gmd=\"http://www.isotc211.org/2005/gmd\" >";
+        }
+    	
+    }
+    
+    private static String decorateFilterString(String filter, OgcServiceProviderType serverType) {
+    	if (serverType == OgcServiceProviderType.GeoServer ) {
+    		return filter.replace("<ogc:PropertyName>ows:BoundingBox</ogc:PropertyName>", "<ogc:PropertyName>BoundingBox</ogc:PropertyName>");
+    	} 
+    	if (serverType == OgcServiceProviderType.PyCSW ) {
+    		return filter.replace("<gml:Envelope srsName=\"WGS:84\">", "<gml:Envelope srsName=\"urn:ogc:def:crs:OGC:1.3:CRS84\">");
+    	} 
+    	return filter;
+    }
     /**
      * Generates a method that performs a CSW GetRecords request with the specified filter
      *
@@ -66,12 +86,14 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
      *             If the PostMethod body cannot be encoded ISO-8859-1
      */
     public HttpRequestBase makeMethod(String serviceUrl, CSWGetDataRecordsFilter filter, ResultType resultType,
-            int maxRecords, int startPosition, String cqlText) {
+            int maxRecords, int startPosition, String cqlText, OgcServiceProviderType serverType) {
         HttpPost httpMethod = new HttpPost(serviceUrl);
 
         String filterString = null;
         if (filter != null) {
             filterString = filter.getFilterStringAllRecords();
+            if (filterString != null) 
+            	filterString = decorateFilterString(filterString, serverType);
         }
 
         // We should be using a library for this call...
@@ -97,10 +119,8 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
             sb.append(" startPosition=\"" + startPosition + "\"");
         }
         sb.append(">");
+        sb.append(getCSWQueryElement(serverType));
 
-        sb.append("<csw:Query typeNames=\"csw:Record\" >");
-// Carsten 17/06/2019: Why is this different in VGL and DCDP?
-//        sb.append("<csw:Query typeNames=\"gmd:MD_Metadata\"  xmlns:gmd=\"http://www.isotc211.org/2005/gmd\" >");
         sb.append("<csw:ElementSetName>full</csw:ElementSetName>");
 
         boolean hasFilter = filterString != null && filterString.length() > 0;
@@ -109,6 +129,7 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
         if (hasFilter || hasCql) {
             sb.append("<csw:Constraint version=\"1.1.0\">");
             if (hasFilter) {
+            	log.debug("filterString=" + filterString);
                 sb.append(filterString);
             }
             if (hasCql) {
@@ -154,21 +175,21 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
      * @return
      * @throws URISyntaxException
      */
-    public HttpRequestBase makeGetMethod(String serviceUrl, ResultType resultType, int maxRecords, int startPosition)
+    public HttpRequestBase makeGetMethod(String serviceUrl, ResultType resultType, int maxRecords, int startPosition, OgcServiceProviderType serverType)
             throws URISyntaxException {
         HttpGet method = new HttpGet();
 
         URIBuilder builder = new URIBuilder(serviceUrl);
-        // http://bomac-ep:8080/api? resultType=results
         
         builder.setParameter("service", "CSW");
-        //builder.setParameter("constraint_language_version", "1.1.0");
+        if (serverType != OgcServiceProviderType.PyCSW ) {
+        	builder.setParameter("constraint_language_version", "1.1.0");
+        }
         builder.setParameter("request", "GetRecords");
         builder.setParameter("version", "2.0.2");
         builder.setParameter("outputSchema", "http://www.isotc211.org/2005/gmd");
         builder.setParameter("typeNames", "gmd:MD_Metadata");
         builder.setParameter("constraintLanguage", "FILTER");
-        //builder.setParameter("namespace", "csw:http://www.opengis.net/cat/csw");
         builder.setParameter("elementSetName", "full");
         builder.setParameter("startPosition", Integer.toString(startPosition));
         builder.setParameter("maxRecords", Integer.toString(maxRecords));

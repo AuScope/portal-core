@@ -19,12 +19,14 @@ import org.w3c.dom.Node;
 public abstract class CSWOnlineResourceFactory {
     
 	protected static final Log logger = LogFactory.getLog(CSWOnlineResourceFactory.class);
-    
+        
     /**
      * Parses a Node into its appropriate CSWOnlineResource representation.
      *
      * @param node
      *            Must be a <gmd:CI_OnlineResource> node
+     * @param threddsLayerName 
+     * 			  the name of dataset layer indexed by Thredds server.
      * @return the abstract csw online resource
      * @throws XPathExpressionException
      *             the x path expression exception

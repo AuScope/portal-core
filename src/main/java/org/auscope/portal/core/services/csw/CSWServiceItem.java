@@ -5,13 +5,15 @@ import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.auscope.portal.core.server.OgcServiceProviderType;
+
 /**
  * A simple class that stores the URL of a CSW service along with extra security / misc information
  *
  * @author Josh Vote
  */
 public class CSWServiceItem {
-
+	
     private String id;
     private String title;
     private String serviceUrl;
@@ -22,6 +24,7 @@ public class CSWServiceItem {
     private String cqlText;
     private String defaultAnyTextFilter;
     private String[] defaultConstraints;
+    private OgcServiceProviderType serverType = OgcServiceProviderType.Default;
     private boolean noCache = false;
     private boolean hideFromCatalogue = false;
 
@@ -65,10 +68,25 @@ public class CSWServiceItem {
      * @param title
      */
     public CSWServiceItem(String id, String serviceUrl, String recordInformationUrl, String title) {
+        this(id, serviceUrl, recordInformationUrl, title, OgcServiceProviderType.Default);
+    }
+    
+    /**
+     * Creates a new service item with ServerType
+     * 
+     * @param id
+     *            Must be unique per service
+     * @param serviceUrl
+     * @param recordInformationUrl
+     * @param title
+     * @param serverType
+     */
+    public CSWServiceItem(String id, String serviceUrl, String recordInformationUrl, String title, OgcServiceProviderType serverType) {
         this.id = id;
         this.serviceUrl = serviceUrl;
         this.recordInformationUrl = recordInformationUrl;
         this.title = title;
+        this.serverType = serverType;
     }
     
     /**
@@ -105,6 +123,7 @@ public class CSWServiceItem {
         for (Object role : restrictedRoleList) {
             this.restrictedRoleList[i++] = role.toString();
         }
+        
     }
 
     /**
@@ -393,5 +412,23 @@ public class CSWServiceItem {
 
     public void setHideFromCatalogue(boolean hideFromCatalogue) {
         this.hideFromCatalogue = hideFromCatalogue;
+    }
+    
+    /**
+     * Get serverType for the CSW service
+     * 
+     * @return String
+     */
+    public OgcServiceProviderType getServerType() {
+        return serverType;
+    }
+
+    /**
+     * Set serverType for the CSW service
+     * 
+     * @return
+     */
+    public void setServerType(OgcServiceProviderType serverType) {
+        this.serverType = serverType;
     }
 }
