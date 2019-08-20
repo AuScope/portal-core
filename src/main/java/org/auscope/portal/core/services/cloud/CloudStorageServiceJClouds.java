@@ -28,6 +28,7 @@ import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.io.ContentMetadata;
+import org.jclouds.openstack.keystone.config.KeystoneProperties;
 import org.jclouds.openstack.swift.v1.blobstore.RegionScopedBlobStoreContext;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.sts.STSApi;
@@ -54,6 +55,8 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
     private boolean stripExpectHeader;
 
     private STSRequirement stsRequirement=STSRequirement.Permissable;
+    
+    
 
    /**
     * Returns whether AWS cross account authorization is mandatory, optional or forced off
@@ -218,6 +221,15 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
         properties.setProperty("jclouds.relax-hostname", relaxHostName ? "true" : "false");
         properties.setProperty("jclouds.strip-expect-header", stripExpectHeader ? "true" : "false");
 
+        
+        if(this.getEndpoint().contains("keystone") && this.getEndpoint().contains("v3")) {
+        	String[] accessParts = this.getAccessKey().split(":");
+            String projectName = accessParts[0];
+            properties.put(KeystoneProperties.KEYSTONE_VERSION, "3");
+        	properties.put(KeystoneProperties.SCOPE, "project:" + projectName);
+        }
+
+        
         Class<? extends BlobStoreContext> targetClass = BlobStoreContext.class;
         if (getRegionName() != null) {
             if (getProvider().contains("openstack") || getProvider().contains("swift")) {
@@ -228,10 +240,12 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
         }
 
         if(! TextUtil.isNullOrEmpty(arn)) {
-            ContextBuilder builder = ContextBuilder.newBuilder("sts");
+        	ContextBuilder builder = ContextBuilder.newBuilder("sts");
+        	
             if(  (! TextUtil.isNullOrEmpty(getAccessKey())) && 
             		(! TextUtil.isNullOrEmpty(getSecretKey()))) {
             	if(! TextUtil.isNullOrEmpty(getSessionKey())) {
+            		
             		SessionCredentials credentials = SessionCredentials.builder()
             			    .accessKeyId(getAccessKey())
             			    .secretAccessKey(getSecretKey())
@@ -245,6 +259,7 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
             }
 
             try (STSApi api = builder.buildApi(STSApi.class)) {
+            	
                 AssumeRoleOptions assumeRoleOptions = new AssumeRoleOptions().durationSeconds(3600)
                         .externalId(clientSecret);
                 final UserAndSessionCredentials credentials = api.assumeRole(arn, "vgl", assumeRoleOptions);
@@ -274,7 +289,6 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
 
             ContextBuilder builder = ContextBuilder.newBuilder(getProvider()).overrides(properties);
 
-//            if (getAccessKey() != null && getSecretKey() != null) {
             if(  (! TextUtil.isNullOrEmpty(getAccessKey())) && 
             		(! TextUtil.isNullOrEmpty(getSecretKey()))) {
             	if(! TextUtil.isNullOrEmpty(getSessionKey())) {
@@ -286,7 +300,14 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
 
             		builder.credentialsSupplier(Suppliers.ofInstance(credentials));
             	} else {
-            		builder.credentials(getAccessKey(), getSecretKey());
+            		String accessKey = getAccessKey();
+            		String secretKey = getSecretKey();
+            		if(this.getEndpoint().contains("keystone") && this.getEndpoint().contains("v3")) {
+                    	properties.put(KeystoneProperties.KEYSTONE_VERSION, "3");
+                    	String[] accessParts = this.getAccessKey().split(":");
+                        accessKey = "default:" + accessParts[1];
+            		}
+            		builder.credentials(accessKey, secretKey);
             	}
             }
             
@@ -459,6 +480,8 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
     public void uploadJobFiles(CloudFileOwner job, File[] files) throws PortalServiceException {
         String arn = job.getProperty(CloudJob.PROPERTY_STS_ARN);
         String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
+        
+        System.out.println("uploadJobFiles: size: " + files.length + ", arn="+arn+", clientSecret=" + clientSecret);
 
         try {
             BlobStore bs = getBlobStore(arn, clientSecret);
@@ -466,14 +489,11 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
             String bucketName = getBucket(job);
             bs.createContainerInLocation(null, bucketName);
             for (File file : files) {
-
                 Blob newBlob = bs.blobBuilder(keyForJobFile(job, file.getName()))
                         .payload(Files.asByteSource(file))
                         .contentLength(file.length())
                         .build();
                 bs.putBlob(bucketName, newBlob);
-
-                log.debug(file.getName() + " uploaded to '" + bucketName + "' container");
             }
         } catch (AuthorizationException ex) {
             log.error("Storage credentials are not valid for job: " + job, ex);
@@ -494,7 +514,7 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
     public void uploadJobFile(CloudFileOwner job, String fileName, InputStream data) throws PortalServiceException {
         String arn = job.getProperty(CloudJob.PROPERTY_STS_ARN);
         String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
-
+        
         try {
             BlobStore bs = getBlobStore(arn, clientSecret);
             String bucketName = getBucket(job);

@@ -36,6 +36,7 @@ import org.jclouds.openstack.nova.v2_0.compute.options.NovaTemplateOptions;
 import org.jclouds.openstack.nova.v2_0.domain.Image;
 import org.jclouds.openstack.nova.v2_0.features.ImageApi;
 import org.openstack4j.api.OSClient.OSClientV3;
+import org.openstack4j.model.common.Identifier;
 import org.openstack4j.openstack.OSFactory;
 
 import com.shaded.google.common.base.Predicate;
@@ -151,10 +152,11 @@ public class CloudComputeServiceNectar extends CloudComputeService {
     @SuppressWarnings("unchecked")
     public CloudComputeServiceNectar(String endpoint, String accessKey, String secretKey, String apiVersion) {
         super(ProviderType.NovaKeystone, endpoint, apiVersion);
+        this.endpoint = endpoint;
         this.accessKey = accessKey;
         this.secretKey = secretKey;
         
-        String[] accessParts = this.accessKey.split(":");        
+        String[] accessParts = this.accessKey.split(":");
         String projectName = accessParts[0];
         String userName = accessParts[1];
         String typeString = "openstack-nova";
@@ -163,13 +165,7 @@ public class CloudComputeServiceNectar extends CloudComputeService {
         overrides.put(KeystoneProperties.KEYSTONE_VERSION, "3");
         overrides.put(KeystoneProperties.SCOPE, "project:" + projectName);
         
-        // Logging
-        //Iterable<Module> modules = ImmutableSet.<Module>of(new SLF4JLoggingModule());        
-
         this.builder = ContextBuilder.newBuilder(typeString)
-                //.endpoint(endpoint)
-            	//.credentials("default:" + userName, secretKey)
-            	//.modules(modules)
                 .overrides(overrides);
         
         if(accessKey!=null && secretKey!=null)
@@ -190,7 +186,7 @@ public class CloudComputeServiceNectar extends CloudComputeService {
         if(!regions.isEmpty())
             region = regions.iterator().next();
         
-        this.imageApi = novaApi.getImageApi(region);        
+        this.imageApi = novaApi.getImageApi(region);
         this.context = builder.buildView(ComputeServiceContext.class);
         this.computeService = this.context.getComputeService();
         this.terminateFilter = Predicates.and(not(TERMINATED), not(RUNNING), inGroup(getGroupName()));
@@ -367,11 +363,13 @@ public class CloudComputeServiceNectar extends CloudComputeService {
         try {
             String[] accessParts = this.accessKey.split(":");
             String[] idParts = computeInstanceId.split("/");
+            
             //JClouds has no support (currently) for tailing server console output. Our current workaround
             //is to offload this to openstack4j.
             OSClientV3 os = OSFactory.builderV3()
             		.endpoint(endpoint)
-                    .credentials("default:" + accessParts[1], secretKey)
+            		.credentials(accessParts[1], secretKey, Identifier.byName("Default"))
+                    .scopeToProject(Identifier.byName(accessParts[0]), Identifier.byName("Default"))
                     .authenticate();
             return os.compute().servers().getConsoleOutput(idParts[1], numLines);
         } catch (Exception ex) {
