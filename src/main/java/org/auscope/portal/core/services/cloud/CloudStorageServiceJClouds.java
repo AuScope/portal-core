@@ -481,8 +481,6 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
         String arn = job.getProperty(CloudJob.PROPERTY_STS_ARN);
         String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
         
-        System.out.println("uploadJobFiles: size: " + files.length + ", arn="+arn+", clientSecret=" + clientSecret);
-
         try {
             BlobStore bs = getBlobStore(arn, clientSecret);
 
