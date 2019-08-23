@@ -530,6 +530,7 @@ public class CSWCacheService {
                                 continue;
                             String recURL = wXSOnlineRes.getLinkage().toString();
                             // trim interface name from url for comparison
+                            recURL = StringUtils.substring(recURL, 0, recURL.indexOf('?'));
                             recURL = StringUtils.substring(recURL, 0, recURL.lastIndexOf('/'));
 
                             // loop through existing records
@@ -562,6 +563,7 @@ public class CSWCacheService {
                                     String existingURL = existingRes.getLinkage().toString();
                                     
                                     // trim interface name from url for comparison
+                                    existingURL = StringUtils.substring(existingURL, 0, existingURL.indexOf('?'));
                                     existingURL = StringUtils.substring(existingURL, 0, existingURL.lastIndexOf('/'));
                                     
                                     // compare Layer Names and URLs
