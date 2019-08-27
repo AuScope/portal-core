@@ -221,14 +221,13 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
         properties.setProperty("jclouds.relax-hostname", relaxHostName ? "true" : "false");
         properties.setProperty("jclouds.strip-expect-header", stripExpectHeader ? "true" : "false");
 
-        
+        // Keystone v3 will require a few extra properties
         if(this.getEndpoint().contains("keystone") && this.getEndpoint().contains("v3")) {
-        	String[] accessParts = this.getAccessKey().split(":");
+            String[] accessParts = this.getAccessKey().split(":");
             String projectName = accessParts[0];
             properties.put(KeystoneProperties.KEYSTONE_VERSION, "3");
-        	properties.put(KeystoneProperties.SCOPE, "project:" + projectName);
+            properties.put(KeystoneProperties.SCOPE, "project:" + projectName);
         }
-
         
         Class<? extends BlobStoreContext> targetClass = BlobStoreContext.class;
         if (getRegionName() != null) {
@@ -240,7 +239,7 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
         }
 
         if(! TextUtil.isNullOrEmpty(arn)) {
-        	ContextBuilder builder = ContextBuilder.newBuilder("sts");
+            ContextBuilder builder = ContextBuilder.newBuilder("sts");
         	
             if(  (! TextUtil.isNullOrEmpty(getAccessKey())) && 
             		(! TextUtil.isNullOrEmpty(getSecretKey()))) {
@@ -259,7 +258,6 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
             }
 
             try (STSApi api = builder.buildApi(STSApi.class)) {
-            	
                 AssumeRoleOptions assumeRoleOptions = new AssumeRoleOptions().durationSeconds(3600)
                         .externalId(clientSecret);
                 final UserAndSessionCredentials credentials = api.assumeRole(arn, "vgl", assumeRoleOptions);
@@ -292,22 +290,22 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
             if(  (! TextUtil.isNullOrEmpty(getAccessKey())) && 
             		(! TextUtil.isNullOrEmpty(getSecretKey()))) {
             	if(! TextUtil.isNullOrEmpty(getSessionKey())) {
-            		SessionCredentials credentials = SessionCredentials.builder()
-            			    .accessKeyId(getAccessKey())
-            			    .secretAccessKey(getSecretKey())
-            			    .sessionToken(getSessionKey())
-            			    .build();
+                    SessionCredentials credentials = SessionCredentials.builder()
+                            .accessKeyId(getAccessKey())
+                            .secretAccessKey(getSecretKey())
+                            .sessionToken(getSessionKey())
+                            .build();
 
-            		builder.credentialsSupplier(Suppliers.ofInstance(credentials));
+                    builder.credentialsSupplier(Suppliers.ofInstance(credentials));
             	} else {
-            		String accessKey = getAccessKey();
-            		String secretKey = getSecretKey();
-            		if(this.getEndpoint().contains("keystone") && this.getEndpoint().contains("v3")) {
-                    	properties.put(KeystoneProperties.KEYSTONE_VERSION, "3");
-                    	String[] accessParts = this.getAccessKey().split(":");
+                    String accessKey = getAccessKey();
+                    String secretKey = getSecretKey();
+                    if(this.getEndpoint().contains("keystone") && this.getEndpoint().contains("v3")) {
+                        properties.put(KeystoneProperties.KEYSTONE_VERSION, "3");
+                        String[] accessParts = this.getAccessKey().split(":");
                         accessKey = "default:" + accessParts[1];
-            		}
-            		builder.credentials(accessKey, secretKey);
+                    }
+                    builder.credentials(accessKey, secretKey);
             	}
             }
             
