@@ -7,25 +7,56 @@ public class WMSWFSSelector implements KnownLayerSelector {
 
 	private String featureTypeName;
 	private String layerName;
+	private String[] serviceEndpoints;
+	// LJ:default true will do the whitelist filtering.
+	private Boolean includeEndpoints = true;
 
 	public WMSWFSSelector(String featureTypeName, String layerName) {
 		this.featureTypeName = featureTypeName;
 		this.layerName = layerName;
 	}
+	public WMSWFSSelector(String featureTypeName, String layerName, String[] serviceEndpoints) {
+		this(featureTypeName, layerName);
+		this.serviceEndpoints = serviceEndpoints;
+	}
+	public WMSWFSSelector(String featureTypeName, String layerName, String[] serviceEndpoints, boolean includeEndpoints) {
+		this(featureTypeName, layerName);
+		this.serviceEndpoints = serviceEndpoints;
+		this.includeEndpoints = includeEndpoints;
+	}
 
 	@Override
 	public RelationType isRelatedRecord(CSWRecord record) {
-		AbstractCSWOnlineResource[] wmsResources = record.getOnlineResources();
+		AbstractCSWOnlineResource[] cSWResources = record.getOnlineResources();
 
 		// Check for strong association to begin with
-		for (AbstractCSWOnlineResource onlineResource : wmsResources) {
+		for (AbstractCSWOnlineResource onlineResource : cSWResources) {
 			if (layerName.equals(onlineResource.getName()) || featureTypeName.equals(onlineResource.getName())) {
+				// OK we have a match, check we don't explicitly/implicitly exclude it
+				// based on its URL
+				if (serviceEndpoints != null && serviceEndpoints.length > 0) {
+					boolean matched = false;
+					for (String url : serviceEndpoints) {
+						if (onlineResource.getLinkage() != null ) {
+							if (onlineResource.getLinkage().toString().indexOf(url) >= 0) {
+								matched = true;
+								break;
+							}
+						}
+					}
 
-				return RelationType.Belongs;
-
+					// Our list of endpoints will be saying either
+					// 'Include only this list of urls'
+					// 'Exclude any of these urls'
+					if ((includeEndpoints && matched) || (!includeEndpoints && !matched)) {
+						return RelationType.Belongs;
+					}
+				} else {
+					// Otherwise this knownlayer makes no restrictions on URL
+					return RelationType.Belongs;
+				}
 			}
 		}
-
 		return RelationType.NotRelated;
 	}
 
