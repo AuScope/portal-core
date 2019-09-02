@@ -222,7 +222,7 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
         properties.setProperty("jclouds.strip-expect-header", stripExpectHeader ? "true" : "false");
 
         // Keystone v3 will require a few extra properties
-        if(this.getEndpoint().contains("keystone") && this.getEndpoint().contains("v3")) {
+        if(this.getEndpoint() != null && this.getEndpoint().contains("keystone") && this.getEndpoint().contains("v3")) {
             String[] accessParts = this.getAccessKey().split(":");
             String projectName = accessParts[0];
             properties.put(KeystoneProperties.KEYSTONE_VERSION, "3");
@@ -300,7 +300,7 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
             	} else {
                     String accessKey = getAccessKey();
                     String secretKey = getSecretKey();
-                    if(this.getEndpoint().contains("keystone") && this.getEndpoint().contains("v3")) {
+                    if(this.getEndpoint() != null && this.getEndpoint().contains("keystone") && this.getEndpoint().contains("v3")) {
                         properties.put(KeystoneProperties.KEYSTONE_VERSION, "3");
                         String[] accessParts = this.getAccessKey().split(":");
                         accessKey = "default:" + accessParts[1];
