@@ -111,8 +111,10 @@ public class CSWFilterService {
 
         try (InputStream responseStream = serviceCaller.getMethodResponseAsStream(method)) {
             Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
+            log.info("got csw response: " + DOMUtil.buildStringFromDom(responseDoc, true));
             return new CSWGetRecordResponse(serviceItem, responseDoc, transformerFactory);
         } catch (Exception ex) {
+            ex.printStackTrace();
             throw new PortalServiceException(method, ex);
         }
     }

@@ -41,19 +41,25 @@ public abstract class CSWOnlineResourceFactory {
 
         CSWNamespaceContext nc = new CSWNamespaceContext();
         XPathExpression protocolXpath = DOMUtil.compileXPathExpr(
-                "gmd:CI_OnlineResource/gmd:protocol/gco:CharacterString", nc);
+                "gmd:protocol/gco:CharacterString", nc);
         XPathExpression nameXpath = DOMUtil.compileXPathExpr(
-                "gmd:CI_OnlineResource/gmd:name/gco:CharacterString|gmd:CI_OnlineResource/gmd:name/gmx:MimeFileType",
+                "gmd:name/gco:CharacterString|gmd:CI_OnlineResource/gmd:name/gmx:MimeFileType",
                 nc);
         XPathExpression descriptionXpath = DOMUtil.compileXPathExpr(
-                "gmd:CI_OnlineResource/gmd:description/gco:CharacterString", nc);
-        XPathExpression urlXpath = DOMUtil.compileXPathExpr("gmd:CI_OnlineResource/gmd:linkage/gmd:URL", nc);
+                "gmd:description/gco:CharacterString", nc);
+        XPathExpression urlXpath = DOMUtil.compileXPathExpr(
+                "gmd:linkage/gmd:URL", nc);
         XPathExpression applicationProfileXpath = DOMUtil.compileXPathExpr(
-                "gmd:CI_OnlineResource/gmd:applicationProfile/gco:CharacterString", nc);
+                "gmd:applicationProfile/gco:CharacterString", nc);
 
         try {
             urlString = (String) urlXpath.evaluate(node, XPathConstants.STRING);
             if (urlString != null) {
+                if (urlString.length() == 0) {
+                    try {
+                    logger.info("got empty urlString from " + DOMUtil.buildStringFromDom(node, true));
+                    } catch (Exception e) {}
+                }
                 url = new URL(urlString);
             }
         } catch (MalformedURLException ex) {
