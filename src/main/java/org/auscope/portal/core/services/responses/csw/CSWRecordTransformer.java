@@ -40,7 +40,7 @@ public class CSWRecordTransformer {
 
     protected static final CSWNamespaceContext nc = new CSWNamespaceContext();
     private static final String SERVICEIDENTIFICATIONPATH = "gmd:identificationInfo/srv:SV_ServiceIdentification";
-    private static final String DATAIDENTIFICATIONPATH = "gmd:identificationInfo/gmd:MD_DataIdentification";
+    private static final String DATAIDENTIFICATIONPATH = "gmd:identificationInfo/(gmd:MD_DataIdentification|mcp:MD_DataIdentification)";
     private static final String TITLEEXPRESSION = "/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString";
 
     private static final String DATESTAMPEXPRESSION = "gmd:dateStamp/gco:DateTime";
@@ -48,22 +48,22 @@ public class CSWRecordTransformer {
     private static final String ABSTRACTEXPRESSION = "/gmd:abstract/gco:CharacterString";
 
     private static final String CONTACTEXPRESSION = "gmd:contact/gmd:CI_ResponsibleParty";
-    private static final String RESOURCEPROVIDEREXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty[./gmd:role[./gmd:CI_RoleCode[@codeListValue = 'resourceProvider']]]/gmd:organisationName/gco:CharacterString";
+    private static final String RESOURCEPROVIDEREXPRESSION = "gmd:identificationInfo/(gmd:MD_DataIdentification|mcp:MD_DataIdentification)/gmd:pointOfContact/gmd:CI_ResponsibleParty[./gmd:role[./gmd:CI_RoleCode[@codeListValue = 'resourceProvider']]]/gmd:organisationName/gco:CharacterString";
     private static final String FILEIDENTIFIEREXPRESSION = "gmd:fileIdentifier/gco:CharacterString";
     private static final String PARENTIDENTIFIEREXPRESSION = "gmd:parentIdentifier/gco:CharacterString";
     private static final String ONLINETRANSFERSEXPRESSION = "gmd:distributionInfo/gmd:MD_Distribution/descendant::gmd:onLine";
-    private static final String BBOXEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox";
-    private static final String KEYWORDLISTEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:descriptiveKeywords/gmd:MD_Keywords/gmd:keyword/gco:CharacterString";
+    private static final String BBOXEXPRESSION = "gmd:identificationInfo/(gmd:MD_DataIdentification|mcp:MD_DataIdentification)/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox";
+    private static final String KEYWORDLISTEXPRESSION = "gmd:identificationInfo/(gmd:MD_DataIdentification|mcp:MD_DataIdentification)/gmd:descriptiveKeywords/gmd:MD_Keywords/gmd:keyword/gco:CharacterString";
     private static final String DATASETURIEXPRESSION = "gmd:dataSetURI/gco:CharacterString";
-    private static final String SUPPLEMENTALINFOEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:supplementalInformation/gco:CharacterString";
-    private static final String LANGUAGEEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:language/gco:CharacterString";
-    private static final String OTHERCONSTRAINTSEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_LegalConstraints/(gmd:otherConstraints/gco:CharacterString | gmd:useLimitation/gco:CharacterString | gmd:accessConstraints/gmd:MD_RestrictionCode[(text())]/@codeList | gmd:reference/gmd:CI_Citation/gmd:title/gco:CharacterString)";  
-    private static final String USELIMITCONSTRAINTSEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_LegalConstraints/gmd:useLimitation/gco:CharacterString";
-    private static final String ACCESSCONSTRAINTSEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_LegalConstraints/gmd:accessConstraints/gmd:MD_RestrictionCode[(text())]/@codeList";    
+    private static final String SUPPLEMENTALINFOEXPRESSION = "gmd:identificationInfo/(gmd:MD_DataIdentification|mcp:MD_DataIdentification)/gmd:supplementalInformation/gco:CharacterString";
+    private static final String LANGUAGEEXPRESSION = "gmd:identificationInfo/(gmd:MD_DataIdentification|mcp:MD_DataIdentification)/gmd:language/gco:CharacterString";
+    private static final String OTHERCONSTRAINTSEXPRESSION = "gmd:identificationInfo/(gmd:MD_DataIdentification|mcp:MD_DataIdentification)/gmd:resourceConstraints/gmd:MD_LegalConstraints/(gmd:otherConstraints/gco:CharacterString | gmd:useLimitation/gco:CharacterString | gmd:accessConstraints/gmd:MD_RestrictionCode[(text())]/@codeList | gmd:reference/gmd:CI_Citation/gmd:title/gco:CharacterString)";  
+    private static final String USELIMITCONSTRAINTSEXPRESSION = "gmd:identificationInfo/(gmd:MD_DataIdentification|mcp:MD_DataIdentification)/gmd:resourceConstraints/gmd:MD_LegalConstraints/gmd:useLimitation/gco:CharacterString";
+    private static final String ACCESSCONSTRAINTSEXPRESSION = "gmd:identificationInfo/(gmd:MD_DataIdentification|mcp:MD_DataIdentification)/gmd:resourceConstraints/gmd:MD_LegalConstraints/gmd:accessConstraints/gmd:MD_RestrictionCode[(text())]/@codeList";    
     private static final String DATAQUALITYSTATEMENTEXPRESSION = "gmd:dataQualityInfo/gmd:DQ_DataQuality/gmd:lineage/gmd:LI_Lineage/gmd:statement/gco:CharacterString";
     private static final String LAYERNAME = "gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource/gmd:name/gco:CharacterString";
 
-    private static final String SCALEDENOMINATOR = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:spatialResolution/gmd:MD_Resolution/gmd:equivalentScale/gmd:MD_RepresentativeFraction/gmd:denominator/gco:Integer";
+    private static final String SCALEDENOMINATOR = "gmd:identificationInfo/(gmd:MD_DataIdentification|mcp:MD_DataIdentification)/gmd:spatialResolution/gmd:MD_Resolution/gmd:equivalentScale/gmd:MD_RepresentativeFraction/gmd:denominator/gco:Integer";
 
     /**
      * Creates a new instance of this class and generates an empty document that will be used for constructing DOM.

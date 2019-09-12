@@ -118,7 +118,7 @@ public class GeonetworkService {
         try {
             Document responseDoc = DOMUtil.buildDomFromString(responseString);
 
-            XPathExpression getIdExpr = DOMUtil.compileXPathExpr("/gmd:MD_Metadata/geonet:info/id",
+            XPathExpression getIdExpr = DOMUtil.compileXPathExpr("/(gmd:MD_Metadata|mcp:MD_Metadata)/geonet:info/id",
                     new CSWNamespaceContext());
             idNode = (Node) getIdExpr.evaluate(responseDoc, XPathConstants.NODE);
         } catch (XPathExpressionException | ParserConfigurationException | SAXException e) {
