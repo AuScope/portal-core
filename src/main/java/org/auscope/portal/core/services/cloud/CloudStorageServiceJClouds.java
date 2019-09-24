@@ -412,7 +412,7 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
 
         try {
             BlobStore bs = getBlobStore(arn, clientSecret);
-            String baseKey = generateBaseKey(job);
+            String baseKey = jobToBaseKey(job);
 
             String bucketName = getBucket(job);
 
