@@ -69,10 +69,12 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
     
     private static String decorateFilterString(String filter, OgcServiceProviderType serverType) {
     	if (serverType == OgcServiceProviderType.GeoServer ) {
-    		return filter.replace("<ogc:PropertyName>ows:BoundingBox</ogc:PropertyName>", "<ogc:PropertyName>BoundingBox</ogc:PropertyName>");
+    		return filter.replace("<ogc:PropertyName>ows:BoundingBox</ogc:PropertyName>", "<ogc:PropertyName>BoundingBox</ogc:PropertyName>")
+    		             .replace("<ogc:PropertyName>identifier</ogc:PropertyName>", "<ogc:PropertyName>Identifier</ogc:PropertyName>");
     	} 
     	if (serverType == OgcServiceProviderType.PyCSW ) {
-    		return filter.replace("<gml:Envelope srsName=\"WGS:84\">", "<gml:Envelope srsName=\"urn:ogc:def:crs:OGC:1.3:CRS84\">");
+    		return filter.replace("<gml:Envelope srsName=\"WGS:84\">", "<gml:Envelope srsName=\"urn:ogc:def:crs:OGC:1.3:CRS84\">")
+    		             .replace("<ogc:PropertyName>identifier</ogc:PropertyName>", "<ogc:PropertyName>dc:identifier</ogc:PropertyName>");
     	} 
     	return filter;
     }

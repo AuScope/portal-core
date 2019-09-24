@@ -20,7 +20,7 @@ import org.auscope.portal.core.services.namespaces.WFSNamespaceContext;
  * @author Josh Vote
  */
 public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
-    public static final String WFS_VERSION = "1.1.0";
+    public static final String WFS_VERSION = "2.0.0";
 
     /**
      * An enumeration of the values that can be used for the 'resultType' parameter
@@ -323,7 +323,9 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
                 if (bbox.getBboxSrs() != null && !bbox.getBboxSrs().isEmpty()) {
                     sb.append(bbox.getBboxSrs());
                 } else {
-                    sb.deleteCharAt(sb.length() - 1);
+                    // append default srs
+                    sb.append("urn:ogc:def:crs:EPSG:4326");
+                    //sb.deleteCharAt(sb.length() - 1);
                 }
             }
 
