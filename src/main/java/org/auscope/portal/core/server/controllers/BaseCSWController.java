@@ -1,13 +1,11 @@
 package org.auscope.portal.core.server.controllers;
 
-import java.net.URL;
 import java.util.*;
 import java.util.Map.Entry;
 
 import org.auscope.portal.core.services.Nagios4CachedService;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
-import org.auscope.portal.core.services.responses.csw.CSWOnlineResourceImpl;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.services.responses.nagios.ServiceStatusResponse;
 import org.auscope.portal.core.services.responses.nagios.ServiceStatusResponse.Status;
