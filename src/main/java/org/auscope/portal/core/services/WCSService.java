@@ -13,6 +13,7 @@ import org.auscope.portal.core.services.methodmakers.WCSMethodMaker;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
 import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
 import org.auscope.portal.core.services.responses.wcs.DescribeCoverageRecord;
+import org.auscope.portal.core.services.responses.wcs.GetCapabilitiesRecord_1_0_0;
 import org.auscope.portal.core.services.responses.wcs.Resolution;
 import org.auscope.portal.core.services.responses.wcs.TimeConstraint;
 import org.auscope.portal.core.util.DOMUtil;
@@ -77,6 +78,70 @@ public class WCSService {
             throw new PortalServiceException(method, "Error while making GetCoverage request", ex);
         }
     }
+    
+    /**
+     * Makes a GetCapabilities request. Currently assumes a version 1.0.0 response.
+     * 
+     * @param 
+     * 		serviceUrl the URL for the WCS GetCapabilities request
+     * @return 
+     * 		GetCapabilities response for WCS as a {@link GetCapabilitiesRecord_1_0_0}
+     * @throws PortalServiceException
+     */
+    public GetCapabilitiesRecord_1_0_0 getWcsCapabilities(String serviceUrl) throws PortalServiceException {
+    	HttpRequestBase method = null;
+    	try {
+    		method = methodMaker.getCapabilitiesMethod(serviceUrl);
+    		try (InputStream response = serviceCaller.getMethodResponseAsStream(method)) {
+    			return new GetCapabilitiesRecord_1_0_0(response);
+            }
+    	} catch(Exception ex) {
+    		throw new PortalServiceException(method, "Error while making GetCapabilities request", ex);
+    	}  finally {
+            if (method != null) {
+                method.releaseConnection();
+            }
+        }
+    }
+    
+    /**
+     * Constructs a GetCoverage request for the specified WCS.
+     * 
+     * @param serviceUrl 
+     * 		the WCS service URL
+     * @param coverageName
+     * 		the coverage name
+     * @param format
+     * 		format for the response
+     * @param outputCrs
+     * 		output CRS
+     * @param outputSize
+     * 		output size (width and height)
+     * @param outputResolution
+     * 		output resolution (x and Y)
+     * @param inputCrs
+     * 		input CRS
+     * @param bbox
+     * 		bounding box for the request
+     * @param timeConstraint
+     * 		time constraint
+     * @param customParams
+     * 		any remaining parameters
+     * @return
+     * 		Full URL for the GetCoverage request
+     * @throws PortalServiceException
+     */
+    public String getCoverageRequestAsString(String serviceUrl, String coverageName,
+            String format, String outputCrs, Dimension outputSize, Resolution outputResolution,
+            String inputCrs, CSWGeographicBoundingBox bbox, TimeConstraint timeConstraint,
+            Map<String, String> customParams) throws PortalServiceException {
+		try {
+			return this.methodMaker.getCoverageMethod(serviceUrl, coverageName, format, outputCrs,
+					outputSize, outputResolution, inputCrs, bbox, timeConstraint, customParams).getURI().toString();
+		} catch(URISyntaxException e) {
+			throw new PortalServiceException("Unable to create GetCoverage request",e);
+		}
+	}
 
     /**
      * Makes a DescribeCoverage request, returns the response as an array of DescribeCoverageRecords
@@ -101,7 +166,7 @@ public class WCSService {
                 return DescribeCoverageRecord.parseRecords(responseDoc);
             }
         } catch (Exception ex) {
-            throw new PortalServiceException(method, "Error while making GetCoverage request", ex);
+            throw new PortalServiceException(method, "Error while making DescribeCoverage request", ex);
         } finally {
             if (method != null) {
                 method.releaseConnection();
