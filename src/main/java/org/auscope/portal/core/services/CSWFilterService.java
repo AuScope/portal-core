@@ -103,16 +103,18 @@ public class CSWFilterService {
      */
     private CSWGetRecordResponse callSingleService(CSWServiceItem serviceItem, CSWGetDataRecordsFilter filter,
             int maxRecords, int startIndex, ResultType resultType) throws PortalServiceException {
-        log.trace(String.format("serviceItem='%1$s' maxRecords=%2$s resultType='%3$s' filter='%4$s'", serviceItem,
+        log.info(String.format("serviceItem='%1$s' maxRecords=%2$s resultType='%3$s' filter='%4$s'", serviceItem,
                 maxRecords, resultType, filter));
         CSWMethodMakerGetDataRecords methodMaker = new CSWMethodMakerGetDataRecords();
         HttpRequestBase method = methodMaker.makeMethod(serviceItem.getServiceUrl(), filter, resultType, maxRecords, startIndex,
-                    null);
+                    null, serviceItem.getServerType());
 
         try (InputStream responseStream = serviceCaller.getMethodResponseAsStream(method)) {
             Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
+            log.debug("got csw response: " + DOMUtil.buildStringFromDom(responseDoc, true));
             return new CSWGetRecordResponse(serviceItem, responseDoc, transformerFactory);
         } catch (Exception ex) {
+            ex.printStackTrace();
             throw new PortalServiceException(method, ex);
         }
     }
@@ -143,7 +145,7 @@ public class CSWFilterService {
                     serviceItem, maxRecords, resultType, filter));
             CSWMethodMakerGetDataRecords methodMaker = new CSWMethodMakerGetDataRecords();
             requestMethods.add(methodMaker.makeMethod(serviceItem.getServiceUrl(), filter, resultType, maxRecords,
-                    startIndex, null));
+                    startIndex, null, serviceItem.getServerType()));
             additionalInfo.add(serviceItem);
         }
 

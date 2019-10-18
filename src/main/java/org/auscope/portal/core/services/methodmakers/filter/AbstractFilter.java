@@ -92,20 +92,11 @@ public abstract class AbstractFilter implements IFilter {
 
         StringBuilder sb = new StringBuilder();
 
-        /*sb.append("<ogc:Not>");
-        sb.append("<ogc:Disjoint>");
-        sb.append("<ogc:PropertyName>" + propertyXpath + "</ogc:PropertyName>");
-        sb.append("<gml:Envelope srsName=\"" + bbox.getBboxSrs() + "\">");
-        sb.append("<gml:lowerCorner>" + lowerCorner + "</gml:lowerCorner>");
-        sb.append("<gml:upperCorner>" + upperCorner +"</gml:upperCorner>");
-        sb.append("</gml:Envelope>");
-        sb.append("</ogc:Disjoint>");
-        sb.append("</ogc:Not>");*/
-
         sb.append("<ogc:BBOX>");
         if (propertyXpath != null && !propertyXpath.isEmpty()) {
             sb.append("<ogc:PropertyName>" + propertyXpath + "</ogc:PropertyName>");
         }
+        //sb.append("<gml:Envelope srsName=\"" + "urn:ogc:def:crs:OGC:1.3:CRS84" + "\">");
         sb.append("<gml:Envelope srsName=\"" + bbox.getBboxSrs() + "\">");
         sb.append("<gml:lowerCorner>" + lowerCorner + "</gml:lowerCorner>");
         sb.append("<gml:upperCorner>" + upperCorner + "</gml:upperCorner>");

@@ -12,6 +12,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.auscope.portal.core.server.OgcServiceProviderType;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.namespaces.CSWNamespaceContext;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.OnlineResourceType;
@@ -56,7 +57,7 @@ public class TestCSWRecordTransformer extends PortalTestClass {
         records = new CSWRecord[nodes.getLength()];
         for (int i = 0; i < nodes.getLength(); i++) {
             final Node metadataNode = nodes.item(i);
-            final CSWRecordTransformer transformer = new CSWRecordTransformer(metadataNode);
+            final CSWRecordTransformer transformer = new CSWRecordTransformer(metadataNode, OgcServiceProviderType.Default);
             records[i] = transformer.transformToCSWRecord();
         }
     }

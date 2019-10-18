@@ -9,6 +9,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.auscope.portal.core.server.OgcServiceProviderType;
 import org.auscope.portal.core.services.methodmakers.CSWMethodMakerGetDataRecords.ResultType;
 import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter;
 import org.auscope.portal.core.test.PortalTestClass;
@@ -61,7 +62,7 @@ public class TestCSWMethodMakerGetDataRecords extends PortalTestClass {
             }
         });
 
-        HttpRequestBase method = methodMaker.makeMethod(uri, mockFilter, ResultType.Results, maxRecords);
+        HttpRequestBase method = methodMaker.makeMethod(uri, mockFilter, ResultType.Results, maxRecords, OgcServiceProviderType.Default);
         Assert.assertNotNull(method);
 
         Assert.assertTrue(method instanceof HttpPost); //we want this to be sent via post in case we get a large filter
@@ -87,7 +88,7 @@ public class TestCSWMethodMakerGetDataRecords extends PortalTestClass {
 
         context.checking(new Expectations());
 
-        HttpRequestBase method = methodMaker.makeMethod(uri, null, ResultType.Hits, maxRecords);
+        HttpRequestBase method = methodMaker.makeMethod(uri, null, ResultType.Hits, maxRecords, OgcServiceProviderType.Default);
         Assert.assertNotNull(method);
 
         Assert.assertTrue(method instanceof HttpPost); //we want this to be sent via post in case we get a large filter
@@ -121,15 +122,15 @@ public class TestCSWMethodMakerGetDataRecords extends PortalTestClass {
         });
 
         //Test POST
-        HttpRequestBase method = methodMaker.makeMethod(uri, mockFilter, ResultType.Results, maxRecords);
+        HttpRequestBase method = methodMaker.makeMethod(uri, mockFilter, ResultType.Results, maxRecords, OgcServiceProviderType.Default);
         Assert.assertNotNull(method);
         String postBody = IOUtils.toString(((HttpPost) method).getEntity().getContent());
         Assert.assertTrue(postBody.contains(String.format("version=\"2.0.2\"")));
         Assert.assertTrue(postBody.contains(String.format("outputSchema=\"http://www.isotc211.org/2005/gmd\"")));
-        Assert.assertTrue(postBody.contains(String.format("typeNames=\"gmd:MD_Metadata\"")));
+        Assert.assertTrue(postBody.contains(String.format("typeNames=\"csw:Record\"")));
 
         //Test GET
-        method = methodMaker.makeGetMethod(uri, ResultType.Results, maxRecords, 0);
+        method = methodMaker.makeGetMethod(uri, ResultType.Results, maxRecords, 0, OgcServiceProviderType.Default);
         Assert.assertNotNull(method);
         String queryString = ((HttpGet) method).getURI().getQuery();
         Assert.assertTrue(queryString, queryString.contains("version=2.0.2"));

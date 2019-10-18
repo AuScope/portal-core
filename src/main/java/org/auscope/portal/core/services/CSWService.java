@@ -1,10 +1,21 @@
 package org.auscope.portal.core.services;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.logging.Log;
@@ -22,6 +33,7 @@ import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
 import org.auscope.portal.core.util.DOMUtil;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+
 
 /**
  * The CSWService class provides functionality to make requests to CSW service endpoints and parse their responses.
@@ -95,35 +107,54 @@ public class CSWService {
 
     }
 
+    public String getStringFromDocument(Document doc)
+    {
+        try
+        {
+           DOMSource domSource = new DOMSource(doc);
+           StringWriter writer = new StringWriter();
+           StreamResult result = new StreamResult(writer);
+           TransformerFactory tf = TransformerFactory.newInstance();
+           Transformer transformer = tf.newTransformer();
+           transformer.transform(domSource, result);
+           return writer.toString();
+        }
+        catch(TransformerException ex)
+        {
+           ex.printStackTrace();
+           return null;
+        }
+    } 
+    
     public CSWGetRecordResponse queryCSWEndpoint(int startPosition, int maxQueryLength, CSWGetDataRecordsFilter filter) throws IOException, OWSException {
-        log.trace(String.format("%1$s - requesting startPosition %2$s", this.endpoint.getServiceUrl(), startPosition));
+        //log.info(String.format("%1$s - requesting startPosition %2$s", this.endpoint.getServiceUrl(), startPosition));
 
         String cswServiceUrl = this.endpoint.getServiceUrl();
-
+        
         // Request our set of records
         HttpRequestBase method = null;
    
         // If cqlText is not null means we want to perform filter on the query
         if (this.forceGetMethods && this.endpoint.getCqlText() == null && filter == null) {
             try {
-                method = this.methodMaker.makeGetMethod(cswServiceUrl, ResultType.Results, maxQueryLength, startPosition);
+                method = this.methodMaker.makeGetMethod(cswServiceUrl, ResultType.Results, maxQueryLength, startPosition, this.endpoint.getServerType());
             } catch (URISyntaxException e) {
                 throw new IOException(e.getMessage(), e);
             }
         } else {
             method = this.methodMaker.makeMethod(cswServiceUrl, filter, ResultType.Results, maxQueryLength,
-                    startPosition, this.endpoint.getCqlText());
+                    startPosition, this.endpoint.getCqlText(), this.endpoint.getServerType());
         }
 
-        try (InputStream responseStream = this.serviceCaller.getMethodResponseAsStream(method)) {
-            log.trace(String.format("%1$s - Response received", this.endpoint.getServiceUrl()));
-
+        try (InputStream responseStream = this.serviceCaller.getMethodResponseAsStream(method)) {            
             // Parse the response into newCache (remember that maps are NOT
             // thread safe)
             Document responseDocument = DOMUtil.buildDomFromStream(responseStream);
             OWSExceptionParser.checkForExceptionResponse(responseDocument);
-
-            return new CSWGetRecordResponse(this.endpoint, responseDocument, transformerFactory);
+            
+        	String url = this.endpoint.getServiceUrl();
+        	CSWGetRecordResponse grr  = new CSWGetRecordResponse(this.endpoint, responseDocument, transformerFactory);
+        	return grr;
         } catch (ParserConfigurationException | SAXException | XPathExpressionException e) {
             throw new IOException(e.getMessage(), e);
         }

@@ -10,7 +10,8 @@ package org.auscope.portal.core.server;
  *
  */
 public enum OgcServiceProviderType {
-    GeoServer, ArcGis;
+    GeoServer, ArcGis, PyCSW, 
+    Default; // for geonetwork or other CSW servers.
     
     public static OgcServiceProviderType parseUrl(String serviceUrl) {
         if (serviceUrl.toUpperCase().contains("WFSSERVER")) {

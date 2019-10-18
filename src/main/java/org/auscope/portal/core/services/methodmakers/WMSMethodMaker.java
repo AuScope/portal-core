@@ -410,7 +410,7 @@ public class WMSMethodMaker extends AbstractMethodMaker implements WMSMethodMake
         //VT: if version is already specified, just return
         if (version != null) {
             if (version.equals(this.getSupportedVersion()) == false) {
-                log.error("WMSMethodMaker::accepts() WMS version is not supported");
+                log.error("WMSMethodMaker::accepts() " + wmsUrl + " WMS version " + version + " is not supported");
                 errStr.delete(0, errStr.length());
                 errStr.append("I can resolve your WMS URL, but the WMS version is not supported");
                 return false;

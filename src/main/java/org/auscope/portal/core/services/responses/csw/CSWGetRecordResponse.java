@@ -78,7 +78,6 @@ public class CSWGetRecordResponse {
         if (node != null) {
             recordsMatched = Integer.parseInt(node.getTextContent());
         }
-
         node = (Node) exprRecordsReturned.evaluate(getRecordResponse, XPathConstants.NODE);
         if (node != null) {
             recordsReturned = Integer.parseInt(node.getTextContent());
@@ -88,17 +87,16 @@ public class CSWGetRecordResponse {
         if (node != null) {
             nextRecord = Integer.parseInt(node.getTextContent());
         }
-
         NodeList nodes = (NodeList) exprRecordMetadata.evaluate(getRecordResponse, XPathConstants.NODESET);
         records = new ArrayList<>(nodes.getLength());
 
         for (int i = 0; i < nodes.getLength(); i++) {
             Node metadataNode = nodes.item(i);
-            CSWRecordTransformer transformer = cswRecordTransformerFactory.newCSWRecordTransformer(metadataNode);
+            CSWRecordTransformer transformer = cswRecordTransformerFactory.newCSWRecordTransformer(metadataNode, origin.getServerType());
             CSWRecord newRecord = transformer.transformToCSWRecord();
             newRecord.setRecordInfoUrl(String.format(origin.getRecordInformationUrl(), newRecord.getFileIdentifier()));
             records.add(newRecord);
-            log.trace("GN layer " + (i + 1) + " : " + newRecord.toString());
+            //log.info("GN layer " + (i + 1) + " : " + newRecord.toString());
         }
     }
 
