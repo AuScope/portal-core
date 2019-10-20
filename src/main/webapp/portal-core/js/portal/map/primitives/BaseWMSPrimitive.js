@@ -19,8 +19,6 @@ Ext.define('portal.map.primitives.BaseWMSPrimitive', {
          */
         getWmsUrl : function(serviceUrl, layer, bbox, width, height, imageFormat) {
 
-        	console.log("------- BasePrimitive - getWmsUrl - layer =" + layer);
-        	
             serviceUrl = this.replaceUrlParamCaseInsensitive(serviceUrl, 'REQUEST' , 'GetMap');
             serviceUrl = this.replaceUrlParamCaseInsensitive(serviceUrl, 'SERVICE' , 'WMS');
             serviceUrl = this.replaceUrlParamCaseInsensitive(serviceUrl, 'VERSION' , '1.1.1');
@@ -37,7 +35,7 @@ Ext.define('portal.map.primitives.BaseWMSPrimitive', {
                 'FORMAT' : imageFormat ? imageFormat : 'image/png',
                 'BGCOLOR' : '0xFFFFFF',
                 'TRANSPARENT' : 'TRUE',
-                'LAYERS' : layer, //"qtot_avg",// 
+                'LAYERS' : layer,  
                 'SRS' :bbox_3857.crs,
                 'BBOX' : bboxString,
                 'WIDTH' : width,
@@ -61,7 +59,6 @@ Ext.define('portal.map.primitives.BaseWMSPrimitive', {
          */
         getWms_130_Url : function(serviceUrl, layer, bbox, width, height, imageFormat) {
 
-        	console.log("------- BasePrimitive - getWmsUrl - 130");
             var bbox_3857=bbox.transform(bbox,'EPSG:3857');
 
             var bboxString = Ext.util.Format.format('{0},{1},{2},{3}',
