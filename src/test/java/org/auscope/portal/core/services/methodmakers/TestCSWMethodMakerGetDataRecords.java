@@ -127,7 +127,9 @@ public class TestCSWMethodMakerGetDataRecords extends PortalTestClass {
         String postBody = IOUtils.toString(((HttpPost) method).getEntity().getContent());
         Assert.assertTrue(postBody.contains(String.format("version=\"2.0.2\"")));
         Assert.assertTrue(postBody.contains(String.format("outputSchema=\"http://www.isotc211.org/2005/gmd\"")));
-        Assert.assertTrue(postBody.contains(String.format("typeNames=\"csw:Record\"")));
+        // for OgcServiceProviderType.Default, typeNames is gmd:MD_Metadata
+        // for OgcServiceProviderType.PyCSW, typeNames is csw:Record
+        Assert.assertTrue(postBody.contains(String.format("typeNames=\"gmd:MD_Metadata\"")));
 
         //Test GET
         method = methodMaker.makeGetMethod(uri, ResultType.Results, maxRecords, 0, OgcServiceProviderType.Default);
