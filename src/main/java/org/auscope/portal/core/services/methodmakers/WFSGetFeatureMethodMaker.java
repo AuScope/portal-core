@@ -323,9 +323,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
                 if (bbox.getBboxSrs() != null && !bbox.getBboxSrs().isEmpty()) {
                     sb.append(bbox.getBboxSrs());
                 } else {
-                    // append default srs
-                    sb.append("urn:ogc:def:crs:EPSG:4326");
-                    //sb.deleteCharAt(sb.length() - 1);
+                    sb.deleteCharAt(sb.length() - 1);
                 }
             }
 

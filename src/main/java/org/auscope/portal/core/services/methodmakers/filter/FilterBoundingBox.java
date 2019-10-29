@@ -178,7 +178,7 @@ public class FilterBoundingBox implements Serializable {
         Double northSouthMin = Math.min(northBoundLatitude, southBoundLatitude);
         Double northSouthMax = Math.max(northBoundLatitude, southBoundLatitude);
 
-        if (ogcServiceProviderType == OgcServiceProviderType.ArcGis || ogcServiceProviderType == OgcServiceProviderType.GeoServer) {
+        if (ogcServiceProviderType == OgcServiceProviderType.ArcGis) {
             return new FilterBoundingBox(crs,
                     new double[] {northSouthMin, eastWestMin},
                     new double[] {northSouthMax, eastWestMax});
