@@ -323,7 +323,10 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
                 if (bbox.getBboxSrs() != null && !bbox.getBboxSrs().isEmpty()) {
                     sb.append(bbox.getBboxSrs());
                 } else {
-                    sb.deleteCharAt(sb.length() - 1);
+                    // The default and internal srs for GeoServer is "EPSG:4326", 
+                	// which is used as the default srs for GetFeature request.
+                	sb.append("EPSG:4326");
+                    //sb.deleteCharAt(sb.length() - 1);
                 }
             }
 
