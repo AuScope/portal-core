@@ -21,6 +21,7 @@ import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.WCSService;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
 import org.auscope.portal.core.services.responses.wcs.DescribeCoverageRecord;
+import org.auscope.portal.core.services.responses.wcs.GetCapabilitiesRecord_1_0_0;
 import org.auscope.portal.core.services.responses.wcs.Resolution;
 import org.auscope.portal.core.services.responses.wcs.TimeConstraint;
 import org.auscope.portal.core.util.FileIOUtil;
@@ -335,10 +336,12 @@ public class WCSController extends BasePortalController {
      * @return
      */
     @RequestMapping("/describeCoverage.do")
-    public ModelAndView describeCoverage(String serviceUrl, String layerName) {
+    public ModelAndView describeCoverage(
+    		@RequestParam("serviceUrl") final String serviceUrl,
+    		@RequestParam("coverageName") final String coverageName) {
         DescribeCoverageRecord[] records = null;
         try {
-            records = wcsService.describeCoverage(serviceUrl, layerName);
+            records = wcsService.describeCoverage(serviceUrl, coverageName);
         } catch (Exception ex) {
             logger.error("Error describing coverage", ex);
             return generateJSONResponseMAV(false, null,
@@ -347,4 +350,25 @@ public class WCSController extends BasePortalController {
 
         return generateJSONResponseMAV(true, records, "");
     }
+    
+    /**
+     * Returns a WCS GetCapabilitiesRecord (v1.0.0) response.
+     * 
+     * @param serviceUrl the link the the GetCapabilities service.
+     * @return a WCS {@link GetCapabilitiesRecord_1_0_0} response as JSON.
+     */
+    @RequestMapping("/getWCSCapabilities.do")
+    public ModelAndView getCapabilities(
+    		@RequestParam("serviceUrl") final String serviceUrl) {
+    	GetCapabilitiesRecord_1_0_0 getCap = null;
+    	try {
+    		getCap = wcsService.getWcsCapabilities(serviceUrl);
+    	} catch(Exception ex) {
+    		logger.error("Error getting capabilities" , ex);
+    		return generateJSONResponseMAV(false, null,
+                    "Error occured whilst communicating to remote service: " + ex.getMessage());
+    	}
+    	return generateJSONResponseMAV(true, getCap, "");
+    }
+    
 }

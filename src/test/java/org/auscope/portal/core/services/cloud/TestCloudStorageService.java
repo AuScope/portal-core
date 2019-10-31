@@ -413,6 +413,8 @@ public class TestCloudStorageService extends PortalTestClass {
     public void testStsRequired() throws PortalServiceException {
         CloudStorageServiceJClouds stsService = new CloudStorageServiceJClouds();
         stsService.setStsRequirement(STSRequirement.Mandatory);
+        stsService.setEndpoint("https://keystone.rc.nectar.org.au:5000/v3");
+        stsService.setAccessKey("Project:User");
         stsService.getBlobStoreContext(null, null);
     }
 

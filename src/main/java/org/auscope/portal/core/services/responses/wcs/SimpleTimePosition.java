@@ -10,7 +10,8 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 
 /**
- * Represents a simplified instance of the <gml:timePosition> element from a WCS DescribeCoverage response
+ * Represents a simplified instance of the <gml:timePosition> element from a
+ * WCS DescribeCoverage or GetCapabilities response
  * 
  * @author vot002
  *
@@ -31,11 +32,15 @@ public class SimpleTimePosition implements TemporalDomain {
     }
 
     public SimpleTimePosition(Node node) throws DOMException, ParseException {
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        df.setTimeZone(TimeZone.getTimeZone("GMT")); // assumption - Make everything GMT
-
-        timePosition = df.parse(node.getTextContent());
-
+        DateFormat df1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        df1.setTimeZone(TimeZone.getTimeZone("GMT")); // assumption - Make everything GMT
+        DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        df2.setTimeZone(TimeZone.getTimeZone("GMT")); // assumption - Make everything GMT
+        try {
+        	timePosition = df1.parse(node.getTextContent());
+        } catch(ParseException e) {
+        	timePosition = df2.parse(node.getTextContent());
+        }
         type = node.getLocalName();
     }
 }

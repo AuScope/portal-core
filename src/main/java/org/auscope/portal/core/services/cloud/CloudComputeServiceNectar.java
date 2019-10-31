@@ -30,16 +30,17 @@ import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.options.TemplateOptions;
+import org.jclouds.openstack.keystone.config.KeystoneProperties;
 import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.compute.options.NovaTemplateOptions;
 import org.jclouds.openstack.nova.v2_0.domain.Image;
 import org.jclouds.openstack.nova.v2_0.features.ImageApi;
 import org.openstack4j.api.OSClient;
+import org.openstack4j.model.common.Identifier;
 import org.openstack4j.openstack.OSFactory;
 
 import com.shaded.google.common.base.Predicate;
 import com.shaded.google.common.base.Predicates;
-
 
 
 /**
@@ -151,17 +152,30 @@ public class CloudComputeServiceNectar extends CloudComputeService {
     @SuppressWarnings("unchecked")
     public CloudComputeServiceNectar(String endpoint, String accessKey, String secretKey, String apiVersion) {
         super(ProviderType.NovaKeystone, endpoint, apiVersion);
+        this.endpoint = endpoint;
         this.accessKey = accessKey;
         this.secretKey = secretKey;
-
-        Properties overrides = new Properties();
-
+        
+        String[] accessParts = this.accessKey.split(":");
+        String projectName = accessParts[0];
+        String userName = accessParts[1];
         String typeString = "openstack-nova";
 
-        builder = ContextBuilder.newBuilder(typeString).overrides(overrides);
-
-        if(accessKey!=null && secretKey!=null)
-            builder.credentials(accessKey, secretKey);
+        Properties overrides = new Properties();
+        if(endpoint.contains("keystone") && endpoint.contains("v3")) {
+            overrides.put(KeystoneProperties.KEYSTONE_VERSION, "3");
+            overrides.put(KeystoneProperties.SCOPE, "project:" + projectName);
+        }
+        this.builder = ContextBuilder.newBuilder(typeString)
+                .overrides(overrides);
+        
+        if(accessKey!=null && secretKey!=null) {
+            if(endpoint.contains("keystone") && endpoint.contains("v3")) {
+        	    builder.credentials("default:"+userName, secretKey);
+            } else {
+            	builder.credentials(userName, secretKey);
+            }
+        }
 
         if (getApiVersion() != null) {
             builder.apiVersion(getApiVersion());
@@ -170,16 +184,15 @@ public class CloudComputeServiceNectar extends CloudComputeService {
         if (endpoint != null) {
             builder.endpoint(endpoint);
         }
-
+        
         this.novaApi = builder.buildApi(NovaApi.class);
 
         Set<String> regions = novaApi.getConfiguredRegions();
         String region = null;
-        if(! regions.isEmpty())
+        if(!regions.isEmpty())
             region = regions.iterator().next();
         
         this.imageApi = novaApi.getImageApi(region);
-        
         this.context = builder.buildView(ComputeServiceContext.class);
         this.computeService = this.context.getComputeService();
         this.terminateFilter = Predicates.and(not(TERMINATED), not(RUNNING), inGroup(getGroupName()));
@@ -356,15 +369,24 @@ public class CloudComputeServiceNectar extends CloudComputeService {
         try {
             String[] accessParts = this.accessKey.split(":");
             String[] idParts = computeInstanceId.split("/");
-
+            
             //JClouds has no support (currently) for tailing server console output. Our current workaround
             //is to offload this to openstack4j.
-            OSClient os = OSFactory.builder()
-                    .endpoint(endpoint)
-                    .credentials(accessParts[1], secretKey)
-                    .tenantName(accessParts[0])
-                    .authenticate();
-
+            @SuppressWarnings("rawtypes")
+			OSClient os = null;
+            if(endpoint.contains("keystone") && endpoint.contains("v3")) {
+            	os = OSFactory.builderV3()
+	            		.endpoint(endpoint)
+	            		.credentials(accessParts[1], secretKey, Identifier.byName("Default"))
+	                    .scopeToProject(Identifier.byName(accessParts[0]), Identifier.byName("Default"))
+	                    .authenticate();
+            } else {
+            	os = OSFactory.builderV2()
+            			.endpoint(endpoint)
+                        .credentials(accessParts[1], secretKey)
+                        .tenantName(accessParts[0])
+                        .authenticate();
+            }
             return os.compute().servers().getConsoleOutput(idParts[1], numLines);
         } catch (Exception ex) {
             logger.error("Unable to retrieve console logs for " + computeInstanceId, ex);

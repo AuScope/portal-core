@@ -1,0 +1,88 @@
+<WCS_Capabilities xmlns="http://www.opengis.net/wcs"
+	xmlns:gml="http://www.opengis.net/gml"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wcs http://schemas.opengis.net/wcs/1.0.0/wcsCapabilities.xsd"
+	version="1.0.0">
+	<Service>
+		<name>test_wcs_service</name>
+		<label>Test WCS Service</label>
+		<fees>NONE</fees>
+		<accessConstraints>NONE</accessConstraints>
+	</Service>
+	<Capability>
+		<Request>
+			<GetCapabilities>
+				<DCPType>
+					<HTTP>
+						<Get>
+							<OnlineResource
+								xlink:href="http://test.org.au/ows/dea" />
+						</Get>
+					</HTTP>
+				</DCPType>
+			</GetCapabilities>
+			<DescribeCoverage>
+				<DCPType>
+					<HTTP>
+						<Get>
+							<OnlineResource
+								xlink:href="http://test.org.au/ows/dea" />
+						</Get>
+					</HTTP>
+				</DCPType>
+			</DescribeCoverage>
+			<GetCoverage>
+				<DCPType>
+					<HTTP>
+						<Get>
+							<OnlineResource
+								xlink:href="http://test.org.au/ows/dea" />
+						</Get>
+					</HTTP>
+				</DCPType>
+			</GetCoverage>
+		</Request>
+		<Exception>
+			<Format>application/vnd.ogc.se_xml</Format>
+		</Exception>
+	</Capability>
+	<ContentMetadata>
+		<CoverageOfferingBrief>
+			<description>This is coverage offering 1</description>
+			<name>coverage_offering_1</name>
+			<label>Coverage Offering 1</label>
+			<lonLatEnvelope
+				srsName="urn:ogc:def:crs:OGC:1.3:CRS84">
+				<gml:pos>-180.0 -90.0</gml:pos>
+				<gml:pos>180.0 90.0</gml:pos>
+				<gml:timePosition>1986-08-15T00:00:00.000Z</gml:timePosition>
+				<gml:timePosition>2019-09-16T00:00:00.000Z</gml:timePosition>
+			</lonLatEnvelope>
+		</CoverageOfferingBrief>
+		<CoverageOfferingBrief>
+			<description>This is coverage offering 2</description>
+			<name>coverage_offering_2</name>
+			<label>Coverage Offering 2</label>
+			<lonLatEnvelope
+				srsName="urn:ogc:def:crs:OGC:1.3:CRS84">
+				<gml:pos>-180.0 -90.0</gml:pos>
+				<gml:pos>180.0 90.0</gml:pos>
+				<gml:timePosition>1986-08-15T00:00:00.000Z</gml:timePosition>
+				<gml:timePosition>2019-09-16T00:00:00.000Z</gml:timePosition>
+			</lonLatEnvelope>
+		</CoverageOfferingBrief>
+		<CoverageOfferingBrief>
+			<description>This is coverage offering 3</description>
+			<name>coverage_offering_3</name>
+			<label>Coverage Offering 3</label>
+			<lonLatEnvelope
+				srsName="urn:ogc:def:crs:OGC:1.3:CRS84">
+				<gml:pos>-180.0 -90.0</gml:pos>
+				<gml:pos>180.0 90.0</gml:pos>
+				<gml:timePosition>2016-10-31T23:59:59.000Z</gml:timePosition>
+				<gml:timePosition>2016-10-31T23:59:59.000Z</gml:timePosition>
+			</lonLatEnvelope>
+		</CoverageOfferingBrief>
+	</ContentMetadata>
+</WCS_Capabilities>

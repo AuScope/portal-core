@@ -565,7 +565,7 @@ public class CSWRecordTransformer {
      * @throws XPathExpressionException
      */
     public CSWRecord transformToCSWRecord() throws XPathExpressionException {
-        logger.info("------- calling transformToCSWRecord from CSWRecordTransformer");
+        //logger.info("------- calling transformToCSWRecord from CSWRecordTransformer");
 
         return transformToCSWRecord(new CSWRecord("", "", "", "", new AbstractCSWOnlineResource[0],
                 new CSWGeographicElement[0]));

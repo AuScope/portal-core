@@ -1,6 +1,6 @@
 language: java
 jdk:
-- oraclejdk8
+- openjdk8
 deploy:
   provider: script
   script: cp .travis.settings.xml $HOME/.m2/settings.xml && mvn deploy >/dev/null
