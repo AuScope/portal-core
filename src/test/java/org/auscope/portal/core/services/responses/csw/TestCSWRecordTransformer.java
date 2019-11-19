@@ -13,7 +13,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.auscope.portal.core.server.OgcServiceProviderType;
-import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.namespaces.CSWNamespaceContext;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.core.test.PortalTestClass;
@@ -22,7 +21,6 @@ import org.auscope.portal.core.util.DOMUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
@@ -304,73 +302,6 @@ public class TestCSWRecordTransformer extends PortalTestClass {
         return nonTextChildren;
     }
 
-    /**
-     * Asserts that 2 nodes and child nodes are equal
-     *
-     * @param expected
-     * @param actual
-     */
-    private void assertNodeTreesEqual(final Node expected, final Node actual) {
-        final String debugLocationString = String.format("expected='%1$s'\nactual='%2$s'\n", debugLocation(expected),
-                debugLocation(actual));
-
-        //Compare node URI + name
-        String expectedUri = expected.getNamespaceURI();
-        if (expectedUri == null) {
-            expectedUri = "";
-        }
-        String actualUri = actual.getNamespaceURI();
-        if (actualUri == null) {
-            actualUri = "";
-        }
-        //To deal with ambiguity of xmlns namespaces (http://xerces.apache.org/xerces2-j/faq-sax.html#faq-5)
-        //we have to be a little tricky with our XML namespaces... (how annoying)
-        if (expectedUri.equals(xmlnsUri) && actualUri.isEmpty()) {
-            actualUri = xmlnsUri;
-        } else if (actualUri.equals(xmlnsUri) && expectedUri.isEmpty()) {
-            expectedUri = xmlnsUri;
-        }
-        Assert.assertEquals(debugLocationString, expectedUri, actualUri);
-        Assert.assertEquals(debugLocationString, expected.getLocalName(), actual.getLocalName());
-
-        //getNonNamespaceAttributes(expected);
-
-        //Compare attributes (if any)
-        final NamedNodeMap expectedAttr = expected.getAttributes();
-        final NamedNodeMap actualAttr = actual.getAttributes();
-        if (expectedAttr != null) {
-            Assert.assertNotNull(debugLocationString, actualAttr);
-
-            Assert.assertEquals(debugLocationString, expectedAttr.getLength(), actualAttr.getLength());
-
-            for (int i = 0; i < expectedAttr.getLength(); i++) {
-                assertNodeTreesEqual(expectedAttr.item(i), actualAttr.item(i));
-            }
-        } else {
-            Assert.assertNull(debugLocationString, actualAttr);
-        }
-
-        //Compare children (if any)
-        final List<Node> expectedChildren = getNonTextChildNodes(expected);
-        final List<Node> actualChildren = getNonTextChildNodes(actual);
-        Assert.assertEquals(debugLocationString, expectedChildren.size(), actualChildren.size());
-        for (int i = 0; i < expectedChildren.size(); i++) {
-            assertNodeTreesEqual(expectedChildren.get(i), actualChildren.get(i));
-        }
-
-        //And of course ensure the contents are equal
-        String expectedValue = expected.getNodeValue();
-        if (expectedValue != null) {
-            expectedValue = expectedValue.replaceAll("\\s+", "");
-        }
-        String actualValue = actual.getNodeValue();
-        if (actualValue != null) {
-            actualValue = actualValue.replaceAll("\\s+", "");
-        }
-
-        Assert.assertEquals(debugLocationString, expectedValue, actualValue);
-    }
-
     @Test
     public void testConstraints() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
@@ -378,18 +309,6 @@ public class TestCSWRecordTransformer extends PortalTestClass {
         Assert.assertArrayEquals(new String[] {"CopyrightConstraint1", "CopyrightConstraint2"},
                 this.records[0].getConstraints());
         Assert.assertArrayEquals(new String[] {}, this.records[1].getConstraints());
-    }
-
-    @Test
-    public void testReverseTransformation() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException, PortalServiceException {
-        setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
-
-        final CSWRecordTransformer transformer = new CSWRecordTransformer();
-
-        final Node original = (Node) exprGetFirstMetadataNode.evaluate(doc, XPathConstants.NODE);
-        final Node actual = transformer.transformToNode(this.records[0]);
-
-        assertNodeTreesEqual(original, actual);
     }
 
     @Test
