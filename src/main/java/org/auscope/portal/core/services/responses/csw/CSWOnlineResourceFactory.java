@@ -38,12 +38,12 @@ public abstract class CSWOnlineResourceFactory {
         String protocol = "";
         String applicationProfile = "";
         URL url = null;
-
+        
         CSWNamespaceContext nc = new CSWNamespaceContext();
         XPathExpression protocolXpath = DOMUtil.compileXPathExpr(
                 "gmd:protocol/gco:CharacterString", nc);
         XPathExpression nameXpath = DOMUtil.compileXPathExpr(
-                "gmd:name/gco:CharacterString|gmd:CI_OnlineResource/gmd:name/gmx:MimeFileType",
+                "gmd:name/gco:CharacterString|gmd:name/gmx:MimeFileType",
                 nc);
         XPathExpression descriptionXpath = DOMUtil.compileXPathExpr(
                 "gmd:description/gco:CharacterString", nc);
@@ -55,11 +55,12 @@ public abstract class CSWOnlineResourceFactory {
         try {
             urlString = (String) urlXpath.evaluate(node, XPathConstants.STRING);
             if (urlString != null) {
-                if (urlString.length() == 0) {
+                /*if (urlString.length() == 0) {
                     try {
                     logger.info("got empty urlString from " + DOMUtil.buildStringFromDom(node, true));
                     } catch (Exception e) {}
                 }
+                */
                 url = new URL(urlString);
             }
         } catch (MalformedURLException ex) {
