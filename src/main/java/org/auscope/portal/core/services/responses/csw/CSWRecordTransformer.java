@@ -565,8 +565,6 @@ public class CSWRecordTransformer {
      * @throws XPathExpressionException
      */
     public CSWRecord transformToCSWRecord() throws XPathExpressionException {
-        //logger.info("------- calling transformToCSWRecord from CSWRecordTransformer");
-
         return transformToCSWRecord(new CSWRecord("", "", "", "", new AbstractCSWOnlineResource[0],
                 new CSWGeographicElement[0]));
     }
@@ -585,7 +583,7 @@ public class CSWRecordTransformer {
     	} else if (this.serverType == OgcServiceProviderType.GeoServer) {
     		return new GeoServerHelper().transform(record);
     	}
-        logger.debug("--------- start Normal.transform ");
+        //logger.info("--------- start Normal.transform ");
    	
         NodeList tempNodeList = null;
 
