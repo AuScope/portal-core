@@ -2,6 +2,7 @@ package org.auscope.portal.core.configuration;
 
 import java.util.List;
 
+
 public class ServiceConfiguration {
 
     List<ServiceConfigurationItem> serviceConfigurationItems;
