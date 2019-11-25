@@ -180,10 +180,10 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
         } else {
             // not only is the encoding not include the gco:Decimal element, but the north/south east/west coords are swapped!!!!
             // this is a hacky workaround!!!!
-            try {
+            /*try {
                 logger.info("found dodgy bbox node: " + DOMUtil.buildStringFromDom(node, true));
             } catch (Exception e) {}
-            
+            */
             westBoundLongitudeExpr = DOMUtil.compileXPathExpr("gmd:southBoundLatitude", nc);
             eastBoundLongitudeExpr = DOMUtil.compileXPathExpr("gmd:northBoundLatitude",  nc);
             northBoundLatitudeExpr = DOMUtil.compileXPathExpr("gmd:eastBoundLongitude", nc);
@@ -194,7 +194,7 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
             double south = (Double) southBoundLatitudeExpr.evaluate(node, XPathConstants.NUMBER);
             double north = (Double) northBoundLatitudeExpr.evaluate(node, XPathConstants.NUMBER);
             
-            logger.info("extracted values: " + west + "," + east + "," + south + "," + north);
+            //logger.info("extracted values: " + west + "," + east + "," + south + "," + north);
         }
 
         bbox.setWestBoundLongitude((Double) westBoundLongitudeExpr.evaluate(node, XPathConstants.NUMBER));
