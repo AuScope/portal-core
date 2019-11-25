@@ -79,9 +79,7 @@ public abstract class GenericFilter extends AbstractFilter {
         	"<ogc:PropertyName>" +
         	obj.getString("xpath") +
         	"</ogc:PropertyName>" +
-        	"<Literal>" +
         	obj.getString("value") +
-        	"</Literal>" +
         	"</ogc:Intersects>";        	
             return polygonString;
         }else throw new UnsupportedOperationException("Unable to parse polygonBBox string fragment.");
@@ -106,6 +104,9 @@ public abstract class GenericFilter extends AbstractFilter {
             for(int i=0;i<jArray.size();i++){
                 if(jArray.get(i) instanceof JSONObject){
                     JSONObject jobj=(JSONObject)jArray.get(i);
+                    if (jobj.getString("value").equals("null")) {
+                        continue;
+                    }
                     if(jobj.getString("type").equals("OPTIONAL.DATE")){
                         results.add(parseDateType(jobj));
                     }else if (jobj.getString("type").equals("OPTIONAL.POLYGONBBOX")) {
