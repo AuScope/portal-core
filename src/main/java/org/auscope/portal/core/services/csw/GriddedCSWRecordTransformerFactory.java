@@ -1,5 +1,6 @@
 package org.auscope.portal.core.services.csw;
 
+import org.auscope.portal.core.server.OgcServiceProviderType;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.responses.csw.CSWRecordTransformer;
 import org.auscope.portal.core.services.responses.csw.CSWRecordTransformerFactory;
@@ -14,8 +15,8 @@ public class GriddedCSWRecordTransformerFactory extends
      * @return
      */
     @Override
-    public CSWRecordTransformer newCSWRecordTransformer(Node mdMetadataNode) {
-        return new GriddedCSWRecordTransformer(mdMetadataNode);
+    public CSWRecordTransformer newCSWRecordTransformer(Node mdMetadataNode,OgcServiceProviderType serverType) {
+        return new GriddedCSWRecordTransformer(mdMetadataNode, serverType);
     }
     
     /**
