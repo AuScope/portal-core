@@ -77,7 +77,7 @@ public class CSWService {
         this.methodMaker = new CSWMethodMakerGetDataRecords();
         this.transformerFactory = transformerFactory;
     }
-
+    
     public CSWGetRecordResponse queryCSWEndpoint(int startPosition, int maxQueryLength, int maxNumberOfAttempts,
             long timeBetweenAttempts) throws IOException, OWSException {
 
@@ -106,28 +106,9 @@ public class CSWService {
         }
 
     }
-
-    public String getStringFromDocument(Document doc)
-    {
-        try
-        {
-           DOMSource domSource = new DOMSource(doc);
-           StringWriter writer = new StringWriter();
-           StreamResult result = new StreamResult(writer);
-           TransformerFactory tf = TransformerFactory.newInstance();
-           Transformer transformer = tf.newTransformer();
-           transformer.transform(domSource, result);
-           return writer.toString();
-        }
-        catch(TransformerException ex)
-        {
-           ex.printStackTrace();
-           return null;
-        }
-    } 
     
     public CSWGetRecordResponse queryCSWEndpoint(int startPosition, int maxQueryLength, CSWGetDataRecordsFilter filter) throws IOException, OWSException {
-        //log.info(String.format("%1$s - requesting startPosition %2$s", this.endpoint.getServiceUrl(), startPosition));
+        log.trace(String.format("%1$s - requesting startPosition %2$s", this.endpoint.getServiceUrl(), startPosition));
 
         String cswServiceUrl = this.endpoint.getServiceUrl();
         
@@ -146,15 +127,15 @@ public class CSWService {
                     startPosition, this.endpoint.getCqlText(), this.endpoint.getServerType());
         }
 
-        try (InputStream responseStream = this.serviceCaller.getMethodResponseAsStream(method)) {            
+        try (InputStream responseStream = this.serviceCaller.getMethodResponseAsStream(method)) {   
+        	log.trace(String.format("%1$s - Response received", this.endpoint.getServiceUrl()));
+        	
             // Parse the response into newCache (remember that maps are NOT
             // thread safe)
             Document responseDocument = DOMUtil.buildDomFromStream(responseStream);
             OWSExceptionParser.checkForExceptionResponse(responseDocument);
             
-        	String url = this.endpoint.getServiceUrl();
-        	CSWGetRecordResponse grr  = new CSWGetRecordResponse(this.endpoint, responseDocument, transformerFactory);
-        	return grr;
+        	return new CSWGetRecordResponse(this.endpoint, responseDocument, transformerFactory);
         } catch (ParserConfigurationException | SAXException | XPathExpressionException e) {
             throw new IOException(e.getMessage(), e);
         }
