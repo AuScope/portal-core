@@ -426,7 +426,8 @@ public class CSWServiceItem {
     /**
      * Set serverType for the CSW service
      * 
-     * @return
+     * @param serverType
+     * 			the OGC service provider type for this CSW item.
      */
     public void setServerType(OgcServiceProviderType serverType) {
         this.serverType = serverType;
