@@ -177,8 +177,8 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
         sb.append("</csw:Query>");
         sb.append("</csw:GetRecords>");
 
- //       log.info("CSW GetRecords Request: " + sb.toString());
- //       log.info("CSW GetRecords Url: " + serviceUrl);
+        log.trace("CSW GetRecords Request: " + sb.toString());
+
         // If this does not work, try params: "text/xml; charset=ISO-8859-1"
         httpMethod.setEntity(new StringEntity(sb.toString(), ContentType.create("text/xml", "ISO-8859-1")));
 
