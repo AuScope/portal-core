@@ -12,10 +12,11 @@ public class GriddedCSWRecordTransformerFactory extends
      * Creates a new instance of GriddedCSWRecordTransformer which will draw from the specified
      * gmd:MD_Metadata Node representation as a template
      * @param mdMetadataNode
+     * @param serverType
      * @return
      */
     @Override
-    public CSWRecordTransformer newCSWRecordTransformer(Node mdMetadataNode,OgcServiceProviderType serverType) {
+    public CSWRecordTransformer newCSWRecordTransformer(Node mdMetadataNode, OgcServiceProviderType serverType) {
         return new GriddedCSWRecordTransformer(mdMetadataNode, serverType);
     }
     

@@ -57,6 +57,12 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
         return this.makeMethod(serviceUrl, filter, resultType, maxRecords, 1, null, serverType);
     }
 
+    /**
+     * Get correct csw:Query element according CSW server type, for the GetRecords request message 
+     * @param serverType
+     * 			the server type of the CSW server receiving this GetRecords message
+     * @return
+     */
     private String getCSWQueryElement(OgcServiceProviderType serverType) {
         switch (serverType) {
         case PyCSW:
@@ -67,6 +73,14 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
     	
     }
     
+    /**
+     * Modify BoundingBox filter element in the GetRecords request message according to the CSW server type.
+     * @param filter
+     * 			the bounding box filter string in the generic GetRecords request message
+     * @param serverType
+     *			the server type of the CSW server receiving this GetRecords message
+     * @return modified bounding box filter string.
+     */
     private static String decorateFilterString(String filter, OgcServiceProviderType serverType) {
     	if (serverType == OgcServiceProviderType.GeoServer ) {
     		return filter.replace("<ogc:PropertyName>ows:BoundingBox</ogc:PropertyName>", "<ogc:PropertyName>BoundingBox</ogc:PropertyName>")
@@ -94,8 +108,9 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
         String filterString = null;
         if (filter != null) {
             filterString = filter.getFilterStringAllRecords();
-            if (filterString != null) 
+            if (filterString != null) {
             	filterString = decorateFilterString(filterString, serverType);
+            }
         }
 
         // We should be using a library for this call...
