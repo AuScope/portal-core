@@ -99,12 +99,23 @@ public class CSWRecordTransformer {
         this.mdMetadataNode = mdMetadata;
     }
 
+    
     /**
      * Creates a new instance of this class which will draw from the specified gmd:MD_Metadata Node representation as a template
      *
      * @param rootNode
      */
-    public CSWRecordTransformer(Node mdMetadataNode,OgcServiceProviderType serverType) {
+    public CSWRecordTransformer(Node mdMetadataNode) {
+    	this(mdMetadataNode, OgcServiceProviderType.Default);
+    }
+    
+    /**
+     * Creates a new instance of this class which will draw from the specified gmd:MD_Metadata Node representation as a template
+     *
+     * @param rootNode
+     * @param serverType
+     */
+    public CSWRecordTransformer(Node mdMetadataNode, OgcServiceProviderType serverType) {
         this.document = mdMetadataNode.getOwnerDocument();
         this.mdMetadataNode = mdMetadataNode;
         this.serverType = serverType;
@@ -583,7 +594,6 @@ public class CSWRecordTransformer {
     	} else if (this.serverType == OgcServiceProviderType.GeoServer) {
     		return new GeoServerHelper().transform(record);
     	}
-        //logger.info("--------- start Normal.transform ");
    	
         NodeList tempNodeList = null;
 
@@ -755,13 +765,24 @@ public class CSWRecordTransformer {
         return record;
     }
     
+    /**
+     * A private class to transform CSW metadata record from PyCSW server to CSWRecord object
+     * 
+     * @author Bo Yan
+     *
+     */
     private class PyCSWHelper {
     	private final String[] FIXED_DIMENSION_NAMES = {"time", "longitude", "lon", "latitude", "lat", "transverse_mercator", "crs"}; 
         private final String THREDDSLAYERNAME = "gmd:contentInfo/gmi:MI_CoverageDescription/gmd:dimension/gmd:MD_Band/gmd:sequenceIdentifier/gco:MemberName/gco:aName/gco:CharacterString";
         private final String PYCSW_ONLINETRANSFERSEXPRESSION = "gmd:identificationInfo/srv:SV_ServiceIdentification/descendant::srv:connectPoint/gmd:CI_OnlineResource";
         
+        /**
+         * Tranform from mdMetadataNode to CSWRecord
+         * @param record
+         * @return
+         * @throws XPathExpressionException
+         */
         public CSWRecord transform(CSWRecord record) throws XPathExpressionException {
-            logger.debug("--------- start PyCSWHelper.transform ");
         	
             NodeList tempNodeList = null;
 
@@ -967,14 +988,24 @@ public class CSWRecordTransformer {
     }
     
 
+    /**
+     * A private class to transform CSW metadata record from GeoServer to CSWRecord object
+     * 
+     * @author Bo Yan
+     * 
+     */
     private class GeoServerHelper {
         private final String GEOSERVER_ONLINETRANSFERSEXPRESSION = "gmd:identificationInfo/srv:SV_ServiceIdentification/descendant::srv:connectPoint/gmd:CI_OnlineResource";
         
+        /**
+         * Tranform from mdMetadataNode to CSWRecord
+         * @param record
+         * @return
+         * @throws XPathExpressionException
+         */
         public CSWRecord transform(CSWRecord record) throws XPathExpressionException {
             NodeList tempNodeList = null;
             
-            logger.debug("--------- start GeoServerHelper.transform ");
-
             //Parse our simple strings
             Node scopeNode = evalXPathNode(mdMetadataNode, SCOPEEXPRESSION);
             String recordType = scopeNode != null ? scopeNode.getNodeValue() : null;
@@ -1148,6 +1179,14 @@ public class CSWRecordTransformer {
     	
     }
     
+    /**
+     * A static method to transform date stamp in date or dataTime element to Date property in CSWRecord object.
+     * 
+     * @param record
+     * @param metaNode
+     * @param logger
+     * @throws XPathExpressionException
+     */
     public static void transformDate(CSWRecord record, Node metaNode, Log logger) throws XPathExpressionException {
         String dateStampString = evalXPathString(metaNode, DATETIMESTAMPEXPRESSION);
         if (dateStampString != null && !dateStampString.isEmpty()) {
