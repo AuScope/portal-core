@@ -947,6 +947,14 @@ public class CSWRecordTransformer {
             return record;
         }
         
+        /**
+         * tranform online resources embedded in the service node.
+         * @param record
+         * @param expression
+         * @param threddsLayerName
+         * @return
+         * @throws XPathExpressionException
+         */
         private List<AbstractCSWOnlineResource> transformSrvNodes(CSWRecord record, String expression, String threddsLayerName) 
     			throws XPathExpressionException{
         	NodeList  tempNodeList = evalXPathNodeList(mdMetadataNode, expression);
@@ -963,6 +971,11 @@ public class CSWRecordTransformer {
         	return resources;
         }
 
+        /**
+         * if the given layer name is fixed special layer name in Thredds server
+         * @param lname
+         * @return Yes, if it is special layer name in Thredds server; False if it is real layer name.
+         */
         private boolean isFixedLayerName(String lname) {
         	for (int i= 0; i < FIXED_DIMENSION_NAMES.length; i++) {
     			if (FIXED_DIMENSION_NAMES[i].compareTo(lname) == 0 ) {
@@ -972,6 +985,11 @@ public class CSWRecordTransformer {
         	return false;
         }
         
+        /**
+         * if the dataset is hosted in Thredds server and harvested into PyCSW, its layer name need special reading procedure.
+         * @return
+         * @throws XPathExpressionException
+         */
         private String getThreddsLayerName() throws XPathExpressionException {
         	NodeList tempNodeList = evalXPathNodeList(mdMetadataNode, THREDDSLAYERNAME);
         	if (tempNodeList != null && tempNodeList.getLength() > 0) {
@@ -1162,6 +1180,13 @@ public class CSWRecordTransformer {
             return record;
         }
         
+        /**
+         * tranform online resources embedded in the service node.
+         * @param record
+         * @param expression
+         * @return
+         * @throws XPathExpressionException
+         */
         private List<AbstractCSWOnlineResource> transformSrvNodes(CSWRecord record, String expression) throws XPathExpressionException{
         	NodeList  tempNodeList = evalXPathNodeList(mdMetadataNode, expression);
             List<AbstractCSWOnlineResource> resources = new ArrayList<>();
