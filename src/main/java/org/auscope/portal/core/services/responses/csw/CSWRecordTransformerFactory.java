@@ -24,10 +24,9 @@ public class CSWRecordTransformerFactory {
      * @param mdMetadataNode
      * @return
      */
-    /*public CSWRecordTransformer newCSWRecordTransformer(Node mdMetadataNode) {
+    public CSWRecordTransformer newCSWRecordTransformer(Node mdMetadataNode) {
     	return new CSWRecordTransformer(mdMetadataNode);
     }
-    */
     
     /**
      * Creates a new instance of CSWRecordTransformer with CSW server type
