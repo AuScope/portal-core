@@ -41,10 +41,31 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
      * 
      * @return
      */
+    public HttpRequestBase makeMethod(String serviceUrl) {
+        return this.makeMethod(serviceUrl, null, ResultType.Results, 1000, 1, null);
+    }
+    
+    /**
+     * Generates a method that performs a CSW GetRecords request for a maximum of 1000 records
+     * 
+     * @return
+     */
     public HttpRequestBase makeMethod(String serviceUrl, OgcServiceProviderType serverType) {
         return this.makeMethod(serviceUrl, null, ResultType.Results, 1000, 1, null, serverType);
     }
 
+    /**
+     * Generates a method that performs a CSW GetRecords request with the specified filter
+     *
+     * @param filter
+     *            [Optional] The filter to constrain our request
+     * @return
+     */
+    public HttpRequestBase makeMethod(String serviceUrl, CSWGetDataRecordsFilter filter, ResultType resultType,
+            int maxRecords) {
+        return this.makeMethod(serviceUrl, filter, resultType, maxRecords, 1, null, OgcServiceProviderType.Default);
+    }
+    
     /**
      * Generates a method that performs a CSW GetRecords request with the specified filter
      *
@@ -92,6 +113,23 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
     	} 
     	return filter;
     }
+    
+    /**
+     * Generates a method that performs a CSW GetRecords request with the specified filter
+     *
+     * @param filter
+     *            [Optional] The filter to constrain our request
+     * @return
+     * @throws UnsupportedEncodingException
+     *             If the PostMethod body cannot be encoded ISO-8859-1
+     */
+    public HttpRequestBase makeMethod(String serviceUrl, CSWGetDataRecordsFilter filter, ResultType resultType,
+            int maxRecords, int startPosition, String cqlText) {
+    	return makeMethod(serviceUrl, filter, resultType,
+                		maxRecords, startPosition, cqlText, 
+                		OgcServiceProviderType.Default);
+    }
+    
     /**
      * Generates a method that performs a CSW GetRecords request with the specified filter
      *
@@ -184,6 +222,18 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
 
         return httpMethod;
     }
+    
+    
+    /**
+     * Generates a HTTP Get method that performs a CSW GetRecords request
+     *
+     * @return
+     * @throws URISyntaxException
+     */
+    public HttpRequestBase makeGetMethod(String serviceUrl, ResultType resultType, int maxRecords, int startPosition)
+            throws URISyntaxException {
+    	return makeGetMethod(serviceUrl, resultType, maxRecords, startPosition, OgcServiceProviderType.Default);
+    }
 
     /**
      * Generates a HTTP Get method that performs a CSW GetRecords request
@@ -232,7 +282,7 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
                 + " query sent to GeoNetwork: \n\t"
                 + serviceUrl + "?" + method.getURI().getQuery();
 
-        //log.debug(queryStr);
+        log.debug(queryStr);
 
         return method;
     }
