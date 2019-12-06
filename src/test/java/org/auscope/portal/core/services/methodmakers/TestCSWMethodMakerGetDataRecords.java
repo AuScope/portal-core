@@ -140,4 +140,41 @@ public class TestCSWMethodMakerGetDataRecords extends PortalTestClass {
         Assert.assertTrue(queryString, queryString.contains("typeNames=gmd:MD_Metadata"));
 
     }
+    
+    /**
+     * @throws IOException
+     * @throws URISyntaxException
+     * Simple test to validate schema for OgcServiceProviderType.PyCSW 
+     * @throws SAXException 
+     * @throws ParserConfigurationException 
+     */
+    @Test
+    public void testMakeMethodForPyCSW() throws  IOException, URISyntaxException, ParserConfigurationException, SAXException {
+        final int maxRecords = 1234;
+        final String filterStr = "<filter/>";
+
+        context.checking(new Expectations() {
+            {
+                allowing(mockFilter).getSortType();
+                oneOf(mockFilter).getFilterStringAllRecords();
+                will(returnValue(filterStr));
+            }
+        });
+
+        //Test Post
+        HttpRequestBase method = methodMaker.makeMethod(uri, mockFilter, ResultType.Results, maxRecords, OgcServiceProviderType.PyCSW);
+        Assert.assertNotNull(method);
+
+        Assert.assertTrue(method instanceof HttpPost); //we want this to be sent via post in case we get a large filter
+        String postBody = IOUtils.toString(((HttpPost) method).getEntity().getContent());
+
+        Assert.assertTrue(postBody.contains(String.format("typeNames=\"csw:Record\"")));
+        
+        //test Get
+        method = methodMaker.makeGetMethod(uri, ResultType.Results, maxRecords, 0, OgcServiceProviderType.PyCSW);
+        Assert.assertNotNull(method);
+        String queryString = ((HttpGet) method).getURI().getQuery();
+
+        Assert.assertFalse(queryString, queryString.contains("constraint_language_version=1.1.0"));
+    }
 }
