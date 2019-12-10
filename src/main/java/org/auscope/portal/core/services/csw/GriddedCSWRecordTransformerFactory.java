@@ -8,6 +8,18 @@ import org.w3c.dom.Node;
 
 public class GriddedCSWRecordTransformerFactory extends
         CSWRecordTransformerFactory {
+	
+    /**
+     * Creates a new instance of GriddedCSWRecordTransformer which will draw from the specified
+     * gmd:MD_Metadata Node representation as a template
+     * @param mdMetadataNode
+     * @return
+     */
+    @Override
+    public CSWRecordTransformer newCSWRecordTransformer(Node mdMetadataNode) {
+        return newCSWRecordTransformer(mdMetadataNode, OgcServiceProviderType.Default);
+    }
+    
     /**
      * Creates a new instance of GriddedCSWRecordTransformer which will draw from the specified
      * gmd:MD_Metadata Node representation as a template

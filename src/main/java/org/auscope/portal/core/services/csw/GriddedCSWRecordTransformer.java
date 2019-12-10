@@ -20,6 +20,15 @@ public class GriddedCSWRecordTransformer extends CSWRecordTransformer {
         super();
     }
     
+    public GriddedCSWRecordTransformer(Node mdMetadataNode)  {
+        this(mdMetadataNode, OgcServiceProviderType.Default);
+    }
+    
+    /**
+     * constructor with specified serverType
+     * @param mdMetadataNode
+     * @param serverType
+     */
     public GriddedCSWRecordTransformer(Node mdMetadataNode, OgcServiceProviderType serverType)  {
         super(mdMetadataNode, serverType);
     }
