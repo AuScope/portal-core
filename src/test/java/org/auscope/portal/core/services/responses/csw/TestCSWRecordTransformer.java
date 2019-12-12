@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.LinkedList;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
@@ -13,6 +14,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.auscope.portal.core.server.OgcServiceProviderType;
+import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.namespaces.CSWNamespaceContext;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.core.test.PortalTestClass;
@@ -343,5 +345,56 @@ public class TestCSWRecordTransformer extends PortalTestClass {
         Assert.assertEquals(-180, box.getWestBoundLongitude(), 0.1);
         Assert.assertEquals(90, box.getNorthBoundLatitude(), 0.1);
         Assert.assertEquals(-90, box.getSouthBoundLatitude(), 0.1);
+    }
+    
+    @Test
+    public void testTransformToCSWRecordFromPyCSW() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
+        List<CSWRecord> records = parseCSWRecordFromGetRecordResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse_Pycsw_Thredds.xml", OgcServiceProviderType.PyCSW);
+        Assert.assertEquals(5, records.size());        
+        CSWRecord record = records.get(0);
+        AbstractCSWOnlineResource[] onlineRes = record.getOnlineResources();
+        Assert.assertEquals(7, onlineRes.length);        
+        Assert.assertEquals("Band1", onlineRes[2].getName());
+        Assert.assertEquals(OnlineResourceType.WMS, onlineRes[2].getType());
+        CSWGeographicElement[] bboxes = record.getCSWGeographicElements();
+        Assert.assertEquals(1, bboxes.length);       
+        Assert.assertEquals(151.92188, bboxes[0].getEastBoundLongitude(), 0.001);       
+    }
+    
+    @Test
+    public void testTransformToCSWRecordFromGeoserver() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
+        List<CSWRecord> records = parseCSWRecordFromGetRecordResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse_Geoserver.xml", OgcServiceProviderType.GeoServer);
+        Assert.assertEquals(10, records.size());        
+        CSWRecord record = records.get(0);
+        Assert.assertEquals("9031SE_loweEE_dom", record.getLayerName());
+        
+        AbstractCSWOnlineResource[] onlineRes = record.getOnlineResources();
+        Assert.assertEquals(2, onlineRes.length);        
+        Assert.assertEquals("9031SE_loweEE_dom", onlineRes[0].getName());
+        Assert.assertEquals(OnlineResourceType.WMS, onlineRes[0].getType());
+        
+        CSWGeographicElement[] bboxes = record.getCSWGeographicElements();
+        Assert.assertEquals(1, bboxes.length);       
+        Assert.assertEquals(151.00606, bboxes[0].getEastBoundLongitude(), 0.001);       
+    }
+    
+    
+    private List<CSWRecord> parseCSWRecordFromGetRecordResponse(String resourceUrl, OgcServiceProviderType serviceType) throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
+    	Document tmpdoc = DOMUtil.buildDomFromStream(ResourceUtil.loadResourceAsStream(resourceUrl));
+        CSWNamespaceContext nc = new CSWNamespaceContext();
+        XPathExpression exprRecordMetadata = DOMUtil.compileXPathExpr(
+                "/csw:GetRecordsResponse/csw:SearchResults/(gmd:MD_Metadata|gmi:MI_Metadata)", nc);
+        
+        NodeList nodes = (NodeList) exprRecordMetadata.evaluate(tmpdoc, XPathConstants.NODESET);
+        LinkedList<CSWRecord> records = new LinkedList<CSWRecord>();
+        CSWRecordTransformerFactory transformerFactory = new CSWRecordTransformerFactory();
+        
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node metadataNode = nodes.item(i);
+            CSWRecordTransformer transformer = transformerFactory.newCSWRecordTransformer(metadataNode, serviceType);
+            CSWRecord newRecord = transformer.transformToCSWRecord();
+            records.add(newRecord);
+        }
+        return records;
     }
 }
