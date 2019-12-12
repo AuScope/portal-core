@@ -151,6 +151,7 @@ public class ViewCSWRecordFactory {
         obj.put("description", res.getDescription());
         obj.put("version", res.getVersion());
         obj.put("applicationProfile", res.getApplicationProfile());
+        obj.put("protocolRequest", res.getProtocolRequest());
         return obj;
     }
 

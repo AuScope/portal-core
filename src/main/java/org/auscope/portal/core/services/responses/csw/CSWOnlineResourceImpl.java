@@ -14,6 +14,7 @@ public class CSWOnlineResourceImpl extends AbstractCSWOnlineResource {
     private String name;
     private String description;
     private String applicationProfile;
+    private String protocolRequest;
 
     public CSWOnlineResourceImpl(URL linkage, String protocol, String name,
             String description) {
@@ -28,6 +29,18 @@ public class CSWOnlineResourceImpl extends AbstractCSWOnlineResource {
         this.name = name;
         this.description = description;
         this.applicationProfile = applicationProfile;
+        this.protocolRequest = "";
+    }
+    
+    public CSWOnlineResourceImpl(URL linkage, String protocol, String name,
+            String description, String applicationProfile, String protocolRequest) {
+        super();
+        this.linkage = linkage;
+        this.protocol = protocol;
+        this.name = name;
+        this.description = description;
+        this.applicationProfile = applicationProfile;
+        this.protocolRequest = protocolRequest;
     }
 
     @Override
@@ -53,6 +66,11 @@ public class CSWOnlineResourceImpl extends AbstractCSWOnlineResource {
     @Override
     public String getDescription() {
         return description;
+    }
+    
+    @Override
+    public String getProtocolRequest() {
+    	return protocolRequest;
     }
 
     /**
