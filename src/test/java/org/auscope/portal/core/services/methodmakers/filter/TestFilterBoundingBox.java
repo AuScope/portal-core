@@ -102,4 +102,35 @@ public class TestFilterBoundingBox extends PortalTestClass {
         Assert.assertEquals(fbb.getUpperCornerPoints()[1], north, 0.001);
     }
 
+    /**
+     * Test populating lowerCorner and upperCorner from latitude and longitude locations for Geoserver
+     */
+    @Test
+    public void testParseFromValuesForGeoserver() {
+    	FilterBoundingBox bbox1 = FilterBoundingBox.parseFromValues("EPSG:4326", north, south, east, west, OgcServiceProviderType.GeoServer);
+    	/*
+     * Geoserver 2.15 (https://docs.geoserver.org/maintain/en/user/services/wfs/basics.html#axis-ordering) implements
+     * 	    axis order as longitude/latitude (x/y) for EPSG:xxxx;
+     * 					  longitude/latitude (x/y) for http://www.opengis.net/gml/srs/epsg.xml#xxxx;
+     * 					  latitude/longitude (y/x) for urn:x-ogc:def:crs:EPSG:xxxx. 
+     * Geoserver 2.16 (https://docs.geoserver.org/stable/en/user/services/wfs/axis_order.html#wfs-basics-axis) and 
+     *    2.17 (https://docs.geoserver.org/latest/en/user/services/wfs/axis_order.html#wfs-1-1-axis-order) implements
+     * 		axis order as longitude/latitude (x/y) for EPSG:4326;
+     * 				  	  longitude/latitude (x/y) for http://www.opengis.net/gml/srs/epsg.xml#xxxx;
+     * 				 	  latitude/longitude (y/x) for urn:x-ogc:def:crs:EPSG:xxxx;
+     * 				 	  latitude/longitude (y/x) for urn:ogc:def:crs:EPSG:4326. 
+    	 */
+        Assert.assertEquals(bbox1.getLowerCornerPoints()[0], west, 0.001);
+        Assert.assertEquals(bbox1.getLowerCornerPoints()[1], south, 0.001);
+        Assert.assertEquals(bbox1.getUpperCornerPoints()[0], east, 0.001);
+        Assert.assertEquals(bbox1.getUpperCornerPoints()[1], north, 0.001);
+        
+    	
+        bbox1 = FilterBoundingBox.parseFromValues("ogc:def:crs:EPSG:4326", north, south, east, west, OgcServiceProviderType.GeoServer);
+        Assert.assertEquals(bbox1.getLowerCornerPoints()[0], south, 0.001);
+        Assert.assertEquals(bbox1.getLowerCornerPoints()[1], west, 0.001);
+        Assert.assertEquals(bbox1.getUpperCornerPoints()[0], north, 0.001);
+        Assert.assertEquals(bbox1.getUpperCornerPoints()[1], east, 0.001);
+    	
+    }
 }

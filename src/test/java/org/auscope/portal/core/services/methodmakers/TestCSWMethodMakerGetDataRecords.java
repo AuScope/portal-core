@@ -9,6 +9,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.auscope.portal.core.server.OgcServiceProviderType;
 import org.auscope.portal.core.services.methodmakers.CSWMethodMakerGetDataRecords.ResultType;
 import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter;
 import org.auscope.portal.core.test.PortalTestClass;
@@ -61,7 +62,7 @@ public class TestCSWMethodMakerGetDataRecords extends PortalTestClass {
             }
         });
 
-        HttpRequestBase method = methodMaker.makeMethod(uri, mockFilter, ResultType.Results, maxRecords);
+        HttpRequestBase method = methodMaker.makeMethod(uri, mockFilter, ResultType.Results, maxRecords, OgcServiceProviderType.Default);
         Assert.assertNotNull(method);
 
         Assert.assertTrue(method instanceof HttpPost); //we want this to be sent via post in case we get a large filter
@@ -87,7 +88,7 @@ public class TestCSWMethodMakerGetDataRecords extends PortalTestClass {
 
         context.checking(new Expectations());
 
-        HttpRequestBase method = methodMaker.makeMethod(uri, null, ResultType.Hits, maxRecords);
+        HttpRequestBase method = methodMaker.makeMethod(uri, null, ResultType.Hits, maxRecords, OgcServiceProviderType.Default);
         Assert.assertNotNull(method);
 
         Assert.assertTrue(method instanceof HttpPost); //we want this to be sent via post in case we get a large filter
@@ -121,15 +122,17 @@ public class TestCSWMethodMakerGetDataRecords extends PortalTestClass {
         });
 
         //Test POST
-        HttpRequestBase method = methodMaker.makeMethod(uri, mockFilter, ResultType.Results, maxRecords);
+        HttpRequestBase method = methodMaker.makeMethod(uri, mockFilter, ResultType.Results, maxRecords, OgcServiceProviderType.Default);
         Assert.assertNotNull(method);
         String postBody = IOUtils.toString(((HttpPost) method).getEntity().getContent());
         Assert.assertTrue(postBody.contains(String.format("version=\"2.0.2\"")));
         Assert.assertTrue(postBody.contains(String.format("outputSchema=\"http://www.isotc211.org/2005/gmd\"")));
+        // for OgcServiceProviderType.Default, typeNames is gmd:MD_Metadata
+        // for OgcServiceProviderType.PyCSW, typeNames is csw:Record
         Assert.assertTrue(postBody.contains(String.format("typeNames=\"gmd:MD_Metadata\"")));
 
         //Test GET
-        method = methodMaker.makeGetMethod(uri, ResultType.Results, maxRecords, 0);
+        method = methodMaker.makeGetMethod(uri, ResultType.Results, maxRecords, 0, OgcServiceProviderType.Default);
         Assert.assertNotNull(method);
         String queryString = ((HttpGet) method).getURI().getQuery();
         Assert.assertTrue(queryString, queryString.contains("version=2.0.2"));
@@ -137,4 +140,91 @@ public class TestCSWMethodMakerGetDataRecords extends PortalTestClass {
         Assert.assertTrue(queryString, queryString.contains("typeNames=gmd:MD_Metadata"));
 
     }
+    
+    /**
+     * @throws IOException
+     * @throws URISyntaxException
+     * Simple test to validate schema for OgcServiceProviderType.PyCSW 
+     * @throws SAXException 
+     * @throws ParserConfigurationException 
+     */
+    @Test
+    public void testMakeMethodForPyCSW() throws  IOException, URISyntaxException, ParserConfigurationException, SAXException {
+        final int maxRecords = 1234;
+        final String filterStr = "<ogc:Filter xmlns:ogc=\"http://www.opengis.net/ogc\" ><ogc:BBOX>" + 
+        		" 	<ogc:PropertyName>ows:BoundingBox</ogc:PropertyName>" + 
+        		" 		<gml:Envelope srsName=\"WGS:84\">" + 
+        		" 			<gml:lowerCorner>143 -44</gml:lowerCorner>" + 
+        		" 			<gml:upperCorner>148 -39</gml:upperCorner>" + 
+        		" 		</gml:Envelope>" + 
+        		" 	</ogc:BBOX></ogc:Filter>";
+
+        context.checking(new Expectations() {
+            {
+                allowing(mockFilter).getSortType();
+                oneOf(mockFilter).getFilterStringAllRecords();
+                will(returnValue(filterStr));
+            }
+        });
+
+        //Test Post
+        HttpRequestBase method = methodMaker.makeMethod(uri, mockFilter, ResultType.Results, maxRecords, OgcServiceProviderType.PyCSW);
+        Assert.assertNotNull(method);
+
+        Assert.assertTrue(method instanceof HttpPost); //we want this to be sent via post in case we get a large filter
+        String postBody = IOUtils.toString(((HttpPost) method).getEntity().getContent());
+
+        Assert.assertTrue(postBody.contains("typeNames=\"csw:Record\""));
+        // method decorateFilterString should replace the envelope srsName for PyCSW request
+        Assert.assertFalse(postBody.contains("<gml:Envelope srsName=\"WGS:84\">"));
+        Assert.assertTrue(postBody.contains("<gml:Envelope srsName=\"urn:ogc:def:crs:OGC:1.3:CRS84\">"));
+        
+        //test Get
+        method = methodMaker.makeGetMethod(uri, ResultType.Results, maxRecords, 0, OgcServiceProviderType.PyCSW);
+        Assert.assertNotNull(method);
+        String queryString = ((HttpGet) method).getURI().getQuery();
+
+        Assert.assertFalse(queryString, queryString.contains("constraint_language_version=1.1.0"));
+    }
+    
+    /**
+     * @throws IOException
+     * @throws URISyntaxException
+     * Simple test to validate schema for OgcServiceProviderType.GeoServer 
+     * @throws SAXException 
+     * @throws ParserConfigurationException 
+     */
+    @Test
+    public void testMakeMethodForGeoserver() throws  IOException, URISyntaxException, ParserConfigurationException, SAXException {
+        final int maxRecords = 1234;
+        final String filterStr = "<ogc:Filter xmlns:ogc=\"http://www.opengis.net/ogc\" ><ogc:BBOX>" + 
+        		" 	<ogc:PropertyName>ows:BoundingBox</ogc:PropertyName>" + 
+        		" 		<gml:Envelope srsName=\"WGS:84\">" + 
+        		" 			<gml:lowerCorner>143 -44</gml:lowerCorner>" + 
+        		" 			<gml:upperCorner>148 -39</gml:upperCorner>" + 
+        		" 		</gml:Envelope>" + 
+        		" 	</ogc:BBOX></ogc:Filter>";
+
+        context.checking(new Expectations() {
+            {
+                allowing(mockFilter).getSortType();
+                oneOf(mockFilter).getFilterStringAllRecords();
+                will(returnValue(filterStr));
+            }
+        });
+
+        //Test Post
+        HttpRequestBase method = methodMaker.makeMethod(uri, mockFilter, ResultType.Results, maxRecords, OgcServiceProviderType.GeoServer);
+        Assert.assertNotNull(method);
+
+        Assert.assertTrue(method instanceof HttpPost); //we want this to be sent via post in case we get a large filter
+        String postBody = IOUtils.toString(((HttpPost) method).getEntity().getContent());
+
+        Assert.assertTrue(postBody.contains("<csw:Query typeNames=\"gmd:MD_Metadata\""));
+        // method decorateFilterString should replace the bounding box property name for Geoserver only!
+        Assert.assertFalse(postBody.contains("<ogc:PropertyName>ows:BoundingBox</ogc:PropertyName>"));
+        Assert.assertTrue(postBody.contains("<ogc:PropertyName>BoundingBox</ogc:PropertyName>"));
+        
+    }
+    
 }

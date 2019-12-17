@@ -1,5 +1,6 @@
 package org.auscope.portal.core.services.csw;
 
+import org.auscope.portal.core.server.OgcServiceProviderType;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.responses.csw.CSWRecordTransformer;
 import org.auscope.portal.core.services.responses.csw.CSWRecordTransformerFactory;
@@ -7,6 +8,7 @@ import org.w3c.dom.Node;
 
 public class GriddedCSWRecordTransformerFactory extends
         CSWRecordTransformerFactory {
+	
     /**
      * Creates a new instance of GriddedCSWRecordTransformer which will draw from the specified
      * gmd:MD_Metadata Node representation as a template
@@ -15,7 +17,19 @@ public class GriddedCSWRecordTransformerFactory extends
      */
     @Override
     public CSWRecordTransformer newCSWRecordTransformer(Node mdMetadataNode) {
-        return new GriddedCSWRecordTransformer(mdMetadataNode);
+        return newCSWRecordTransformer(mdMetadataNode, OgcServiceProviderType.Default);
+    }
+    
+    /**
+     * Creates a new instance of GriddedCSWRecordTransformer which will draw from the specified
+     * gmd:MD_Metadata Node representation as a template
+     * @param mdMetadataNode
+     * @param serverType
+     * @return
+     */
+    @Override
+    public CSWRecordTransformer newCSWRecordTransformer(Node mdMetadataNode, OgcServiceProviderType serverType) {
+        return new GriddedCSWRecordTransformer(mdMetadataNode, serverType);
     }
     
     /**

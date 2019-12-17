@@ -294,7 +294,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
 
             if (spatialBounds != null) {
                 fragments.add(this.generateBboxFragment(spatialBounds,
-                        "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement"));
+                        "ows:BoundingBox"));
             }
 
             if (keywords != null && keywords.length > 0) {

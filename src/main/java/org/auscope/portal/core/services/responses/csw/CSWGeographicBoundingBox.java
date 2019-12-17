@@ -6,9 +6,12 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.services.namespaces.CSWNamespaceContext;
 import org.auscope.portal.core.util.DOMUtil;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * A simple class representing an gmd:EX_GeographicBoundingBox.
@@ -17,6 +20,8 @@ import org.w3c.dom.Node;
  */
 public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElement {
 
+    protected static final Log logger = LogFactory.getLog(new CSWGeographicBoundingBox().getClass());
+    
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
@@ -151,14 +156,46 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
      * @return the cSW geographic bounding box
      */
     public static CSWGeographicBoundingBox fromGeographicBoundingBoxNode(Node node) throws XPathExpressionException {
+       
+        // Some servers have the lat/lon values within nested gco:Decimal elements, others just have the number (e.g. geoserver 2.15)
+        // Do a test to see which format is used
+        NodeList nodeList = evalXPathNodeList(node, "gmd:westBoundLongitude/gco:Decimal");
+        
         CSWNamespaceContext nc = new CSWNamespaceContext();
 
-        XPathExpression westBoundLongitudeExpr = DOMUtil.compileXPathExpr("gmd:westBoundLongitude/gco:Decimal", nc);
-        XPathExpression eastBoundLongitudeExpr = DOMUtil.compileXPathExpr("gmd:eastBoundLongitude/gco:Decimal", nc);
-        XPathExpression northBoundLatitudeExpr = DOMUtil.compileXPathExpr("gmd:northBoundLatitude/gco:Decimal", nc);
-        XPathExpression southBoundLatitudeExpr = DOMUtil.compileXPathExpr("gmd:southBoundLatitude/gco:Decimal", nc);
-
+        XPathExpression westBoundLongitudeExpr;
+        XPathExpression eastBoundLongitudeExpr;
+        XPathExpression northBoundLatitudeExpr;
+        XPathExpression southBoundLatitudeExpr;
+        
         CSWGeographicBoundingBox bbox = new CSWGeographicBoundingBox();
+        
+        if (nodeList.getLength() > 0) {
+            
+            westBoundLongitudeExpr = DOMUtil.compileXPathExpr("gmd:westBoundLongitude/gco:Decimal", nc);
+            eastBoundLongitudeExpr = DOMUtil.compileXPathExpr("gmd:eastBoundLongitude/gco:Decimal",  nc);
+            northBoundLatitudeExpr = DOMUtil.compileXPathExpr("gmd:northBoundLatitude/gco:Decimal", nc);
+            southBoundLatitudeExpr = DOMUtil.compileXPathExpr("gmd:southBoundLatitude/gco:Decimal", nc);
+            
+        } else {
+            // not only is the encoding not include the gco:Decimal element, but the north/south east/west coords are swapped!!!!
+            // this is a hacky workaround!!!!
+            /*try {
+                logger.info("found dodgy bbox node: " + DOMUtil.buildStringFromDom(node, true));
+            } catch (Exception e) {}
+            */
+            westBoundLongitudeExpr = DOMUtil.compileXPathExpr("gmd:southBoundLatitude", nc);
+            eastBoundLongitudeExpr = DOMUtil.compileXPathExpr("gmd:northBoundLatitude",  nc);
+            northBoundLatitudeExpr = DOMUtil.compileXPathExpr("gmd:eastBoundLongitude", nc);
+            southBoundLatitudeExpr = DOMUtil.compileXPathExpr("gmd:westBoundLongitude", nc);
+
+            double west = (Double) westBoundLongitudeExpr.evaluate(node, XPathConstants.NUMBER);
+            double east = (Double) eastBoundLongitudeExpr.evaluate(node, XPathConstants.NUMBER);
+            double south = (Double) southBoundLatitudeExpr.evaluate(node, XPathConstants.NUMBER);
+            double north = (Double) northBoundLatitudeExpr.evaluate(node, XPathConstants.NUMBER);
+            
+            //logger.info("extracted values: " + west + "," + east + "," + south + "," + north);
+        }
 
         bbox.setWestBoundLongitude((Double) westBoundLongitudeExpr.evaluate(node, XPathConstants.NUMBER));
         bbox.setEastBoundLongitude((Double) eastBoundLongitudeExpr.evaluate(node, XPathConstants.NUMBER));
@@ -166,6 +203,21 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
         bbox.setNorthBoundLatitude((Double) northBoundLatitudeExpr.evaluate(node, XPathConstants.NUMBER));
 
         return bbox;
+    }
+    
+    /**
+     * Helper method for evaluating an xpath string on a particular node and returning the result as a (possible empty) list of matching nodes
+     *
+     * @param node
+     * @param xPath
+     *            A valid XPath expression
+     * @return
+     * @throws XPathExpressionException
+     */
+    static protected NodeList evalXPathNodeList(Node node, String xPath) throws XPathExpressionException {
+        CSWNamespaceContext nc = new CSWNamespaceContext();
+        XPathExpression expression = DOMUtil.compileXPathExpr(xPath, nc);
+        return (NodeList) expression.evaluate(node, XPathConstants.NODESET);
     }
 
     /**

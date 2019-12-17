@@ -40,7 +40,7 @@ public class CSWContactFactory {
     private static final String XPATHADDRESSEMAIL = "gmd:address/gmd:CI_Address/gmd:electronicMailAddress/gco:CharacterString";
 
     /** The Constant xPath expression for XPATHONLINERESOURCE. */
-    private static final String XPATHONLINERESOURCE = "gmd:onlineResource";
+    private static final String XPATHONLINERESOURCE = "gmd:onlineResource/gmd:CI_OnlineResource";
 
     /**
      * Given a node representing a gmd:CI_Contact, generate a CSWContact instance and return it.
@@ -98,7 +98,7 @@ public class CSWContactFactory {
 
         field = (Node) DOMUtil.compileXPathExpr(XPATHONLINERESOURCE, nc).evaluate(node, XPathConstants.NODE);
         if (field != null) {
-            AbstractCSWOnlineResource resource = CSWOnlineResourceFactory.parseFromNode(field);
+            AbstractCSWOnlineResource resource = CSWOnlineResourceFactory.parseFromNode(field, null);
             contact.setOnlineResource(resource);
         }
 

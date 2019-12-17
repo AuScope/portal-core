@@ -182,6 +182,12 @@ public class FilterBoundingBox implements Serializable {
             return new FilterBoundingBox(crs,
                     new double[] {northSouthMin, eastWestMin},
                     new double[] {northSouthMax, eastWestMax});
+        } else if (ogcServiceProviderType == OgcServiceProviderType.GeoServer) {
+        	return createFilterBoundingBoxForGeoserver(crs,
+                    									eastWestMin,
+                    									eastWestMax,
+                    									northSouthMin,
+                    									northSouthMax);
         } else {
             return new FilterBoundingBox(crs,
                     new double[] {eastWestMin, northSouthMin},
@@ -189,6 +195,42 @@ public class FilterBoundingBox implements Serializable {
 
         }
 
+    }
+    
+    /**
+     * Utility method for creating a new FilterBoundingBox from long/lat coordinate pairs for GeoServers.
+     * 
+     * @param crs
+     * @param eastWestMin
+     * @param eastWestMax
+     * @param northSouthMin
+     * @param northSouthMax
+     * 
+     * Geo
+     * Geoserver 2.15 (https://docs.geoserver.org/maintain/en/user/services/wfs/basics.html#axis-ordering) implements
+     * 	    axis order as longitude/latitude (x/y) for EPSG:xxxx;
+     * 					  longitude/latitude (x/y) for http://www.opengis.net/gml/srs/epsg.xml#xxxx;
+     * 					  latitude/longitude (y/x) for urn:x-ogc:def:crs:EPSG:xxxx. 
+     * Geoserver 2.16 (https://docs.geoserver.org/stable/en/user/services/wfs/axis_order.html#wfs-basics-axis) and 
+     *    2.17 (https://docs.geoserver.org/latest/en/user/services/wfs/axis_order.html#wfs-1-1-axis-order) implements
+     * 		axis order as longitude/latitude (x/y) for EPSG:4326;
+     * 				  	  longitude/latitude (x/y) for http://www.opengis.net/gml/srs/epsg.xml#xxxx;
+     * 				 	  latitude/longitude (y/x) for urn:x-ogc:def:crs:EPSG:xxxx;
+     * 				 	  latitude/longitude (y/x) for urn:ogc:def:crs:EPSG:4326.
+     * @return
+     */
+    private static FilterBoundingBox createFilterBoundingBoxForGeoserver(String crs,
+            double eastWestMin,
+            double eastWestMax,
+            double northSouthMin,
+            double northSouthMax) {
+    	if (crs != null && crs.contains("ogc:def:crs:EPSG") )
+    		return new FilterBoundingBox(crs,
+                    new double[] {northSouthMin, eastWestMin},
+                    new double[] {northSouthMax, eastWestMax});
+    	else return new FilterBoundingBox(crs,
+                new double[] {eastWestMin, northSouthMin},
+                new double[] {eastWestMax, northSouthMax});
     }
 
     /**

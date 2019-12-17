@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.LinkedList;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
@@ -12,7 +13,8 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.auscope.portal.core.services.PortalServiceException;
+import org.auscope.portal.core.server.OgcServiceProviderType;
+import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.namespaces.CSWNamespaceContext;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.core.test.PortalTestClass;
@@ -21,7 +23,6 @@ import org.auscope.portal.core.util.DOMUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
@@ -56,7 +57,7 @@ public class TestCSWRecordTransformer extends PortalTestClass {
         records = new CSWRecord[nodes.getLength()];
         for (int i = 0; i < nodes.getLength(); i++) {
             final Node metadataNode = nodes.item(i);
-            final CSWRecordTransformer transformer = new CSWRecordTransformer(metadataNode);
+            final CSWRecordTransformer transformer = new CSWRecordTransformer(metadataNode, OgcServiceProviderType.Default);
             records[i] = transformer.transformToCSWRecord();
         }
     }
@@ -303,73 +304,6 @@ public class TestCSWRecordTransformer extends PortalTestClass {
         return nonTextChildren;
     }
 
-    /**
-     * Asserts that 2 nodes and child nodes are equal
-     *
-     * @param expected
-     * @param actual
-     */
-    private void assertNodeTreesEqual(final Node expected, final Node actual) {
-        final String debugLocationString = String.format("expected='%1$s'\nactual='%2$s'\n", debugLocation(expected),
-                debugLocation(actual));
-
-        //Compare node URI + name
-        String expectedUri = expected.getNamespaceURI();
-        if (expectedUri == null) {
-            expectedUri = "";
-        }
-        String actualUri = actual.getNamespaceURI();
-        if (actualUri == null) {
-            actualUri = "";
-        }
-        //To deal with ambiguity of xmlns namespaces (http://xerces.apache.org/xerces2-j/faq-sax.html#faq-5)
-        //we have to be a little tricky with our XML namespaces... (how annoying)
-        if (expectedUri.equals(xmlnsUri) && actualUri.isEmpty()) {
-            actualUri = xmlnsUri;
-        } else if (actualUri.equals(xmlnsUri) && expectedUri.isEmpty()) {
-            expectedUri = xmlnsUri;
-        }
-        Assert.assertEquals(debugLocationString, expectedUri, actualUri);
-        Assert.assertEquals(debugLocationString, expected.getLocalName(), actual.getLocalName());
-
-        //getNonNamespaceAttributes(expected);
-
-        //Compare attributes (if any)
-        final NamedNodeMap expectedAttr = expected.getAttributes();
-        final NamedNodeMap actualAttr = actual.getAttributes();
-        if (expectedAttr != null) {
-            Assert.assertNotNull(debugLocationString, actualAttr);
-
-            Assert.assertEquals(debugLocationString, expectedAttr.getLength(), actualAttr.getLength());
-
-            for (int i = 0; i < expectedAttr.getLength(); i++) {
-                assertNodeTreesEqual(expectedAttr.item(i), actualAttr.item(i));
-            }
-        } else {
-            Assert.assertNull(debugLocationString, actualAttr);
-        }
-
-        //Compare children (if any)
-        final List<Node> expectedChildren = getNonTextChildNodes(expected);
-        final List<Node> actualChildren = getNonTextChildNodes(actual);
-        Assert.assertEquals(debugLocationString, expectedChildren.size(), actualChildren.size());
-        for (int i = 0; i < expectedChildren.size(); i++) {
-            assertNodeTreesEqual(expectedChildren.get(i), actualChildren.get(i));
-        }
-
-        //And of course ensure the contents are equal
-        String expectedValue = expected.getNodeValue();
-        if (expectedValue != null) {
-            expectedValue = expectedValue.replaceAll("\\s+", "");
-        }
-        String actualValue = actual.getNodeValue();
-        if (actualValue != null) {
-            actualValue = actualValue.replaceAll("\\s+", "");
-        }
-
-        Assert.assertEquals(debugLocationString, expectedValue, actualValue);
-    }
-
     @Test
     public void testConstraints() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
@@ -377,18 +311,6 @@ public class TestCSWRecordTransformer extends PortalTestClass {
         Assert.assertArrayEquals(new String[] {"CopyrightConstraint1", "CopyrightConstraint2"},
                 this.records[0].getConstraints());
         Assert.assertArrayEquals(new String[] {}, this.records[1].getConstraints());
-    }
-
-    @Test
-    public void testReverseTransformation() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException, PortalServiceException {
-        setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
-
-        final CSWRecordTransformer transformer = new CSWRecordTransformer();
-
-        final Node original = (Node) exprGetFirstMetadataNode.evaluate(doc, XPathConstants.NODE);
-        final Node actual = transformer.transformToNode(this.records[0]);
-
-        assertNodeTreesEqual(original, actual);
     }
 
     @Test
@@ -423,5 +345,56 @@ public class TestCSWRecordTransformer extends PortalTestClass {
         Assert.assertEquals(-180, box.getWestBoundLongitude(), 0.1);
         Assert.assertEquals(90, box.getNorthBoundLatitude(), 0.1);
         Assert.assertEquals(-90, box.getSouthBoundLatitude(), 0.1);
+    }
+    
+    @Test
+    public void testTransformToCSWRecordFromPyCSW() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
+        List<CSWRecord> records = parseCSWRecordFromGetRecordResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse_Pycsw_Thredds.xml", OgcServiceProviderType.PyCSW);
+        Assert.assertEquals(5, records.size());        
+        CSWRecord record = records.get(0);
+        AbstractCSWOnlineResource[] onlineRes = record.getOnlineResources();
+        Assert.assertEquals(7, onlineRes.length);        
+        Assert.assertEquals("Band1", onlineRes[2].getName());
+        Assert.assertEquals(OnlineResourceType.WMS, onlineRes[2].getType());
+        CSWGeographicElement[] bboxes = record.getCSWGeographicElements();
+        Assert.assertEquals(1, bboxes.length);       
+        Assert.assertEquals(151.92188, bboxes[0].getEastBoundLongitude(), 0.001);       
+    }
+    
+    @Test
+    public void testTransformToCSWRecordFromGeoserver() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
+        List<CSWRecord> records = parseCSWRecordFromGetRecordResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse_Geoserver.xml", OgcServiceProviderType.GeoServer);
+        Assert.assertEquals(10, records.size());        
+        CSWRecord record = records.get(0);
+        Assert.assertEquals("9031SE_loweEE_dom", record.getLayerName());
+        
+        AbstractCSWOnlineResource[] onlineRes = record.getOnlineResources();
+        Assert.assertEquals(2, onlineRes.length);        
+        Assert.assertEquals("9031SE_loweEE_dom", onlineRes[0].getName());
+        Assert.assertEquals(OnlineResourceType.WMS, onlineRes[0].getType());
+        
+        CSWGeographicElement[] bboxes = record.getCSWGeographicElements();
+        Assert.assertEquals(1, bboxes.length);       
+        Assert.assertEquals(151.00606, bboxes[0].getEastBoundLongitude(), 0.001);       
+    }
+    
+    
+    private List<CSWRecord> parseCSWRecordFromGetRecordResponse(String resourceUrl, OgcServiceProviderType serviceType) throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
+    	Document tmpdoc = DOMUtil.buildDomFromStream(ResourceUtil.loadResourceAsStream(resourceUrl));
+        CSWNamespaceContext nc = new CSWNamespaceContext();
+        XPathExpression exprRecordMetadata = DOMUtil.compileXPathExpr(
+                "/csw:GetRecordsResponse/csw:SearchResults/(gmd:MD_Metadata|gmi:MI_Metadata)", nc);
+        
+        NodeList nodes = (NodeList) exprRecordMetadata.evaluate(tmpdoc, XPathConstants.NODESET);
+        LinkedList<CSWRecord> records = new LinkedList<CSWRecord>();
+        CSWRecordTransformerFactory transformerFactory = new CSWRecordTransformerFactory();
+        
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node metadataNode = nodes.item(i);
+            CSWRecordTransformer transformer = transformerFactory.newCSWRecordTransformer(metadataNode, serviceType);
+            CSWRecord newRecord = transformer.transformToCSWRecord();
+            records.add(newRecord);
+        }
+        return records;
     }
 }
