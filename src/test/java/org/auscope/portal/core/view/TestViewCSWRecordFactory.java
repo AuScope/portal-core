@@ -58,6 +58,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         final URL orUrl = new URL("http://hah.com");
         final String orName = "ascom";
         final String orDesc = "desc";
+        final String orProtocolRequest = "prot";
         final OnlineResourceType orType = OnlineResourceType.WFS;
         final String applicationProfile = "Esri:ArcGIS Server/x";
 
@@ -101,6 +102,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         onlineResExpectation.put("name", orName);
         onlineResExpectation.put("description", orDesc);
         onlineResExpectation.put("type", orType.name());
+        onlineResExpectation.put("protocolRequest", orProtocolRequest);
         onlineResExpectation.put("version", version);
         onlineResExpectation.put("applicationProfile", applicationProfile);
 
@@ -132,6 +134,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         final URL orUrl_1 = new URL("http://hah_1.com");
         final String orName_1 = "ascom_1";
         final String orDesc_1 = "desc_1";
+        final String orProtocolRequest_1 = "prot_1";
         final OnlineResourceType orType_1 = OnlineResourceType.WCS;
 
         //The ModelMap expectation objects for the child of mockCSWRecord object (mockCSWChildRecord1)
@@ -162,6 +165,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         onlineResExpectation_1.put("name", orName_1);
         onlineResExpectation_1.put("description", orDesc_1);
         onlineResExpectation_1.put("type", orType_1.name());
+        onlineResExpectation_1.put("protocolRequest", orProtocolRequest_1);
         onlineResExpectation_1.put("version", version);
         onlineResExpectation_1.put("applicationProfile", applicationProfile);
 
@@ -262,6 +266,8 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 will(returnValue(orName));
                 allowing(mockOnlineRes).getType();
                 will(returnValue(orType));
+                allowing(mockOnlineRes).getProtocolRequest();
+                will(returnValue(orProtocolRequest));
                 allowing(mockOnlineRes).getLinkage();
                 will(returnValue(orUrl));
                 allowing(mockOnlineRes).getVersion();
@@ -275,6 +281,8 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 will(returnValue(orName_1));
                 allowing(mockOnlineRes_1).getType();
                 will(returnValue(orType_1));
+                allowing(mockOnlineRes_1).getProtocolRequest();
+                will(returnValue(orProtocolRequest_1));
                 allowing(mockOnlineRes_1).getLinkage();
                 will(returnValue(orUrl_1));
                 allowing(mockOnlineRes_1).getVersion();
@@ -465,6 +473,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         final String version = "1.3.0";
         final String orName = "ascom";
         final String orDesc = "desc";
+        final String orProtocolRequest = "prot";
         final OnlineResourceType orType = OnlineResourceType.WFS;
         final String applicationProfile = "Esri:ArcGIS Server/x";
 
@@ -505,6 +514,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         onlineResExpectation.put("name", orName);
         onlineResExpectation.put("description", orDesc);
         onlineResExpectation.put("type", orType.name());
+        onlineResExpectation.put("protocolRequest", orProtocolRequest);
         onlineResExpectation.put("version", version);
         onlineResExpectation.put("applicationProfile", applicationProfile);
 
@@ -571,6 +581,8 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 will(returnValue(orName));
                 allowing(mockOnlineRes).getType();
                 will(returnValue(orType));
+                allowing(mockOnlineRes).getProtocolRequest();
+                will(returnValue(orProtocolRequest));
                 allowing(mockOnlineRes).getLinkage();
                 will(returnValue(orUrl));
                 allowing(mockOnlineRes).getVersion();
