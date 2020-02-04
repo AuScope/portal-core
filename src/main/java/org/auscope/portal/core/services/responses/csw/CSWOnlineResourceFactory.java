@@ -36,6 +36,7 @@ public abstract class CSWOnlineResourceFactory {
         String name = "";
         String description = "";
         String protocol = "";
+        String protocolRequest = "";
         String applicationProfile = "";
         URL url = null;
         
@@ -51,6 +52,8 @@ public abstract class CSWOnlineResourceFactory {
                 "gmd:linkage/gmd:URL", nc);
         XPathExpression applicationProfileXpath = DOMUtil.compileXPathExpr(
                 "gmd:applicationProfile/gco:CharacterString", nc);
+        XPathExpression protocolRequestXpath = DOMUtil.compileXPathExpr(
+                "gmd:protocolRequest/gco:CharacterString", nc);
 
         try {
             urlString = (String) urlXpath.evaluate(node, XPathConstants.STRING);
@@ -72,6 +75,8 @@ public abstract class CSWOnlineResourceFactory {
         }
         description = (String) descriptionXpath.evaluate(node, XPathConstants.STRING);
         applicationProfile = (String) applicationProfileXpath.evaluate(node, XPathConstants.STRING);
-        return new CSWOnlineResourceImpl(url, protocol, name, description, applicationProfile);
+        protocolRequest = (String) protocolRequestXpath.evaluate(node, XPathConstants.STRING);
+
+        return new CSWOnlineResourceImpl(url, protocol, name, description, applicationProfile, protocolRequest);
     }
 }

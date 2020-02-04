@@ -112,6 +112,13 @@ public abstract class AbstractCSWOnlineResource {
      * @return version if possible
      */
     public abstract String getVersion();
+    
+    /**
+     * provide the protocol request if possible
+     * 
+     * @return protocol request if possible
+     */
+    public abstract String getProtocolRequest();
 
     /**
      * Gets a simplification of the protocol that this online resource represents.
