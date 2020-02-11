@@ -19,8 +19,8 @@ abstract public class CloudComputeService {
         NovaKeystone,
         /** Connect to an Amazon Web Services instance via EC2 */
         AWSEc2,
-        /** Connect to Raijin NCI HPC */
-        RAIJIN
+        /** Connect to GADI NCI HPC */
+        GADI
     }
 
     /**
