@@ -7,11 +7,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+
 /**
  * Base class representing the base state of a job that is sent to the cloud for processing.
  *
  * @author Josh Vote
  */
+@MappedSuperclass
 public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
 
     /**
@@ -23,6 +29,8 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
     public static final String DATE_FORMAT = "yyyyMMdd_HHmmss";
 
     /** Unique ID identifying this job */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Integer id;
     /** Descriptive name of this job */
     protected String name;
