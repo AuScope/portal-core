@@ -352,6 +352,7 @@ public class CSWSearchController extends BaseCSWController {
             map.put("title", item.getTitle());
             map.put("id", item.getId());
             map.put("url", item.getServiceUrl());
+            map.put("type", item.getServerType());
             convertedServiceItems.add(map);
         }
 
