@@ -3,6 +3,7 @@ package org.auscope.portal.core.test.jmock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.jmock.api.Invocation;
+import org.jmock.api.InvocationDispatcher;
 import org.jmock.api.Invokable;
 import org.jmock.api.ThreadingPolicy;
 
@@ -49,4 +50,10 @@ public class PortalSynchroniser implements ThreadingPolicy {
             releaseLock();
         }
     }
+
+	@Override
+	public InvocationDispatcher dispatcher() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
