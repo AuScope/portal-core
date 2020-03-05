@@ -325,6 +325,11 @@
     <!-- Dependencies -->
     <dependencies>
         <!-- Servlets 2.3 - JSTL 1.1 -->
+         <dependency>
+         	<groupId>org.ow2.asm</groupId>
+         	<artifactId>asm</artifactId>
+         	<version>7.1</version>
+         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -447,12 +452,33 @@
             <groupId>org.jmock</groupId>
             <artifactId>jmock-junit4</artifactId>
             <version>2.12.0</version>
+            <exclusions>
+            	<exclusion>
+            		<groupId>org.ow2.asm</groupId>
+            		<artifactId>asm</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.jmock</groupId>
             <artifactId>jmock-legacy</artifactId>
             <version>2.12.0</version>
+            <exclusions>
+            	<exclusion>
+            		<groupId>org.ow2.asm</groupId>
+            		<artifactId>asm</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>cglib</groupId>
+            		<artifactId>cglib</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
+   		<dependency>
+   			<groupId>cglib</groupId>
+   			<artifactId>cglib</artifactId>
+   			<version>3.2.12</version>
+   		</dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
@@ -555,6 +581,12 @@
 	        <groupId>com.esotericsoftware</groupId>
 	        <artifactId>kryo</artifactId>
 	        <version>4.0.1</version>
-	    </dependency>
+	        <exclusions>
+	        	<exclusion>
+	        		<groupId>org.ow2.asm</groupId>
+	        		<artifactId>asm</artifactId>
+	        	</exclusion>
+	        </exclusions>
+        </dependency>
     </dependencies>
 </project>
