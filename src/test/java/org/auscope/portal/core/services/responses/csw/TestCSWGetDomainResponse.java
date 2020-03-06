@@ -1,12 +1,12 @@
 package org.auscope.portal.core.services.responses.csw;
 
+import java.io.IOException;
+
 import org.auscope.portal.core.test.PortalTestClass;
-import org.auscope.portal.core.test.ResourceUtil;
+import org.auscope.portal.core.util.ResourceUtil;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.IOException;
 
 public class TestCSWGetDomainResponse extends PortalTestClass {
     private CSWGetDomainResponse getDomainResponse;

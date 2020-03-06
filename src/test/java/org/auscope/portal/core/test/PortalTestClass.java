@@ -28,7 +28,6 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.jmock.api.Action;
 import org.jmock.api.ExpectationError;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -36,6 +35,7 @@ import org.junit.Rule;
 //import org.junit.runner.RunWith;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 
 /**
  * Base class for all unit test classes to inherit from
@@ -88,7 +88,7 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
      */
     @Rule public PortalRuleMockery context = new PortalRuleMockery() {
         {
-            setImposteriser(ClassImposteriser.INSTANCE);
+            setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
             setThreadingPolicy(new PortalSynchroniser());
         }
     };

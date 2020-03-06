@@ -19,7 +19,7 @@ import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord;
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord_1_1_1;
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesWMSLayerRecord;
 import org.auscope.portal.core.test.PortalTestClass;
-import org.auscope.portal.core.test.ResourceUtil;
+import org.auscope.portal.core.util.ResourceUtil;
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Before;
