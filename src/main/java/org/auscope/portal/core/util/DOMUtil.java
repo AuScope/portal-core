@@ -40,8 +40,8 @@ public class DOMUtil {
      * @return
      */
     private static DocumentBuilderFactory getDocumentBuilderFactory() {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance(
-                "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl", null);
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newDefaultInstance(); //DocumentBuilderFactory.newInstance(
+                // "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl", null);
         return factory;
     }
 
@@ -149,7 +149,7 @@ public class DOMUtil {
     public static XPathExpression compileXPathExpr(String xPathStr, NamespaceContext nc)
             throws XPathExpressionException {
         //Use saxon explicitly for namespace aware XPath - it's much more performant
-        XPathFactory factory = new net.sf.saxon.xpath.XPathFactoryImpl();
+        XPathFactory factory = XPathFactory.newDefaultInstance();// new net.sf.saxon.xpath.XPathFactoryImpl();
         XPath xPath = factory.newXPath();
         xPath.setNamespaceContext(nc);
         return xPath.compile(xPathStr);
@@ -166,7 +166,7 @@ public class DOMUtil {
     public static XPathExpression compileXPathExpr(String xPathStr) throws XPathExpressionException {
         //Use JAXP for namespace unaware xpath - saxon doesnt handle this sort of behaviour
         //http://stackoverflow.com/questions/21118051/namespace-unaware-xpath-expression-fails-if-saxon-is-on-the-classpath
-        XPathFactory factory = new org.apache.xpath.jaxp.XPathFactoryImpl();
+        XPathFactory factory = XPathFactory.newDefaultInstance();//new com.sun.org.apache.xpath.internal.jaxp.XPathFactoryImpl();
         XPath xPath = factory.newXPath();
         return xPath.compile(xPathStr);
     }

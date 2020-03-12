@@ -12,7 +12,6 @@ import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.xalan.xsltc.DOM;
 import org.auscope.portal.core.services.namespaces.IterableNamespace;
 import org.auscope.portal.core.util.DOMUtil;
 import org.w3c.dom.Document;

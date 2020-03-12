@@ -15,6 +15,8 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.auscope.portal.core.services.namespaces.CSWNamespaceContext;
+import org.auscope.portal.core.services.namespaces.WCSNamespaceContext;
 import org.auscope.portal.core.util.DOMUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -37,15 +39,15 @@ public class GetCapabilitiesRecord_1_0_0 {
 	CoverageOfferingBrief[] coverageOfferingBriefs;
 	
 	
-	private static final String EXTRACT_CAPABILITY_REQUESTS_EXPRESSION = "/WCS_Capabilities/Capability/Request";
+	private static final String EXTRACT_CAPABILITY_REQUESTS_EXPRESSION = "/ns:WCS_Capabilities/ns:Capability/ns:Request";
 	// This expression is relative to the previous expression
-	private static final String EXTRACT_CAPABILITY_REQUEST_ONLINE_RESOURCES_EXPRESSION = "DCPType/HTTP/Get/OnlineResource/@href";
-	private static final String EXTRACT_COVERAGE_OFFERING_BRIEFS_EXPRESSION = "/WCS_Capabilities/ContentMetadata/CoverageOfferingBrief";
+	private static final String EXTRACT_CAPABILITY_REQUEST_ONLINE_RESOURCES_EXPRESSION = "ns:DCPType/ns:HTTP/ns:Get/ns:OnlineResource/@href";
+	private static final String EXTRACT_COVERAGE_OFFERING_BRIEFS_EXPRESSION = "/ns:WCS_Capabilities/ns:ContentMetadata/ns:CoverageOfferingBrief";
 	
 
 	public GetCapabilitiesRecord_1_0_0(InputStream inXml) throws SAXException, IOException, ParserConfigurationException {
 		try {
-			Document doc = DOMUtil.buildDomFromStream(inXml, false);
+			Document doc = DOMUtil.buildDomFromStream(inXml, true);
 			this.capabilities = getCapabilityRequests(doc);
 			this.coverageOfferingBriefs = getCoverageBriefs(doc);
 		} catch(SAXException e) {
@@ -70,7 +72,17 @@ public class GetCapabilitiesRecord_1_0_0 {
 		Map<String, String> capabilityRequests = new HashMap<String, String>();
         try {
         	XPathFactory xpFactory = XPathFactory.newInstance();
+        	System.out.println("");
+        	System.out.println("");
+        	System.out.println("");
+        	System.out.println(""+ xpFactory.getClass().getCanonicalName());
+        	System.out.println("");
+        	System.out.println("");
+        	System.out.println("");
+        	System.out.println("");
+        	System.out.println("");
         	XPath xp = xpFactory.newXPath();
+        	xp.setNamespaceContext(new CSWNamespaceContext());
         	NodeList requestNodes = (NodeList)xp.evaluate(EXTRACT_CAPABILITY_REQUESTS_EXPRESSION, doc, XPathConstants.NODE);
         	for (int i = 0; i < requestNodes.getLength(); i++) {
         		if(!requestNodes.item(i).getNodeName().toLowerCase().equals("#text")) {
@@ -94,6 +106,7 @@ public class GetCapabilitiesRecord_1_0_0 {
 		try {
 			XPathFactory xpFactory = XPathFactory.newInstance();
         	XPath xp = xpFactory.newXPath();
+        	xp.setNamespaceContext(new WCSNamespaceContext());
         	NodeList requestNodes = (NodeList)xp.evaluate(EXTRACT_COVERAGE_OFFERING_BRIEFS_EXPRESSION, doc, XPathConstants.NODESET);
         	for (int i = 0; i < requestNodes.getLength(); i++) {
         		CoverageOfferingBrief cob = new CoverageOfferingBrief(requestNodes.item(i));

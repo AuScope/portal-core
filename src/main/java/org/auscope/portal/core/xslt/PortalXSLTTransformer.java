@@ -57,7 +57,7 @@ public class PortalXSLTTransformer {
         // determines the actual class to instantiate:
         // org.apache.xalan.transformer.TransformerImpl.
         // However, we prefer Saxon...
-        TransformerFactory tFactory = new net.sf.saxon.TransformerFactoryImpl();
+        TransformerFactory tFactory = TransformerFactory.newDefaultInstance(); // new net.sf.saxon.TransformerFactoryImpl();
         log.debug("XSLT implementation in use: " + tFactory.getClass());
 
         // Ensure we resolve resources locally
