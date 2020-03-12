@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.zip.ZipInputStream;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 
 /**
  * A ServletOutputStream extension that buffers any written data and gives methods to access that data.
@@ -29,5 +30,14 @@ public class ReadableServletOutputStream extends ServletOutputStream {
 
     public ZipInputStream getZipInputStream() {
         return new ZipInputStream(new ByteArrayInputStream(getDataWritten()));
+    }
+
+    @Override
+    public boolean isReady() {
+        return true;
+    }
+
+    @Override
+    public void setWriteListener(WriteListener writeListener) {
     }
 }
