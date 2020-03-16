@@ -17,14 +17,17 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.auscope.portal.core.services.PortalServiceException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
 
 /**
  * Utility functions for interacting with a DOM object
@@ -35,7 +38,7 @@ import org.xml.sax.SAXException;
 public class DOMUtil {
 
     /**
-     * Utility for accessing a consistent DocumentBuilderFactory (irregardless of what is on the classpath)
+     * Utility for accessing a consistent DocumentBuilderFactory (regardless of what is on the classpath)
      *
      * @return
      */
@@ -149,7 +152,8 @@ public class DOMUtil {
     public static XPathExpression compileXPathExpr(String xPathStr, NamespaceContext nc)
             throws XPathExpressionException {
         //Use saxon explicitly for namespace aware XPath - it's much more performant
-        XPathFactory factory = XPathFactory.newDefaultInstance();// new net.sf.saxon.xpath.XPathFactoryImpl();
+        // Also Saxon supports XPath 2 which some of our expressions are.
+        XPathFactory factory = new net.sf.saxon.xpath.XPathFactoryImpl();
         XPath xPath = factory.newXPath();
         xPath.setNamespaceContext(nc);
         return xPath.compile(xPathStr);
@@ -162,11 +166,12 @@ public class DOMUtil {
      *            A string representing a valid XPath expression
      * @return
      * @throws XPathExpressionException
+     * @throws PortalServiceException 
      */
-    public static XPathExpression compileXPathExpr(String xPathStr) throws XPathExpressionException {
+    public static XPathExpression compileXPathExpr(String xPathStr) throws XPathException {
         //Use JAXP for namespace unaware xpath - saxon doesnt handle this sort of behaviour
         //http://stackoverflow.com/questions/21118051/namespace-unaware-xpath-expression-fails-if-saxon-is-on-the-classpath
-        XPathFactory factory = XPathFactory.newDefaultInstance();//new com.sun.org.apache.xpath.internal.jaxp.XPathFactoryImpl();
+        XPathFactory factory = XPathFactory.newInstance(XPathFactory.DEFAULT_OBJECT_MODEL_URI, "com.sun.org.apache.xpath.internal.jaxp.XPathFactoryImpl", null);
         XPath xPath = factory.newXPath();
         return xPath.compile(xPathStr);
     }

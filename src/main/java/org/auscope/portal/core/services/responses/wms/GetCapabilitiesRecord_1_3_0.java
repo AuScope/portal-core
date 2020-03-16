@@ -6,12 +6,16 @@ import java.util.ArrayList;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.util.DOMUtil;
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
@@ -235,7 +239,7 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord {
                 serviceUrlString = "wms";
             }
 
-        } catch (XPathExpressionException e) {
+        } catch (XPathException e) {
             log.error("GetCapabilities get service xml parsing error: " + e.getMessage());
         }
         return serviceUrlString;
@@ -258,7 +262,7 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord {
 
             contactOrganisation = tempNode != null ? tempNode.getTextContent() : "";
 
-        } catch (XPathExpressionException e) {
+        } catch (XPathException e) {
             log.error("GetCapabilities get organisation xml parsing error: " + e.getMessage());
         }
         return contactOrganisation;
@@ -280,7 +284,7 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord {
 
             mapUrl = elem.getAttribute("xlink:href");
 
-        } catch (XPathExpressionException e) {
+        } catch (XPathException e) {
             log.error("GetCapabilities GetMapUrl xml parsing error: " + e.getMessage());
         }
         return mapUrl;
@@ -302,7 +306,7 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord {
             if (elem != null) {
                 metadataUrlStr = elem.getAttribute("xlink:href");
             }
-        } catch (XPathExpressionException e) {
+        } catch (XPathException e) {
             log.error("GetCapabilities MetadataURL xml parsing error: " + e.getMessage());
         }
         return metadataUrlStr;
@@ -331,7 +335,7 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord {
                 log.debug("WMS layer " + (i + 1) + " : " + mylayerList.get(i).toString());
             }
 
-        } catch (XPathExpressionException e) {
+        } catch (XPathException e) {
             log.error("GetCapabilities - getWMSLayers xml parsing error: " + e.getMessage());
         }
 
@@ -358,7 +362,7 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord {
                 Node srsNode = nodes.item(i);
                 layerSRSList[i] = srsNode != null ? srsNode.getTextContent() : "";
             }
-        } catch (XPathExpressionException e) {
+        } catch (XPathException e) {
             log.error("GetCapabilities - getLayerSRS xml parsing error: " + e.getMessage());
         }
         return layerSRSList;
@@ -385,7 +389,7 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord {
                 Node formatNode = nodes.item(i);
                 formatList[i] = formatNode != null ? formatNode.getTextContent() : "";
             }
-        } catch (XPathExpressionException e) {
+        } catch (XPathException e) {
             log.error("GetCapabilities - getWMSGetMapFormats xml parsing error: " + e.getMessage());
         }
         return formatList;

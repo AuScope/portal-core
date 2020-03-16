@@ -1,7 +1,11 @@
 package org.auscope.portal.core.services.responses.csw;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -15,7 +19,6 @@ import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.server.OgcServiceProviderType;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.namespaces.CSWNamespaceContext;
-import org.auscope.portal.core.services.responses.csw.CSWRecordTransformer.Scope;
 import org.auscope.portal.core.util.DOMUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
