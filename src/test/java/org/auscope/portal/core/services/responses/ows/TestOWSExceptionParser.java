@@ -5,8 +5,8 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.auscope.portal.core.test.PortalTestClass;
-import org.auscope.portal.core.test.ResourceUtil;
 import org.auscope.portal.core.util.DOMUtil;
+import org.auscope.portal.core.util.ResourceUtil;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
