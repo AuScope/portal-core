@@ -11,8 +11,8 @@ import javax.xml.xpath.XPathExpressionException;
 
 import org.auscope.portal.core.services.namespaces.VocabNamespaceContext;
 import org.auscope.portal.core.test.PortalTestClass;
-import org.auscope.portal.core.test.ResourceUtil;
 import org.auscope.portal.core.util.DOMUtil;
+import org.auscope.portal.core.util.ResourceUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.w3c.dom.Document;

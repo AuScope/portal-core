@@ -1,31 +1,34 @@
 package org.auscope.portal.core.services;
 
-import org.apache.jena.rdf.model.*;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.auscope.portal.core.server.http.HttpClientInputStream;
-import org.auscope.portal.core.server.http.HttpServiceCaller;
-import org.auscope.portal.core.services.methodmakers.VocabularyMethodMaker;
-import org.auscope.portal.core.services.methodmakers.VocabularyMethodMaker.Format;
-import org.auscope.portal.core.services.methodmakers.VocabularyMethodMaker.View;
-
-import org.auscope.portal.core.services.namespaces.VocabNamespaceContext;
-import org.auscope.portal.core.services.vocabs.VocabularyServiceItem;
-import org.auscope.portal.core.test.BasicThreadExecutor;
-import org.auscope.portal.core.test.PortalTestClass;
-import org.auscope.portal.core.test.ResourceUtil;
-import org.jmock.Expectations;
-import org.jmock.Sequence;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.Selector;
+import org.apache.jena.rdf.model.SimpleSelector;
+import org.apache.jena.rdf.model.StmtIterator;
+import org.auscope.portal.core.server.http.HttpClientInputStream;
+import org.auscope.portal.core.server.http.HttpServiceCaller;
+import org.auscope.portal.core.services.methodmakers.VocabularyMethodMaker;
+import org.auscope.portal.core.services.methodmakers.VocabularyMethodMaker.Format;
+import org.auscope.portal.core.services.methodmakers.VocabularyMethodMaker.View;
+import org.auscope.portal.core.services.vocabs.VocabularyServiceItem;
+import org.auscope.portal.core.test.BasicThreadExecutor;
+import org.auscope.portal.core.test.PortalTestClass;
+import org.auscope.portal.core.util.ResourceUtil;
+import org.jmock.Expectations;
+import org.jmock.Sequence;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class TestVocabularyCacheService extends PortalTestClass {
 

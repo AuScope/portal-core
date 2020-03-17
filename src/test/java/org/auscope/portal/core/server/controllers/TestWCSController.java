@@ -10,6 +10,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletResponse;
 
 import org.auscope.portal.core.server.controllers.WCSController;
@@ -43,6 +44,15 @@ public class TestWCSController extends PortalTestClass {
 
         public ZipInputStream getZipInputStream() {
             return new ZipInputStream(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()));
+        }
+
+        @Override
+        public boolean isReady() {
+            return true;
+        }
+
+        @Override
+        public void setWriteListener(WriteListener writeListener) {
         }
     };
 

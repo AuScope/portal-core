@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 
 /**
  * Test class extension of a ServletOutputStream that allows access to an underlying byte[] of data that was written
@@ -32,5 +33,14 @@ public class ByteBufferedServletOutputStream extends ServletOutputStream {
 
     public ByteArrayOutputStream getStream() {
         return this.stream;
+    }
+
+    @Override
+    public boolean isReady() {
+        return true;
+    }
+
+    @Override
+    public void setWriteListener(WriteListener writeListener) {
     }
 }

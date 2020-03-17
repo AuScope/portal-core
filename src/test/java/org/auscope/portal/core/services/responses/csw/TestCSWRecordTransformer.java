@@ -2,9 +2,9 @@ package org.auscope.portal.core.services.responses.csw;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
-import java.util.LinkedList;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
@@ -14,12 +14,11 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.auscope.portal.core.server.OgcServiceProviderType;
-import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.namespaces.CSWNamespaceContext;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.core.test.PortalTestClass;
-import org.auscope.portal.core.test.ResourceUtil;
 import org.auscope.portal.core.util.DOMUtil;
+import org.auscope.portal.core.util.ResourceUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.w3c.dom.Document;
