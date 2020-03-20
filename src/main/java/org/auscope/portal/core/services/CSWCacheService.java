@@ -605,6 +605,7 @@ public class CSWCacheService {
             Map<String, CSWRecord> serialisedCSWRecordMap = new HashMap<>();
             if(new File(FileIOUtil.getTempDirURL() + endpoint.getId() +".ser").exists()) {
                 Kryo kryo = new Kryo();
+                kryo.register(java.util.HashMap.class);
                 kryo.setInstantiatorStrategy(new com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
                 com.esotericsoftware.kryo.io.Input input = null;
                 try {
@@ -697,6 +698,7 @@ public class CSWCacheService {
                         // If there are records returned, serialise the cache and saved it to disk
                         if (cswRecordMap.size() > 0) {
 	                        Kryo kryo = new Kryo();
+	                        kryo.register(java.util.HashMap.class);
 	                        com.esotericsoftware.kryo.io.Output output = new com.esotericsoftware.kryo.io.Output(new FileOutputStream( FileIOUtil.getTempDirURL() + endpoint.getId() +".ser"));
 	                        kryo.writeObject(output, cswRecordMap);
 	                        output.close();
