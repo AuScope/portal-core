@@ -347,7 +347,6 @@
         <dependency>
 		    <groupId>org.hibernate.javax.persistence</groupId>
 		    <artifactId>hibernate-jpa-2.1-api</artifactId>
-		    <version>1.0.2.Final</version>
 		</dependency>
         <dependency>
             <groupId>com.amazonaws</groupId>
@@ -497,7 +496,6 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>[4.5.5,)</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
