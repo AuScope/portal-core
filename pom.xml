@@ -233,7 +233,7 @@
             <!-- This builds our GUI release plugin -->
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.5.3</version>
+                <version>3.2.0</version>
                 <configuration>
                     <descriptors>
                         <descriptor>src/assembly/webapp.xml</descriptor>
