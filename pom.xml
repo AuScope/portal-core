@@ -547,6 +547,16 @@
             <groupId>org.apache.jclouds</groupId>
             <artifactId>jclouds-all</artifactId>
             <version>2.1.2-SHADED</version>
+            <exclusions>
+              <exclusion>
+                <groupId>javax.annotation</groupId>
+                <artifactId>jsr250-api</artifactId>
+              </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
