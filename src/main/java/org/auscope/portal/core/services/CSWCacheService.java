@@ -29,7 +29,6 @@ import org.auscope.portal.core.services.responses.csw.CSWOnlineResourceImpl;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.services.responses.csw.CSWRecordTransformerFactory;
 import org.auscope.portal.core.util.FileIOUtil;
-import org.objenesis.strategy.InstantiatorStrategy;
 import org.objenesis.strategy.StdInstantiatorStrategy;
 
 import com.esotericsoftware.kryo.Kryo;
@@ -606,9 +605,9 @@ public class CSWCacheService {
             Map<String, CSWRecord> serialisedCSWRecordMap = new HashMap<>();
             if(new File(FileIOUtil.getTempDirURL() + endpoint.getId() +".ser").exists()) {
                 Kryo kryo = new Kryo();
-                kryo.register(java.util.HashMap.class);
-                kryo.setInstantiatorStrategy(new Kryo.DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
-//                kryo.setInstantiatorStrategy(new com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
+                kryo.setRegistrationRequired(false);
+//                kryo.setInstantiatorStrategy(new Kryo.DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
+                kryo.setInstantiatorStrategy(new com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
                 com.esotericsoftware.kryo.io.Input input = null;
                 try {
                     input = new com.esotericsoftware.kryo.io.Input(new FileInputStream(FileIOUtil.getTempDirURL() + endpoint.getId() + ".ser"));
@@ -701,19 +700,6 @@ public class CSWCacheService {
                         if (cswRecordMap.size() > 0) {
 	                        Kryo kryo = new Kryo();
 	                        kryo.setRegistrationRequired(false);
-//	                        kryo.register(java.util.HashMap.class);
-//	                        kryo.register(org.auscope.portal.core.services.csw.GriddedCSWRecord.class);
-//	                        kryo.register(String[].class);
-//	                        kryo.register(java.util.ArrayList.class);
-//	                        kryo.register(org.auscope.portal.core.services.responses.csw.CSWResponsibleParty.class);
-//	                        kryo.register(org.auscope.portal.core.services.responses.csw.CSWContact.class);
-//	                        kryo.register(org.auscope.portal.core.services.responses.csw.CSWGeographicElement[].class);
-//	                        kryo.register(org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox.class);
-//	                        kryo.register(java.util.Date.class);
-//	                        kryo.register(org.auscope.portal.core.services.csw.GriddedDataPositionalAccuracy[].class);
-//	                        kryo.register(org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource[].class);
-//	                        kryo.register(org.auscope.portal.core.services.responses.csw.CSWOnlineResourceImpl.class);
-//	                        kryo.register(java.net.URL.class);
 	                        com.esotericsoftware.kryo.io.Output output = new com.esotericsoftware.kryo.io.Output(new FileOutputStream( FileIOUtil.getTempDirURL() + endpoint.getId() +".ser"));
 	                        kryo.writeObject(output, cswRecordMap);
 	                        output.close();
