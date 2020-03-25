@@ -6,15 +6,12 @@ import java.awt.Point;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.view.knownlayer.KnownLayer;
 import org.auscope.portal.core.view.knownlayer.KnownLayerSelector;
-import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.ui.ModelMap;
 
 public class TestViewKnownLayerFactory extends PortalTestClass {
-
-    private Point mockP1 = context.mock(Point.class, "p1");
-    private Dimension mockD1 = context.mock(Dimension.class, "d1");
+    
     private KnownLayerSelector mockSelector = context.mock(KnownLayerSelector.class);
 
     /**
@@ -22,25 +19,18 @@ public class TestViewKnownLayerFactory extends PortalTestClass {
      */
     @Test
     public void testToViewOptionalParams() {
+        double x = 1.0;
+        double y = 5.0;
+        double width = 32.0;
+        double height = 16.0;
+
+        Point p1 = new Point();
+        p1.setLocation(x, y);
+        Dimension d1 = new Dimension();
+        d1.setSize(width, height);
+
         final ViewKnownLayerFactory factory = new ViewKnownLayerFactory();
         final KnownLayer knownLayer = new KnownLayer("id", mockSelector);
-        final double x = 1.0;
-        final double y = 5.0;
-        final double width = 32.0;
-        final double height = 16.0;
-
-        context.checking(new Expectations() {
-            {
-                oneOf(mockP1).getX();
-                will(returnValue(x));
-                oneOf(mockP1).getY();
-                will(returnValue(y));
-                oneOf(mockD1).getWidth();
-                will(returnValue(width));
-                oneOf(mockD1).getHeight();
-                will(returnValue(height));
-            }
-        });
 
         //Test with no optional params
         ModelMap model = factory.toView(knownLayer);
@@ -50,8 +40,8 @@ public class TestViewKnownLayerFactory extends PortalTestClass {
 
         //add our optional params
         knownLayer.setIconUrl("http://icon.url.test");
-        knownLayer.setIconSize(mockD1);
-        knownLayer.setIconAnchor(mockP1);
+        knownLayer.setIconSize(d1);
+        knownLayer.setIconAnchor(p1);
         knownLayer.setNagiosHostGroup("nagios-host-group");
 
         //Test with all optional params

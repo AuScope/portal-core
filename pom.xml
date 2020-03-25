@@ -38,7 +38,7 @@
             <dependency>
                 <groupId>io.spring.platform</groupId>
                 <artifactId>platform-bom</artifactId>
-                <version>2.0.8.RELEASE</version>
+                <version>Cairo-SR8</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -233,7 +233,7 @@
             <!-- This builds our GUI release plugin -->
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.5.3</version>
+                <version>3.2.0</version>
                 <configuration>
                     <descriptors>
                         <descriptor>src/assembly/webapp.xml</descriptor>
@@ -253,7 +253,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>2.7</version>
+                <version>3.1.0</version>
             </plugin>
         </plugins>
         <resources>
@@ -334,7 +334,7 @@
          <dependency>
          	<groupId>org.ow2.asm</groupId>
          	<artifactId>asm</artifactId>
-         	<version>7.1</version>
+         	<version>[7.1,)</version>
          </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -347,7 +347,6 @@
         <dependency>
 		    <groupId>org.hibernate.javax.persistence</groupId>
 		    <artifactId>hibernate-jpa-2.1-api</artifactId>
-		    <version>1.0.2.Final</version>
 		</dependency>
         <dependency>
             <groupId>com.amazonaws</groupId>
@@ -493,11 +492,11 @@
         <dependency>
             <groupId>org.objenesis</groupId>
             <artifactId>objenesis</artifactId>
+            <version>[3.0.1,)</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.5</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -548,6 +547,16 @@
             <groupId>org.apache.jclouds</groupId>
             <artifactId>jclouds-all</artifactId>
             <version>2.1.2-SHADED</version>
+            <exclusions>
+              <exclusion>
+                <groupId>javax.annotation</groupId>
+                <artifactId>jsr250-api</artifactId>
+              </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -594,7 +603,8 @@
         <dependency>
 	        <groupId>com.esotericsoftware</groupId>
 	        <artifactId>kryo</artifactId>
-	        <version>4.0.1</version>
+<!-- 	        <version>4.0.2</version> -->
+            <version>5.0.0-RC2</version>
 	        <exclusions>
 	        	<exclusion>
 	        		<groupId>org.ow2.asm</groupId>
