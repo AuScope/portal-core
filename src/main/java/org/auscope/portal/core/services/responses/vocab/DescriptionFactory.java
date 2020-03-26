@@ -8,7 +8,7 @@ import java.util.Map;
 
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,10 +38,10 @@ public class DescriptionFactory {
      * @param relationXPath
      *            The type of relation to parse
      * @return
-     * @throws XPathExpressionException
+     * @throws XPathException
      */
     protected Description[] attemptParseRelations(Node descriptionNode, String relationXPath)
-            throws XPathExpressionException {
+            throws XPathException {
         XPathExpression getRelationsExpr = DOMUtil.compileXPathExpr(relationXPath, nc);
         XPathExpression getInlineDescExpr = DOMUtil.compileXPathExpr("rdf:Description", nc);
 
@@ -78,9 +78,9 @@ public class DescriptionFactory {
      * Given a rdf:Description node, parse it into a Description object. Unless the node defines all related Descriptions inline the resulting Description node
      * will be populated with related Descriptions that have the 'href' flag set.
      *
-     * @throws XPathExpressionException
+     * @throws XPathException
      */
-    protected Description attemptParseDescription(Node node) throws XPathExpressionException {
+    protected Description attemptParseDescription(Node node) throws XPathException {
         String urn = (String) DOMUtil.compileXPathExpr("@rdf:about", nc).evaluate(node, XPathConstants.STRING);
         if (urn == null || urn.isEmpty()) {
             return null;
@@ -238,7 +238,7 @@ public class DescriptionFactory {
                 Description desc = attemptParseDescription(descriptionNodes.item(i));
                 addDescriptionToMap(desc, parsedDescriptions);
             }
-        } catch (XPathExpressionException e) {
+        } catch (XPathException e) {
             log.error("Unable to evaluate inbuilt XPath - requesting descriptions", e);
             throw new RuntimeException();
         }

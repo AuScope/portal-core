@@ -3,6 +3,7 @@ package org.auscope.portal.core.services.responses.wcs;
 import java.io.Serializable;
 
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.auscope.portal.core.services.namespaces.WCSNamespaceContext;
@@ -40,7 +41,7 @@ public class SpatialDomain implements Serializable {
      * @param rectifiedGrid
      * @throws XPathExpressionException
      */
-    public SpatialDomain(Node node, WCSNamespaceContext nc) throws XPathExpressionException {
+    public SpatialDomain(Node node, WCSNamespaceContext nc) throws XPathException {
         NodeList envelopeNodes = (NodeList) DOMUtil.compileXPathExpr(
                 "wcs:Envelope | gml:Envelope | wcs:EnvelopeWithTimePeriod", nc).evaluate(node, XPathConstants.NODESET);
         this.envelopes = new SimpleEnvelope[envelopeNodes.getLength()];

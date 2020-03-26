@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 
@@ -31,7 +32,7 @@ public abstract class CSWOnlineResourceFactory {
      * @throws XPathExpressionException
      *             the x path expression exception
      */
-    public static AbstractCSWOnlineResource parseFromNode(Node node, String threddsLayerName) throws XPathExpressionException {
+    public static AbstractCSWOnlineResource parseFromNode(Node node, String threddsLayerName) throws XPathException {
         String urlString = null;
         String name = "";
         String description = "";

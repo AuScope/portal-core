@@ -1,7 +1,6 @@
 package org.auscope.portal.core.services.responses.wms;
 
 import javax.xml.xpath.XPathException;
-import javax.xml.xpath.XPathExpressionException;
 
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
 
@@ -20,7 +19,7 @@ public interface GetCapabilitiesWMSLayerRecord {
      * Gets the name.
      *
      * @return the name
-     * @throws XPathExpressionException
+     * @throws XPathException
      *             the x path expression exception
      */
     public String getName() throws XPathException;
@@ -29,7 +28,7 @@ public interface GetCapabilitiesWMSLayerRecord {
      * Gets the title.
      *
      * @return the title
-     * @throws XPathExpressionException
+     * @throws XPathException
      *             the x path expression exception
      */
     public String getTitle() throws XPathException;
@@ -38,7 +37,7 @@ public interface GetCapabilitiesWMSLayerRecord {
      * Gets the abstract.
      *
      * @return the abstract
-     * @throws XPathExpressionException
+     * @throws XPathException
      *             the x path expression exception
      */
     public String getAbstract() throws XPathException;
@@ -47,7 +46,7 @@ public interface GetCapabilitiesWMSLayerRecord {
      * Gets the metadata URL.
      *
      * @return the metadataURL
-     * @throws XPathExpressionException
+     * @throws XPathException
      *             the x path expression exception
      */
     public String getMetadataURL() throws XPathException;
@@ -56,7 +55,7 @@ public interface GetCapabilitiesWMSLayerRecord {
      * Gets the legendURL.
      *
      * @return the legendURL
-     * @throws XPathExpressionException
+     * @throws XPathException
      *             the x path expression exception
      */
     public String getLegendURL() throws XPathException;
@@ -72,7 +71,7 @@ public interface GetCapabilitiesWMSLayerRecord {
      * Gets the child layer srs.
      *
      * @return the child layer srs
-     * @throws XPathExpressionException
+     * @throws XPathException
      *             the x path expression exception
      */
     public String[] getChildLayerSRS() throws XPathException;

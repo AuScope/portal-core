@@ -19,7 +19,6 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.auscope.portal.core.services.PortalServiceException;
@@ -150,7 +149,7 @@ public class DOMUtil {
      * @throws XPathExpressionException
      */
     public static XPathExpression compileXPathExpr(String xPathStr, NamespaceContext nc)
-            throws XPathExpressionException {
+            throws XPathException {
         //Use saxon explicitly for namespace aware XPath - it's much more performant
         // Also Saxon supports XPath 2 which some of our expressions are.
         XPathFactory factory = new net.sf.saxon.xpath.XPathFactoryImpl();

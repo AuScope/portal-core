@@ -2,7 +2,6 @@ package org.auscope.portal.core.services.responses.wms;
 
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathException;
-import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -63,7 +62,7 @@ public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRec
      * Gets the name.
      *
      * @return the name
-     * @throws XPathExpressionException
+     * @throws XPathException
      *             the x path expression exception
      */
     @Override
@@ -79,7 +78,7 @@ public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRec
      * Gets the title.
      *
      * @return the title
-     * @throws XPathExpressionException
+     * @throws XPathException
      *             the x path expression exception
      */
     @Override
@@ -95,7 +94,7 @@ public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRec
      * Gets the legendURL.
      *
      * @return the legendURL
-     * @throws XPathExpressionException
+     * @throws XPathException
      *             the x path expression exception
      */
     @Override
@@ -111,7 +110,7 @@ public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRec
      * Gets the abstract.
      *
      * @return the abstract
-     * @throws XPathExpressionException
+     * @throws XPathException
      *             the x path expression exception
      */
     @Override
@@ -127,7 +126,7 @@ public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRec
      * Gets the metadataURL.
      *
      * @return the metadataURL
-     * @throws XPathExpressionException
+     * @throws XPathException
      *             the x path expression exception
      */
     @Override
@@ -150,7 +149,7 @@ public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRec
      * Gets the bounding box.
      *
      * @return the bounding box
-     * @throws XPathExpressionException
+     * @throws XPathException
      */
     @Override
     public CSWGeographicBoundingBox getBoundingBox() {
@@ -187,7 +186,7 @@ public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRec
      * Gets the child layer srs.
      *
      * @return the child layer srs
-     * @throws XPathExpressionException
+     * @throws XPathException
      *             the x path expression exception
      */
     @Override

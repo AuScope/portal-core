@@ -3,6 +3,7 @@ package org.auscope.portal.core.services.responses.wcs;
 import java.io.Serializable;
 
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.auscope.portal.core.services.namespaces.WCSNamespaceContext;
@@ -48,7 +49,7 @@ public class SimpleEnvelope implements Serializable {
         this.westBoundLongitude = westBoundLongitude;
     }
 
-    public SimpleEnvelope(Node node, WCSNamespaceContext nc) throws XPathExpressionException {
+    public SimpleEnvelope(Node node, WCSNamespaceContext nc) throws XPathException {
         //get our list of gml:Points and parse our spatial bounds
         NodeList tempNodeList = (NodeList) DOMUtil.compileXPathExpr("gml:pos", nc).evaluate(node, XPathConstants.NODESET);
         if (tempNodeList.getLength() != 2)

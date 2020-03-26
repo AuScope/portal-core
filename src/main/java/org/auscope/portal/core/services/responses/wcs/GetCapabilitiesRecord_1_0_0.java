@@ -74,15 +74,6 @@ public class GetCapabilitiesRecord_1_0_0 {
 		Map<String, String> capabilityRequests = new HashMap<String, String>();
         try {
         	XPathFactory xpFactory = XPathFactory.newInstance();
-        	System.out.println("");
-        	System.out.println("");
-        	System.out.println("");
-        	System.out.println(""+ xpFactory.getClass().getCanonicalName());
-        	System.out.println("");
-        	System.out.println("");
-        	System.out.println("");
-        	System.out.println("");
-        	System.out.println("");
         	XPath xp = xpFactory.newXPath();
         	xp.setNamespaceContext(new CSWNamespaceContext());
         	NodeList requestNodes = (NodeList)xp.evaluate(EXTRACT_CAPABILITY_REQUESTS_EXPRESSION, doc, XPathConstants.NODE);

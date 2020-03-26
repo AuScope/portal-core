@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.concurrent.Executor;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -282,7 +282,7 @@ public class CSWFilterService {
                 Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
                 CSWGetRecordResponse response = new CSWGetRecordResponse(origin, responseDoc, transformerFactory);
                 count += response.getRecordsMatched();
-            } catch (ParserConfigurationException | SAXException | XPathExpressionException e) {
+            } catch (ParserConfigurationException | SAXException | XPathException e) {
                 throw new IOException(e.getMessage(), e);
             }
         }
