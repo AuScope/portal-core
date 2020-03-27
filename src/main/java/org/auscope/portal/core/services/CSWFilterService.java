@@ -11,6 +11,7 @@ import java.util.concurrent.Executor;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathException;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpGet;
@@ -109,13 +110,19 @@ public class CSWFilterService {
         HttpRequestBase method = methodMaker.makeMethod(serviceItem.getServiceUrl(), filter, resultType, maxRecords, startIndex,
                     null, serviceItem.getServerType());
 
-        try (InputStream responseStream = serviceCaller.getMethodResponseAsStream(method)) {
+        InputStream responseStream = null;
+        
+        try  {
+            responseStream = serviceCaller.getMethodResponseAsStream(method);
             Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
             log.debug("got csw response: " + DOMUtil.buildStringFromDom(responseDoc, true));
-            return new CSWGetRecordResponse(serviceItem, responseDoc, transformerFactory);
+            var res= new CSWGetRecordResponse(serviceItem, responseDoc, transformerFactory);
+            return res;
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new PortalServiceException(method, ex);
+        } finally {
+            IOUtils.closeQuietly(responseStream);
         }
     }
 

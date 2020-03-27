@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.util.Properties;
 
 import javax.xml.namespace.NamespaceContext;
@@ -19,13 +20,17 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.io.IOUtils;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import com.esotericsoftware.minlog.Log;
 
 
 /**
@@ -101,6 +106,10 @@ public class DOMUtil {
     public static Document buildDomFromStream(InputStream stream, boolean isNamespaceAware)
             throws ParserConfigurationException, IOException, SAXException {
         //build the XML dom
+        String theString = IOUtils.toString(stream, Charset.forName("UTF-8")); 
+        Log.debug(theString);
+        stream = IOUtils.toInputStream(theString, Charset.forName("UTF-8"));
+
         DocumentBuilderFactory factory = getDocumentBuilderFactory();
         factory.setNamespaceAware(isNamespaceAware); // never forget this!
         DocumentBuilder builder = factory.newDocumentBuilder();
