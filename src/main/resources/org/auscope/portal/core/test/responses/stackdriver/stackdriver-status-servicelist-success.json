@@ -1,0 +1,44 @@
+{
+  "format_version": 0,
+  "result": {
+    "query_time": 1470185701000,
+    "cgi": "statusjson.cgi",
+    "user": "Foo",
+    "query": "servicelist",
+    "query_status": "released",
+    "program_start": 1470035836000,
+    "last_data_update": 1470185695000,
+    "type_code": 0,
+    "type_text": "Success",
+    "message": ""
+  },
+  "data": {
+    "selectors": {
+      "hostgroup": "auscope-portal-servers"
+    },
+    "servicelist": {
+      "auscope-portal-2": {
+        "AuScope Google Map Client": "ok",
+        "Auscope Portal GeoNetwork Data CSW": "ok",
+        "Disk Check": "ok",
+        "Load Check": "warning",
+        "PING": "ok",
+        "SSH": "ok",
+        "Total Processes Check": "ok",
+        "Zombie Check": "ok",
+        "time-check": "ok"
+      },
+      "portal.auscope.org": {
+        "AuScope Google Map Client": "ok",
+        "Auscope Portal GeoNetwork Data CSW": "pending",
+        "Disk Check": "ok",
+        "Load Check": "unknown",
+        "PING": "critical",
+        "SSH": "ok",
+        "Total Processes Check": "ok",
+        "Zombie Check": "ok",
+        "time-check": "ok"
+      }
+    }
+  }
+}

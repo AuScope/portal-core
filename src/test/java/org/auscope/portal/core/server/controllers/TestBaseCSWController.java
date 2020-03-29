@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import org.auscope.portal.core.services.Nagios4CachedService;
+import org.auscope.portal.core.services.GoogleCloudMonitoringCachedService;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
 import org.auscope.portal.core.services.responses.csw.CSWOnlineResourceImpl;
@@ -41,7 +41,7 @@ public class TestBaseCSWController extends PortalTestClass {
     }
 
     private BaseCSWControllerImpl baseController = new BaseCSWControllerImpl(new ViewCSWRecordFactory(), new ViewKnownLayerFactory());
-    private Nagios4CachedService mockNagiosService = context.mock(Nagios4CachedService.class);
+    private GoogleCloudMonitoringCachedService mockStackDriverService = context.mock(GoogleCloudMonitoringCachedService.class);
 
     /**
      * Tests that TestBaseCSWController properly encodes nagios responses
@@ -102,12 +102,12 @@ public class TestBaseCSWController extends PortalTestClass {
         hg2Response.put("host.name.4", Arrays.asList(new ServiceStatusResponse(Status.critical, "hg2.serv3"), new ServiceStatusResponse(Status.critical, "hg2.serv4")));
 
         context.checking(new Expectations() {{
-            oneOf(mockNagiosService).getStatuses("hg1", null);will(returnValue(hg1Response));
-            oneOf(mockNagiosService).getStatuses("hg2", null);will(returnValue(hg2Response));
-            oneOf(mockNagiosService).getStatuses("hg4", null);will(throwException(new PortalServiceException("hg4 error")));
+            oneOf(mockStackDriverService).getStatuses("hg1", null);will(returnValue(hg1Response));
+            oneOf(mockStackDriverService).getStatuses("hg2", null);will(returnValue(hg2Response));
+            oneOf(mockStackDriverService).getStatuses("hg4", null);will(throwException(new PortalServiceException("hg4 error")));
         }});
 
-        ModelAndView mav = baseController.generateKnownLayerResponse(knownLayers, mockNagiosService);
+        ModelAndView mav = baseController.generateKnownLayerResponse(knownLayers, mockStackDriverService);
         List<ModelMap> data = (List<ModelMap>) mav.getModelMap().get("data");
         Assert.assertEquals(4, data.size());
 
