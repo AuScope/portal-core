@@ -4,8 +4,6 @@ import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.annotation.Resource;
-
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.auscope.portal.core.server.controllers.BaseCSWController;
@@ -47,7 +45,7 @@ public class CSWFilterController extends BaseCSWController {
     private CSWFilterService cswFilterService;
     protected static ConcurrentHashMap<String, Set> catalogueKeywordCache;
 
-    @Resource(name="conversionService")
+    @Autowired
     private ConversionService converter;
 
     static {

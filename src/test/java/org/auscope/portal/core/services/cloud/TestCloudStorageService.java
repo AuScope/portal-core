@@ -1,6 +1,5 @@
 package org.auscope.portal.core.services.cloud;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,9 +58,8 @@ public class TestCloudStorageService extends PortalTestClass {
         final String myKey = "my.key";
         final BlobStore mockBlobStore = context.mock(BlobStore.class);
         final Blob mockBlob = context.mock(Blob.class);
-        final ByteArrayInputStream is = new ByteArrayInputStream(new byte[0]);
-        
-        try (final Payload mockPayload = context.mock(Payload.class)) {
+        try (final Payload mockPayload = context.mock(Payload.class);
+                final InputStream mockReturnedInputStream = context.mock(InputStream.class)) {
             context.checking(new Expectations() {
                 {
                     oneOf(mockBlobStoreContext).close();
@@ -75,14 +73,15 @@ public class TestCloudStorageService extends PortalTestClass {
                     will(returnValue(mockPayload));
 
                     oneOf(mockPayload).openStream();
-                    will(returnValue(is));
+                    will(returnValue(mockReturnedInputStream));
 
+                    allowing(mockReturnedInputStream).close();
                     allowing(mockPayload).close();
                 }
             });
 
             try (InputStream actualInputStream = service.getJobFile(job, myKey)) {
-                Assert.assertSame(is, actualInputStream);
+                Assert.assertSame(mockReturnedInputStream, actualInputStream);
             }
         }
     }
@@ -248,30 +247,8 @@ public class TestCloudStorageService extends PortalTestClass {
         final PayloadBlobBuilder mockBuilder2 = context.mock(PayloadBlobBuilder.class, "mockBuilder2");
 
         final File[] mockFiles = new File[] {
-                new File("mockFile1") {
-                    @Override
-                    public String getName() {
-                        return "file1Name";
-                    }
-
-                    @Override
-                    public long length() {
-                        return 1L;
-                    }
-                    
-                },
-                new File("mockFile2") {
-                    @Override
-                    public String getName() {
-                        return "file2Name";
-                    }
-
-                    @Override
-                    public long length() {
-                        return 1L;
-                    }
-                    
-                },
+                context.mock(File.class, "mockFile1"),
+                context.mock(File.class, "mockFile2"),
         };
 
         context.checking(new Expectations() {
@@ -281,6 +258,16 @@ public class TestCloudStorageService extends PortalTestClass {
 
                 oneOf(mockBlobStore).createContainerInLocation(null, bucket);
                 will(returnValue(true));
+
+                allowing(mockFiles[0]).length();
+                will(returnValue(1L));
+                allowing(mockFiles[0]).getName();
+                will(returnValue("file1Name"));
+
+                allowing(mockFiles[1]).length();
+                will(returnValue(1L));
+                allowing(mockFiles[1]).getName();
+                will(returnValue("file2Name"));
 
                 oneOf(mockBlobStore).blobBuilder(jobStorageBaseKey + "/file1Name");
                 will(returnValue(mockBuilder1));
@@ -322,8 +309,7 @@ public class TestCloudStorageService extends PortalTestClass {
 
         final PayloadBlobBuilder mockBuilder1 = context.mock(PayloadBlobBuilder.class, "mockBuilder1");
 
-        final InputStream is = new ByteArrayInputStream(new byte[0]);
-        
+        final InputStream mockInputStream = context.mock(InputStream.class);
         final String fileName = "file.name";
 
         context.checking(new Expectations() {
@@ -339,7 +325,7 @@ public class TestCloudStorageService extends PortalTestClass {
 
                 allowing(mockBuilder1).contentLength(1L);
                 will(returnValue(mockBuilder1));
-                allowing(mockBuilder1).payload(with(is));
+                allowing(mockBuilder1).payload(with(mockInputStream));
                 will(returnValue(mockBuilder1));
                 oneOf(mockBuilder1).build();
                 will(returnValue(mockBlob1));
@@ -349,7 +335,7 @@ public class TestCloudStorageService extends PortalTestClass {
             }
         });
 
-        service.uploadJobFile(job, fileName, is);
+        service.uploadJobFile(job, fileName, mockInputStream);
     }
 
     /**

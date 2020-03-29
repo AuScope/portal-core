@@ -24,9 +24,9 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
     private HttpRequestBase mockMethod1 = context.mock(HttpRequestBase.class, "method1");
     private HttpRequestBase mockMethod2 = context.mock(HttpRequestBase.class, "method2");
     private HttpRequestBase mockMethod3 = context.mock(HttpRequestBase.class, "method3");
-    private Object mockAdditionalInfo1 = new Object();
-    private Object mockAdditionalInfo2 = new Object();
-    private Object mockAdditionalInfo3 = new Object();
+    private Object mockAdditionalInfo1 = context.mock(Object.class, "mockAddInfo1");
+    private Object mockAdditionalInfo2 = context.mock(Object.class, "mockAddInfo2");
+    private Object mockAdditionalInfo3 = context.mock(Object.class, "mockAddInfo3");
     private HttpServiceCaller mockServiceCaller = context.mock(HttpServiceCaller.class);
     private ExecutorService threadPool;
     private HttpClientInputStream mockInputStream1 = context.mock(HttpClientInputStream.class, "stream1");

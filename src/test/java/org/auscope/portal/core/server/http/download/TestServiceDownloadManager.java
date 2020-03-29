@@ -185,99 +185,99 @@ public class TestServiceDownloadManager extends PortalTestClass {
         }
     }
 
-//    /**
-//     * A complicated scenario that sees 3 requests being firing off to 2 shared resources.
-//     *
-//     * note - this test is built on the assumption maxThreadPerEndpoint=1 and maxThreadPerSession=2 if these values change then this test will be invalid
-//     * @throws IOException 
-//     * @throws URISyntaxException 
-//     * @throws InCompleteDownloadException 
-//     */
-//    @Test
-//    public void testServiceFairness() throws IOException, URISyntaxException, InCompleteDownloadException {
-//        
-//        // assume this test is NOT running within TRAVIS CI. If it is the result will be ignored.
-//        // This is done because TRAVIS is not fair even if this service class is.
-//        
-//        org.junit.Assume.assumeTrue("Travis environment detected, skipping Service fairness test because Travis performance is not sufficiently predictable to reliably evaluate fairness",System.getenv("TRAVIS")==null);
-//        
-//        final String[] serviceUrls = {
-//                "http://localhost/portal?serviceUrl=http://domain1/wfs",
-//                "http://localhost/portal?serviceUrl=http://domain1/wfs",
-//                "http://localhost/portal?serviceUrl=http://domain2/wfs",
-//        };
-//        final InputStream[] responseStreams = {
-//                context.mock(InputStream.class, "is-1"),
-//                context.mock(InputStream.class, "is-2"),
-//                context.mock(InputStream.class, "is-3"),
-//        };
-//        final long[] responseDelays = {
-//                1000,
-//                2000,
-//                1500
-//        };
-//
-//        //The service should hit url 0 and 2 simultaneously and when one returns
-//        //make a further request to url 1.
-//        //Because our responses all take specific amounts of time we can expect
-//        //that the overall processing will take a fixed amount of time
-//        //
-//        //The rough formula is
-//        //0ms      Request url0, Request url2
-//        //400ms    Response url0, Request url1
-//        //600ms    Response url2
-//        //1200ms   Response url1
-//        context.checking(new Expectations() {
-//            {
-//                //It's too difficult to test a sequence as at step 1 it is undefined
-//                //as to whether url0/url2 will be requested first (they will be requested at roughly the same time).
-//                //It's also too difficult to use a JMock state for the same reason - we are stuck comparing execution times
-//
-//                //first request
-//                oneOf(mockServiceCaller).getMethodResponseAsHttpResponse(
-//                        with(aHttpMethodBase(null, serviceUrls[0], null)));
-//                will(delayReturnValue(responseDelays[0], new MyHttpResponse(responseStreams[0])));
-//
-//                //second request
-//                oneOf(mockServiceCaller).getMethodResponseAsHttpResponse(
-//                        with(aHttpMethodBase(null, serviceUrls[2], null)));
-//                will(delayReturnValue(responseDelays[2], new MyHttpResponse(responseStreams[2])));
-//
-//                //third request
-//                oneOf(mockServiceCaller).getMethodResponseAsHttpResponse(
-//                        with(aHttpMethodBase(null, serviceUrls[1], null)));
-//                will(delayReturnValue(responseDelays[1], new MyHttpResponse(responseStreams[1])));
-//
-//                allowing(mockServiceConfiguration).getServiceConfigurationItem(with(any(String.class)));
-//                will(returnValue(null));
-//            }
-//        });
-//
-//        //We have a pretty good idea of what the processing time and margin of error should be
-//        long processingTime = Math.min(responseDelays[0], responseDelays[2]) + responseDelays[1];
-//        long marginOfError = processingTime / 10;
-//        long minProcessingTime = processingTime - 5;
-//        long maxProcessingTime = processingTime + marginOfError;
-//
-//        //Create our service downloader
-//        ServiceDownloadManager sdm = new ServiceDownloadManager(serviceUrls, mockServiceCaller, threadPool,
-//                mockServiceConfiguration);
-//
-//        startTimer();
-//        ArrayList<DownloadResponse> gmlDownloads = sdm.downloadAll();
-//        long elapsedTime = endTimer();
-//
-//        //Given our processing order we expect a specific response time (and no errors).
-//        //This will indicate our requests are run in a 'fair' order
-//        Assert.assertTrue(String.format("elapsedTime %1$s is not in the range [%2$s, %3$s]", elapsedTime,
-//                minProcessingTime, maxProcessingTime),
-//                elapsedTime >= minProcessingTime && elapsedTime <= maxProcessingTime);
-//        Assert.assertNotNull(gmlDownloads);
-//        for (DownloadResponse dr : gmlDownloads) {
-//            Assert.assertNotNull(dr);
-//            Assert.assertFalse(dr.hasException());
-//        }
-//    }
+    /**
+     * A complicated scenario that sees 3 requests being firing off to 2 shared resources.
+     *
+     * note - this test is built on the assumption maxThreadPerEndpoint=1 and maxThreadPerSession=2 if these values change then this test will be invalid
+     * @throws IOException 
+     * @throws URISyntaxException 
+     * @throws InCompleteDownloadException 
+     */
+    @Test
+    public void testServiceFairness() throws IOException, URISyntaxException, InCompleteDownloadException {
+        
+        // assume this test is NOT running within TRAVIS CI. If it is the result will be ignored.
+        // This is done because TRAVIS is not fair even if this service class is.
+        
+        org.junit.Assume.assumeTrue("Travis environment detected, skipping Service fairness test because Travis performance is not sufficiently predictable to reliably evaluate fairness",System.getenv("TRAVIS")==null);
+        
+        final String[] serviceUrls = {
+                "http://localhost/portal?serviceUrl=http://domain1/wfs",
+                "http://localhost/portal?serviceUrl=http://domain1/wfs",
+                "http://localhost/portal?serviceUrl=http://domain2/wfs",
+        };
+        final InputStream[] responseStreams = {
+                context.mock(InputStream.class, "is-1"),
+                context.mock(InputStream.class, "is-2"),
+                context.mock(InputStream.class, "is-3"),
+        };
+        final long[] responseDelays = {
+                1000,
+                2000,
+                1500
+        };
+
+        //The service should hit url 0 and 2 simultaneously and when one returns
+        //make a further request to url 1.
+        //Because our responses all take specific amounts of time we can expect
+        //that the overall processing will take a fixed amount of time
+        //
+        //The rough formula is
+        //0ms      Request url0, Request url2
+        //400ms    Response url0, Request url1
+        //600ms    Response url2
+        //1200ms   Response url1
+        context.checking(new Expectations() {
+            {
+                //It's too difficult to test a sequence as at step 1 it is undefined
+                //as to whether url0/url2 will be requested first (they will be requested at roughly the same time).
+                //It's also too difficult to use a JMock state for the same reason - we are stuck comparing execution times
+
+                //first request
+                oneOf(mockServiceCaller).getMethodResponseAsHttpResponse(
+                        with(aHttpMethodBase(null, serviceUrls[0], null)));
+                will(delayReturnValue(responseDelays[0], new MyHttpResponse(responseStreams[0])));
+
+                //second request
+                oneOf(mockServiceCaller).getMethodResponseAsHttpResponse(
+                        with(aHttpMethodBase(null, serviceUrls[2], null)));
+                will(delayReturnValue(responseDelays[2], new MyHttpResponse(responseStreams[2])));
+
+                //third request
+                oneOf(mockServiceCaller).getMethodResponseAsHttpResponse(
+                        with(aHttpMethodBase(null, serviceUrls[1], null)));
+                will(delayReturnValue(responseDelays[1], new MyHttpResponse(responseStreams[1])));
+
+                allowing(mockServiceConfiguration).getServiceConfigurationItem(with(any(String.class)));
+                will(returnValue(null));
+            }
+        });
+
+        //We have a pretty good idea of what the processing time and margin of error should be
+        long processingTime = Math.min(responseDelays[0], responseDelays[2]) + responseDelays[1];
+        long marginOfError = processingTime / 10;
+        long minProcessingTime = processingTime - 5;
+        long maxProcessingTime = processingTime + marginOfError;
+
+        //Create our service downloader
+        ServiceDownloadManager sdm = new ServiceDownloadManager(serviceUrls, mockServiceCaller, threadPool,
+                mockServiceConfiguration);
+
+        startTimer();
+        ArrayList<DownloadResponse> gmlDownloads = sdm.downloadAll();
+        long elapsedTime = endTimer();
+
+        //Given our processing order we expect a specific response time (and no errors).
+        //This will indicate our requests are run in a 'fair' order
+        Assert.assertTrue(String.format("elapsedTime %1$s is not in the range [%2$s, %3$s]", elapsedTime,
+                minProcessingTime, maxProcessingTime),
+                elapsedTime >= minProcessingTime && elapsedTime <= maxProcessingTime);
+        Assert.assertNotNull(gmlDownloads);
+        for (DownloadResponse dr : gmlDownloads) {
+            Assert.assertNotNull(dr);
+            Assert.assertFalse(dr.hasException());
+        }
+    }
 
     /**
      * Tests a download with no service URL parameter succeeds
