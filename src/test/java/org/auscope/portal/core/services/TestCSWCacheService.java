@@ -336,7 +336,7 @@ public class TestCSWCacheService extends PortalTestClass {
             Assert.assertFalse(this.cswCacheService.updateRunning);
             
 			Kryo kryo = new Kryo();
-			kryo.setInstantiatorStrategy(new Kryo.DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
+			kryo.setInstantiatorStrategy(new com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
 			com.esotericsoftware.kryo.io.Input input = null;
 			try {
 				input = new com.esotericsoftware.kryo.io.Input(
