@@ -12,6 +12,7 @@ import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicElement;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.services.responses.csw.CSWResponsibleParty;
+import org.auscope.portal.core.services.responses.csw.CSWTemporalExtent;
 import org.springframework.ui.ModelMap;
 
 /**
@@ -68,6 +69,9 @@ public class ViewCSWRecordFactory {
             }
         }
         obj.put("geographicElements", geographicElements);
+        
+        if(record.getTemporalExtent() != null)
+        	obj.put("temporalExtent", temporalExtentToView(record.getTemporalExtent()));
 
         List<String> descriptiveKeywords = new ArrayList<>();
         if (record.getDescriptiveKeywords() != null) {
@@ -177,6 +181,26 @@ public class ViewCSWRecordFactory {
             return obj;
         } else {
             throw new IllegalArgumentException("unsupported type - " + el.getClass());
+        }
+    }
+    
+    /**
+     * Converts a CSWTemporalExtent to its view equivalent. If ex is not a supported implementation of CSWTemporalExtent a IllegalArgumentException
+     * will be thrown.
+     *
+     * @param el
+     * @return
+     */
+    public ModelMap temporalExtentToView(CSWTemporalExtent ex) {
+        ModelMap obj = new ModelMap();
+        if (ex instanceof CSWTemporalExtent) {
+        	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            CSWTemporalExtent temporalExtent = (CSWTemporalExtent) ex;
+            obj.put("beginPosition", sdf.format(temporalExtent.getBeginPosition()));
+            obj.put("endPosition", sdf.format(temporalExtent.getEndPosition()));
+            return obj;
+        } else {
+            throw new IllegalArgumentException("unsupported type - " + ex.getClass());
         }
     }
 }

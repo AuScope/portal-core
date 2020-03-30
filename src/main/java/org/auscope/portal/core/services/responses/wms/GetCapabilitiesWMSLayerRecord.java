@@ -66,6 +66,13 @@ public interface GetCapabilitiesWMSLayerRecord {
      * @return the bounding box
      */
     public CSWGeographicBoundingBox getBoundingBox();
+    
+    /**
+    * Gets the time extent, if it is present.
+    * 
+    * @return an array of time strings
+    */
+    public String[] getTimeExtent() throws XPathExpressionException;
 
     /**
      * Gets the child layer srs.
