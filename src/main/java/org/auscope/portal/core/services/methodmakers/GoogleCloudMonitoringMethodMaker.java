@@ -56,9 +56,9 @@ public class GoogleCloudMonitoringMethodMaker extends AbstractMethodMaker {
         builder.addParameter("filter", filter.toString());
 
     	// start_time and end_time in timestamp eg. 2020-03-02T15:01:23.045123456Z
-        // allow a minute to get results
+        // one interval is 10s
         Instant end = Instant.now();
-        Instant start = end.minusSeconds(60);
+        Instant start = end.minusSeconds(10);
         builder.addParameter("interval.startTime", start.toString());
         builder.addParameter("interval.endTime", end.toString());
 
