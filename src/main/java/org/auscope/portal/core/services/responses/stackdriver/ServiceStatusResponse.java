@@ -24,7 +24,7 @@ public class ServiceStatusResponse implements Serializable {
      * Checks if keyed service is up or down
      * @return
      */
-    public boolean getUptimeCheck() {
+    public boolean isUp() {
         return uptimeCheck;
     }
 

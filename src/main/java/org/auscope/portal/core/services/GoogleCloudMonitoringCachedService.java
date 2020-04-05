@@ -5,14 +5,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.GoogleCloudMonitoringMethodMaker;
-import org.auscope.portal.core.services.responses.nagios.ServiceStatusResponse;
+import org.auscope.portal.core.services.responses.stackdriver.ServiceStatusResponse;
 
 /**
- * A caching extension built around Nagios4Service.
+ * A caching extension built around GoogleCloudMonitoringService.
  *
  * @author Josh Vote (CSIRO)
+ * @author Rini Angreani (CSIRO)
  *
  */
 public class GoogleCloudMonitoringCachedService extends GoogleCloudMonitoringService {
@@ -23,8 +23,8 @@ public class GoogleCloudMonitoringCachedService extends GoogleCloudMonitoringSer
     private long ttlSeconds = DEFAULT_TTL_SECONDS;
     private ConcurrentHashMap<String, CacheEntry> cache; //cache entries keyed by hostgroup
 
-    public GoogleCloudMonitoringCachedService(String serviceUrl, HttpServiceCaller serviceCaller, GoogleCloudMonitoringMethodMaker methodMaker) {
-        super(serviceUrl, serviceCaller, methodMaker);
+    public GoogleCloudMonitoringCachedService(GoogleCloudMonitoringMethodMaker methodMaker) {
+        super(methodMaker);
         cache = new ConcurrentHashMap<String, CacheEntry>();
     }
 
@@ -43,11 +43,13 @@ public class GoogleCloudMonitoringCachedService extends GoogleCloudMonitoringSer
      * fast so unless we are servicing tens of thousands of simultaneous requests, this should hold up fine.
      *
      *
-     * @see Nagios4Service.getStatuses
+     * @see GoogleCloudMonitoringService.getStatuses
      */
     @Override
-    public synchronized Map<String, List<ServiceStatusResponse>> getStatuses(String hostGroup, String serviceGroup) throws PortalServiceException {
-        CacheEntry cacheEntry = cache.get(hostGroup);
+    public synchronized Map<String, List<ServiceStatusResponse>> getStatuses(String[] checkIds) throws PortalServiceException {
+        String projectId = getProjectId();
+
+    	CacheEntry cacheEntry = cache.get(projectId);
 
         if (cacheEntry != null) {
         	if(cacheEntry.getPortalServiceException() != null){
@@ -64,15 +66,15 @@ public class GoogleCloudMonitoringCachedService extends GoogleCloudMonitoringSer
         // but I feel that's over engineering it
         Map<String, List<ServiceStatusResponse>> response = null;
         try{
-        	response = super.getStatuses(hostGroup,serviceGroup);
+        	response = super.getStatuses(checkIds);
         } catch(PortalServiceException pse){
         	cacheEntry = new CacheEntry(new Date(), pse); // This could potentially recycle the CacheEntry objects instead
-            cache.put(hostGroup, cacheEntry);
+            cache.put(projectId, cacheEntry);
         	throw pse;
         }
 
         cacheEntry = new CacheEntry(new Date(), response); // This could potentially recycle the CacheEntry objects instead
-        cache.put(hostGroup, cacheEntry);
+        cache.put(projectId, cacheEntry);
 
         return response;
     }

@@ -75,8 +75,8 @@ public class ViewKnownLayerFactory {
             obj.put("filterCollection",k.getFilterCollection());
         }
 
-        if (k.getNagiosHostGroup() != null) {
-            obj.put("nagiosHostGroup", k.getNagiosHostGroup());
+        if (k.getStackdriverCheckList() != null) {
+            obj.put("stackdriverCheckList", k.getStackdriverCheckList());
         }
 
         return obj;

@@ -151,7 +151,7 @@ Ext.define('portal.widgets.panel.CommonBaseRecordPanel', {
 
         if ((containsDataService || containsImageService) && 
             (record instanceof portal.knownlayer.KnownLayer) &&
-            record.containsNagiosFailures()) {
+            record.containsStackdriverFailures()) {
             iconPath = this.nagiosErrorIcon;
         } else if (this.serviceInformationIcon && (containsDataService || containsImageService)) {
             // check whether the portal has overridden the icons

@@ -11,8 +11,7 @@ import org.auscope.portal.core.services.GoogleCloudMonitoringCachedService;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
-import org.auscope.portal.core.services.responses.nagios.ServiceStatusResponse;
-import org.auscope.portal.core.services.responses.nagios.ServiceStatusResponse.Status;
+import org.auscope.portal.core.services.responses.stackdriver.ServiceStatusResponse;
 import org.auscope.portal.core.view.ViewCSWRecordFactory;
 import org.auscope.portal.core.view.ViewKnownLayerFactory;
 import org.auscope.portal.core.view.knownlayer.KnownLayer;
@@ -129,13 +128,13 @@ public abstract class BaseCSWController extends BasePortalController {
             viewKnownLayer.put("cswRecords", viewMappedRecords);
             viewKnownLayer.put("relatedRecords", viewRelatedRecords);
 
-            if (stackDriverService != null && (kl.getNagiosHostGroup() != null || kl.getNagiosServiceGroup() != null)) {
+            if (stackDriverService != null && kl.getStackdriverCheckList() != null) {
                 try {
-                    Map<String, List<ServiceStatusResponse>> response = stackDriverService.getStatuses(kl.getNagiosHostGroup(),kl.getNagiosServiceGroup());
+                    Map<String, List<ServiceStatusResponse>> response = stackDriverService.getStatuses(kl.getStackdriverCheckList());
                     List<String> failingHosts = new ArrayList<String>();
                     for (Entry<String, List<ServiceStatusResponse>> entry : response.entrySet()) {
                         for (ServiceStatusResponse status : entry.getValue()) {
-                            if (status.getStatus() == Status.critical || status.getStatus() == Status.warning) {
+                            if (!status.isUp()) {
                                 if (onlineResourceEndpoints.contains(entry.getKey())) {
                                     failingHosts.add(entry.getKey());
                                     break;
@@ -145,10 +144,10 @@ public abstract class BaseCSWController extends BasePortalController {
                     }
 
                     if (!failingHosts.isEmpty()) {
-                        viewKnownLayer.put("nagiosFailingHosts", failingHosts);
+                        viewKnownLayer.put("stackdriverFailingHosts", failingHosts);
                     }
                 } catch (PortalServiceException ex) {
-                    log.error("Error updating nagios hostgroup info for " + kl.getNagiosHostGroup() + " :" + ex.getMessage());
+                    log.error("Error updating stackdriver host info for " + kl.getName() + " :" + ex.getMessage());
                 }
             }
 

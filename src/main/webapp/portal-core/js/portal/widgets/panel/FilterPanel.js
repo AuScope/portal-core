@@ -324,8 +324,8 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         }
         
         if (layer.get('sourceType') === portal.layer.Layer.KNOWN_LAYER &&
-            layer.get('source').containsNagiosFailures()) {
-            var failingHosts = layer.get('source').get('nagiosFailingHosts');
+            layer.get('source').containsStackdriverFailures()) {
+            var failingHosts = layer.get('source').get('stackdriverFailingHosts');
             
             var message = 'Please be aware that some of the services underpinning this layer have recently been reported as being unstable. The unstable hosts will be not be queried. The hosts reported to be experiencing problems are:<br><ul>';
             Ext.each(failingHosts, function(host) {

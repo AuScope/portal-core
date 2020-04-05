@@ -52,7 +52,7 @@ public class TestViewKnownLayerFactory extends PortalTestClass {
         knownLayer.setIconUrl("http://icon.url.test");
         knownLayer.setIconSize(mockD1);
         knownLayer.setIconAnchor(mockP1);
-        knownLayer.setNagiosHostGroup("nagios-host-group");
+        knownLayer.setStackdriverCheckList(new String[] {"wfsgetcaps"});
 
         //Test with all optional params
         model = factory.toView(knownLayer);
@@ -72,6 +72,6 @@ public class TestViewKnownLayerFactory extends PortalTestClass {
         Assert.assertEquals(width, (Double) iconSize.get("width"), 0.01);
         Assert.assertEquals(height, (Double) iconSize.get("height"), 0.01);
 
-        Assert.assertEquals("nagios-host-group", model.get("nagiosHostGroup"));
+        Assert.assertEquals("wfsgetcaps", ((String[])model.get("stackdriverCheckList"))[0]);
     }
 }
