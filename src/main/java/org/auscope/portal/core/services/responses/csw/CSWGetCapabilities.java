@@ -8,7 +8,7 @@ import java.util.List;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -47,12 +47,12 @@ public class CSWGetCapabilities {
             doc = DOMUtil.buildDomFromStream(getCapXML, true);
             this.setTitle(doc);
             this.setOperations(doc);
-        } catch (ParserConfigurationException | SAXException | XPathExpressionException e) {
+        } catch (ParserConfigurationException | SAXException | XPathException e) {
             throw new IOException(e.getMessage(), e);
         }
     }
 
-    public void setTitle(Document doc) throws XPathExpressionException {
+    public void setTitle(Document doc) throws XPathException {
         String t = "";
 
         Node tempNode = (Node) DOMUtil.compileXPathExpr(TITLE_EXPRESSION, nc).evaluate(doc, XPathConstants.NODE);
@@ -70,7 +70,7 @@ public class CSWGetCapabilities {
         return this.title;
     }
 
-    public void setOperations(Document document) throws XPathExpressionException {
+    public void setOperations(Document document) throws XPathException {
         List<String> ops = new ArrayList<String>();
         NodeList nodes = (NodeList) DOMUtil.compileXPathExpr(OPERATIONS_EXPRESSION, nc).evaluate(document, XPathConstants.NODESET);
         for (int i=0; i < nodes.getLength(); i++ ) {

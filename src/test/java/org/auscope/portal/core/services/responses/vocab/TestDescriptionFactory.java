@@ -7,7 +7,7 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathException;
 
 import org.auscope.portal.core.services.namespaces.VocabNamespaceContext;
 import org.auscope.portal.core.test.PortalTestClass;
@@ -60,10 +60,10 @@ public class TestDescriptionFactory extends PortalTestClass {
      * @throws IOException 
      * @throws SAXException 
      * @throws ParserConfigurationException 
-     * @throws XPathExpressionException 
+     * @throws XPathException 
      */
     @Test
-    public void testSISSVocRDF() throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
+    public void testSISSVocRDF() throws IOException, ParserConfigurationException, SAXException, XPathException {
         //Build our expectation
         Description concept1 = new Description("urn:concept:1");
         Description concept2 = new Description("urn:concept:2");

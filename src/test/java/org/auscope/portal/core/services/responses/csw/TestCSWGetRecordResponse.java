@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathException;
 
 import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.test.PortalTestClass;
@@ -32,10 +32,10 @@ public class TestCSWGetRecordResponse extends PortalTestClass {
      * @throws SAXException 
      * @throws IOException 
      * @throws ParserConfigurationException 
-     * @throws XPathExpressionException 
+     * @throws XPathException 
      */
     @Before
-    public void setUp() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
+    public void setUp() throws ParserConfigurationException, IOException, SAXException, XPathException {
         // load CSW record response document
         Document doc = DOMUtil.buildDomFromStream(ResourceUtil
                 .loadResourceAsStream("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml"));

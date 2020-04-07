@@ -3,6 +3,7 @@ package org.auscope.portal.core.services.responses.csw;
 import java.io.Serializable;
 
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 
@@ -155,7 +156,7 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
      *            should represent a gmd:EX_GeographicBoundingBox node
      * @return the cSW geographic bounding box
      */
-    public static CSWGeographicBoundingBox fromGeographicBoundingBoxNode(Node node) throws XPathExpressionException {
+    public static CSWGeographicBoundingBox fromGeographicBoundingBoxNode(Node node) throws XPathException {
        
         // Some servers have the lat/lon values within nested gco:Decimal elements, others just have the number (e.g. geoserver 2.15)
         // Do a test to see which format is used
@@ -214,7 +215,7 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
      * @return
      * @throws XPathExpressionException
      */
-    static protected NodeList evalXPathNodeList(Node node, String xPath) throws XPathExpressionException {
+    static protected NodeList evalXPathNodeList(Node node, String xPath) throws XPathException {
         CSWNamespaceContext nc = new CSWNamespaceContext();
         XPathExpression expression = DOMUtil.compileXPathExpr(xPath, nc);
         return (NodeList) expression.evaluate(node, XPathConstants.NODESET);

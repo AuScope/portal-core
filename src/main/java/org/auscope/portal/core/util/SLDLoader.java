@@ -20,7 +20,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -28,7 +28,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class SLDLoader {
-
+    /** The log. */
     private static final String RULE_XPATH = "/StyledLayerDescriptor/NamedLayer/UserStyle/FeatureTypeStyle/Rule";
 
 
@@ -63,7 +63,7 @@ public class SLDLoader {
 
     }
 
-    public static String loadSLDWithFilter(String filename, String filterString, String prefix, String namespace) throws IOException, ParserConfigurationException, XPathExpressionException, TransformerException, SAXException {
+    public static String loadSLDWithFilter(String filename, String filterString, String prefix, String namespace) throws IOException, ParserConfigurationException, XPathException, TransformerException, SAXException {
 
 
         InputStream inputStream = loadStreamFromClass(filename);
@@ -74,26 +74,20 @@ public class SLDLoader {
           doc.getDocumentElement().setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:"+prefix, namespace);
         }
 
-        try {
-
-            DocumentBuilderFactory documentBuilderFactory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory documentBuilderFactory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
 
 
-            DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
-            Document filter = builder.parse(new ByteArrayInputStream(filterString.getBytes()));
+        DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
+        Document filter = builder.parse(new ByteArrayInputStream(filterString.getBytes()));
 
-            Node filterNode = doc.importNode(filter.getDocumentElement(), true);
+        Node filterNode = doc.importNode(filter.getDocumentElement(), true);
 
-            NodeList nodes = (NodeList) DOMUtil.compileXPathExpr(RULE_XPATH).evaluate(doc, XPathConstants.NODESET);
+        NodeList nodes = (NodeList) DOMUtil.compileXPathExpr(RULE_XPATH).evaluate(doc, XPathConstants.NODESET);
 
-            for (int i = 0; i < nodes.getLength(); i++) {
-                Node node = nodes.item(i);
-                node.insertBefore(filterNode.cloneNode(true), node.getFirstChild());
-            }
-        } catch (SAXException sxe) {
-
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node node = nodes.item(i);
+            node.insertBefore(filterNode.cloneNode(true), node.getFirstChild());
         }
-
 
         doc.normalizeDocument();
 
@@ -132,7 +126,7 @@ public class SLDLoader {
         return inputStream;
     }
 
-    public static String loadSLDWithFilter(String filename, String filter) throws ParserConfigurationException, TransformerException, SAXException, XPathExpressionException, IOException {
+    public static String loadSLDWithFilter(String filename, String filter) throws ParserConfigurationException, TransformerException, SAXException, IOException, XPathException {
         return loadSLDWithFilter(filename, filter, null, null);
     }
 }

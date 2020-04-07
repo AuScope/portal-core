@@ -10,6 +10,7 @@ import org.apache.http.client.methods.HttpRequestBase;
  * @author Josh Vote
  * @author Richard Goh
  */
+@SuppressWarnings("serial")
 public class PortalServiceException extends Exception {
     /** The method that was executing when this exception was thrown */
     private HttpRequestBase rootMethod;

@@ -1,7 +1,7 @@
 package org.auscope.portal.core.services.responses.wcs;
 
 import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathException;
 
 import org.auscope.portal.core.services.namespaces.WCSNamespaceContext;
 import org.auscope.portal.core.util.DOMUtil;
@@ -22,7 +22,7 @@ public class AxisDescriptionImpl implements AxisDescription {
     private String label;
     private ValueEnumType[] values;
 
-    public AxisDescriptionImpl(Node node, WCSNamespaceContext nc) throws XPathExpressionException {
+    public AxisDescriptionImpl(Node node, WCSNamespaceContext nc) throws XPathException {
         Node tempNode;
 
         //optional

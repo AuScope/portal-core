@@ -1,7 +1,7 @@
 package org.auscope.portal.core.services.responses.wcs;
 
 import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathException;
 
 import org.auscope.portal.core.services.namespaces.WCSNamespaceContext;
 import org.auscope.portal.core.util.DOMUtil;
@@ -25,7 +25,7 @@ public class Interval implements ValueEnumType {
     private Double max;
     private Double resolution;
 
-    public Interval(Node node, WCSNamespaceContext nc) throws XPathExpressionException {
+    public Interval(Node node, WCSNamespaceContext nc) throws XPathException {
         type = node.getLocalName();
 
         Node tempNode = (Node) DOMUtil.compileXPathExpr("wcs:min", nc).evaluate(node, XPathConstants.NODE);

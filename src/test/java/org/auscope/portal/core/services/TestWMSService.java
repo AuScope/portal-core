@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.http.client.methods.HttpRequestBase;
@@ -59,7 +60,7 @@ public class TestWMSService extends PortalTestClass {
      * @throws PortalServiceException 
      */
     @Test
-    public void testParsingWMS111() throws XPathExpressionException, URISyntaxException, IOException, ParserConfigurationException, SAXException, PortalServiceException {
+    public void testParsingWMS111() throws XPathException, URISyntaxException, IOException, ParserConfigurationException, SAXException, PortalServiceException {
         final String serviceUrl = "http://service/wms";
         try (final InputStream is = ResourceUtil
                 .loadResourceAsStream(

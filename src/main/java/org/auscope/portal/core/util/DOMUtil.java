@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.util.Properties;
 
 import javax.xml.namespace.NamespaceContext;
@@ -17,14 +18,20 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.io.IOUtils;
+import org.auscope.portal.core.services.PortalServiceException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import com.esotericsoftware.minlog.Log;
+
 
 /**
  * Utility functions for interacting with a DOM object
@@ -35,13 +42,13 @@ import org.xml.sax.SAXException;
 public class DOMUtil {
 
     /**
-     * Utility for accessing a consistent DocumentBuilderFactory (irregardless of what is on the classpath)
+     * Utility for accessing a consistent DocumentBuilderFactory (regardless of what is on the classpath)
      *
      * @return
      */
     private static DocumentBuilderFactory getDocumentBuilderFactory() {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance(
-                "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl", null);
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newDefaultInstance(); //DocumentBuilderFactory.newInstance(
+                // "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl", null);
         return factory;
     }
 
@@ -99,6 +106,10 @@ public class DOMUtil {
     public static Document buildDomFromStream(InputStream stream, boolean isNamespaceAware)
             throws ParserConfigurationException, IOException, SAXException {
         //build the XML dom
+        String theString = IOUtils.toString(stream, Charset.forName("UTF-8")); 
+        Log.debug(theString);
+        stream = IOUtils.toInputStream(theString, Charset.forName("UTF-8"));
+
         DocumentBuilderFactory factory = getDocumentBuilderFactory();
         factory.setNamespaceAware(isNamespaceAware); // never forget this!
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -147,8 +158,9 @@ public class DOMUtil {
      * @throws XPathExpressionException
      */
     public static XPathExpression compileXPathExpr(String xPathStr, NamespaceContext nc)
-            throws XPathExpressionException {
+            throws XPathException {
         //Use saxon explicitly for namespace aware XPath - it's much more performant
+        // Also Saxon supports XPath 2 which some of our expressions are.
         XPathFactory factory = new net.sf.saxon.xpath.XPathFactoryImpl();
         XPath xPath = factory.newXPath();
         xPath.setNamespaceContext(nc);
@@ -162,11 +174,12 @@ public class DOMUtil {
      *            A string representing a valid XPath expression
      * @return
      * @throws XPathExpressionException
+     * @throws PortalServiceException 
      */
-    public static XPathExpression compileXPathExpr(String xPathStr) throws XPathExpressionException {
+    public static XPathExpression compileXPathExpr(String xPathStr) throws XPathException {
         //Use JAXP for namespace unaware xpath - saxon doesnt handle this sort of behaviour
         //http://stackoverflow.com/questions/21118051/namespace-unaware-xpath-expression-fails-if-saxon-is-on-the-classpath
-        XPathFactory factory = new org.apache.xpath.jaxp.XPathFactoryImpl();
+        XPathFactory factory = XPathFactory.newInstance(XPathFactory.DEFAULT_OBJECT_MODEL_URI, "com.sun.org.apache.xpath.internal.jaxp.XPathFactoryImpl", null);
         XPath xPath = factory.newXPath();
         return xPath.compile(xPathStr);
     }

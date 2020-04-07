@@ -39,7 +39,11 @@ public abstract class IterableNamespace implements NamespaceContext {
 
         if (map.containsKey(prefix)) {
             return map.get(prefix);
-        } else {
+        } else if ("ns".equals(prefix)) {
+        	return "http://www.opengis.net/wcs";
+        }
+        else
+        {
             return XMLConstants.NULL_NS_URI;
         }
     }

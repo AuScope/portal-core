@@ -1,6 +1,7 @@
 package org.auscope.portal.core.services.responses.csw;
 
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.auscope.portal.core.services.namespaces.CSWNamespaceContext;
@@ -51,7 +52,7 @@ public class CSWContactFactory {
      * @throws XPathExpressionException
      *             the x path expression exception
      */
-    public static CSWContact generateContactFromCIContactNode(Node node) throws XPathExpressionException {
+    public static CSWContact generateContactFromCIContactNode(Node node) throws XPathException {
         CSWContact contact = new CSWContact();
         CSWNamespaceContext nc = new CSWNamespaceContext();
 

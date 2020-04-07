@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
@@ -33,7 +34,7 @@ public class TestGetCapabilitiesRecord extends PortalTestClass {
      * @throws XPathExpressionException 
      */
     @Test
-    public void testParseWMSDocument() throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
+    public void testParseWMSDocument() throws IOException, ParserConfigurationException, SAXException, XPathException {
         //Build our record
         try (final InputStream xmlStream = ResourceUtil
                 .loadResourceAsStream("org/auscope/portal/core/test/responses/wms/wmsGetCapabilities.xml")) {
@@ -105,7 +106,7 @@ public class TestGetCapabilitiesRecord extends PortalTestClass {
     }
 
     @Test
-    public void testParseWMS_1_3_0() throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
+    public void testParseWMS_1_3_0() throws IOException, SAXException, ParserConfigurationException, XPathException {
         //Build our record
         try (final InputStream xmlStream = ResourceUtil
                 .loadResourceAsStream(

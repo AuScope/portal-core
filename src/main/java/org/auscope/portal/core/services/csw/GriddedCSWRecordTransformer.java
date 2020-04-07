@@ -1,6 +1,6 @@
 package org.auscope.portal.core.services.csw;
 
-import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathException;
 
 import org.auscope.portal.core.server.OgcServiceProviderType;
 import org.auscope.portal.core.services.PortalServiceException;
@@ -34,7 +34,7 @@ public class GriddedCSWRecordTransformer extends CSWRecordTransformer {
     }
     
     @Override
-    public CSWRecord transformToCSWRecord() throws XPathExpressionException {
+    public CSWRecord transformToCSWRecord() throws XPathException {
         //Parse basic information
         GriddedCSWRecord cswRecord = new GriddedCSWRecord(null);
         super.transformToCSWRecord(cswRecord);
