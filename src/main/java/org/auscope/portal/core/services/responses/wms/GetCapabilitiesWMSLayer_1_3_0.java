@@ -196,7 +196,7 @@ public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRec
      *             the x path expression exception 
      */
     @Override
-    public String[] getTimeExtent() throws XPathExpressionException {
+    public String[] getTimeExtent() throws XPathException {
     	if(timeExtent == null) {
     		Node tempNode = (Node) DOMUtil.compileXPathExpr("Extent[@name='time']").evaluate(node, XPathConstants.NODE);
             String timeStr = tempNode != null ? tempNode.getTextContent() : null;

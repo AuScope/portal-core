@@ -1,6 +1,7 @@
 package org.auscope.portal.core.services.responses.wms;
 
 import javax.xml.xpath.XPathException;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
 
@@ -72,7 +73,7 @@ public interface GetCapabilitiesWMSLayerRecord {
     * 
     * @return an array of time strings
     */
-    public String[] getTimeExtent() throws XPathExpressionException;
+    public String[] getTimeExtent() throws XPathException;
 
     /**
      * Gets the child layer srs.
