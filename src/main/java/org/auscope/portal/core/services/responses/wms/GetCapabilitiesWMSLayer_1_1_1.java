@@ -2,6 +2,7 @@ package org.auscope.portal.core.services.responses.wms;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
@@ -217,7 +218,7 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
      *             the x path expression exception 
      */
     @Override
-    public String[] getTimeExtent() throws XPathExpressionException {
+    public String[] getTimeExtent() throws XPathException {
     	if(timeExtent == null) {
     		Node tempNode = (Node) DOMUtil.compileXPathExpr("Extent[@name='time']").evaluate(node, XPathConstants.NODE);
             String timeStr = tempNode != null ? tempNode.getTextContent() : null;
