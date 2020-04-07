@@ -358,17 +358,6 @@
             <artifactId>standard</artifactId>
             <version>1.1.2</version>
         </dependency>
-<!--         <dependency> -->
-<!--             <groupId>xerces</groupId> -->
-<!--             <artifactId>xercesImpl</artifactId> -->
-<!--             <version>2.12.0</version> -->
-<!--             <exclusions> -->
-<!--             	<exclusion> -->
-<!--             		<groupId>xml-apis</groupId> -->
-<!--             		<artifactId>xml-apis</artifactId> -->
-<!--             	</exclusion> -->
-<!--             </exclusions> -->
-<!--         </dependency> -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
@@ -509,28 +498,6 @@
             <artifactId>httpclient-cache</artifactId>
             <scope>compile</scope>
         </dependency>
-<!--         <dependency> -->
-<!--             <groupId>xom</groupId> -->
-<!--             <artifactId>xom</artifactId> -->
-<!--             <version>1.3.4</version> -->
-<!--             <exclusions> -->
-<!--             	<exclusion> -->
-<!--             		<groupId>xml-apis</groupId> -->
-<!--             		<artifactId>xml-apis</artifactId> -->
-<!--             	</exclusion> -->
-<!--             </exclusions> -->
-<!--         </dependency> -->
-<!--         <dependency> -->
-<!-- 		    <groupId>xalan</groupId> -->
-<!-- 		    <artifactId>xalan</artifactId> -->
-<!-- 		    <version>2.7.1</version> -->
-<!--             <exclusions> -->
-<!--             	<exclusion> -->
-<!--             		<groupId>xml-apis</groupId> -->
-<!--             		<artifactId>xml-apis</artifactId> -->
-<!--             	</exclusion> -->
-<!--             </exclusions> -->
-<!-- 		</dependency> -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
@@ -603,7 +570,6 @@
         <dependency>
 	        <groupId>com.esotericsoftware</groupId>
 	        <artifactId>kryo</artifactId>
-<!-- 	        <version>4.0.2</version> -->
             <version>5.0.0-RC2</version>
 	        <exclusions>
 	        	<exclusion>
