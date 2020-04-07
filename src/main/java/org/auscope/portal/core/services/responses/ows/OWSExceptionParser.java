@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -108,7 +108,7 @@ public class OWSExceptionParser {
 
                 throw new OWSException(String.format("Code='%1$s' Message='%2$s'", exceptionCode, exceptionText));
             }
-        } catch (XPathExpressionException ex) {
+        } catch (XPathException ex) {
             //This should *hopefully* never occur
             log.error("Error whilst attempting to check for errors", ex);
         }

@@ -6,8 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,9 +35,9 @@ public class ConceptFactory {
      *
      * @param node
      * @return
-     * @throws XPathExpressionException
+     * @throws XPathException
      */
-    protected NamedIndividual attemptParseNamedIndividual(Node node) throws XPathExpressionException {
+    protected NamedIndividual attemptParseNamedIndividual(Node node) throws XPathException {
         String urn = (String) DOMUtil.compileXPathExpr("@rdf:about", nc).evaluate(node, XPathConstants.STRING);
         if (urn == null || urn.isEmpty()) {
             return null;
@@ -61,9 +62,9 @@ public class ConceptFactory {
      * @param node
      *            an owl:NamedIndividual or skos:ConceptNode node
      * @return
-     * @throws XPathExpressionException
+     * @throws XPathException
      */
-    protected Concept attemptParseConcept(Node node) throws XPathExpressionException {
+    protected Concept attemptParseConcept(Node node) throws XPathException {
         String urn = (String) DOMUtil.compileXPathExpr("@rdf:about", nc).evaluate(node, XPathConstants.STRING);
         if (urn == null || urn.isEmpty()) {
             return null;
@@ -151,7 +152,7 @@ public class ConceptFactory {
                 NamedIndividual ni = attemptParseNamedIndividual(namedIndividualNodes.item(i));
                 parsedConceptMap.put(ni.getUrn(), ni);
             }
-        } catch (XPathExpressionException e) {
+        } catch (XPathException e) {
             log.error("Unable to evaluate inbuilt XPath - requesting concepts/individuals", e);
             throw new RuntimeException();
         }

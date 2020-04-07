@@ -1,6 +1,7 @@
 package org.auscope.portal.core.services.responses.csw;
 
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.auscope.portal.core.services.namespaces.CSWNamespaceContext;
@@ -29,7 +30,7 @@ public class CSWResponsiblePartyFactory {
      *             invalid xml.
      * @return CSWResponsibleParty
      */
-    public static CSWResponsibleParty generateResponsiblePartyFromNode(Node node) throws XPathExpressionException {
+    public static CSWResponsibleParty generateResponsiblePartyFromNode(Node node) throws XPathException {
         CSWResponsibleParty rp = new CSWResponsibleParty();
         CSWNamespaceContext nc = new CSWNamespaceContext();
 

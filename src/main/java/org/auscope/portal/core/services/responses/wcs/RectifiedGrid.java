@@ -3,6 +3,7 @@ package org.auscope.portal.core.services.responses.wcs;
 import java.io.Serializable;
 
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.logging.Log;
@@ -18,6 +19,7 @@ import org.w3c.dom.NodeList;
  * @author Josh Vote
  *
  */
+@SuppressWarnings("serial")
 public class RectifiedGrid implements Serializable {
 
     private final Log log = LogFactory.getLog(getClass());
@@ -88,7 +90,7 @@ public class RectifiedGrid implements Serializable {
      * @param node
      * @throws XPathExpressionException
      */
-    public RectifiedGrid(Node node) throws XPathExpressionException {
+    public RectifiedGrid(Node node) throws XPathException {
         WCSNamespaceContext nc = new WCSNamespaceContext();
 
         String nodeSrsName = (String) DOMUtil.compileXPathExpr("@srsName", nc).evaluate(node, XPathConstants.STRING);

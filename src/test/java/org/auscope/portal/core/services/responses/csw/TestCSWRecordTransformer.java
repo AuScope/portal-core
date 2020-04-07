@@ -9,6 +9,7 @@ import java.util.Stack;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
@@ -37,7 +38,7 @@ public class TestCSWRecordTransformer extends PortalTestClass {
     private XPathExpression exprGetFirstMetadataNode;
 
     private void setUpForResponse(final String responseResourceName) throws ParserConfigurationException, SAXException,
-    IOException, XPathExpressionException {
+    IOException, XPathException {
 
         final CSWNamespaceContext nc = new CSWNamespaceContext();
         exprGetAllMetadataNodes = DOMUtil.compileXPathExpr("/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata",
@@ -62,7 +63,7 @@ public class TestCSWRecordTransformer extends PortalTestClass {
     }
 
     @Test
-    public void testGetServiceName() throws XPathExpressionException, ParserConfigurationException, SAXException,
+    public void testGetServiceName() throws XPathException, ParserConfigurationException, SAXException,
     IOException {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
 
@@ -76,7 +77,7 @@ public class TestCSWRecordTransformer extends PortalTestClass {
     }
 
     @Test
-    public void testGetServiceUrl() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException  {
+    public void testGetServiceUrl() throws XPathException, ParserConfigurationException, SAXException, IOException  {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
 
         AbstractCSWOnlineResource[] resources = this.records[4].getOnlineResourcesByType(OnlineResourceType.WFS);
@@ -93,7 +94,7 @@ public class TestCSWRecordTransformer extends PortalTestClass {
     }
 
     @Test
-    public void testDescriptiveKeywords() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException  {
+    public void testDescriptiveKeywords() throws XPathException, ParserConfigurationException, SAXException, IOException  {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
 
         final String[] actual = this.records[0].getDescriptiveKeywords();
@@ -103,7 +104,7 @@ public class TestCSWRecordTransformer extends PortalTestClass {
     }
 
     @Test
-    public void testMultipleOnlineResources() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException  {
+    public void testMultipleOnlineResources() throws XPathException, ParserConfigurationException, SAXException, IOException  {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
 
         AbstractCSWOnlineResource[] resources = this.records[14].getOnlineResources();
@@ -154,7 +155,7 @@ public class TestCSWRecordTransformer extends PortalTestClass {
     }
 
     @Test
-    public void testGeographicBoundingBoxParsing() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException  {
+    public void testGeographicBoundingBoxParsing() throws XPathException, ParserConfigurationException, SAXException, IOException  {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
 
         final CSWGeographicElement[] geoEls = this.records[0].getCSWGeographicElements();
@@ -172,7 +173,7 @@ public class TestCSWRecordTransformer extends PortalTestClass {
     }
 
     @Test
-    public void testContactInfo() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException  {
+    public void testContactInfo() throws XPathException, ParserConfigurationException, SAXException, IOException  {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
 
         final CSWRecord rec = this.records[0];
@@ -211,7 +212,7 @@ public class TestCSWRecordTransformer extends PortalTestClass {
      * @throws XPathExpressionException 
      */
     @Test
-    public void testDataQualityInfo() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException  {
+    public void testDataQualityInfo() throws XPathException, ParserConfigurationException, SAXException, IOException  {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
 
         Assert.assertEquals("Data Quality Statment 1", this.records[0].getDataQualityStatement());
@@ -227,7 +228,7 @@ public class TestCSWRecordTransformer extends PortalTestClass {
      * @throws XPathExpressionException 
      */
     @Test
-    public void testNoDatasetURI() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException  {
+    public void testNoDatasetURI() throws XPathException, ParserConfigurationException, SAXException, IOException  {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
         Assert.assertNotNull(this.records[0].getDataSetURIs());
         Assert.assertTrue(this.records[0].getDataSetURIs().length == 0);
@@ -242,7 +243,7 @@ public class TestCSWRecordTransformer extends PortalTestClass {
      * @throws XPathExpressionException 
      */
     @Test
-    public void testSingleDatasetURI() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException  {
+    public void testSingleDatasetURI() throws XPathException, ParserConfigurationException, SAXException, IOException  {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse_SingleDatasetURI.xml");
         Assert.assertNotNull(this.records[0].getDataSetURIs());
         Assert.assertEquals("http://geology.data.vic.gov.au/searchAssistant/reference.html?q=record_id:26150",
@@ -257,7 +258,7 @@ public class TestCSWRecordTransformer extends PortalTestClass {
      * @throws XPathExpressionException 
      */
     @Test
-    public void testMultipleDatasetURIs() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException  {
+    public void testMultipleDatasetURIs() throws XPathException, ParserConfigurationException, SAXException, IOException  {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse_MultipleDatasetURIs.xml");
         Assert.assertNotNull(this.records[0].getDataSetURIs());
         Assert.assertEquals("http://geology.data.vic.gov.au/searchAssistant/reference.html?q=record_id:26150",
@@ -304,7 +305,7 @@ public class TestCSWRecordTransformer extends PortalTestClass {
     }
 
     @Test
-    public void testConstraints() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
+    public void testConstraints() throws XPathException, ParserConfigurationException, SAXException, IOException {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
 
         Assert.assertArrayEquals(new String[] {"CopyrightConstraint1", "CopyrightConstraint2"},
@@ -313,7 +314,7 @@ public class TestCSWRecordTransformer extends PortalTestClass {
     }
 
     @Test
-    public void testUploadedResourceParsing() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
+    public void testUploadedResourceParsing() throws XPathException, ParserConfigurationException, SAXException, IOException {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse_UploadedResources.xml");
 
         final AbstractCSWOnlineResource[] ors = this.records[0].getOnlineResources();
@@ -347,7 +348,7 @@ public class TestCSWRecordTransformer extends PortalTestClass {
     }
     
     @Test
-    public void testTransformToCSWRecordFromPyCSW() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
+    public void testTransformToCSWRecordFromPyCSW() throws ParserConfigurationException, IOException, SAXException, XPathException {
         List<CSWRecord> records = parseCSWRecordFromGetRecordResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse_Pycsw_Thredds.xml", OgcServiceProviderType.PyCSW);
         Assert.assertEquals(5, records.size());        
         CSWRecord record = records.get(0);
@@ -361,7 +362,7 @@ public class TestCSWRecordTransformer extends PortalTestClass {
     }
     
     @Test
-    public void testTransformToCSWRecordFromGeoserver() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
+    public void testTransformToCSWRecordFromGeoserver() throws ParserConfigurationException, IOException, SAXException, XPathException {
         List<CSWRecord> records = parseCSWRecordFromGetRecordResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse_Geoserver.xml", OgcServiceProviderType.GeoServer);
         Assert.assertEquals(10, records.size());        
         CSWRecord record = records.get(0);
@@ -378,7 +379,7 @@ public class TestCSWRecordTransformer extends PortalTestClass {
     }
     
     
-    private List<CSWRecord> parseCSWRecordFromGetRecordResponse(String resourceUrl, OgcServiceProviderType serviceType) throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
+    private List<CSWRecord> parseCSWRecordFromGetRecordResponse(String resourceUrl, OgcServiceProviderType serviceType) throws ParserConfigurationException, IOException, SAXException, XPathException {
     	Document tmpdoc = DOMUtil.buildDomFromStream(ResourceUtil.loadResourceAsStream(resourceUrl));
         CSWNamespaceContext nc = new CSWNamespaceContext();
         XPathExpression exprRecordMetadata = DOMUtil.compileXPathExpr(

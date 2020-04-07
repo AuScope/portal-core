@@ -1,22 +1,11 @@
 package org.auscope.portal.core.services;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -127,7 +116,9 @@ public class CSWService {
                     startPosition, this.endpoint.getCqlText(), this.endpoint.getServerType());
         }
 
-        try (InputStream responseStream = this.serviceCaller.getMethodResponseAsStream(method)) {   
+        InputStream responseStream = null;
+        try {   
+            responseStream = this.serviceCaller.getMethodResponseAsStream(method);
         	log.trace(String.format("%1$s - Response received", this.endpoint.getServiceUrl()));
         	
             // Parse the response into newCache (remember that maps are NOT
@@ -135,9 +126,18 @@ public class CSWService {
             Document responseDocument = DOMUtil.buildDomFromStream(responseStream);
             OWSExceptionParser.checkForExceptionResponse(responseDocument);
             
-        	return new CSWGetRecordResponse(this.endpoint, responseDocument, transformerFactory);
-        } catch (ParserConfigurationException | SAXException | XPathExpressionException e) {
+        	var res= new CSWGetRecordResponse(this.endpoint, responseDocument, transformerFactory);
+        	return res;
+        } catch (ParserConfigurationException | SAXException | XPathException e) {
             throw new IOException(e.getMessage(), e);
+        } finally {
+            if(responseStream!=null) {
+                try {
+                    responseStream.close();
+                } catch (IOException e) {
+                    log.debug("Error while closing stream: "+ e.getMessage());
+                }
+            }
         }
     }
 }

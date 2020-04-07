@@ -4,17 +4,22 @@ import java.io.Serializable;
 import java.text.ParseException;
 
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.services.namespaces.WCSNamespaceContext;
 import org.auscope.portal.core.util.DOMUtil;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+@SuppressWarnings("serial")
 public class CoverageOfferingBrief implements Serializable {
-
-	private static final long serialVersionUID = 1545107506827553704L;
+    
+    @SuppressWarnings("unused")
+    private final Log log = LogFactory.getLog(getClass());
 	
 	private String name;
 	private String description;
@@ -39,22 +44,22 @@ public class CoverageOfferingBrief implements Serializable {
 	 * @throws ParseException 
 	 * @throws DOMException 
 	 */
-	public CoverageOfferingBrief(Node node) throws XPathExpressionException, DOMException, ParseException {
+	public CoverageOfferingBrief(Node node) throws XPathException, DOMException, ParseException {
 		WCSNamespaceContext nc = new WCSNamespaceContext();
 		Node tempNode = null;
 		NodeList tempNodeList = null;
         
-        tempNode = (Node)DOMUtil.compileXPathExpr("name").evaluate(node, XPathConstants.NODE);
+        tempNode = (Node)DOMUtil.compileXPathExpr("ns:name", nc).evaluate(node, XPathConstants.NODE);
         name = getTextContentOrEmptyString(tempNode);
         
-		tempNode = (Node)DOMUtil.compileXPathExpr("description").evaluate(node, XPathConstants.NODE);
+		tempNode = (Node)DOMUtil.compileXPathExpr("ns:description", nc).evaluate(node, XPathConstants.NODE);
         description = getTextContentOrEmptyString(tempNode);
 
-        tempNode = (Node)DOMUtil.compileXPathExpr("label").evaluate(node, XPathConstants.NODE);
+        tempNode = (Node)DOMUtil.compileXPathExpr("ns:label", nc).evaluate(node, XPathConstants.NODE);
         label = getTextContentOrEmptyString(tempNode);
         
         //Parse our spatial domain (currently only looking at lonLatEvelope)
-        tempNode = (Node) DOMUtil.compileXPathExpr("lonLatEnvelope").evaluate(node, XPathConstants.NODE);
+        tempNode = (Node) DOMUtil.compileXPathExpr("ns:lonLatEnvelope", nc).evaluate(node, XPathConstants.NODE);
         if (tempNode != null) {
             lonLatEnvelope = new SimpleEnvelope(tempNode, nc);
             tempNodeList = (NodeList)DOMUtil.compileXPathExpr("gml:timePosition", nc).evaluate(tempNode, XPathConstants.NODESET);

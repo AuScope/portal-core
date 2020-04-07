@@ -1,21 +1,24 @@
 package org.auscope.portal.core.services.responses.csw;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.server.OgcServiceProviderType;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.namespaces.CSWNamespaceContext;
-import org.auscope.portal.core.services.responses.csw.CSWRecordTransformer.Scope;
 import org.auscope.portal.core.util.DOMUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -502,9 +505,9 @@ public class CSWRecordTransformer {
      * @param xPath
      *            A valid XPath expression
      * @return
-     * @throws XPathExpressionException
+     * @throws XPathException
      */
-    protected static String evalXPathString(Node node, String xPath) throws XPathExpressionException {
+    protected static String evalXPathString(Node node, String xPath) throws XPathException {
         XPathExpression expression = DOMUtil.compileXPathExpr(xPath, nc);
         return (String) expression.evaluate(node, XPathConstants.STRING);
     }
@@ -516,9 +519,9 @@ public class CSWRecordTransformer {
      * @param xPath
      *            A valid XPath expression
      * @return
-     * @throws XPathExpressionException
+     * @throws XPathException
      */
-    protected NodeList evalXPathNodeList(Node node, String xPath) throws XPathExpressionException {
+    protected NodeList evalXPathNodeList(Node node, String xPath) throws XPathException {
         XPathExpression expression = DOMUtil.compileXPathExpr(xPath, nc);
         return (NodeList) expression.evaluate(node, XPathConstants.NODESET);
     }
@@ -530,9 +533,9 @@ public class CSWRecordTransformer {
      * @param xPath
      *            A valid XPath expression
      * @return
-     * @throws XPathExpressionException
+     * @throws XPathException
      */
-    protected Node evalXPathNode(Node node, String xPath) throws XPathExpressionException {
+    protected Node evalXPathNode(Node node, String xPath) throws XPathException {
         XPathExpression expression = DOMUtil.compileXPathExpr(xPath, nc);
         return (Node) expression.evaluate(node, XPathConstants.NODE);
     }
@@ -573,9 +576,9 @@ public class CSWRecordTransformer {
      * Throws an exception if the internal template cannot be parsed correctly
      *
      * @return
-     * @throws XPathExpressionException
+     * @throws XPathException
      */
-    public CSWRecord transformToCSWRecord() throws XPathExpressionException {
+    public CSWRecord transformToCSWRecord() throws XPathException {
         return transformToCSWRecord(new CSWRecord("", "", "", "", new AbstractCSWOnlineResource[0],
                 new CSWGeographicElement[0]));
     }
@@ -586,9 +589,9 @@ public class CSWRecordTransformer {
      * Throws an exception if the internal template cannot be parsed correctly
      *
      * @return
-     * @throws XPathExpressionException
+     * @throws XPathException
      */
-    protected CSWRecord transformToCSWRecord(CSWRecord record) throws XPathExpressionException {
+    protected CSWRecord transformToCSWRecord(CSWRecord record) throws XPathException {
     	if (this.serverType == OgcServiceProviderType.PyCSW) {
     		return new PyCSWHelper().transform(record);
     	} else if (this.serverType == OgcServiceProviderType.GeoServer) {
@@ -780,9 +783,9 @@ public class CSWRecordTransformer {
          * Tranform from mdMetadataNode to CSWRecord
          * @param record
          * @return
-         * @throws XPathExpressionException
+         * @throws XPathException
          */
-        public CSWRecord transform(CSWRecord record) throws XPathExpressionException {
+        public CSWRecord transform(CSWRecord record) throws XPathException {
         	
             NodeList tempNodeList = null;
 
@@ -953,10 +956,10 @@ public class CSWRecordTransformer {
          * @param expression
          * @param threddsLayerName
          * @return
-         * @throws XPathExpressionException
+         * @throws XPathException
          */
         private List<AbstractCSWOnlineResource> transformSrvNodes(CSWRecord record, String expression, String threddsLayerName) 
-    			throws XPathExpressionException{
+    			throws XPathException{
         	NodeList  tempNodeList = evalXPathNodeList(mdMetadataNode, expression);
         	List<AbstractCSWOnlineResource> resources = new ArrayList<>();
         	for (int i = 0; i < tempNodeList.getLength(); i++) {
@@ -988,9 +991,9 @@ public class CSWRecordTransformer {
         /**
          * if the dataset is hosted in Thredds server and harvested into PyCSW, its layer name need special reading procedure.
          * @return
-         * @throws XPathExpressionException
+         * @throws XPathException
          */
-        private String getThreddsLayerName() throws XPathExpressionException {
+        private String getThreddsLayerName() throws XPathException {
         	NodeList tempNodeList = evalXPathNodeList(mdMetadataNode, THREDDSLAYERNAME);
         	if (tempNodeList != null && tempNodeList.getLength() > 0) {
         		for (int i = 0; i < tempNodeList.getLength(); i++) {
@@ -1019,9 +1022,9 @@ public class CSWRecordTransformer {
          * Tranform from mdMetadataNode to CSWRecord
          * @param record
          * @return
-         * @throws XPathExpressionException
+         * @throws XPathException
          */
-        public CSWRecord transform(CSWRecord record) throws XPathExpressionException {
+        public CSWRecord transform(CSWRecord record) throws XPathException {
             NodeList tempNodeList = null;
             
             //Parse our simple strings
@@ -1185,9 +1188,9 @@ public class CSWRecordTransformer {
          * @param record
          * @param expression
          * @return
-         * @throws XPathExpressionException
+         * @throws XPathException
          */
-        private List<AbstractCSWOnlineResource> transformSrvNodes(CSWRecord record, String expression) throws XPathExpressionException{
+        private List<AbstractCSWOnlineResource> transformSrvNodes(CSWRecord record, String expression) throws XPathException{
         	NodeList  tempNodeList = evalXPathNodeList(mdMetadataNode, expression);
             List<AbstractCSWOnlineResource> resources = new ArrayList<>();
             for (int i = 0; i < tempNodeList.getLength(); i++) {
@@ -1210,9 +1213,9 @@ public class CSWRecordTransformer {
      * @param record
      * @param metaNode
      * @param logger
-     * @throws XPathExpressionException
+     * @throws XPathException
      */
-    public static void transformDate(CSWRecord record, Node metaNode, Log logger) throws XPathExpressionException {
+    public static void transformDate(CSWRecord record, Node metaNode, Log logger) throws XPathException {
         String dateStampString = evalXPathString(metaNode, DATETIMESTAMPEXPRESSION);
         if (dateStampString != null && !dateStampString.isEmpty()) {
             try {

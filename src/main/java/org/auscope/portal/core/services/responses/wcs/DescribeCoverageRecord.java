@@ -5,7 +5,7 @@ import java.text.ParseException;
 
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -110,11 +110,11 @@ public class DescribeCoverageRecord implements Serializable {
      *            the node
      * @param xPath
      *            Should be configured with the WCSNamespaceContext
-     * @throws XPathExpressionException 
+     * @throws XPathException 
      * @throws ParseException 
      * @throws DOMException 
      */
-    private DescribeCoverageRecord(Node node, WCSNamespaceContext nc) throws XPathExpressionException, DOMException, ParseException {
+    private DescribeCoverageRecord(Node node, WCSNamespaceContext nc) throws XPathException, DOMException, ParseException {
         Node tempNode = null;
         NodeList tempNodeList = null;
 
@@ -311,11 +311,11 @@ public class DescribeCoverageRecord implements Serializable {
      *            the input xml
      * @return the describe coverage record[]
      * @throws OWSException 
-     * @throws XPathExpressionException 
+     * @throws XPathException 
      * @throws ParseException 
      * @throws DOMException 
      */
-    public static DescribeCoverageRecord[] parseRecords(Document doc) throws OWSException, XPathExpressionException, DOMException, ParseException {
+    public static DescribeCoverageRecord[] parseRecords(Document doc) throws OWSException, XPathException, DOMException, ParseException {
         //This is to make sure we actually receive a valid response
         OWSExceptionParser.checkForExceptionResponse(doc);
 

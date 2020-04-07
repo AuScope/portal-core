@@ -1,6 +1,6 @@
 package org.auscope.portal.core.services.responses.wcs;
 
-import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathException;
 
 import org.auscope.portal.core.services.namespaces.WCSNamespaceContext;
 import org.w3c.dom.Node;
@@ -14,7 +14,7 @@ public class ValueEnumTypeFactory {
      * @return
      * @throws XPathExpressionException 
      */
-    public static ValueEnumType parseFromNode(Node node, WCSNamespaceContext nc) throws XPathExpressionException {
+    public static ValueEnumType parseFromNode(Node node, WCSNamespaceContext nc) throws XPathException {
         if (node.getLocalName().equals("singleValue")) {
             return new SingleValue(node);
         } else if (node.getLocalName().equals("interval")) {

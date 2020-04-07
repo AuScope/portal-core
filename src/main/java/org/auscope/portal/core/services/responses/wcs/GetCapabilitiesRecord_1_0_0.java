@@ -10,13 +10,17 @@ import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.auscope.portal.core.services.namespaces.CSWNamespaceContext;
+import org.auscope.portal.core.services.namespaces.WCSNamespaceContext;
 import org.auscope.portal.core.util.DOMUtil;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -37,15 +41,15 @@ public class GetCapabilitiesRecord_1_0_0 {
 	CoverageOfferingBrief[] coverageOfferingBriefs;
 	
 	
-	private static final String EXTRACT_CAPABILITY_REQUESTS_EXPRESSION = "/WCS_Capabilities/Capability/Request";
+	private static final String EXTRACT_CAPABILITY_REQUESTS_EXPRESSION = "/ns:WCS_Capabilities/ns:Capability/ns:Request";
 	// This expression is relative to the previous expression
-	private static final String EXTRACT_CAPABILITY_REQUEST_ONLINE_RESOURCES_EXPRESSION = "DCPType/HTTP/Get/OnlineResource/@href";
-	private static final String EXTRACT_COVERAGE_OFFERING_BRIEFS_EXPRESSION = "/WCS_Capabilities/ContentMetadata/CoverageOfferingBrief";
+	private static final String EXTRACT_CAPABILITY_REQUEST_ONLINE_RESOURCES_EXPRESSION = "ns:DCPType/ns:HTTP/ns:Get/ns:OnlineResource/@xlink:href";
+	private static final String EXTRACT_COVERAGE_OFFERING_BRIEFS_EXPRESSION = "/ns:WCS_Capabilities/ns:ContentMetadata/ns:CoverageOfferingBrief";
 	
 
 	public GetCapabilitiesRecord_1_0_0(InputStream inXml) throws SAXException, IOException, ParserConfigurationException {
 		try {
-			Document doc = DOMUtil.buildDomFromStream(inXml, false);
+			Document doc = DOMUtil.buildDomFromStream(inXml, true);
 			this.capabilities = getCapabilityRequests(doc);
 			this.coverageOfferingBriefs = getCoverageBriefs(doc);
 		} catch(SAXException e) {
@@ -71,11 +75,14 @@ public class GetCapabilitiesRecord_1_0_0 {
         try {
         	XPathFactory xpFactory = XPathFactory.newInstance();
         	XPath xp = xpFactory.newXPath();
+        	xp.setNamespaceContext(new CSWNamespaceContext());
         	NodeList requestNodes = (NodeList)xp.evaluate(EXTRACT_CAPABILITY_REQUESTS_EXPRESSION, doc, XPathConstants.NODE);
         	for (int i = 0; i < requestNodes.getLength(); i++) {
-        		if(!requestNodes.item(i).getNodeName().toLowerCase().equals("#text")) {
-		        	String requestUrl = xp.evaluate(EXTRACT_CAPABILITY_REQUEST_ONLINE_RESOURCES_EXPRESSION, requestNodes.item(i));
-		        	capabilityRequests.put(requestNodes.item(i).getNodeName(), requestUrl);
+        	    Node node = requestNodes.item(i);
+        	    String nodeName = node.getNodeName();
+        		if(!nodeName.toLowerCase().equals("#text")) {
+		        	String requestUrl = xp.evaluate(EXTRACT_CAPABILITY_REQUEST_ONLINE_RESOURCES_EXPRESSION, node);
+		        	capabilityRequests.put(nodeName, requestUrl);
         		}
         	}
         } catch (XPathExpressionException e) {
@@ -84,7 +91,7 @@ public class GetCapabilitiesRecord_1_0_0 {
         return capabilityRequests;
     }
 	
-	/**
+    /**
 	 * 
 	 * @param doc
 	 * @return
@@ -94,12 +101,13 @@ public class GetCapabilitiesRecord_1_0_0 {
 		try {
 			XPathFactory xpFactory = XPathFactory.newInstance();
         	XPath xp = xpFactory.newXPath();
+        	xp.setNamespaceContext(new WCSNamespaceContext());
         	NodeList requestNodes = (NodeList)xp.evaluate(EXTRACT_COVERAGE_OFFERING_BRIEFS_EXPRESSION, doc, XPathConstants.NODESET);
         	for (int i = 0; i < requestNodes.getLength(); i++) {
         		CoverageOfferingBrief cob = new CoverageOfferingBrief(requestNodes.item(i));
         		coverageOfferingsList.add(cob);
         	}
-		} catch(XPathExpressionException e) {
+		} catch(XPathException e) {
 			log.error("GetCapabilities get coverage offering briefs xml parsing error: " + e.getMessage());
 		} catch(ParseException pe) {
 			log.error("GetCapabilities get coverage offering parsing error: " + pe.getMessage());

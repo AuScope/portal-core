@@ -6,7 +6,7 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathException;
 
 import org.auscope.portal.core.services.responses.ows.OWSException;
 import org.auscope.portal.core.test.PortalTestClass;
@@ -21,7 +21,7 @@ import org.xml.sax.SAXException;
 public class TestDescribeCoverageRecord extends PortalTestClass {
 
     @Test
-    public void parseTest1() throws IOException, ParserConfigurationException, SAXException, XPathExpressionException, DOMException, OWSException, ParseException {
+    public void parseTest1() throws IOException, ParserConfigurationException, SAXException, XPathException, DOMException, OWSException, ParseException {
         final String xmlString = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/responses/wcs/DescribeCoverageResponse1.xml");
         final Document doc = DOMUtil.buildDomFromString(xmlString);
@@ -115,7 +115,7 @@ public class TestDescribeCoverageRecord extends PortalTestClass {
     }
 
     @Test
-    public void parseTest2() throws IOException, ParserConfigurationException, SAXException, XPathExpressionException, DOMException, OWSException, ParseException  {
+    public void parseTest2() throws IOException, ParserConfigurationException, SAXException, XPathException, DOMException, OWSException, ParseException  {
         final String xmlString = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/responses/wcs/DescribeCoverageResponse2.xml");
         final Document doc = DOMUtil.buildDomFromString(xmlString);
@@ -173,7 +173,7 @@ public class TestDescribeCoverageRecord extends PortalTestClass {
     }
 
     @Test
-    public void parseTest3() throws IOException, ParserConfigurationException, SAXException, XPathExpressionException, DOMException, OWSException, ParseException {
+    public void parseTest3() throws IOException, ParserConfigurationException, SAXException, XPathException, DOMException, OWSException, ParseException {
         final String xmlString = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/responses/wcs/DescribeCoverageResponse3.xml");
         final Document doc = DOMUtil.buildDomFromString(xmlString);

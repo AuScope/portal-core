@@ -22,7 +22,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import net.sf.saxon.xpath.XPathFactoryImpl;
 
 /**
  * Unit tests for DOMUtil
@@ -111,7 +110,7 @@ public class TestDOMUtil extends PortalTestClass {
         final Document doc = DOMUtil.buildDomFromString(originalXmlString);
 
         //Build our queries (namespace aware)
-        final XPathFactory factory = new XPathFactoryImpl();
+        final XPathFactory factory = XPathFactory.newDefaultInstance();
         final XPath xPath = factory.newXPath();
         xPath.setNamespaceContext(new SimpleXMLNamespace());
         final XPathExpression getChild1Expr = xPath.compile("test:root/test2:child1");

@@ -7,7 +7,7 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathException;
 
 import org.auscope.portal.core.services.namespaces.VocabNamespaceContext;
 import org.auscope.portal.core.test.PortalTestClass;
@@ -62,10 +62,10 @@ public class TestConceptFactory extends PortalTestClass {
      * @throws IOException 
      * @throws SAXException 
      * @throws ParserConfigurationException 
-     * @throws XPathExpressionException 
+     * @throws XPathException 
      */
     @Test
-    public void testSISSVocRDF() throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
+    public void testSISSVocRDF() throws IOException, ParserConfigurationException, SAXException, XPathException {
         //Build our expectation
         Concept concept1 = new Concept("urn:concept:1");
         Concept concept2 = new Concept("urn:concept:2");
@@ -130,10 +130,10 @@ public class TestConceptFactory extends PortalTestClass {
      * @throws IOException 
      * @throws SAXException 
      * @throws ParserConfigurationException 
-     * @throws XPathExpressionException 
+     * @throws XPathException 
      */
     @Test
-    public void testGetConcepts() throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
+    public void testGetConcepts() throws IOException, ParserConfigurationException, SAXException, XPathException {
         String responseXml = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/responses/sissvoc/vocabularyServiceResponse.xml");
         Document responseDoc = DOMUtil.buildDomFromString(responseXml);
