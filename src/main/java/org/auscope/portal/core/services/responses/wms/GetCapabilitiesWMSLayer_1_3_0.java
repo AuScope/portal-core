@@ -42,6 +42,9 @@ public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRec
 
     /** The bbox. */
     private CSWGeographicBoundingBox bbox;
+    
+    /** The time extent, if present */
+    private String[] timeExtent;
 
     /** The child layer srs. */
     private String[] childLayerSRS;
@@ -180,6 +183,28 @@ public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRec
             }
         }
         return bbox;
+    }
+    
+    /**
+     * Gets the time extent as an array of Strings. Currently this only
+     * supports time dimensions as a comma separated list of dates.
+     * 
+     * Note: MapServer may use 'min/max/res', or comma delimited list of same, not supported yet.
+     * 
+     * @return the time extent
+     * @throws XPathExpressionException
+     *             the x path expression exception 
+     */
+    @Override
+    public String[] getTimeExtent() throws XPathExpressionException {
+    	if(timeExtent == null) {
+    		Node tempNode = (Node) DOMUtil.compileXPathExpr("Extent[@name='time']").evaluate(node, XPathConstants.NODE);
+            String timeStr = tempNode != null ? tempNode.getTextContent() : null;
+            if(timeStr != null) {
+	            timeExtent = timeStr.split(",");
+            }
+        }
+    	return timeExtent;
     }
 
     /**

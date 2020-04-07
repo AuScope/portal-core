@@ -119,15 +119,14 @@ public class CSWService {
         InputStream responseStream = null;
         try {   
             responseStream = this.serviceCaller.getMethodResponseAsStream(method);
-        	log.trace(String.format("%1$s - Response received", this.endpoint.getServiceUrl()));
+        	  log.trace(String.format("%1$s - Response received", this.endpoint.getServiceUrl()));
         	
             // Parse the response into newCache (remember that maps are NOT
             // thread safe)
             Document responseDocument = DOMUtil.buildDomFromStream(responseStream);
             OWSExceptionParser.checkForExceptionResponse(responseDocument);
             
-        	var res= new CSWGetRecordResponse(this.endpoint, responseDocument, transformerFactory);
-        	return res;
+        	  return new CSWGetRecordResponse(this.endpoint, responseDocument, transformerFactory);
         } catch (ParserConfigurationException | SAXException | XPathException e) {
             throw new IOException(e.getMessage(), e);
         } finally {

@@ -70,8 +70,24 @@ public class WMSController extends BaseCSWController {
         this.wmsService = wmsService;
         this.serviceCaller = serviceCaller;
     }
-
-    // ------------------------------------------- Property Setters and Getters
+    
+    /**
+	 * Gets the GetCapabilities response for the given WMS URL
+	 *
+	 * @param serviceUrl The WMS URL to query
+	 */
+	@RequestMapping("/getWMSCapabilities.do")
+	public ModelAndView getWmsCapabilities(@RequestParam("serviceUrl") String serviceUrl,
+			@RequestParam("version") String version) throws Exception {
+		try {
+			GetCapabilitiesRecord capabilitiesRec = wmsService.getWmsCapabilities(serviceUrl, version);
+			return generateJSONResponseMAV(true, capabilitiesRec, "");
+		} catch (Exception e) {
+			log.warn(String.format("Unable to retrieve WMS GetCapabilities for '%1$s'", serviceUrl));
+			log.debug(e);
+			return generateJSONResponseMAV(false, "Unable to process request", null);
+		}
+	}
 
     /**
      * Gets all WMS data records from a discovery service, and then creates JSON response for the WMS layers list in the portal
