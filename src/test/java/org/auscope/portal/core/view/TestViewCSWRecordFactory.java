@@ -97,7 +97,6 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         expectation.put("maxScale", maxScale);
         expectation.put("service", false);
 
-
         onlineResExpectation.put("url", orUrl.toString());
         onlineResExpectation.put("name", orName);
         onlineResExpectation.put("description", orDesc);
@@ -111,7 +110,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         geoExpectation.put("westBoundLongitude", bboxWest);
         geoExpectation.put("northBoundLatitude", bboxNorth);
         geoExpectation.put("southBoundLatitude", bboxSouth);
-
+        
         //for mockCSWChildRecord1
         final String serviceName_1 = "sn_1";
         final String contactOrg_1 = "Unknown";
@@ -125,7 +124,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         final String dataSetURI2_1 = "ds2_1";
         final String constraint1_1 = "c1_1";
         final String constraint2_1 = "c2_1";
-      //added code for use limitation and access constraints
+        //added code for use limitation and access constraints
         final String uselimitation1_1 = "use1_1";
         final String uselimitation2_1 = "use2_1";
         final String accessconstraint1_1 = "acess1_1";
@@ -136,7 +135,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         final String orDesc_1 = "desc_1";
         final String orProtocolRequest_1 = "prot_1";
         final OnlineResourceType orType_1 = OnlineResourceType.WCS;
-
+        
         //The ModelMap expectation objects for the child of mockCSWRecord object (mockCSWChildRecord1)
         final ModelMap onlineResExpectation_1 = new ModelMap();
 
@@ -211,6 +210,8 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 will(returnValue(minScale));
                 allowing(mockCSWRecord).isService();
                 will(returnValue(false));
+                allowing(mockCSWRecord).getTemporalExtent();
+                will(returnValue(null));
 
                 allowing(mockCSWChildRecord1).getServiceName();
                 will(returnValue(serviceName_1));
@@ -250,6 +251,8 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 will(returnValue(null));
                 allowing(mockCSWChildRecord1).isService();
                 will(returnValue(false));
+                allowing(mockCSWChildRecord1).getTemporalExtent();
+                will(returnValue(null));
 
                 allowing(mockBbox).getEastBoundLongitude();
                 will(returnValue(bboxEast));
@@ -409,6 +412,8 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 will(returnValue(true));
                 allowing(mockCSWRecord).getDataSetURIs();
                 will(returnValue(new String[] {}));
+                allowing(mockCSWRecord).getTemporalExtent();
+                will(returnValue(null));
 
                 allowing(mockBbox).getEastBoundLongitude();
                 will(returnValue(bboxEast));
@@ -560,6 +565,8 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 will(returnValue(maxScale));
                 allowing(mockCSWRecord).getMinScale();
                 will(returnValue(minScale));
+                allowing(mockCSWRecord).getTemporalExtent();
+                will(returnValue(null));
 
                 allowing(mockCSWRecord).isService();
                 will(returnValue(false));
