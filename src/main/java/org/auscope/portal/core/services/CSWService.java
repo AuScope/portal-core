@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -125,7 +125,7 @@ public class CSWService {
             OWSExceptionParser.checkForExceptionResponse(responseDocument);
             
         	return new CSWGetRecordResponse(this.endpoint, responseDocument, transformerFactory);
-        } catch (ParserConfigurationException | SAXException | XPathExpressionException e) {
+        } catch (ParserConfigurationException | SAXException | XPathException e) {
             throw new IOException(e.getMessage(), e);
         }
     }
