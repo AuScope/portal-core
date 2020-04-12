@@ -128,13 +128,14 @@ public abstract class BaseCSWController extends BasePortalController {
             viewKnownLayer.put("cswRecords", viewMappedRecords);
             viewKnownLayer.put("relatedRecords", viewRelatedRecords);
 
-            if (stackDriverService != null && kl.getStackdriverCheckList() != null) {
+            Set<String> servicesToCheck = kl.getStackdriverCheckList();
+            if (stackDriverService != null && servicesToCheck != null) {
                 try {
-                    Map<String, List<ServiceStatusResponse>> response = stackDriverService.getStatuses(kl.getStackdriverCheckList());
+                    Map<String, List<ServiceStatusResponse>> response = stackDriverService.getStatuses(servicesToCheck);
                     List<String> failingHosts = new ArrayList<String>();
                     for (Entry<String, List<ServiceStatusResponse>> entry : response.entrySet()) {
                         for (ServiceStatusResponse status : entry.getValue()) {
-                            if (!status.isUp()) {
+                            if (!status.isUp() && servicesToCheck.contains(status.getCheckId())) {
                                 if (onlineResourceEndpoints.contains(entry.getKey())) {
                                     failingHosts.add(entry.getKey());
                                     break;

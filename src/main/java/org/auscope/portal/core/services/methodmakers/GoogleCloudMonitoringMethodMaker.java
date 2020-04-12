@@ -3,6 +3,8 @@ package org.auscope.portal.core.services.methodmakers;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.Instant;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.apache.http.client.utils.URIBuilder;
 
@@ -24,13 +26,13 @@ public class GoogleCloudMonitoringMethodMaker extends AbstractMethodMaker {
 	}
     /**
      * Generates a timeseries query for uptime check metrics
-     * @param projectName Unique google cloud monitoring project id
-     * @param serviceCheckIds Part of check id related to this layer to match with uptime config e.g. wfsgetfeatureboreholeview
+     * @param projectId Unique google cloud monitoring project id
+     * @param checkIds Part of check ids related to a layer to match with uptimecheck config e.g. wfsgetfeatureboreholeview
      * @return
      * @throws URISyntaxException
      * @throws IOException
      */
-    public HttpRequest getTimeSeriesUptimeCheck(String projectId, String[] serviceCheckIds) throws URISyntaxException, IOException {
+    public HttpRequest getTimeSeriesUptimeCheck(String projectId, Set<String> checkIds) throws URISyntaxException, IOException {
     	// Make our request
     	// Request: GET https://monitoring.googleapis.com/v3/{name}/timeSeries
     	// {name} = projects/geoanalytics-tooling
@@ -40,14 +42,16 @@ public class GoogleCloudMonitoringMethodMaker extends AbstractMethodMaker {
     	// filter = metrics.type="monitoring.googleapis.com/uptime_check/check_passed"
         StringBuilder filter = new StringBuilder("metric.type=\"monitoring.googleapis.com/uptime_check/check_passed\"");
         filter.append(" AND ");
+
         // check for service type
         // check_id example: "auscope-nt-web-services-wfsgetfeatureboreholeview". The last part tells us it's a boreholeview
         StringBuilder orFilter = new StringBuilder("(");
-        for (int i = 0; i < serviceCheckIds.length; i++) {
+        Iterator<String> checkIdsIterator = checkIds.iterator();
+        while (checkIdsIterator.hasNext()) {
             orFilter.append("metric.labels.check_id = has_substring(\"");
-            orFilter.append(serviceCheckIds[i]);
+            orFilter.append(checkIdsIterator.next());
             orFilter.append("\")");
-            if (i < serviceCheckIds.length - 1) {
+            if (checkIdsIterator.hasNext()) {
             	orFilter.append(" OR ");
             }
         }
@@ -57,8 +61,11 @@ public class GoogleCloudMonitoringMethodMaker extends AbstractMethodMaker {
 
     	// start_time and end_time in timestamp eg. 2020-03-02T15:01:23.045123456Z
         // one interval is 10s
+        // since it takes a long time for the uptime checks to return a value (WFS queries),
+        // and uptime checks are done every 10 minutes, we should check intervals
+        // in the last 10 minutes for it to return results
         Instant end = Instant.now();
-        Instant start = end.minusSeconds(10);
+        Instant start = end.minusSeconds(600);
         builder.addParameter("interval.startTime", start.toString());
         builder.addParameter("interval.endTime", end.toString());
 

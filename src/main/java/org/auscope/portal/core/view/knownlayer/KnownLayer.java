@@ -3,6 +3,7 @@ package org.auscope.portal.core.view.knownlayer;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.Serializable;
+import java.util.Set;
 
 import org.auscope.portal.core.uifilter.FilterCollection;
 
@@ -83,7 +84,7 @@ public class KnownLayer implements Serializable {
     private FilterCollection filterCollection;
 
     /** If specified, the list of checks matching parts of check_id in Google Monitoring uptime checks */
-	private String[] stackdriverCheckList;
+	private Set<String> stackdriverCheckList;
     /**
      * Creates a new KnownLayer
      *
@@ -394,11 +395,11 @@ public class KnownLayer implements Serializable {
         this.staticLegendUrl = staticLegendUrl;
     }
 
-    public void setStackdriverCheckList(String[] checkList) {
+    public void setStackdriverCheckList(Set<String> checkList) {
     	this.stackdriverCheckList = checkList;
     }
 
-    public String[] getStackdriverCheckList() {
+    public Set<String> getStackdriverCheckList() {
     	return this.stackdriverCheckList;
     }
 
