@@ -14,7 +14,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
 import org.auscope.portal.core.services.methodmakers.GoogleCloudMonitoringMethodMaker;
@@ -105,7 +104,7 @@ public class GoogleCloudMonitoringService {
      * @return
      * @throws PortalServiceException
      */
-    public Map<String, List<ServiceStatusResponse>> getStatuses(Set<String> checkIds) throws PortalServiceException {
+    public Map<String, List<ServiceStatusResponse>> getStatuses(List<String> checkIds) throws PortalServiceException {
 
         // Make our request
     	// Request: GET https://monitoring.googleapis.com/v3/{name}/timeSeries
@@ -172,15 +171,7 @@ public class GoogleCloudMonitoringService {
                 	// initiate if it hasn't been created yet
                     statusResponses = new ArrayList<ServiceStatusResponse>();
                 }
-                ServiceStatusResponse status = new ServiceStatusResponse(passedCheck, serviceName);
-                for (String id : checkIds) {
-                	if (serviceName.contains(id)) {
-                		status.setCheckId(id);
-                		break;
-                	}
-                }
-
-                statusResponses.add(status);
+                statusResponses.add(new ServiceStatusResponse(passedCheck, serviceName));
                 // update entry for this host with this service status
                 parsedResponses.put(hostName, statusResponses);
             }

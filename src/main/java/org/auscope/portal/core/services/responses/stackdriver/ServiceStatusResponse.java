@@ -13,7 +13,6 @@ public class ServiceStatusResponse implements Serializable {
 
     private boolean uptimeCheck;
     private String serviceName;
-	private String checkId;
 
     public ServiceStatusResponse(boolean passedCheck, String serviceName) {
         super();
@@ -35,13 +34,5 @@ public class ServiceStatusResponse implements Serializable {
      */
     public String getServiceName() {
         return serviceName;
-    }
-
-    public String getCheckId() {
-    	return checkId;
-    }
-
-    public void setCheckId(String checkId) {
-    	this.checkId = checkId;
     }
 }

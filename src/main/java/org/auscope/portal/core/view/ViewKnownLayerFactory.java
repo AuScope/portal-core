@@ -75,8 +75,8 @@ public class ViewKnownLayerFactory {
             obj.put("filterCollection",k.getFilterCollection());
         }
 
-        if (k.getStackdriverCheckList() != null) {
-            obj.put("stackdriverCheckList", k.getStackdriverCheckList());
+        if (k.getStackdriverServiceGroup() != null) {
+            obj.put("stackdriverServiceGroup", k.getStackdriverServiceGroup());
         }
 
         return obj;

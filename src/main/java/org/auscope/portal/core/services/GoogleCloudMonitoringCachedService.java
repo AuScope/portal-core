@@ -3,8 +3,6 @@ package org.auscope.portal.core.services;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.auscope.portal.core.services.methodmakers.GoogleCloudMonitoringMethodMaker;
@@ -25,6 +23,8 @@ public class GoogleCloudMonitoringCachedService extends GoogleCloudMonitoringSer
     private long ttlSeconds = DEFAULT_TTL_SECONDS;
     private ConcurrentHashMap<String, CacheEntry> cache; //cache entries keyed by hostgroup
 
+	private Map<String, List<String>> servicesMap;
+
     public GoogleCloudMonitoringCachedService(GoogleCloudMonitoringMethodMaker methodMaker) {
         super(methodMaker);
         cache = new ConcurrentHashMap<String, CacheEntry>();
@@ -38,20 +38,27 @@ public class GoogleCloudMonitoringCachedService extends GoogleCloudMonitoringSer
         this.ttlSeconds = ttlSeconds;
     }
 
+    public void setServicesMap(Map<String, List<String>> servicesMap) {
+    	this.servicesMap = servicesMap;
+    }
+
+    public Map<String, List<String>> getServicesMap() {
+    	return this.servicesMap;
+    }
+
     /**
      * See parent implementation for details on method.
      *
      * This method is synchronised to avoid swarms of requests going out when the cache entries expire. The cache lookups should be super
      * fast so unless we are servicing tens of thousands of simultaneous requests, this should hold up fine.
-     * @param checkIds
+     * @param serviceGroup
      *
      *
      * @see GoogleCloudMonitoringService.getStatuses
      */
-    @Override
-	public synchronized Map<String, List<ServiceStatusResponse>> getStatuses(Set<String> checkIds) throws PortalServiceException {
+	public synchronized Map<String, List<ServiceStatusResponse>> getStatuses(String serviceGroup) throws PortalServiceException {
 
-    	CacheEntry cacheEntry = cache.get(this.getProjectId());
+    	CacheEntry cacheEntry = cache.get(serviceGroup);
 
     	if (cacheEntry != null) {
 
@@ -63,67 +70,34 @@ public class GoogleCloudMonitoringCachedService extends GoogleCloudMonitoringSer
                	if(cacheEntry.getPortalServiceException() != null){
                		throw cacheEntry.getPortalServiceException();
                	}
-
-          		Set<String> currentCheckIds = cacheEntry.getCheckIds();
-           		// check if the check ids are already cached, if not query the ones that haven't been queried
-           		if (!currentCheckIds.containsAll(checkIds)) {
-           			checkIds.addAll(currentCheckIds);
-                    return generateCache(true, checkIds);
-           		}
             	// return cache
             	return cacheEntry.responses;
              }
-           	 // cache expired, generate new cache
-             return generateCache(false, checkIds);
     	}
-    	// cache is empty, generate new cache
-   		return generateCache(false, checkIds);
-    }
-
-    private Map<String, List<ServiceStatusResponse>> generateCache(boolean retainCacheValue, Set<String> checkIds) throws PortalServiceException {
     	Map<String, List<ServiceStatusResponse>> responses;
-        CacheEntry cacheEntry;
-        String projectId = this.getProjectId();
-		try{
-        	responses = super.getStatuses(checkIds);
+    	try{
+        	responses = super.getStatuses(servicesMap.get(serviceGroup));
         } catch(PortalServiceException pse){
         	cacheEntry = new CacheEntry(new Date(), pse); // This could potentially recycle the CacheEntry objects instead
-            cache.put(projectId, cacheEntry);
+            cache.put(serviceGroup, cacheEntry);
         	throw pse;
         }
-		if (retainCacheValue) {
-			// merge entries that aren't in the new results
-			// so we don't have to requery them again
-			Map<String, List<ServiceStatusResponse>> oldResponse = cache.get(projectId).getResponse();
-			for (Entry<String, List<ServiceStatusResponse>> entry : oldResponse.entrySet()) {
-				for (ServiceStatusResponse status : entry.getValue()) {
-					if (!checkIds.contains(status.getCheckId())) {
-						responses.entrySet().add(entry);
-					}
-				}
-			}
-			cache.get(projectId).getCheckIds();
-		}
-
-		cacheEntry = new CacheEntry(new Date(), responses, checkIds); // This could potentially recycle the CacheEntry objects instead
-        cache.put(projectId, cacheEntry);
+		cacheEntry = new CacheEntry(new Date(), responses); // This could potentially recycle the CacheEntry objects instead
+        cache.put(serviceGroup, cacheEntry);
 
         return responses;
-	}
-
+    }
 
 	public class CacheEntry {
         private Date created;
         private Map<String, List<ServiceStatusResponse>> responses;
         private PortalServiceException portalServiceException;
-		private Set<String> checkIds;
 
-        public CacheEntry(Date created, Map<String, List<ServiceStatusResponse>> responses, Set<String> checkIds) {
+        public CacheEntry(Date created, Map<String, List<ServiceStatusResponse>> responses) {
             super();
             this.created = created;
             this.responses = responses;
             this.portalServiceException = null;
-            this.checkIds = checkIds;
         }
 
         public CacheEntry(Date created, PortalServiceException ex) {
@@ -131,7 +105,6 @@ public class GoogleCloudMonitoringCachedService extends GoogleCloudMonitoringSer
             this.created = created;
             this.setPortalServiceException(ex);
             this.responses = null;
-            this.checkIds = null;
         }
 
         public Date getCreated() {
@@ -146,11 +119,6 @@ public class GoogleCloudMonitoringCachedService extends GoogleCloudMonitoringSer
         public void setResponse(Map<String, List<ServiceStatusResponse>> responses) {
             this.responses = responses;
         }
-
-        public Set<String> getCheckIds() {
-        	return this.checkIds;
-        }
-
 		public PortalServiceException getPortalServiceException() {
 			return portalServiceException;
 		}

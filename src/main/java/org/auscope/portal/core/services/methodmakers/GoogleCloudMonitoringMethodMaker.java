@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.Instant;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
 
 import org.apache.http.client.utils.URIBuilder;
 
@@ -32,7 +32,7 @@ public class GoogleCloudMonitoringMethodMaker extends AbstractMethodMaker {
      * @throws URISyntaxException
      * @throws IOException
      */
-    public HttpRequest getTimeSeriesUptimeCheck(String projectId, Set<String> checkIds) throws URISyntaxException, IOException {
+    public HttpRequest getTimeSeriesUptimeCheck(String projectId, List<String> checkIds) throws URISyntaxException, IOException {
     	// Make our request
     	// Request: GET https://monitoring.googleapis.com/v3/{name}/timeSeries
     	// {name} = projects/geoanalytics-tooling
