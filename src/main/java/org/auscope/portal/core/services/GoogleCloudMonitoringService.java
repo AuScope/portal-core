@@ -124,7 +124,11 @@ public class GoogleCloudMonitoringService {
         }
 
         //Parse our response
-        HashMap<String, List<ServiceStatusResponse>> parsedResponses = new HashMap<String, List<ServiceStatusResponse>>();
+        return parseResponses(responseString);
+    }
+
+    public HashMap<String, List<ServiceStatusResponse>> parseResponses(String responseString) throws PortalServiceException {
+    	HashMap<String, List<ServiceStatusResponse>> parsedResponses = new HashMap<String, List<ServiceStatusResponse>>();
         try {
             JSONObject result = JSONObject.fromObject(responseString);
             // Check for errors, e.g.
@@ -180,7 +184,6 @@ public class GoogleCloudMonitoringService {
         } catch (Exception ex) {
             throw new PortalServiceException("Unable to parse Google Cloud Monitoring response", ex);
         }
-
         return parsedResponses;
     }
 
@@ -191,7 +194,7 @@ public class GoogleCloudMonitoringService {
      * @return
      * @throws PortalServiceException
      */
-	private HttpRequest setAuthorization(HttpRequest request) throws PortalServiceException {
+	public HttpRequest setAuthorization(HttpRequest request) throws PortalServiceException {
 
 		ServiceAccountCredentials.Builder creds = ServiceAccountCredentials.newBuilder();
 		creds.setClientId(this.clientId);
