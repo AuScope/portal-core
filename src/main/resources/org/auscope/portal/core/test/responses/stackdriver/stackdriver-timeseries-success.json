@@ -1,0 +1,1334 @@
+
+{
+  "timeSeries": [
+    {
+      "metric": {
+        "labels": {
+          "check_id": "ittc-data",
+          "checked_resource_id": "data-ittc-app.it.csiro.au",
+          "checker_location": "usa-iowa"
+        },
+        "type": "monitoring.googleapis.com/uptime_check/check_passed"
+      },
+      "resource": {
+        "type": "uptime_url",
+        "labels": {
+          "project_id": "geoanalytics-tooling",
+          "host": "data-ittc-app.it.csiro.au"
+        }
+      },
+      "metricKind": "GAUGE",
+      "valueType": "BOOL",
+      "points": [
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:20Z",
+            "endTime": "2020-03-02T15:01:20Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        }
+      ]
+    },
+    {
+      "metric": {
+        "labels": {
+          "check_id": "ittc-drat",
+          "checked_resource_id": "drat-process.com",
+          "checker_location": "usa-virginia"
+        },
+        "type": "monitoring.googleapis.com/uptime_check/check_passed"
+      },
+      "resource": {
+        "type": "uptime_url",
+        "labels": {
+          "project_id": "geoanalytics-tooling",
+          "host": "drat-process.com"
+        }
+      },
+      "metricKind": "GAUGE",
+      "valueType": "BOOL",
+      "points": [
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:10Z",
+            "endTime": "2020-03-02T15:01:10Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:00Z",
+            "endTime": "2020-03-02T15:01:00Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:50Z",
+            "endTime": "2020-03-02T15:00:50Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:30Z",
+            "endTime": "2020-03-02T15:00:30Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        }
+      ]
+    },
+    {
+      "metric": {
+        "labels": {
+          "checker_location": "usa-oregon",
+          "check_id": "ittc-drat",
+          "checked_resource_id": "drat-process.com"
+        },
+        "type": "monitoring.googleapis.com/uptime_check/check_passed"
+      },
+      "resource": {
+        "type": "uptime_url",
+        "labels": {
+          "project_id": "geoanalytics-tooling",
+          "host": "drat-process.com"
+        }
+      },
+      "metricKind": "GAUGE",
+      "valueType": "BOOL",
+      "points": [
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:30Z",
+            "endTime": "2020-03-02T15:00:30Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        }
+      ]
+    },
+    {
+      "metric": {
+        "labels": {
+          "check_id": "auscope-nt-web-services-wfsgetcaps",
+          "checked_resource_id": "geology.data.nt.gov.au",
+          "checker_location": "eur-belgium"
+        },
+        "type": "monitoring.googleapis.com/uptime_check/check_passed"
+      },
+      "resource": {
+        "type": "uptime_url",
+        "labels": {
+          "project_id": "geoanalytics-tooling",
+          "host": "geology.data.nt.gov.au"
+        }
+      },
+      "metricKind": "GAUGE",
+      "valueType": "BOOL",
+      "points": [
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:00Z",
+            "endTime": "2020-03-02T15:01:00Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:50Z",
+            "endTime": "2020-03-02T15:00:50Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:30Z",
+            "endTime": "2020-03-02T15:00:30Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        }
+      ]
+    },
+    {
+      "metric": {
+        "labels": {
+          "checker_location": "eur-belgium",
+          "check_id": "auscope-nt-web-services-wfsgetfeatureboreholeview",
+          "checked_resource_id": "geology.data.nt.gov.au"
+        },
+        "type": "monitoring.googleapis.com/uptime_check/check_passed"
+      },
+      "resource": {
+        "type": "uptime_url",
+        "labels": {
+          "project_id": "geoanalytics-tooling",
+          "host": "geology.data.nt.gov.au"
+        }
+      },
+      "metricKind": "GAUGE",
+      "valueType": "BOOL",
+      "points": [
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:10Z",
+            "endTime": "2020-03-02T15:01:10Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:00Z",
+            "endTime": "2020-03-02T15:01:00Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:50Z",
+            "endTime": "2020-03-02T15:00:50Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:30Z",
+            "endTime": "2020-03-02T15:00:30Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        }
+      ]
+    },
+    {
+      "metric": {
+        "labels": {
+          "check_id": "auscope-nt-web-services-nvcldataservices",
+          "checked_resource_id": "geology.data.nt.gov.au",
+          "checker_location": "sa-brazil-sao_paulo"
+        },
+        "type": "monitoring.googleapis.com/uptime_check/check_passed"
+      },
+      "resource": {
+        "type": "uptime_url",
+        "labels": {
+          "project_id": "geoanalytics-tooling",
+          "host": "geology.data.nt.gov.au"
+        }
+      },
+      "metricKind": "GAUGE",
+      "valueType": "BOOL",
+      "points": [
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:50Z",
+            "endTime": "2020-03-02T15:00:50Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:30Z",
+            "endTime": "2020-03-02T15:00:30Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        }
+      ]
+    },
+    {
+      "metric": {
+        "labels": {
+          "check_id": "auscope-qld-web-services-wfsgetcaps-1581911615",
+          "checked_resource_id": "geology.information.qld.gov.au",
+          "checker_location": "sa-brazil-sao_paulo"
+        },
+        "type": "monitoring.googleapis.com/uptime_check/check_passed"
+      },
+      "resource": {
+        "type": "uptime_url",
+        "labels": {
+          "project_id": "geoanalytics-tooling",
+          "host": "geology.information.qld.gov.au"
+        }
+      },
+      "metricKind": "GAUGE",
+      "valueType": "BOOL",
+      "points": [
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:20Z",
+            "endTime": "2020-03-02T15:01:20Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:10Z",
+            "endTime": "2020-03-02T15:01:10Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:00Z",
+            "endTime": "2020-03-02T15:01:00Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:50Z",
+            "endTime": "2020-03-02T15:00:50Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        }
+      ]
+    },
+    {
+      "metric": {
+        "labels": {
+          "check_id": "auscope-wa-web-services-wfsgetfeatureboreholeview",
+          "checked_resource_id": "geossdi.dmp.wa.gov.au",
+          "checker_location": "eur-belgium"
+        },
+        "type": "monitoring.googleapis.com/uptime_check/check_passed"
+      },
+      "resource": {
+        "type": "uptime_url",
+        "labels": {
+          "project_id": "geoanalytics-tooling",
+          "host": "geossdi.dmp.wa.gov.au"
+        }
+      },
+      "metricKind": "GAUGE",
+      "valueType": "BOOL",
+      "points": [
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:20Z",
+            "endTime": "2020-03-02T15:01:20Z"
+          },
+          "value": {
+            "boolValue": false
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:10Z",
+            "endTime": "2020-03-02T15:01:10Z"
+          },
+          "value": {
+            "boolValue": false
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:00Z",
+            "endTime": "2020-03-02T15:01:00Z"
+          },
+          "value": {
+            "boolValue": false
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:50Z",
+            "endTime": "2020-03-02T15:00:50Z"
+          },
+          "value": {
+            "boolValue": false
+          }
+        }
+      ]
+    },
+    {
+      "metric": {
+        "labels": {
+          "check_id": "auscope-wa-web-services-wfsgetfeaturetenements",
+          "checked_resource_id": "geossdi.dmp.wa.gov.au",
+          "checker_location": "apac-singapore"
+        },
+        "type": "monitoring.googleapis.com/uptime_check/check_passed"
+      },
+      "resource": {
+        "type": "uptime_url",
+        "labels": {
+          "project_id": "geoanalytics-tooling",
+          "host": "geossdi.dmp.wa.gov.au"
+        }
+      },
+      "metricKind": "GAUGE",
+      "valueType": "BOOL",
+      "points": [
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:20Z",
+            "endTime": "2020-03-02T15:01:20Z"
+          },
+          "value": {
+            "boolValue": false
+          }
+        }
+      ]
+    },
+    {
+      "metric": {
+        "labels": {
+          "checker_location": "usa-oregon",
+          "check_id": "gpt-staging",
+          "checked_resource_id": "gpt.staging.geoanalytics.group"
+        },
+        "type": "monitoring.googleapis.com/uptime_check/check_passed"
+      },
+      "resource": {
+        "type": "uptime_url",
+        "labels": {
+          "project_id": "geoanalytics-tooling",
+          "host": "gpt.staging.geoanalytics.group"
+        }
+      },
+      "metricKind": "GAUGE",
+      "valueType": "BOOL",
+      "points": [
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:20Z",
+            "endTime": "2020-03-02T15:01:20Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:10Z",
+            "endTime": "2020-03-02T15:01:10Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:00Z",
+            "endTime": "2020-03-02T15:01:00Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:50Z",
+            "endTime": "2020-03-02T15:00:50Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        }
+      ]
+    },
+    {
+      "metric": {
+        "labels": {
+          "check_id": "gpt-staging",
+          "checked_resource_id": "gpt.staging.geoanalytics.group",
+          "checker_location": "usa-iowa"
+        },
+        "type": "monitoring.googleapis.com/uptime_check/check_passed"
+      },
+      "resource": {
+        "type": "uptime_url",
+        "labels": {
+          "project_id": "geoanalytics-tooling",
+          "host": "gpt.staging.geoanalytics.group"
+        }
+      },
+      "metricKind": "GAUGE",
+      "valueType": "BOOL",
+      "points": [
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:30Z",
+            "endTime": "2020-03-02T15:00:30Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        }
+      ]
+    },
+    {
+      "metric": {
+        "labels": {
+          "check_id": "auscope-nsw-web-services-nvcldataservices",
+          "checked_resource_id": "gs.geoscience.nsw.gov.au",
+          "checker_location": "eur-belgium"
+        },
+        "type": "monitoring.googleapis.com/uptime_check/check_passed"
+      },
+      "resource": {
+        "type": "uptime_url",
+        "labels": {
+          "project_id": "geoanalytics-tooling",
+          "host": "gs.geoscience.nsw.gov.au"
+        }
+      },
+      "metricKind": "GAUGE",
+      "valueType": "BOOL",
+      "points": [
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:50Z",
+            "endTime": "2020-03-02T15:00:50Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:30Z",
+            "endTime": "2020-03-02T15:00:30Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        }
+      ]
+    },
+    {
+      "metric": {
+        "labels": {
+          "check_id": "auscope-nsw-web-services-wfsgetfeatureboreholeview",
+          "checked_resource_id": "gs.geoscience.nsw.gov.au",
+          "checker_location": "sa-brazil-sao_paulo"
+        },
+        "type": "monitoring.googleapis.com/uptime_check/check_passed"
+      },
+      "resource": {
+        "type": "uptime_url",
+        "labels": {
+          "project_id": "geoanalytics-tooling",
+          "host": "gs.geoscience.nsw.gov.au"
+        }
+      },
+      "metricKind": "GAUGE",
+      "valueType": "BOOL",
+      "points": [
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:00Z",
+            "endTime": "2020-03-02T15:01:00Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:50Z",
+            "endTime": "2020-03-02T15:00:50Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:30Z",
+            "endTime": "2020-03-02T15:00:30Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        }
+      ]
+    },
+    {
+      "metric": {
+        "labels": {
+          "check_id": "ittc-jira",
+          "checked_resource_id": "jira-ittc-app.it.csiro.au",
+          "checker_location": "apac-singapore"
+        },
+        "type": "monitoring.googleapis.com/uptime_check/check_passed"
+      },
+      "resource": {
+        "type": "uptime_url",
+        "labels": {
+          "project_id": "geoanalytics-tooling",
+          "host": "jira-ittc-app.it.csiro.au"
+        }
+      },
+      "metricKind": "GAUGE",
+      "valueType": "BOOL",
+      "points": [
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:30Z",
+            "endTime": "2020-03-02T15:00:30Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        }
+      ]
+    },
+    {
+      "metric": {
+        "labels": {
+          "check_id": "auscope-csiro-nvcl-test-wfsgetcaps-1581914637",
+          "checked_resource_id": "nvclwebservices.csiro.au",
+          "checker_location": "eur-belgium"
+        },
+        "type": "monitoring.googleapis.com/uptime_check/check_passed"
+      },
+      "resource": {
+        "type": "uptime_url",
+        "labels": {
+          "project_id": "geoanalytics-tooling",
+          "host": "nvclwebservices.csiro.au"
+        }
+      },
+      "metricKind": "GAUGE",
+      "valueType": "BOOL",
+      "points": [
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:20Z",
+            "endTime": "2020-03-02T15:01:20Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:10Z",
+            "endTime": "2020-03-02T15:01:10Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:00Z",
+            "endTime": "2020-03-02T15:01:00Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:50Z",
+            "endTime": "2020-03-02T15:00:50Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        }
+      ]
+    },
+    {
+      "metric": {
+        "labels": {
+          "check_id": "auscope-csiro-nvcl-test-wfsgetcaps-1581914637",
+          "checked_resource_id": "nvclwebservices.csiro.au",
+          "checker_location": "sa-brazil-sao_paulo"
+        },
+        "type": "monitoring.googleapis.com/uptime_check/check_passed"
+      },
+      "resource": {
+        "type": "uptime_url",
+        "labels": {
+          "project_id": "geoanalytics-tooling",
+          "host": "nvclwebservices.csiro.au"
+        }
+      },
+      "metricKind": "GAUGE",
+      "valueType": "BOOL",
+      "points": [
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:20Z",
+            "endTime": "2020-03-02T15:01:20Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:10Z",
+            "endTime": "2020-03-02T15:01:10Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        }
+      ]
+    },
+    {
+      "metric": {
+        "labels": {
+          "check_id": "auscope-portal-api",
+          "checked_resource_id": "portal.auscope.org",
+          "checker_location": "apac-singapore"
+        },
+        "type": "monitoring.googleapis.com/uptime_check/check_passed"
+      },
+      "resource": {
+        "type": "uptime_url",
+        "labels": {
+          "project_id": "geoanalytics-tooling",
+          "host": "portal.auscope.org"
+        }
+      },
+      "metricKind": "GAUGE",
+      "valueType": "BOOL",
+      "points": [
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:20Z",
+            "endTime": "2020-03-02T15:01:20Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:10Z",
+            "endTime": "2020-03-02T15:01:10Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:00Z",
+            "endTime": "2020-03-02T15:01:00Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        }
+      ]
+    },
+    {
+      "metric": {
+        "labels": {
+          "check_id": "auscope-portal",
+          "checked_resource_id": "portal.auscope.org",
+          "checker_location": "sa-brazil-sao_paulo"
+        },
+        "type": "monitoring.googleapis.com/uptime_check/check_passed"
+      },
+      "resource": {
+        "type": "uptime_url",
+        "labels": {
+          "project_id": "geoanalytics-tooling",
+          "host": "portal.auscope.org"
+        }
+      },
+      "metricKind": "GAUGE",
+      "valueType": "BOOL",
+      "points": [
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:30Z",
+            "endTime": "2020-03-02T15:00:30Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        }
+      ]
+    },
+    {
+      "metric": {
+        "labels": {
+          "check_id": "auscope-sa-web-services-wfsgetfeatureminoccviewnew",
+          "checked_resource_id": "sarigdata.pir.sa.gov.au",
+          "checker_location": "sa-brazil-sao_paulo"
+        },
+        "type": "monitoring.googleapis.com/uptime_check/check_passed"
+      },
+      "resource": {
+        "type": "uptime_url",
+        "labels": {
+          "project_id": "geoanalytics-tooling",
+          "host": "sarigdata.pir.sa.gov.au"
+        }
+      },
+      "metricKind": "GAUGE",
+      "valueType": "BOOL",
+      "points": [
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:50Z",
+            "endTime": "2020-03-02T15:00:50Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:30Z",
+            "endTime": "2020-03-02T15:00:30Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        }
+      ]
+    },
+    {
+      "metric": {
+        "labels": {
+          "check_id": "auscope-sa-web-services-nvcldataservices",
+          "checked_resource_id": "sarigdata.pir.sa.gov.au",
+          "checker_location": "sa-brazil-sao_paulo"
+        },
+        "type": "monitoring.googleapis.com/uptime_check/check_passed"
+      },
+      "resource": {
+        "type": "uptime_url",
+        "labels": {
+          "project_id": "geoanalytics-tooling",
+          "host": "sarigdata.pir.sa.gov.au"
+        }
+      },
+      "metricKind": "GAUGE",
+      "valueType": "BOOL",
+      "points": [
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:20Z",
+            "endTime": "2020-03-02T15:01:20Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        }
+      ]
+    },
+    {
+      "metric": {
+        "labels": {
+          "check_id": "ittc-utils",
+          "checked_resource_id": "utils-ittc-app.it.csiro.au",
+          "checker_location": "usa-virginia"
+        },
+        "type": "monitoring.googleapis.com/uptime_check/check_passed"
+      },
+      "resource": {
+        "type": "uptime_url",
+        "labels": {
+          "project_id": "geoanalytics-tooling",
+          "host": "utils-ittc-app.it.csiro.au"
+        }
+      },
+      "metricKind": "GAUGE",
+      "valueType": "BOOL",
+      "points": [
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:20Z",
+            "endTime": "2020-03-02T15:01:20Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:10Z",
+            "endTime": "2020-03-02T15:01:10Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:00Z",
+            "endTime": "2020-03-02T15:01:00Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:50Z",
+            "endTime": "2020-03-02T15:00:50Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        }
+      ]
+    },
+    {
+      "metric": {
+        "labels": {
+          "check_id": "ittc-utils",
+          "checked_resource_id": "utils-ittc-app.it.csiro.au",
+          "checker_location": "usa-oregon"
+        },
+        "type": "monitoring.googleapis.com/uptime_check/check_passed"
+      },
+      "resource": {
+        "type": "uptime_url",
+        "labels": {
+          "project_id": "geoanalytics-tooling",
+          "host": "utils-ittc-app.it.csiro.au"
+        }
+      },
+      "metricKind": "GAUGE",
+      "valueType": "BOOL",
+      "points": [
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:20Z",
+            "endTime": "2020-03-02T15:01:20Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:10Z",
+            "endTime": "2020-03-02T15:01:10Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:00Z",
+            "endTime": "2020-03-02T15:01:00Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:50Z",
+            "endTime": "2020-03-02T15:00:50Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        }
+      ]
+    },
+    {
+      "metric": {
+        "labels": {
+          "check_id": "ittc-utils",
+          "checked_resource_id": "utils-ittc-app.it.csiro.au",
+          "checker_location": "eur-belgium"
+        },
+        "type": "monitoring.googleapis.com/uptime_check/check_passed"
+      },
+      "resource": {
+        "type": "uptime_url",
+        "labels": {
+          "project_id": "geoanalytics-tooling",
+          "host": "utils-ittc-app.it.csiro.au"
+        }
+      },
+      "metricKind": "GAUGE",
+      "valueType": "BOOL",
+      "points": [
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:20Z",
+            "endTime": "2020-03-02T15:01:20Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        }
+      ]
+    },
+    {
+      "metric": {
+        "labels": {
+          "checker_location": "apac-singapore",
+          "check_id": "ittc-utils",
+          "checked_resource_id": "utils-ittc-app.it.csiro.au"
+        },
+        "type": "monitoring.googleapis.com/uptime_check/check_passed"
+      },
+      "resource": {
+        "type": "uptime_url",
+        "labels": {
+          "project_id": "geoanalytics-tooling",
+          "host": "utils-ittc-app.it.csiro.au"
+        }
+      },
+      "metricKind": "GAUGE",
+      "valueType": "BOOL",
+      "points": [
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:20Z",
+            "endTime": "2020-03-02T15:01:20Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:10Z",
+            "endTime": "2020-03-02T15:01:10Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        }
+      ]
+    },
+    {
+      "metric": {
+        "labels": {
+          "checker_location": "usa-virginia",
+          "check_id": "ittc-confluence",
+          "checked_resource_id": "www.maintenance.org.au"
+        },
+        "type": "monitoring.googleapis.com/uptime_check/check_passed"
+      },
+      "resource": {
+        "type": "uptime_url",
+        "labels": {
+          "project_id": "geoanalytics-tooling",
+          "host": "www.maintenance.org.au"
+        }
+      },
+      "metricKind": "GAUGE",
+      "valueType": "BOOL",
+      "points": [
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:20Z",
+            "endTime": "2020-03-02T15:01:20Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:10Z",
+            "endTime": "2020-03-02T15:01:10Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:00Z",
+            "endTime": "2020-03-02T15:01:00Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:50Z",
+            "endTime": "2020-03-02T15:00:50Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:30Z",
+            "endTime": "2020-03-02T15:00:30Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        }
+      ]
+    },
+    {
+      "metric": {
+        "labels": {
+          "check_id": "ittc-confluence",
+          "checked_resource_id": "www.maintenance.org.au",
+          "checker_location": "usa-oregon"
+        },
+        "type": "monitoring.googleapis.com/uptime_check/check_passed"
+      },
+      "resource": {
+        "type": "uptime_url",
+        "labels": {
+          "project_id": "geoanalytics-tooling",
+          "host": "www.maintenance.org.au"
+        }
+      },
+      "metricKind": "GAUGE",
+      "valueType": "BOOL",
+      "points": [
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:20Z",
+            "endTime": "2020-03-02T15:01:20Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:10Z",
+            "endTime": "2020-03-02T15:01:10Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:00Z",
+            "endTime": "2020-03-02T15:01:00Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:50Z",
+            "endTime": "2020-03-02T15:00:50Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        }
+      ]
+    },
+    {
+      "metric": {
+        "labels": {
+          "checker_location": "eur-belgium",
+          "check_id": "ittc-confluence",
+          "checked_resource_id": "www.maintenance.org.au"
+        },
+        "type": "monitoring.googleapis.com/uptime_check/check_passed"
+      },
+      "resource": {
+        "type": "uptime_url",
+        "labels": {
+          "project_id": "geoanalytics-tooling",
+          "host": "www.maintenance.org.au"
+        }
+      },
+      "metricKind": "GAUGE",
+      "valueType": "BOOL",
+      "points": [
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:20Z",
+            "endTime": "2020-03-02T15:01:20Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:10Z",
+            "endTime": "2020-03-02T15:01:10Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:00Z",
+            "endTime": "2020-03-02T15:01:00Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:50Z",
+            "endTime": "2020-03-02T15:00:50Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        }
+      ]
+    },
+    {
+      "metric": {
+        "labels": {
+          "check_id": "auscope-tas-web-services-wfsgetfeaturetenements",
+          "checked_resource_id": "www.mrt.tas.gov.au",
+          "checker_location": "apac-singapore"
+        },
+        "type": "monitoring.googleapis.com/uptime_check/check_passed"
+      },
+      "resource": {
+        "type": "uptime_url",
+        "labels": {
+          "project_id": "geoanalytics-tooling",
+          "host": "www.mrt.tas.gov.au"
+        }
+      },
+      "metricKind": "GAUGE",
+      "valueType": "BOOL",
+      "points": [
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:20Z",
+            "endTime": "2020-03-02T15:01:20Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:10Z",
+            "endTime": "2020-03-02T15:01:10Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:00Z",
+            "endTime": "2020-03-02T15:01:00Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:50Z",
+            "endTime": "2020-03-02T15:00:50Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        }
+      ]
+    },
+    {
+      "metric": {
+        "labels": {
+          "checker_location": "apac-singapore",
+          "check_id": "auscope-tas-web-services-wfsgetfeatureboreholeview",
+          "checked_resource_id": "www.mrt.tas.gov.au"
+        },
+        "type": "monitoring.googleapis.com/uptime_check/check_passed"
+      },
+      "resource": {
+        "type": "uptime_url",
+        "labels": {
+          "project_id": "geoanalytics-tooling",
+          "host": "www.mrt.tas.gov.au"
+        }
+      },
+      "metricKind": "GAUGE",
+      "valueType": "BOOL",
+      "points": [
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:10Z",
+            "endTime": "2020-03-02T15:01:10Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:01:00Z",
+            "endTime": "2020-03-02T15:01:00Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:50Z",
+            "endTime": "2020-03-02T15:00:50Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        },
+        {
+          "interval": {
+            "startTime": "2020-03-02T15:00:30Z",
+            "endTime": "2020-03-02T15:00:30Z"
+          },
+          "value": {
+            "boolValue": true
+          }
+        }
+      ]
+    }
+  ]
+}
