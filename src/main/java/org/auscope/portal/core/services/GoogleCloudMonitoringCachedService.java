@@ -21,7 +21,7 @@ public class GoogleCloudMonitoringCachedService extends GoogleCloudMonitoringSer
 
     /** How long a cache entry can exist before it requires an update*/
     private long ttlSeconds = DEFAULT_TTL_SECONDS;
-    private ConcurrentHashMap<String, CacheEntry> cache; //cache entries keyed by hostgroup
+    private ConcurrentHashMap<String, CacheEntry> cache; //cache entries keyed by service group
 
 	private Map<String, List<String>> servicesMap;
 

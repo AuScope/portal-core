@@ -44,6 +44,8 @@ public class GoogleCloudMonitoringService {
 	private String tokenUri;
 	private String projectId;
 
+	HttpRequest request;
+
     public GoogleCloudMonitoringService(GoogleCloudMonitoringMethodMaker methodMaker) {
         super();
         this.methodMaker = methodMaker;
@@ -111,7 +113,8 @@ public class GoogleCloudMonitoringService {
     	// {name} = projects%2Fgeoanalytics-tooling
     	// filter = metrics.type="monitoring.googleapis.com/uptime_check/check_passed"
     	// start_time and end_time in timestamp eg. 2020-03-02T15:01:23.045123456Z
-        HttpRequest request = null;
+    	request = null;
+
         String responseString = null;
         try {
             request = methodMaker.getTimeSeriesUptimeCheck(this.projectId, checkIds);

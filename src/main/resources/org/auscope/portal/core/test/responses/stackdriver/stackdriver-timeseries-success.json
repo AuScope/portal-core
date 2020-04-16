@@ -344,7 +344,7 @@
             "endTime": "2020-03-02T15:01:20Z"
           },
           "value": {
-            "boolValue": false
+            "boolValue": true
           }
         },
         {
@@ -353,7 +353,7 @@
             "endTime": "2020-03-02T15:01:10Z"
           },
           "value": {
-            "boolValue": false
+            "boolValue": true
           }
         },
         {
@@ -362,7 +362,7 @@
             "endTime": "2020-03-02T15:01:00Z"
           },
           "value": {
-            "boolValue": false
+            "boolValue": true
           }
         },
         {
@@ -371,7 +371,7 @@
             "endTime": "2020-03-02T15:00:50Z"
           },
           "value": {
-            "boolValue": false
+            "boolValue": true
           }
         }
       ]
