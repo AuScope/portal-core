@@ -1,30 +1,29 @@
 package org.auscope.portal.core.services;
 
-import com.google.common.collect.Lists;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.Property;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdf.model.Statement;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.auscope.portal.core.server.http.HttpClientInputStream;
-import org.auscope.portal.core.server.http.HttpServiceCaller;
-import org.auscope.portal.core.services.methodmakers.VocabularyMethodMaker;
-import org.auscope.portal.core.services.methodmakers.VocabularyMethodMaker.Format;
-import org.auscope.portal.core.services.methodmakers.VocabularyMethodMaker.View;
-import org.auscope.portal.core.test.PortalTestClass;
-import org.auscope.portal.core.test.ResourceUtil;
-import org.jmock.Expectations;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
+import org.auscope.portal.core.server.http.HttpClientInputStream;
+import org.auscope.portal.core.server.http.HttpServiceCaller;
+import org.auscope.portal.core.services.methodmakers.VocabularyMethodMaker;
+import org.auscope.portal.core.services.methodmakers.VocabularyMethodMaker.Format;
+import org.auscope.portal.core.services.methodmakers.VocabularyMethodMaker.View;
+import org.auscope.portal.core.test.PortalTestClass;
+import org.auscope.portal.core.util.ResourceUtil;
+import org.jmock.Expectations;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.google.common.collect.Lists;
 
 public class TestVocabularyService extends PortalTestClass {
 

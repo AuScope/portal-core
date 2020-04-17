@@ -1,12 +1,7 @@
 package org.auscope.portal.core.xslt;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-
 import org.auscope.portal.core.test.PortalTestClass;
-import org.auscope.portal.core.test.ResourceUtil;
-import org.auscope.portal.core.xslt.GmlToHtml;
+import org.auscope.portal.core.util.ResourceUtil;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

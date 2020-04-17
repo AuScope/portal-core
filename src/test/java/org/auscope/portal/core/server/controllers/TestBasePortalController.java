@@ -2,6 +2,7 @@ package org.auscope.portal.core.server.controllers;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -165,83 +166,18 @@ public class TestBasePortalController extends PortalTestClass {
      */
     @Test
     public void testWriteInputToOutputStream() throws IOException {
-        final int bufferSize = 134;
-        try (final InputStream mockInput = context.mock(InputStream.class);
-                final OutputStream outputStream = context.mock(OutputStream.class)) {
-
-            context.checking(new Expectations() {
-                {
-                    oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
-                    will(returnValue(bufferSize));
-
-                    oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
-                    will(returnValue(12));
-
-                    oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
-                    will(returnValue(-1));
-
-                    allowing(mockInput).close();
-                    oneOf(outputStream).write(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
-                    oneOf(outputStream).write(with(any(byte[].class)), with(equal(0)), with(equal(12)));
-                    allowing(outputStream).close();
-                }
-            });
-
-            FileIOUtil.writeInputToOutputStream(mockInput, outputStream, bufferSize, false);
+        byte input[] = new byte[150];
+        for(int i=0; i<input.length; i++) {
+            input[i]= (byte)i;
         }
+        
+        final int bufferSize = 134;
+        
+        ByteArrayInputStream is = new ByteArrayInputStream(input);
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        FileIOUtil.writeInputToOutputStream(is, os, bufferSize, false);
+
+        Assert.assertArrayEquals(input, os.toByteArray());
     }
 
-    /**
-     * Tests piping input->output correctly closes input streams (where appropriate)
-     * @throws IOException 
-     */
-    @Test
-    public void testWriteInputToOutputStreamClosing() throws IOException {
-        //VT: I removed the IOException expectation because if given an array of inputstream and 1 fail,
-        //we should return the rest and encapsulate the exception in the file to inform users.
-        final int bufferSize = 134;
-
-        try (final InputStream mockInput = context.mock(InputStream.class);
-                final OutputStream outputStream = context.mock(OutputStream.class)) {
-
-            context.checking(new Expectations() {
-                {
-                    oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
-                    will(throwException(new IOException()));
-                    oneOf(outputStream).write(with(any(byte[].class)));
-                    allowing(mockInput).close();
-                    allowing(outputStream).close();
-                }
-            });
-
-            FileIOUtil.writeInputToOutputStream(mockInput, outputStream, bufferSize, true);
-        }
-    }
-
-    /**
-     * Tests piping input->output correctly closes input streams (where appropriate)
-     * @throws IOException 
-     */
-    @Test
-    public void testWriteInputToOutputStreamClosing2() throws IOException {
-        final int bufferSize = 134;
-        try (final InputStream mockInput = context.mock(InputStream.class);
-                final OutputStream outputStream = context.mock(OutputStream.class)) {
-            // VT: I removed the IOException expectation because if given an
-            // array of inputstream and 1 fail,
-            // we should return the rest and encapsulate the exception in the
-            // file to inform users.
-            context.checking(new Expectations() {
-                {
-                    oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
-                    will(throwException(new IOException()));
-                    oneOf(outputStream).write(with(any(byte[].class)));
-                    allowing(outputStream).close();
-                    allowing(mockInput).close();
-                }
-            });
-
-            FileIOUtil.writeInputToOutputStream(mockInput, outputStream, bufferSize, false);
-        }
-    }
 }

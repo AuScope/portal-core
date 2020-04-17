@@ -21,7 +21,7 @@ public class TestStagedFile extends PortalTestClass {
         CloudJob c1 = new CloudJob(123);
         CloudJob c2 = new CloudJob(456);
 
-        File mockFile = context.mock(File.class);
+        File mockFile = new File("xxx");//context.mock(File.class);
 
         StagedFile f1 = new StagedFile(c1, "f1", mockFile);
         StagedFile f2 = new StagedFile(c1, "f1", mockFile);
