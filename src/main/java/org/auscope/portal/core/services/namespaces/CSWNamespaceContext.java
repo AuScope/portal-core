@@ -15,7 +15,7 @@ public class CSWNamespaceContext extends IterableNamespace {
         map.put("xlink", "http://www.w3.org/1999/xlink");
         map.put("srv", "http://www.isotc211.org/2005/srv");
         map.put("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-        map.put("gml", "http://www.opengis.net/gml");
+        map.put("gml", "http://www.opengis.net/gml/3.2");
         map.put("gmx", "http://www.isotc211.org/2005/gmx");
         map.put("gts", "http://www.isotc211.org/2005/gts");
         map.put("geonet", "http://www.fao.org/geonetwork");

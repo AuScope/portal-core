@@ -2,6 +2,7 @@ package org.auscope.portal.core.services.responses.wms;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
@@ -9,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
+import org.auscope.portal.core.util.DOMUtil;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -43,6 +45,9 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
 
     /** The bbox. */
     private CSWGeographicBoundingBox bbox;
+    
+    /** The time extent, if present */
+    private String[] timeExtent;
 
     /** The child layer srs. */
     private String[] childLayerSRS;
@@ -200,6 +205,28 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
     @Override
     public CSWGeographicBoundingBox getBoundingBox() {
         return bbox;
+    }
+    
+    /**
+     * Gets the time extent as an array of Strings. Currently this only
+     * supports time dimensions as a comma separated list of dates.
+     * 
+     * Note: MapServer may use 'min/max/res', or comma delimited list of same, not supported yet.
+     * 
+     * @return the time dimension
+     * @throws XPathExpressionException
+     *             the x path expression exception 
+     */
+    @Override
+    public String[] getTimeExtent() throws XPathException {
+    	if(timeExtent == null) {
+    		Node tempNode = (Node) DOMUtil.compileXPathExpr("Extent[@name='time']").evaluate(node, XPathConstants.NODE);
+            String timeStr = tempNode != null ? tempNode.getTextContent() : null;
+            if(timeStr != null) {
+	            timeExtent = timeStr.split(",");
+            }
+        }
+    	return timeExtent;
     }
 
     /**

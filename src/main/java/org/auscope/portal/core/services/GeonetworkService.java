@@ -6,8 +6,8 @@ import java.net.URISyntaxException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -121,7 +121,7 @@ public class GeonetworkService {
             XPathExpression getIdExpr = DOMUtil.compileXPathExpr("/gmd:MD_Metadata/geonet:info/id",
                     new CSWNamespaceContext());
             idNode = (Node) getIdExpr.evaluate(responseDoc, XPathConstants.NODE);
-        } catch (XPathExpressionException | ParserConfigurationException | SAXException e) {
+        } catch (XPathException | ParserConfigurationException | SAXException e) {
             throw new PortalServiceException(e.getMessage(),e);
         }
         if (idNode == null) {

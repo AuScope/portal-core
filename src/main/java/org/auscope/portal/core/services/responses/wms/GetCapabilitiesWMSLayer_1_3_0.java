@@ -1,7 +1,7 @@
 package org.auscope.portal.core.services.responses.wms;
 
 import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -42,6 +42,9 @@ public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRec
 
     /** The bbox. */
     private CSWGeographicBoundingBox bbox;
+    
+    /** The time extent, if present */
+    private String[] timeExtent;
 
     /** The child layer srs. */
     private String[] childLayerSRS;
@@ -62,11 +65,11 @@ public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRec
      * Gets the name.
      *
      * @return the name
-     * @throws XPathExpressionException
+     * @throws XPathException
      *             the x path expression exception
      */
     @Override
-    public String getName() throws XPathExpressionException {
+    public String getName() throws XPathException {
         if (name == null) {
             Node tempNode = (Node) DOMUtil.compileXPathExpr("Name").evaluate(node, XPathConstants.NODE);
             name = tempNode != null ? tempNode.getTextContent() : "";
@@ -78,11 +81,11 @@ public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRec
      * Gets the title.
      *
      * @return the title
-     * @throws XPathExpressionException
+     * @throws XPathException
      *             the x path expression exception
      */
     @Override
-    public String getTitle() throws XPathExpressionException {
+    public String getTitle() throws XPathException {
         if (title == null) {
             Node tempNode = (Node) DOMUtil.compileXPathExpr("Title").evaluate(node, XPathConstants.NODE);
             title = tempNode != null ? tempNode.getTextContent() : "";
@@ -94,11 +97,11 @@ public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRec
      * Gets the legendURL.
      *
      * @return the legendURL
-     * @throws XPathExpressionException
+     * @throws XPathException
      *             the x path expression exception
      */
     @Override
-    public String getLegendURL() throws XPathExpressionException {
+    public String getLegendURL() throws XPathException {
         if (legendURL == null) {
             Node tempNode = (Node) DOMUtil.compileXPathExpr("Style/LegendURL/OnlineResource").evaluate(node, XPathConstants.NODE);
             legendURL = tempNode != null ? tempNode.getAttributes().getNamedItem("xlink:href").getNodeValue() : "";
@@ -110,11 +113,11 @@ public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRec
      * Gets the abstract.
      *
      * @return the abstract
-     * @throws XPathExpressionException
+     * @throws XPathException
      *             the x path expression exception
      */
     @Override
-    public String getAbstract() throws XPathExpressionException {
+    public String getAbstract() throws XPathException {
         if (description == null) {
             Node tempNode = (Node) DOMUtil.compileXPathExpr("Abstract").evaluate(node, XPathConstants.NODE);
             description = tempNode != null ? tempNode.getTextContent() : "";
@@ -126,11 +129,11 @@ public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRec
      * Gets the metadataURL.
      *
      * @return the metadataURL
-     * @throws XPathExpressionException
+     * @throws XPathException
      *             the x path expression exception
      */
     @Override
-    public String getMetadataURL() throws XPathExpressionException {
+    public String getMetadataURL() throws XPathException {
 
         // look for the metadataURL in the nested OnlineResource element
         Node tempNode = (Node) DOMUtil.compileXPathExpr("MetadataURL/OnlineResource").evaluate(node, XPathConstants.NODE);
@@ -149,7 +152,7 @@ public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRec
      * Gets the bounding box.
      *
      * @return the bounding box
-     * @throws XPathExpressionException
+     * @throws XPathException
      */
     @Override
     public CSWGeographicBoundingBox getBoundingBox() {
@@ -174,23 +177,45 @@ public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRec
                     }
 
                 }
-            } catch (XPathExpressionException ex) {
+            } catch (XPathException ex) {
                 log.error("Format error", ex);
                 throw new RuntimeException(ex);
             }
         }
         return bbox;
     }
+    
+    /**
+     * Gets the time extent as an array of Strings. Currently this only
+     * supports time dimensions as a comma separated list of dates.
+     * 
+     * Note: MapServer may use 'min/max/res', or comma delimited list of same, not supported yet.
+     * 
+     * @return the time extent
+     * @throws XPathExpressionException
+     *             the x path expression exception 
+     */
+    @Override
+    public String[] getTimeExtent() throws XPathException {
+    	if(timeExtent == null) {
+    		Node tempNode = (Node) DOMUtil.compileXPathExpr("Extent[@name='time']").evaluate(node, XPathConstants.NODE);
+            String timeStr = tempNode != null ? tempNode.getTextContent() : null;
+            if(timeStr != null) {
+	            timeExtent = timeStr.split(",");
+            }
+        }
+    	return timeExtent;
+    }
 
     /**
      * Gets the child layer srs.
      *
      * @return the child layer srs
-     * @throws XPathExpressionException
+     * @throws XPathException
      *             the x path expression exception
      */
     @Override
-    public String[] getChildLayerSRS() throws XPathExpressionException {
+    public String[] getChildLayerSRS() throws XPathException {
         if (childLayerSRS == null) {
             NodeList nodes = (NodeList) DOMUtil.compileXPathExpr("CRS").evaluate(node, XPathConstants.NODESET);
             childLayerSRS = new String[nodes.getLength()];
@@ -217,7 +242,7 @@ public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRec
             buf.append(seperator);
             buf.append(getAbstract());
             buf.append(seperator);
-        } catch (XPathExpressionException ex) {
+        } catch (XPathException ex) {
             log.error("Format error", ex);
             throw new RuntimeException(ex);
         }

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 
@@ -46,7 +47,7 @@ public class CSWGetRecordResponse {
      *            Where the getRecordResponse has originated from
      * @throws XPathExpressionException
      */
-    public CSWGetRecordResponse(CSWServiceItem origin, Document getRecordResponse) throws XPathExpressionException {
+    public CSWGetRecordResponse(CSWServiceItem origin, Document getRecordResponse) throws XPathException {
         this(origin, getRecordResponse, new CSWRecordTransformerFactory());
     }
 
@@ -62,7 +63,7 @@ public class CSWGetRecordResponse {
      * @throws XPathExpressionException
      */
     public CSWGetRecordResponse(CSWServiceItem origin, Document getRecordResponse,
-            CSWRecordTransformerFactory cswRecordTransformerFactory) throws XPathExpressionException {
+            CSWRecordTransformerFactory cswRecordTransformerFactory) throws XPathException {
         //These cannot be static pre-compiled expressions as they are NOT threadsafe
         CSWNamespaceContext nc = new CSWNamespaceContext();
         XPathExpression exprRecordsMatched = DOMUtil.compileXPathExpr(

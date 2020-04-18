@@ -1,22 +1,26 @@
 package org.auscope.portal.core.services.responses.csw;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.server.OgcServiceProviderType;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.namespaces.CSWNamespaceContext;
-import org.auscope.portal.core.services.responses.csw.CSWRecordTransformer.Scope;
 import org.auscope.portal.core.util.DOMUtil;
+import org.springframework.util.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -58,6 +62,7 @@ public class CSWRecordTransformer {
     protected static final String PARENTIDENTIFIEREXPRESSION = "gmd:parentIdentifier/gco:CharacterString";
     protected static final String ONLINETRANSFERSEXPRESSION = "gmd:distributionInfo/gmd:MD_Distribution/descendant::gmd:onLine/gmd:CI_OnlineResource";
     protected static final String BBOXEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox";
+    protected static final String TEMPORALEXTENTEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:temporalElement/gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod";
     protected static final String KEYWORDLISTEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:descriptiveKeywords/gmd:MD_Keywords/gmd:keyword/gco:CharacterString";
     protected static final String DATASETURIEXPRESSION = "gmd:dataSetURI/gco:CharacterString";
     protected static final String SUPPLEMENTALINFOEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:supplementalInformation/gco:CharacterString";
@@ -201,20 +206,31 @@ public class CSWRecordTransformer {
      * @param parent
      * @param namespaceUri
      * @param name
-     * @param geoEl
+     * @param bbox
+     * @param temporalExtent may be null in which case won't be added to document
      */
     protected void appendChildExtent(Node parent, String namespaceUri, String name,
-            CSWGeographicBoundingBox bbox) {
+            CSWGeographicBoundingBox bbox, CSWTemporalExtent temporalExtent) {
         Node child = createChildNode(parent, namespaceUri, name);
         Node exExtent = createChildNode(child, nc.getNamespaceURI("gmd"), "EX_Extent");
-
         Node geoEl = createChildNode(exExtent, nc.getNamespaceURI("gmd"), "geographicElement");
+        
+        // GeographicBoundigBox
         Node geoBbox = createChildNode(geoEl, nc.getNamespaceURI("gmd"), "EX_GeographicBoundingBox");
-
         appendChildDecimal(geoBbox, nc.getNamespaceURI("gmd"), "westBoundLongitude", bbox.getWestBoundLongitude());
         appendChildDecimal(geoBbox, nc.getNamespaceURI("gmd"), "eastBoundLongitude", bbox.getEastBoundLongitude());
         appendChildDecimal(geoBbox, nc.getNamespaceURI("gmd"), "southBoundLatitude", bbox.getSouthBoundLatitude());
         appendChildDecimal(geoBbox, nc.getNamespaceURI("gmd"), "northBoundLatitude", bbox.getNorthBoundLatitude());
+        
+        // TemporalExtent (optional)
+        if(temporalExtent != null) {
+	        Node temporalElement = createChildNode(geoEl, nc.getNamespaceURI("gmd"), "temporalElement");
+	        Node exTemporalExtent = createChildNode(temporalElement, nc.getNamespaceURI("gmd"), "EX_TemporalExtent");
+	        Node extent = createChildNode(exTemporalExtent, nc.getNamespaceURI("gmd"), "extent");
+	        Node timePeriod = createChildNode(extent, nc.getNamespaceURI("gml"), "TimePeriod");
+	        appendChildDate(timePeriod, nc.getNamespaceURI("gml"), "beginPosition", temporalExtent.getBeginPosition());
+	        appendChildDate(timePeriod, nc.getNamespaceURI("gml"), "endPosition", temporalExtent.getEndPosition());
+        }
     }
 
     /**
@@ -445,13 +461,14 @@ public class CSWRecordTransformer {
         //DataIdentification -> language
         appendChildCharacterString(mdDataIdentification, nc.getNamespaceURI("gmd"), "language", record.getLanguage());
 
-        //DataIdentification -> extent
+        //DataIdentification -> extent (bounding box and temporal)
         CSWGeographicElement[] geoEls = record.getCSWGeographicElements();
+        CSWTemporalExtent temporalExtent = record.getTemporalExtent();
         if (geoEls != null) {
             for (CSWGeographicElement geoEl : geoEls) {
                 if (geoEl instanceof CSWGeographicBoundingBox) {
                     appendChildExtent(mdDataIdentification, nc.getNamespaceURI("gmd"), "extent",
-                            (CSWGeographicBoundingBox) geoEl);
+                            (CSWGeographicBoundingBox) geoEl, temporalExtent);
                 }
             }
         }
@@ -502,9 +519,9 @@ public class CSWRecordTransformer {
      * @param xPath
      *            A valid XPath expression
      * @return
-     * @throws XPathExpressionException
+     * @throws XPathException
      */
-    protected static String evalXPathString(Node node, String xPath) throws XPathExpressionException {
+    protected static String evalXPathString(Node node, String xPath) throws XPathException {
         XPathExpression expression = DOMUtil.compileXPathExpr(xPath, nc);
         return (String) expression.evaluate(node, XPathConstants.STRING);
     }
@@ -516,9 +533,9 @@ public class CSWRecordTransformer {
      * @param xPath
      *            A valid XPath expression
      * @return
-     * @throws XPathExpressionException
+     * @throws XPathException
      */
-    protected NodeList evalXPathNodeList(Node node, String xPath) throws XPathExpressionException {
+    protected NodeList evalXPathNodeList(Node node, String xPath) throws XPathException {
         XPathExpression expression = DOMUtil.compileXPathExpr(xPath, nc);
         return (NodeList) expression.evaluate(node, XPathConstants.NODESET);
     }
@@ -530,9 +547,9 @@ public class CSWRecordTransformer {
      * @param xPath
      *            A valid XPath expression
      * @return
-     * @throws XPathExpressionException
+     * @throws XPathException
      */
-    protected Node evalXPathNode(Node node, String xPath) throws XPathExpressionException {
+    protected Node evalXPathNode(Node node, String xPath) throws XPathException {
         XPathExpression expression = DOMUtil.compileXPathExpr(xPath, nc);
         return (Node) expression.evaluate(node, XPathConstants.NODE);
     }
@@ -573,9 +590,9 @@ public class CSWRecordTransformer {
      * Throws an exception if the internal template cannot be parsed correctly
      *
      * @return
-     * @throws XPathExpressionException
+     * @throws XPathException
      */
-    public CSWRecord transformToCSWRecord() throws XPathExpressionException {
+    public CSWRecord transformToCSWRecord() throws XPathException {
         return transformToCSWRecord(new CSWRecord("", "", "", "", new AbstractCSWOnlineResource[0],
                 new CSWGeographicElement[0]));
     }
@@ -586,9 +603,9 @@ public class CSWRecordTransformer {
      * Throws an exception if the internal template cannot be parsed correctly
      *
      * @return
-     * @throws XPathExpressionException
+     * @throws XPathException
      */
-    protected CSWRecord transformToCSWRecord(CSWRecord record) throws XPathExpressionException {
+    protected CSWRecord transformToCSWRecord(CSWRecord record) throws XPathException {
     	if (this.serverType == OgcServiceProviderType.PyCSW) {
     		return new PyCSWHelper().transform(record);
     	} else if (this.serverType == OgcServiceProviderType.GeoServer) {
@@ -626,9 +643,9 @@ public class CSWRecordTransformer {
         record.setResourceProvider(resourceProvider);
 
         String dateStampString = evalXPathString(this.mdMetadataNode, DATETIMESTAMPEXPRESSION);
+        SimpleDateFormat sdf = new SimpleDateFormat(DATEFORMATSTRING);
         if (dateStampString != null && !dateStampString.isEmpty()) {
             try {
-                SimpleDateFormat sdf = new SimpleDateFormat(DATEFORMATSTRING);
                 record.setDate(sdf.parse(dateStampString));
             } catch (Exception ex) {
                 logger.debug(String.format("Unable to parse date for serviceName='%1$s' %2$s", record.getServiceName(),
@@ -666,6 +683,28 @@ public class CSWRecordTransformer {
                 }
             }
             record.setCSWGeographicElements(elList.toArray(new CSWGeographicElement[elList.size()]));
+        }
+        
+        //Parse temporal extent (if it exists)
+        Node temporalNode = evalXPathNode(this.mdMetadataNode, TEMPORALEXTENTEXPRESSION);
+        if (temporalNode != null) {
+            try {
+            	sdf.applyPattern(DATETIMEFORMATSTRING);
+            	CSWTemporalExtent temporalExtent = new CSWTemporalExtent();
+            	String beginPos = (evalXPathString(temporalNode, "gml:beginPosition"));
+            	if(!StringUtils.isEmpty(beginPos)) {
+            		temporalExtent.setBeginPosition(sdf.parse(beginPos));
+            	}
+            	String endPos = (evalXPathString(temporalNode, "gml:endPosition"));
+            	if(!StringUtils.isEmpty(endPos)) {
+            		temporalExtent.setEndPosition(sdf.parse(endPos));
+            	}
+            	record.setTemporalExtent(temporalExtent);
+            } catch (Exception ex) {
+                logger.debug(String.format(
+                        "Unable to parse CSWTemporalExtent resource for serviceName='%1$s' %2$s",
+                        record.getServiceName(), ex));
+            }
         }
 
         //Parse the descriptive keywords
@@ -780,9 +819,9 @@ public class CSWRecordTransformer {
          * Tranform from mdMetadataNode to CSWRecord
          * @param record
          * @return
-         * @throws XPathExpressionException
+         * @throws XPathException
          */
-        public CSWRecord transform(CSWRecord record) throws XPathExpressionException {
+        public CSWRecord transform(CSWRecord record) throws XPathException {
         	
             NodeList tempNodeList = null;
 
@@ -848,6 +887,28 @@ public class CSWRecordTransformer {
                     }
                 }
                 record.setCSWGeographicElements(elList.toArray(new CSWGeographicElement[elList.size()]));
+            }
+            
+            //Parse temporal extent (if it exists)
+            Node temporalNode = evalXPathNode(mdMetadataNode, TEMPORALEXTENTEXPRESSION);
+            if (temporalNode != null) {
+                try {
+                	SimpleDateFormat sdf = new SimpleDateFormat(DATETIMEFORMATSTRING);
+                	CSWTemporalExtent temporalExtent = new CSWTemporalExtent();
+                	String beginPos = (evalXPathString(temporalNode, "gml:beginPosition"));
+                	if(!StringUtils.isEmpty(beginPos)) {
+                		temporalExtent.setBeginPosition(sdf.parse(beginPos));
+                	}
+                	String endPos = (evalXPathString(temporalNode, "gml:endPosition"));
+                	if(!StringUtils.isEmpty(endPos)) {
+                		temporalExtent.setEndPosition(sdf.parse(endPos));
+                	}
+                	record.setTemporalExtent(temporalExtent);
+                } catch (Exception ex) {
+                    logger.debug(String.format(
+                            "Unable to parse CSWTemporalExtent resource for serviceName='%1$s' %2$s",
+                            record.getServiceName(), ex));
+                }
             }
 
             //Parse the descriptive keywords
@@ -953,10 +1014,10 @@ public class CSWRecordTransformer {
          * @param expression
          * @param threddsLayerName
          * @return
-         * @throws XPathExpressionException
+         * @throws XPathException
          */
         private List<AbstractCSWOnlineResource> transformSrvNodes(CSWRecord record, String expression, String threddsLayerName) 
-    			throws XPathExpressionException{
+    			throws XPathException{
         	NodeList  tempNodeList = evalXPathNodeList(mdMetadataNode, expression);
         	List<AbstractCSWOnlineResource> resources = new ArrayList<>();
         	for (int i = 0; i < tempNodeList.getLength(); i++) {
@@ -988,9 +1049,9 @@ public class CSWRecordTransformer {
         /**
          * if the dataset is hosted in Thredds server and harvested into PyCSW, its layer name need special reading procedure.
          * @return
-         * @throws XPathExpressionException
+         * @throws XPathException
          */
-        private String getThreddsLayerName() throws XPathExpressionException {
+        private String getThreddsLayerName() throws XPathException {
         	NodeList tempNodeList = evalXPathNodeList(mdMetadataNode, THREDDSLAYERNAME);
         	if (tempNodeList != null && tempNodeList.getLength() > 0) {
         		for (int i = 0; i < tempNodeList.getLength(); i++) {
@@ -1019,9 +1080,9 @@ public class CSWRecordTransformer {
          * Tranform from mdMetadataNode to CSWRecord
          * @param record
          * @return
-         * @throws XPathExpressionException
+         * @throws XPathException
          */
-        public CSWRecord transform(CSWRecord record) throws XPathExpressionException {
+        public CSWRecord transform(CSWRecord record) throws XPathException {
             NodeList tempNodeList = null;
             
             //Parse our simple strings
@@ -1081,6 +1142,28 @@ public class CSWRecordTransformer {
                     }
                 }
                 record.setCSWGeographicElements(elList.toArray(new CSWGeographicElement[elList.size()]));
+            }
+            
+            //Parse temporal extent (if it exists)
+            Node temporalNode = evalXPathNode(mdMetadataNode, TEMPORALEXTENTEXPRESSION);
+            if (temporalNode != null) {
+                try {
+                	SimpleDateFormat sdf = new SimpleDateFormat(DATETIMEFORMATSTRING);
+                	CSWTemporalExtent temporalExtent = new CSWTemporalExtent();
+                	String beginPos = (evalXPathString(temporalNode, "gml:beginPosition"));
+                	if(!StringUtils.isEmpty(beginPos)) {
+                		temporalExtent.setBeginPosition(sdf.parse(beginPos));
+                	}
+                	String endPos = (evalXPathString(temporalNode, "gml:endPosition"));
+                	if(!StringUtils.isEmpty(endPos)) {
+                		temporalExtent.setEndPosition(sdf.parse(endPos));
+                	}
+                	record.setTemporalExtent(temporalExtent);
+                } catch (Exception ex) {
+                    logger.debug(String.format(
+                            "Unable to parse CSWTemporalExtent resource for serviceName='%1$s' %2$s",
+                            record.getServiceName(), ex));
+                }
             }
 
             //Parse the descriptive keywords
@@ -1185,9 +1268,9 @@ public class CSWRecordTransformer {
          * @param record
          * @param expression
          * @return
-         * @throws XPathExpressionException
+         * @throws XPathException
          */
-        private List<AbstractCSWOnlineResource> transformSrvNodes(CSWRecord record, String expression) throws XPathExpressionException{
+        private List<AbstractCSWOnlineResource> transformSrvNodes(CSWRecord record, String expression) throws XPathException{
         	NodeList  tempNodeList = evalXPathNodeList(mdMetadataNode, expression);
             List<AbstractCSWOnlineResource> resources = new ArrayList<>();
             for (int i = 0; i < tempNodeList.getLength(); i++) {
@@ -1210,9 +1293,9 @@ public class CSWRecordTransformer {
      * @param record
      * @param metaNode
      * @param logger
-     * @throws XPathExpressionException
+     * @throws XPathException
      */
-    public static void transformDate(CSWRecord record, Node metaNode, Log logger) throws XPathExpressionException {
+    public static void transformDate(CSWRecord record, Node metaNode, Log logger) throws XPathException {
         String dateStampString = evalXPathString(metaNode, DATETIMESTAMPEXPRESSION);
         if (dateStampString != null && !dateStampString.isEmpty()) {
             try {

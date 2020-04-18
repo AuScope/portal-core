@@ -1,5 +1,6 @@
 package org.auscope.portal.core.services.responses.wms;
 
+import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
@@ -19,46 +20,46 @@ public interface GetCapabilitiesWMSLayerRecord {
      * Gets the name.
      *
      * @return the name
-     * @throws XPathExpressionException
+     * @throws XPathException
      *             the x path expression exception
      */
-    public String getName() throws XPathExpressionException;
+    public String getName() throws XPathException;
 
     /**
      * Gets the title.
      *
      * @return the title
-     * @throws XPathExpressionException
+     * @throws XPathException
      *             the x path expression exception
      */
-    public String getTitle() throws XPathExpressionException;
+    public String getTitle() throws XPathException;
 
     /**
      * Gets the abstract.
      *
      * @return the abstract
-     * @throws XPathExpressionException
+     * @throws XPathException
      *             the x path expression exception
      */
-    public String getAbstract() throws XPathExpressionException;
+    public String getAbstract() throws XPathException;
 
     /**
      * Gets the metadata URL.
      *
      * @return the metadataURL
-     * @throws XPathExpressionException
+     * @throws XPathException
      *             the x path expression exception
      */
-    public String getMetadataURL() throws XPathExpressionException;
+    public String getMetadataURL() throws XPathException;
     
     /**
      * Gets the legendURL.
      *
      * @return the legendURL
-     * @throws XPathExpressionException
+     * @throws XPathException
      *             the x path expression exception
      */
-    public String getLegendURL() throws XPathExpressionException;
+    public String getLegendURL() throws XPathException;
     
     /**
      * Gets the bounding box.
@@ -66,15 +67,22 @@ public interface GetCapabilitiesWMSLayerRecord {
      * @return the bounding box
      */
     public CSWGeographicBoundingBox getBoundingBox();
+    
+    /**
+    * Gets the time extent, if it is present.
+    * 
+    * @return an array of time strings
+    */
+    public String[] getTimeExtent() throws XPathException;
 
     /**
      * Gets the child layer srs.
      *
      * @return the child layer srs
-     * @throws XPathExpressionException
+     * @throws XPathException
      *             the x path expression exception
      */
-    public String[] getChildLayerSRS() throws XPathExpressionException;
+    public String[] getChildLayerSRS() throws XPathException;
 
     /**
      * @see java.lang.Object#toString()

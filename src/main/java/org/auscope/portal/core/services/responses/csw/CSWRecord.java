@@ -65,7 +65,6 @@ public class CSWRecord {
     
     /** The access constraints. */
     private String[] accessConstraints;
-    
 
     /** The contact. */
     private CSWResponsibleParty contact;
@@ -75,6 +74,9 @@ public class CSWRecord {
 
     /** The data quality statement. */
     private String dataQualityStatement;
+    
+    /** The temporal extent of the record **/
+    private CSWTemporalExtent temporalExtent;
 
     /** The csw child records */
     private List<CSWRecord> childRecords = new ArrayList<>();
@@ -548,6 +550,25 @@ public class CSWRecord {
      */
     public void setDataQualityStatement(String dataQualityStatement) {
         this.dataQualityStatement = dataQualityStatement;
+    }
+    
+    /**
+     * Gets the temporal extent
+     * 
+     * @return the temporal extent
+     */
+    public CSWTemporalExtent getTemporalExtent() {
+    	return this.temporalExtent;
+    }
+    
+    /**
+     * Sets the temporal extent.
+     * 
+     * @param temporalExtent
+     * 			the new temporal extent
+     */
+    public void setTemporalExtent(CSWTemporalExtent temporalExtent) {
+    	this.temporalExtent = temporalExtent;
     }
 
     /**

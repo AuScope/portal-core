@@ -1,18 +1,20 @@
 package org.auscope.portal.core.services.responses.csw;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.xml.namespace.NamespaceContext;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathException;
+import javax.xml.xpath.XPathExpressionException;
+
 import org.auscope.portal.core.services.namespaces.IterableNamespace;
 import org.auscope.portal.core.util.DOMUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import javax.xml.namespace.NamespaceContext;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashSet;
-import java.util.Set;
 
 public class CSWGetDomainResponse {
 
@@ -42,7 +44,7 @@ public class CSWGetDomainResponse {
         return propertyName;
     }
 
-    public void setPropertyName(Document document) throws XPathExpressionException {
+    public void setPropertyName(Document document) throws XPathException {
         Node node = (Node) DOMUtil.compileXPathExpr(PROPERTY_NAME_EXPRESSION, nc).evaluate(document, XPathConstants.NODE);
         this.propertyName = node.getTextContent();
     }
@@ -51,7 +53,7 @@ public class CSWGetDomainResponse {
         return domainValues;
     }
 
-    public void setDomainValues(Document document) throws XPathExpressionException {
+    public void setDomainValues(Document document) throws XPathException {
 
 
         Set<String> values = new HashSet<String>();

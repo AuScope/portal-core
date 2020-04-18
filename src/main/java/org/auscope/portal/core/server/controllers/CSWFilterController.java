@@ -6,12 +6,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
 
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.URIBuilder;
 import org.auscope.portal.core.server.controllers.BaseCSWController;
 import org.auscope.portal.core.services.CSWFilterService;
 import org.auscope.portal.core.services.csw.CSWServiceItem;
-import org.auscope.portal.core.services.csw.custom.CustomRegistry;
 import org.auscope.portal.core.services.csw.custom.CustomRegistryInt;
 import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
 import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter;
