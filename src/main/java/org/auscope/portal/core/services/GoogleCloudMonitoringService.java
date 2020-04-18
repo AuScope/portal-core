@@ -44,7 +44,6 @@ public class GoogleCloudMonitoringService {
 	private String tokenUri;
 	private String projectId;
 
-	HttpRequest request;
 
     public GoogleCloudMonitoringService(GoogleCloudMonitoringMethodMaker methodMaker) {
         super();
@@ -113,16 +112,16 @@ public class GoogleCloudMonitoringService {
     	// {name} = projects%2Fgeoanalytics-tooling
     	// filter = metrics.type="monitoring.googleapis.com/uptime_check/check_passed"
     	// start_time and end_time in timestamp eg. 2020-03-02T15:01:23.045123456Z
-    	request = null;
-
         String responseString = null;
+        HttpRequest request = null;
         try {
             request = methodMaker.getTimeSeriesUptimeCheck(this.projectId, checkIds);
 
             request = this.setAuthorization(request);
 
             responseString = request.execute().parseAsString();
-        } catch (Exception ex) {
+
+        } catch(Exception ex) {
             throw new PortalServiceException(request.getUrl().toString(), "Unable to access Google Cloud Monitoring service", ex);
         }
 
@@ -130,7 +129,7 @@ public class GoogleCloudMonitoringService {
         return parseResponses(responseString);
     }
 
-    public HashMap<String, List<ServiceStatusResponse>> parseResponses(String responseString) throws PortalServiceException {
+	public HashMap<String, List<ServiceStatusResponse>> parseResponses(String responseString) throws PortalServiceException {
     	HashMap<String, List<ServiceStatusResponse>> parsedResponses = new HashMap<String, List<ServiceStatusResponse>>();
         try {
             JSONObject result = JSONObject.fromObject(responseString);

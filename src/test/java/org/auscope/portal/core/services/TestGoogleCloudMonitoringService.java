@@ -16,8 +16,7 @@ import java.util.Set;
 import org.auscope.portal.core.services.methodmakers.GoogleCloudMonitoringMethodMaker;
 import org.auscope.portal.core.services.responses.stackdriver.ServiceStatusResponse;
 import org.auscope.portal.core.test.PortalTestClass;
-import org.auscope.portal.core.test.ResourceUtil;
-import org.jmock.Expectations;
+import org.auscope.portal.core.util.ResourceUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,22 +30,15 @@ import com.google.api.client.http.HttpRequest;
  */
 public class TestGoogleCloudMonitoringService extends PortalTestClass {
 
-    private GoogleCloudMonitoringMethodMaker mockMethodMaker =  context.mock(GoogleCloudMonitoringMethodMaker.class);
-
     private GoogleCloudMonitoringCachedService service;
 
 
     @Before
     public void setup() {
-        service = new GoogleCloudMonitoringCachedService(mockMethodMaker);
+        service = new GoogleCloudMonitoringCachedService(new GoogleCloudMonitoringMethodMaker());
 
         // loaded from auscope portal env.properties
-        service.setClientEmail("serviceaccount@email.com");
-        service.setClientId("12345");
-        service.setPrivateKey("-----BEGIN PRIVATE KEY-----\\nsecretprivatekeystring\\n-----END PRIVATE KEY-----");
-        service.setPrivateKeyId("privatekeyid");
         service.setProjectId("auscope-siss");
-        service.setTokenUri("https://oauth2.googleapis.com/token");
 
         // loaded from auscope portal applicationContext.xml
         HashMap<String, List<String>> servicesMap = new HashMap<String, List<String>>();
@@ -60,7 +52,7 @@ public class TestGoogleCloudMonitoringService extends PortalTestClass {
     @Test
     public void testGoogleCloudMonitoringMethodMaker() throws URISyntaxException, IOException {
 
-    	HttpRequest request = mockMethodMaker.getTimeSeriesUptimeCheck(service.getProjectId(),
+    	HttpRequest request = new GoogleCloudMonitoringMethodMaker().getTimeSeriesUptimeCheck(service.getProjectId(),
     			service.getServicesMap().get("EarthResourcesLayers"));
     	String[] urlParts = request.getUrl().toString().split("&");
     	assertEquals(urlParts.length, 3);
@@ -84,38 +76,13 @@ public class TestGoogleCloudMonitoringService extends PortalTestClass {
     }
 
     @Test
-    public void testSetAuthorization() throws URISyntaxException, IOException, PortalServiceException {
-    	HttpRequest request = service.setAuthorization(
-    			mockMethodMaker.getTimeSeriesUptimeCheck(service.getProjectId(),
-    			    service.getServicesMap().get("EarthResourcesLayers")));
-    	// make sure it generates expected access token
-    	assertEquals("Bearer : ", request.getHeaders().getAuthorization());
-
-    	// but then it will fail because this login details is fake
-    	// so may as well test authorization failure
-    	boolean portalServiceExceptionThrown = false;
-    	try {
-    	    service.getStatuses("EarthResourcesLayers");
-    	} catch (PortalServiceException e) {
-    		assertEquals(e.getCause(), null);
-    		portalServiceExceptionThrown = true;
-    	}
-    	assertEquals(true, portalServiceExceptionThrown);
-    }
-
-    @Test
-    public void testGetStatusesSuccessful() throws IOException, PortalServiceException {
+    public void testGetStatusesSuccessful() throws IOException, PortalServiceException, URISyntaxException {
     	final String responseString = ResourceUtil.loadResourceAsString(
     			"org/auscope/portal/core/test/responses/stackdriver/stackdriver-timeseries-success.json");
 
-        context.checking(new Expectations() {
-            {
-                oneOf(service.request).execute().toString();
-                will(returnValue(responseString));
-            }
-        });
-        // test responses and then test caching
-        Map<String, List<ServiceStatusResponse>> responses = service.getStatuses("EarthResourcesLayers");
+    	// test responses
+        Map<String, List<ServiceStatusResponse>> responses = service.parseResponses(responseString);
+
         Set<String> failingHosts = new HashSet<String>();
         for (Entry<String, List<ServiceStatusResponse>> entry : responses.entrySet()) {
         	for (ServiceStatusResponse status : entry.getValue()) {
@@ -138,24 +105,16 @@ public class TestGoogleCloudMonitoringService extends PortalTestClass {
     }
 
     @Test
-    public void testGetStatusesError() throws IOException {
+    public void testGetStatusesError() throws IOException, URISyntaxException {
     	final String responseString = ResourceUtil.loadResourceAsString(
     			"org/auscope/portal/core/test/responses/stackdriver/stackdriver-timeseries-fail.json");
-
-    	context.checking(new Expectations() {
-            {
-                oneOf(service.request).execute().toString();
-                will(returnValue(responseString));
-            }
-        });
-
     	boolean exceptionThrown = false;
     	try {
-    	    service.getStatuses("EarthResourcesLayers");
+    		service.parseResponses(responseString);
     	} catch (PortalServiceException e) {
     		exceptionThrown = true;
-    		assertEquals("Response reports failure:400 - The provided filter matches more than one metric.\n"
-    				+ "TimeSeries data are limited to a single metric per request.", true);
+    		assertEquals("Response reports failure:400 - The provided filter matches more than one metric. "
+    				+ "TimeSeries data are limited to a single metric per request.", e.getCause().getMessage());
     	}
     	assertEquals(true, exceptionThrown);
     }
