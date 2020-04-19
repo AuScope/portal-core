@@ -94,12 +94,15 @@ public class TestBaseCSWController extends PortalTestClass {
         final HashMap<String, List<ServiceStatusResponse>> servGroup1Response = new HashMap<String, List<ServiceStatusResponse>>();
         final HashMap<String, List<ServiceStatusResponse>> servGroup2Response = new HashMap<String, List<ServiceStatusResponse>>();
 
-        servGroup1Response.put("host.name.1", Arrays.asList(new ServiceStatusResponse(true, "minoccview"), new ServiceStatusResponse(true, "erMine")));
-        servGroup1Response.put("host.name.2", Arrays.asList(new ServiceStatusResponse(true, "erMineralOccurrence")));
+        servGroup1Response.put("host.name.1", Arrays.asList(new ServiceStatusResponse(true, "getfeatureminoccview"),
+        		new ServiceStatusResponse(true, "wfsgetcaps")));
+        servGroup1Response.put("host.name.2", Arrays.asList(new ServiceStatusResponse(true, "getfeatureminoccview")));
 
-        servGroup2Response.put("host.name.2", Arrays.asList(new ServiceStatusResponse(false, "boreholeview"), new ServiceStatusResponse(false, "borehole")));
-        servGroup2Response.put("host.name.3", Arrays.asList(new ServiceStatusResponse(true, "boreholeview"), new ServiceStatusResponse(false, "borehole")));
-        servGroup2Response.put("host.name.4", Arrays.asList(new ServiceStatusResponse(false, "boreholeview")));
+        servGroup2Response.put("host.name.2", Arrays.asList(new ServiceStatusResponse(false, "getfeatureboreholeview"),
+        		new ServiceStatusResponse(false, "wfsgetcaps")));
+        servGroup2Response.put("host.name.3", Arrays.asList(new ServiceStatusResponse(true, "getfeatureboreholeview"),
+        		new ServiceStatusResponse(false, "wfsgetcaps")));
+        servGroup2Response.put("host.name.4", Arrays.asList(new ServiceStatusResponse(false, "getfeatureboreholeview")));
 
         context.checking(new Expectations() {{
             oneOf(mockStackDriverService).getStatuses("ERML");will(returnValue(servGroup1Response));
@@ -111,14 +114,18 @@ public class TestBaseCSWController extends PortalTestClass {
         List<ModelMap> data = (List<ModelMap>) mav.getModelMap().get("data");
         Assert.assertEquals(4, data.size());
 
+        //servGroup1
         Assert.assertFalse(data.get(0).containsKey("stackdriverFailingHosts"));
+        //servGroup2
         Assert.assertTrue(data.get(1).containsKey("stackdriverFailingHosts"));
         List<String> failingHosts = (List<String>) data.get(1).get("stackdriverFailingHosts");
         Assert.assertEquals(3, failingHosts.size());
         Assert.assertEquals("host.name.2", failingHosts.get(0));
         Assert.assertEquals("host.name.3", failingHosts.get(1));
         Assert.assertEquals("host.name.4", failingHosts.get(2));
+        //servGroup3
         Assert.assertFalse(data.get(2).containsKey("stackdriverFailingHosts"));
+        //servGroup4
         Assert.assertFalse(data.get(3).containsKey("stackdriverFailingHosts"));
     }
 
