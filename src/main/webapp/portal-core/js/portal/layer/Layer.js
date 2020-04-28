@@ -42,7 +42,7 @@ Ext.define('portal.layer.Layer', {
     /**
      * Utility function for concatenating all online resources stored in all
      * CSWRecords and returning the result as an Array. Online resources
-     * that are sourced from a known layer with defined nagiosFailingHosts
+     * that are sourced from a known layer with defined stackdriverFailingHosts
      * that are "known failing" will be omitted. To force the inclusion of
      * all online resources set includeFailingHosts to true.
      *
@@ -53,7 +53,7 @@ Ext.define('portal.layer.Layer', {
         var failingHosts = null;
         if (!includeFailingHosts) {
             if (this.get('sourceType') === portal.layer.Layer.KNOWN_LAYER) {
-                failingHosts = this.get('source').get('nagiosFailingHosts');
+                failingHosts = this.get('source').get('stackdriverFailingHosts');
             }
         }
         

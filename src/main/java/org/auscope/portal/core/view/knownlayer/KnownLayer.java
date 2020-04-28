@@ -80,13 +80,10 @@ public class KnownLayer implements Serializable {
     /** A URL to use to grab a canned legend graphic for the layer (optional). */
     private String staticLegendUrl;
 
-    /** If specified, the name/id of a Nagios host group whose status reflects the availability of this known layer */
-    private String nagiosHostGroup;
-
-    /** If specified, the name/id of a Nagios host group whose status reflects the availability of this known layer */
-    private String nagiosServiceGroup;
-
     private FilterCollection filterCollection;
+
+    /** If specified, the service group to match the check_id in Google Monitoring uptime checks */
+	private String stackdriverServiceGroup;
     /**
      * Creates a new KnownLayer
      *
@@ -397,20 +394,12 @@ public class KnownLayer implements Serializable {
         this.staticLegendUrl = staticLegendUrl;
     }
 
-    public String getNagiosHostGroup() {
-        return nagiosHostGroup;
+    public void setStackdriverServiceGroup(String serviceGroup) {
+    	this.stackdriverServiceGroup = serviceGroup;
     }
 
-    public void setNagiosHostGroup(String nagiosHostGroup) {
-        this.nagiosHostGroup = nagiosHostGroup;
-    }
-
-    public String getNagiosServiceGroup() {
-        return nagiosServiceGroup;
-    }
-
-    public void setNagiosServiceGroup(String nagiosServiceGroup) {
-        this.nagiosServiceGroup = nagiosServiceGroup;
+    public String getStackdriverServiceGroup() {
+    	return this.stackdriverServiceGroup;
     }
 
     /* (non-Javadoc)

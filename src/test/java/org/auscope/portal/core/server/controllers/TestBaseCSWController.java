@@ -6,13 +6,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import org.auscope.portal.core.services.Nagios4CachedService;
+import org.auscope.portal.core.services.GoogleCloudMonitoringCachedService;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
 import org.auscope.portal.core.services.responses.csw.CSWOnlineResourceImpl;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
-import org.auscope.portal.core.services.responses.nagios.ServiceStatusResponse;
-import org.auscope.portal.core.services.responses.nagios.ServiceStatusResponse.Status;
+import org.auscope.portal.core.services.responses.stackdriver.ServiceStatusResponse;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.view.ViewCSWRecordFactory;
 import org.auscope.portal.core.view.ViewKnownLayerFactory;
@@ -41,14 +40,14 @@ public class TestBaseCSWController extends PortalTestClass {
     }
 
     private BaseCSWControllerImpl baseController = new BaseCSWControllerImpl(new ViewCSWRecordFactory(), new ViewKnownLayerFactory());
-    private Nagios4CachedService mockNagiosService = context.mock(Nagios4CachedService.class);
+    private GoogleCloudMonitoringCachedService mockStackDriverService = context.mock(GoogleCloudMonitoringCachedService.class);
 
     /**
-     * Tests that TestBaseCSWController properly encodes nagios responses
+     * Tests that TestBaseCSWController properly encodes stackdriver responses
      * @throws Exception
      */
     @Test
-    public void testNagiosErrorHandling() throws Exception {
+    public void testStackdriverErrorHandling() throws Exception {
         CSWOnlineResourceImpl or1 = new CSWOnlineResourceImpl(new URL("http://host.name.1"), null, "Host Name 1", null);
         CSWOnlineResourceImpl or2 = new CSWOnlineResourceImpl(new URL("http://host.name.2"), null, "Host Name 2", null);
         CSWOnlineResourceImpl or3 = new CSWOnlineResourceImpl(new URL("http://host.name.3"), null, "Host Name 3", null);
@@ -83,42 +82,51 @@ public class TestBaseCSWController extends PortalTestClass {
                 return RelationType.NotRelated;
             }
         });
-        kl1.setNagiosHostGroup("hg1");
-        kl2.setNagiosHostGroup("hg2");
-        kl4.setNagiosHostGroup("hg4");
+        kl1.setStackdriverServiceGroup("ERML");
+        kl2.setStackdriverServiceGroup("NVCL");
+        kl4.setStackdriverServiceGroup("Tenements");
         List<KnownLayerAndRecords> knownLayers = Arrays.asList(
                 new KnownLayerAndRecords(kl1, Arrays.asList(new CSWRecord[]{mockBelongingRecord}), new ArrayList<CSWRecord>()),
                 new KnownLayerAndRecords(kl2, Arrays.asList(new CSWRecord[]{mockBelongingRecord}), new ArrayList<CSWRecord>()),
                 new KnownLayerAndRecords(kl3, Arrays.asList(new CSWRecord[]{mockBelongingRecord}), new ArrayList<CSWRecord>()),
                 new KnownLayerAndRecords(kl4, Arrays.asList(new CSWRecord[]{mockBelongingRecord}), new ArrayList<CSWRecord>()));
 
-        final HashMap<String, List<ServiceStatusResponse>> hg1Response = new HashMap<String, List<ServiceStatusResponse>>();
-        final HashMap<String, List<ServiceStatusResponse>> hg2Response = new HashMap<String, List<ServiceStatusResponse>>();
+        final HashMap<String, List<ServiceStatusResponse>> servGroup1Response = new HashMap<String, List<ServiceStatusResponse>>();
+        final HashMap<String, List<ServiceStatusResponse>> servGroup2Response = new HashMap<String, List<ServiceStatusResponse>>();
 
-        hg1Response.put("host.name.1", Arrays.asList(new ServiceStatusResponse(Status.ok, "hg1.serv1"), new ServiceStatusResponse(Status.ok, "hg1.serv2")));
-        hg1Response.put("host.name.2", Arrays.asList(new ServiceStatusResponse(Status.ok, "hg1.serv3")));
+        servGroup1Response.put("host.name.1", Arrays.asList(new ServiceStatusResponse(true, "getfeatureminoccview"),
+        		new ServiceStatusResponse(true, "wfsgetcaps")));
+        servGroup1Response.put("host.name.2", Arrays.asList(new ServiceStatusResponse(true, "getfeatureminoccview")));
 
-        hg2Response.put("host.name.3", Arrays.asList(new ServiceStatusResponse(Status.ok, "hg2.serv1"), new ServiceStatusResponse(Status.warning, "hg2.serv2")));
-        hg2Response.put("host.name.4", Arrays.asList(new ServiceStatusResponse(Status.critical, "hg2.serv3"), new ServiceStatusResponse(Status.critical, "hg2.serv4")));
+        servGroup2Response.put("host.name.2", Arrays.asList(new ServiceStatusResponse(false, "getfeatureboreholeview"),
+        		new ServiceStatusResponse(false, "wfsgetcaps")));
+        servGroup2Response.put("host.name.3", Arrays.asList(new ServiceStatusResponse(true, "getfeatureboreholeview"),
+        		new ServiceStatusResponse(false, "wfsgetcaps")));
+        servGroup2Response.put("host.name.4", Arrays.asList(new ServiceStatusResponse(false, "getfeatureboreholeview")));
 
         context.checking(new Expectations() {{
-            oneOf(mockNagiosService).getStatuses("hg1", null);will(returnValue(hg1Response));
-            oneOf(mockNagiosService).getStatuses("hg2", null);will(returnValue(hg2Response));
-            oneOf(mockNagiosService).getStatuses("hg4", null);will(throwException(new PortalServiceException("hg4 error")));
+            oneOf(mockStackDriverService).getStatuses("ERML");will(returnValue(servGroup1Response));
+            oneOf(mockStackDriverService).getStatuses("NVCL");will(returnValue(servGroup2Response));
+            oneOf(mockStackDriverService).getStatuses("Tenements");will(throwException(new PortalServiceException("tenements error")));
         }});
 
-        ModelAndView mav = baseController.generateKnownLayerResponse(knownLayers, mockNagiosService);
+        ModelAndView mav = baseController.generateKnownLayerResponse(knownLayers, mockStackDriverService);
         List<ModelMap> data = (List<ModelMap>) mav.getModelMap().get("data");
         Assert.assertEquals(4, data.size());
 
-        Assert.assertFalse(data.get(0).containsKey("nagiosFailingHosts"));
-        Assert.assertTrue(data.get(1).containsKey("nagiosFailingHosts"));
-        List<String> failingHosts = (List<String>) data.get(1).get("nagiosFailingHosts");
-        Assert.assertEquals(2, failingHosts.size());
-        Assert.assertEquals("host.name.3", failingHosts.get(0));
-        Assert.assertEquals("host.name.4", failingHosts.get(1));
-        Assert.assertFalse(data.get(2).containsKey("nagiosFailingHosts"));
-        Assert.assertFalse(data.get(3).containsKey("nagiosFailingHosts"));
+        //servGroup1
+        Assert.assertFalse(data.get(0).containsKey("stackdriverFailingHosts"));
+        //servGroup2
+        Assert.assertTrue(data.get(1).containsKey("stackdriverFailingHosts"));
+        List<String> failingHosts = (List<String>) data.get(1).get("stackdriverFailingHosts");
+        Assert.assertEquals(3, failingHosts.size());
+        Assert.assertEquals("host.name.2", failingHosts.get(0));
+        Assert.assertEquals("host.name.3", failingHosts.get(1));
+        Assert.assertEquals("host.name.4", failingHosts.get(2));
+        //servGroup3
+        Assert.assertFalse(data.get(2).containsKey("stackdriverFailingHosts"));
+        //servGroup4
+        Assert.assertFalse(data.get(3).containsKey("stackdriverFailingHosts"));
     }
 
 

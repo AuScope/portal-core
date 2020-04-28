@@ -1,8 +1,7 @@
 package org.auscope.portal.core.server.controllers;
 
-import org.auscope.portal.core.server.controllers.BaseCSWController;
+import org.auscope.portal.core.services.GoogleCloudMonitoringCachedService;
 import org.auscope.portal.core.services.KnownLayerService;
-import org.auscope.portal.core.services.Nagios4CachedService;
 import org.auscope.portal.core.view.ViewCSWRecordFactory;
 import org.auscope.portal.core.view.ViewKnownLayerFactory;
 import org.auscope.portal.core.view.knownlayer.KnownLayerGrouping;
@@ -25,7 +24,7 @@ public class KnownLayerController extends BaseCSWController {
     /** Used for converting data to something the view can understand */
     private ViewKnownLayerFactory viewKnownLayerFactory;
 
-    private Nagios4CachedService nagios4CachedService = null;
+    private GoogleCloudMonitoringCachedService stackDriverCachedService = null;
 
     @Autowired
     public KnownLayerController(KnownLayerService knownLayerService,
@@ -34,8 +33,8 @@ public class KnownLayerController extends BaseCSWController {
         this.knownLayerService = knownLayerService;
     }
     @Autowired(required = false)
-    public void setNagios4CachedService(Nagios4CachedService nagios4CachedService) {
-        this.nagios4CachedService = nagios4CachedService;
+    public void setCachedService(GoogleCloudMonitoringCachedService service) {
+        this.stackDriverCachedService = service;
     }
     /**
      * Gets a JSON response which contains the representations of each and every "KnownFeatureTypeDefinition".
@@ -47,8 +46,8 @@ public class KnownLayerController extends BaseCSWController {
     @RequestMapping("getKnownLayers.do")
     public ModelAndView getKnownLayers() {
         KnownLayerGrouping grouping = knownLayerService.groupKnownLayerRecords();
-        if (nagios4CachedService != null) {
-            return generateKnownLayerResponse(grouping.getKnownLayers(), nagios4CachedService);
+        if (stackDriverCachedService != null) {
+            return generateKnownLayerResponse(grouping.getKnownLayers(), stackDriverCachedService);
         } else {
             return generateKnownLayerResponse(grouping.getKnownLayers());
         }

@@ -45,8 +45,8 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
         this.problemHosts = [];
         if (cfg.parentRecord && 
             cfg.parentRecord instanceof portal.knownlayer.KnownLayer && 
-            cfg.parentRecord.containsNagiosFailures()) {
-            this.problemHosts = cfg.parentRecord.get('nagiosFailingHosts');
+            cfg.parentRecord.containsStackdriverFailures()) {
+            this.problemHosts = cfg.parentRecord.get('stackdriverFailingHosts');
         }
 
         //We allow the owner to specify additional columns
