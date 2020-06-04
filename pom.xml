@@ -356,7 +356,7 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk</artifactId>
-            <version>1.11.396</version>
+            <version>1.11.700</version>
         </dependency>
         <dependency>
             <groupId>taglibs</groupId>
@@ -549,7 +549,7 @@
         <dependency>
           <groupId>org.apache.jena</groupId>
           <artifactId>jena-arq</artifactId>
-          <version>3.9.0</version>
+          <version>3.13.0</version>
           <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
