@@ -511,8 +511,7 @@
         <dependency>
             <groupId>edu.ucar</groupId>
             <artifactId>netcdf</artifactId>
-            <version>4.3.16</version>
-        <!--     <version>4.3.22</version>  -->
+            <version>4.3.22</version>
             <optional>false</optional>
         </dependency>
         <dependency>
