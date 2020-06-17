@@ -1,6 +1,9 @@
 package org.auscope.portal.core.cloud;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Represents a single virtual machine image that can be used for spawning worker instances.
@@ -25,6 +28,8 @@ public class MachineImage implements Serializable {
     private Integer minimumDiskGB;
     /** The (possibly null) run command that should be used to execute python scripts. If null, most providers will default to 'python'*/
     private String runCommand;
+    /** A set of optional String annotations for image and/or provider specific metadata. */
+    private Set<String> annotations;
 
     /**
      * Creates a new VglMachineImage object
@@ -36,6 +41,7 @@ public class MachineImage implements Serializable {
         this.imageId = imageId;
         this.name = imageId;
         this.keywords = new String[0];
+        this.annotations = new HashSet<String>();
     }
 
     /**
@@ -61,6 +67,21 @@ public class MachineImage implements Serializable {
      */
     public void setRunCommand(String runCommand) {
         this.runCommand = runCommand;
+    }
+
+    /**
+     * A set of optional String annotations for image and/or provider specific metadata.
+     */
+    public Set<String> getAnnotations() {
+        return this.annotations;
+    }
+
+    /**
+     * A set of optional String annotations for image and/or provider specific metadata.
+     */
+    public void setAnnotations(Collection<String> annotations) {
+        this.annotations.clear();
+        this.annotations.addAll(annotations);
     }
 
     /**
