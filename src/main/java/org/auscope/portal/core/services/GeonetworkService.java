@@ -2,6 +2,7 @@ package org.auscope.portal.core.services;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -161,7 +162,7 @@ public class GeonetworkService {
             throw new PortalServiceException(e.getMessage(),e);
         }
         try (HttpClientResponse gnResponse = serviceCaller.getMethodResponseAsHttpResponse(methodLogin)) {
-            gnResponseString = IOUtils.toString(gnResponse.getEntity().getContent());
+            gnResponseString = IOUtils.toString(gnResponse.getEntity().getContent(), StandardCharsets.UTF_8);
             logger.debug(String.format("GN Login response: %1$s", gnResponseString));
             if (!gnResponseString.contains("<ok />")) {
                 throw new PortalServiceException("Geonetwork login failed");

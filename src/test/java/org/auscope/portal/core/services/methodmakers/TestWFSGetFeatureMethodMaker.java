@@ -2,6 +2,7 @@ package org.auscope.portal.core.services.methodmakers;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -57,7 +58,7 @@ public class TestWFSGetFeatureMethodMaker extends PortalTestClass {
             //Post methods involve deciphering the POST body
             HttpEntity entity = ((HttpPost) wfsRequest).getEntity();
             if (entity instanceof StringEntity) {
-                String content = IOUtils.toString((((StringEntity) entity).getContent()));
+                String content = IOUtils.toString((((StringEntity) entity).getContent()), StandardCharsets.UTF_8);
 
                 //Assert that we can parse the contents into a DOM document (ie our XML is valid)
                 Assert.assertNotNull(DOMUtil.buildDomFromString(content));

@@ -3,7 +3,7 @@ package org.auscope.portal.core.server.http;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
+import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -117,7 +117,7 @@ public class TestHttpServiceCaller extends PortalTestClass {
 //                "</wfs:GetFeature>";
 
         //Assert.assertEquals(expectedPost, thePost.toString());
-        String out = IOUtils.toString(method.getEntity().getContent());
+        String out = IOUtils.toString(method.getEntity().getContent(), StandardCharsets.UTF_8);
         Assert.assertTrue("Bad WFS namespace", out.contains("xmlns:wfs=\"http://www.opengis.net/wfs\""));
         Assert.assertTrue("Bad OGC namespace", out.contains("xmlns:ogc=\"http://www.opengis.net/ogc\""));
         Assert.assertTrue("Bad GML namespace", out.contains("xmlns:gml=\"http://www.opengis.net/gml\""));

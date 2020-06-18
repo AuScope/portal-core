@@ -14,7 +14,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.configuration.ServiceConfiguration;
-import org.auscope.portal.core.server.controllers.DownloadController;
 import org.auscope.portal.core.server.http.HttpClientResponse;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.server.http.download.MyHttpResponse;
