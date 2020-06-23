@@ -2,10 +2,7 @@ package org.auscope.portal.core.server.controllers;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FilterInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.ConnectException;
 import java.util.Arrays;
 import java.util.List;
@@ -16,7 +13,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.auscope.portal.core.server.http.download.DownloadResponse;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.util.FileIOUtil;
-import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.ui.ModelMap;

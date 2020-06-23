@@ -2,6 +2,7 @@ package org.auscope.portal.core.services.methodmakers;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -66,7 +67,7 @@ public class TestCSWMethodMakerGetDataRecords extends PortalTestClass {
         Assert.assertNotNull(method);
 
         Assert.assertTrue(method instanceof HttpPost); //we want this to be sent via post in case we get a large filter
-        String postBody = IOUtils.toString(((HttpPost) method).getEntity().getContent());
+        String postBody = IOUtils.toString(((HttpPost) method).getEntity().getContent(), StandardCharsets.UTF_8);
 
         Assert.assertTrue(postBody.contains(String.format("maxRecords=\"%1$s\"", maxRecords)));
         Assert.assertTrue(postBody.contains(String.format("resultType=\"results\"")));
@@ -93,7 +94,7 @@ public class TestCSWMethodMakerGetDataRecords extends PortalTestClass {
 
         Assert.assertTrue(method instanceof HttpPost); //we want this to be sent via post in case we get a large filter
 
-        String postBody = IOUtils.toString(((HttpPost) method).getEntity().getContent());
+        String postBody = IOUtils.toString(((HttpPost) method).getEntity().getContent(), StandardCharsets.UTF_8);
 
         Assert.assertTrue(postBody.contains(String.format("maxRecords=\"%1$s\"", maxRecords)));
         Assert.assertTrue(postBody.contains(String.format("resultType=\"hits\"")));
@@ -124,7 +125,7 @@ public class TestCSWMethodMakerGetDataRecords extends PortalTestClass {
         //Test POST
         HttpRequestBase method = methodMaker.makeMethod(uri, mockFilter, ResultType.Results, maxRecords, OgcServiceProviderType.Default);
         Assert.assertNotNull(method);
-        String postBody = IOUtils.toString(((HttpPost) method).getEntity().getContent());
+        String postBody = IOUtils.toString(((HttpPost) method).getEntity().getContent(), StandardCharsets.UTF_8);
         Assert.assertTrue(postBody.contains(String.format("version=\"2.0.2\"")));
         Assert.assertTrue(postBody.contains(String.format("outputSchema=\"http://www.isotc211.org/2005/gmd\"")));
         // for OgcServiceProviderType.Default, typeNames is gmd:MD_Metadata
@@ -172,7 +173,7 @@ public class TestCSWMethodMakerGetDataRecords extends PortalTestClass {
         Assert.assertNotNull(method);
 
         Assert.assertTrue(method instanceof HttpPost); //we want this to be sent via post in case we get a large filter
-        String postBody = IOUtils.toString(((HttpPost) method).getEntity().getContent());
+        String postBody = IOUtils.toString(((HttpPost) method).getEntity().getContent(), StandardCharsets.UTF_8);
 
         Assert.assertTrue(postBody.contains("typeNames=\"csw:Record\""));
         // method decorateFilterString should replace the envelope srsName for PyCSW request
@@ -218,7 +219,7 @@ public class TestCSWMethodMakerGetDataRecords extends PortalTestClass {
         Assert.assertNotNull(method);
 
         Assert.assertTrue(method instanceof HttpPost); //we want this to be sent via post in case we get a large filter
-        String postBody = IOUtils.toString(((HttpPost) method).getEntity().getContent());
+        String postBody = IOUtils.toString(((HttpPost) method).getEntity().getContent(), StandardCharsets.UTF_8);
 
         Assert.assertTrue(postBody.contains("<csw:Query typeNames=\"gmd:MD_Metadata\""));
         // method decorateFilterString should replace the bounding box property name for Geoserver only!

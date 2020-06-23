@@ -9,7 +9,7 @@ import java.net.URLDecoder;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.httpclient.HttpStatus;
+import org.apache.http.HttpStatus;
 import org.auscope.portal.core.server.controllers.BasePortalController;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker;

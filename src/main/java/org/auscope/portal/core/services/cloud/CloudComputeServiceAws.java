@@ -14,7 +14,7 @@ import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.httpclient.HttpStatus;
+import org.apache.http.HttpStatus;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

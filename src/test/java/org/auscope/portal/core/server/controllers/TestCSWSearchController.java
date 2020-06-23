@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.auscope.portal.core.server.controllers.CSWSearchController;
 import org.auscope.portal.core.services.CSWCacheService;
 import org.auscope.portal.core.services.CSWFilterService;
 import org.auscope.portal.core.services.LocalCSWFilterService;

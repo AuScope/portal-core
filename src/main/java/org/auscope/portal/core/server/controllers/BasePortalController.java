@@ -5,7 +5,7 @@ import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
-import org.apache.commons.io.Charsets;
+import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -235,7 +235,7 @@ public abstract class BasePortalController {
             HttpEntity entity = ((HttpPost) request).getEntity();
             if (entity instanceof StringEntity) {
                 try {
-                    debugInfo.put("info", IOUtils.toString(((StringEntity) entity).getContent(), Charsets.UTF_8));
+                    debugInfo.put("info", IOUtils.toString(((StringEntity) entity).getContent(), StandardCharsets.UTF_8));
                 } catch (IOException e) {
                     log.error(e.toString());
                 }

@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.auscope.portal.core.server.controllers.CSWFilterController;
 import org.auscope.portal.core.services.CSWFilterService;
 import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.csw.custom.CustomRegistryInt;

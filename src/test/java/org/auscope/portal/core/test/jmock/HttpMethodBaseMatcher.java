@@ -2,6 +2,7 @@ package org.auscope.portal.core.test.jmock;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
@@ -112,7 +113,7 @@ public class HttpMethodBaseMatcher extends TypeSafeMatcher<HttpRequestBase> {
             if (entity instanceof StringEntity) {
                 String content = "";
                 try {
-                    content = IOUtils.toString(((StringEntity) entity).getContent());
+                    content = IOUtils.toString(((StringEntity) entity).getContent(), StandardCharsets.UTF_8);
                 } catch (IOException e) {
                     e.printStackTrace();
                     return false;

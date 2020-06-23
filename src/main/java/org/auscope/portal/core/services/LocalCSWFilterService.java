@@ -9,8 +9,6 @@ import java.util.concurrent.Executor;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.auscope.portal.core.services.CSWFilterService;
-import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.csw.SearchFacet;
 import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;

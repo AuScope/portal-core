@@ -32,8 +32,6 @@ public class TestCSWRecordTransformer extends PortalTestClass {
     private CSWRecord[] records;
     private Document doc;
 
-    private static final String xmlnsUri = "http://www.w3.org/2000/xmlns/";
-
     private XPathExpression exprGetAllMetadataNodes;
     private XPathExpression exprGetFirstMetadataNode;
 

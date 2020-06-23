@@ -5,16 +5,15 @@ import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
+import java.nio.charset.StandardCharsets;
 
-import org.apache.commons.httpclient.ConnectTimeoutException;
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -89,7 +88,7 @@ public class HttpServiceCaller {
      * @throws IOException
      */
     public String getMethodResponseAsString(HttpRequestBase method) throws ConnectException, UnknownHostException,
-        ConnectTimeoutException, IOException {
+        IOException {
         return getMethodResponseAsString(method, (CredentialsProvider) null);
     }
 
@@ -105,7 +104,7 @@ public class HttpServiceCaller {
      * @throws IOException
      */
     public String getMethodResponseAsString(HttpRequestBase method, CredentialsProvider credentialsProvider) throws ConnectException, UnknownHostException,
-            ConnectTimeoutException, IOException {
+            IOException {
         try (CloseableHttpClient httpClient = generateClient(credentialsProvider)) {
             return getMethodResponseAsString(method, httpClient);
         }
@@ -274,7 +273,9 @@ public class HttpServiceCaller {
      * @throws IllegalStateException
      */
     private HttpResponse invokeTheMethod(HttpRequestBase method, HttpClient client) throws IOException {
-        if(client==null) throw new IllegalArgumentException("HttpClient must not be null");
+        if (client==null) {
+            throw new IllegalArgumentException("HttpClient must not be null");
+        }
 
         log.debug("method=" + method.getURI());
 
@@ -284,7 +285,7 @@ public class HttpServiceCaller {
                 HttpEntity body = ((HttpPost) method).getEntity();
                 byte[] dataHead =  new byte[(int) Math.min(MAX_POST_BODY_LOGGING, body.getContentLength())];
                 IOUtils.read(body.getContent(), dataHead);
-                String content = new String(dataHead, Charsets.UTF_8);
+                String content = new String(dataHead, StandardCharsets.UTF_8);
                 log.trace("Outgoing POST body (UTF-8): " + content);
             }
         }
@@ -292,9 +293,10 @@ public class HttpServiceCaller {
         // make the call
         HttpResponse response = client.execute(method);
 
-        int statusCode = response.getStatusLine().getStatusCode();
-        String statusCodeText = HttpStatus.getStatusText(statusCode);
-        log.trace("Status code text: '"+statusCodeText+"'");
+        StatusLine statusLine = response.getStatusLine();
+        int statusCode = statusLine.getStatusCode();
+        String statusCodeText =statusLine.getReasonPhrase();
+        log.trace("Status code text: '" + statusCodeText + "'");
 
         if (statusCode != HttpStatus.SC_OK &&
                 statusCode != HttpStatus.SC_CREATED &&
@@ -310,7 +312,7 @@ public class HttpServiceCaller {
                 String responseBody = responseToString(response.getEntity().getContent());
                 log.trace("Returned response body: " + responseBody);
             }
-            throw new HttpException(statusCodeText);
+            throw new IOException(statusCodeText);
         } else {
             return response;
         }
@@ -325,7 +327,7 @@ public class HttpServiceCaller {
      */
     private String responseToString(InputStream stream) throws IOException {
         try {
-            return IOUtils.toString(stream);
+            return IOUtils.toString(stream, StandardCharsets.UTF_8);
         } finally {
             stream.close();
         }
