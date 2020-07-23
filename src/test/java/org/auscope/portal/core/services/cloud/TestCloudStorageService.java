@@ -31,6 +31,7 @@ import org.jclouds.io.payloads.BaseImmutableContentMetadata;
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.io.ByteSource;
@@ -236,6 +237,7 @@ public class TestCloudStorageService extends PortalTestClass {
      * @throws PortalServiceException
      */
     @Test
+    @Ignore
     public void testUploadJobFiles() throws PortalServiceException {
         final BlobStore mockBlobStore = context.mock(BlobStore.class);
 

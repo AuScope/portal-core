@@ -3,8 +3,11 @@ package org.auscope.portal.core.util;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
+import net.sf.cglib.core.Local;
 import org.auscope.portal.core.test.PortalTestClass;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,13 +20,24 @@ import org.junit.Test;
 public class TestDateUtil extends PortalTestClass {
     Date d1 = null;
     Date d2 = null;
+    Locale original;
 
     @Before
     public void setup() {
+        // Match locale on Amazon Linux
+        original = Locale.getDefault();
+        Locale.setDefault(Locale.US);
+
         Calendar cal1 = new GregorianCalendar(2013, 2, 5, 12, 00, 00);
         Calendar cal2 = new GregorianCalendar(2013, 2, 5, 12, 00, 45);
         d1 = cal1.getTime();
         d2 = cal2.getTime();
+    }
+
+    @After
+    public void teardown() {
+        // Reset locale
+        Locale.setDefault(original);
     }
 
     /**

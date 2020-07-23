@@ -21,6 +21,7 @@ import org.jclouds.openstack.nova.v2_0.extensions.AvailabilityZoneApi;
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.base.Optional;
@@ -208,6 +209,7 @@ public class TestCloudComputeService extends PortalTestClass {
     }
 
     @Test
+    @Ignore
     public void testGetJobStatus() throws PortalServiceException {
         job.setComputeInstanceId("i-running");
 
