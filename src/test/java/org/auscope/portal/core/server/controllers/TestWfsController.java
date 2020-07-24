@@ -7,13 +7,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.controllers.WFSController;
 import org.auscope.portal.core.services.PortalServiceException;
+import org.auscope.portal.core.services.WFSGml32Service;
+import org.auscope.portal.core.services.WFSService;
 import org.auscope.portal.core.services.methodmakers.filter.SimplePropertyFilter;
 import org.auscope.portal.core.services.responses.wfs.WFSCountResponse;
 import org.auscope.portal.core.services.responses.wfs.WFSResponse;
 import org.auscope.portal.core.services.responses.wfs.WFSTransformedResponse;
 import org.auscope.portal.core.test.ByteBufferedServletOutputStream;
 import org.auscope.portal.core.test.PortalTestClass;
-import org.auscope.portal.core.services.WFSService;
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Before;
@@ -38,11 +39,13 @@ public class TestWfsController extends PortalTestClass {
 
     private WFSService mockWfsService = context.mock(WFSService.class);
 
+    private WFSGml32Service mockWfs32Service = context.mock(WFSGml32Service.class);
+
     private HttpServletResponse mockResponse = context.mock(HttpServletResponse.class);
 
     @Before
     public void setUp() {
-        wfsController = new WFSController(mockWfsService);
+        wfsController = new WFSController(mockWfsService, mockWfs32Service);
     }
 
     /**

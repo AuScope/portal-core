@@ -15,6 +15,7 @@ import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WMSMethodMakerInterface;
 import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord;
+import org.auscope.portal.core.xslt.GmlToHtml;
 
 /**
  * Service class providing functionality for interacting with a Web Map Service
@@ -29,11 +30,14 @@ public class WMSService {
 
     protected List<WMSMethodMakerInterface> listOfSupportedWMSMethodMaker;
 
+	private GmlToHtml gmlToHtml;
+
     // ----------------------------------------------------------- Constructors
-    public WMSService(HttpServiceCaller serviceCaller, List<WMSMethodMakerInterface> methodMaker) {
+    public WMSService(HttpServiceCaller serviceCaller, List<WMSMethodMakerInterface> methodMaker,
+    		GmlToHtml gmlToHtml) {
         this.serviceCaller = serviceCaller;
         this.listOfSupportedWMSMethodMaker = methodMaker;
-
+        this.gmlToHtml = gmlToHtml;
     }
 
     // ------------------------------------------- Property Setters and Getters
@@ -212,5 +216,9 @@ public class WMSService {
         methodMaker = getSupportedMethodMaker(url, version);
         String sldBody = methodMaker.getStyle(sldUrl);
         return sldBody;
+    }
+
+    public String transform(String document, String url) {
+    	return this.gmlToHtml.convert(document, url);
     }
 }

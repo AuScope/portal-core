@@ -545,4 +545,15 @@ public class WMSController extends BaseCSWController {
         return style;
     }
 
+
+    @RequestMapping(value="transformToHtmlPopup.do", method = {RequestMethod.GET, RequestMethod.POST})
+    public void transformToHtml(HttpServletResponse response, @RequestParam("gml") String gml) throws Exception {
+    	String responseString;
+    	if (gml != null) {
+            responseString = wmsService.transform(gml, null);
+        	InputStream responseStream = new ByteArrayInputStream(responseString.getBytes());
+            FileIOUtil.writeInputToOutputStream(responseStream, response.getOutputStream(), BUFFERSIZE, true);
+    	}
+    }
+
 }

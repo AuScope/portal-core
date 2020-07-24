@@ -21,6 +21,7 @@ import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord_1_1_
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesWMSLayerRecord;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.util.ResourceUtil;
+import org.auscope.portal.core.xslt.GmlToHtml;
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Before;
@@ -47,7 +48,7 @@ public class TestWMSService extends PortalTestClass {
         mockMethodMaker = context.mock(WMSMethodMaker.class);
         mockMethod = context.mock(HttpRequestBase.class);
         methodMaker.add(mockMethodMaker);
-        service = new WMSService(mockServiceCaller, methodMaker);
+        service = new WMSService(mockServiceCaller, methodMaker, new GmlToHtml());
     }
 
     /**

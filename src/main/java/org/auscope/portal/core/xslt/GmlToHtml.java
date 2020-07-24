@@ -18,9 +18,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class GmlToHtml extends PortalXSLTTransformer {
 
-    public GmlToHtml() {
-        super("/org/auscope/portal/core/xslt/WfsToHtml.xsl");
-    }
+	private String portalBackendUrl;
+
+	public GmlToHtml(String url) {
+		super("/org/auscope/portal/core/xslt/WfsToHtml.xsl");
+		this.portalBackendUrl = url;
+	}
+
+	public GmlToHtml() {
+	    super("/org/auscope/portal/core/xslt/WfsToHtml.xsl");
+	}
 
     /**
      * Utility method to transform a WFS response into HTML
@@ -59,7 +66,13 @@ public class GmlToHtml extends PortalXSLTTransformer {
      */
     public String convert(StreamSource wfs, String serviceUrl) {
         Properties stylesheetParams = new Properties();
-        stylesheetParams.setProperty("serviceUrl", serviceUrl);
+        if (serviceUrl != null) {
+        	// this is only used for Yilgarn...
+            stylesheetParams.setProperty("serviceUrl", serviceUrl);
+        }
+        if (this.portalBackendUrl != null) {
+            stylesheetParams.setProperty("portalBaseURL", this.portalBackendUrl);
+        }
         return convert(wfs, stylesheetParams);
     }
 }
