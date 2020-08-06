@@ -33,7 +33,6 @@ public class TestCSWRecordTransformer extends PortalTestClass {
     private Document doc;
 
     private XPathExpression exprGetAllMetadataNodes;
-    private XPathExpression exprGetFirstMetadataNode;
 
     private void setUpForResponse(final String responseResourceName) throws ParserConfigurationException, SAXException,
     IOException, XPathException {
@@ -41,8 +40,6 @@ public class TestCSWRecordTransformer extends PortalTestClass {
         final CSWNamespaceContext nc = new CSWNamespaceContext();
         exprGetAllMetadataNodes = DOMUtil.compileXPathExpr("/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata",
                 nc);
-        exprGetFirstMetadataNode = DOMUtil.compileXPathExpr(
-                "/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata[1]", nc);
 
         // load CSW record response document
         doc = DOMUtil.buildDomFromStream(ResourceUtil.loadResourceAsStream(responseResourceName));

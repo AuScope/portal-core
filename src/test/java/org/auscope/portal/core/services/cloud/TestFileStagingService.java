@@ -147,13 +147,9 @@ public class TestFileStagingService extends PortalTestClass {
 
             //Test file contents
             if (expectedData != null) {
-                FileInputStream fis = null;
-                try {
-                    fis = new FileInputStream(stageInFile);
+                try (FileInputStream fis = new FileInputStream(stageInFile)) {
                     byte[] actualData = IOUtils.toByteArray(fis);
                     Assert.assertArrayEquals(expectedData, actualData);
-                } finally {
-                    IOUtils.closeQuietly(fis);
                 }
             }
 

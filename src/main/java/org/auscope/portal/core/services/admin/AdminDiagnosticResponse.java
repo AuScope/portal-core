@@ -12,7 +12,9 @@ import java.util.List;
  *
  */
 public class AdminDiagnosticResponse implements Serializable {
-    /** Any useful pieces of info relating to the operation */
+	private static final long serialVersionUID = 2704553967372350261L;
+	
+	/** Any useful pieces of info relating to the operation */
     private List<String> details;
     /** Any (non critical) problems that occurred during the operation */
     private List<String> warnings;

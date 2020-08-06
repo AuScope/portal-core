@@ -15,17 +15,12 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.compute.options.NovaTemplateOptions;
-import org.jclouds.openstack.nova.v2_0.domain.zonescoped.AvailabilityZone;
-import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ZoneState;
-import org.jclouds.openstack.nova.v2_0.extensions.AvailabilityZoneApi;
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.common.base.Optional;
 import com.shaded.google.common.base.Predicate;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
 
 public class TestCloudComputeService extends PortalTestClass {
@@ -36,17 +31,10 @@ public class TestCloudComputeService extends PortalTestClass {
     private final Template mockTemplate = context.mock(Template.class);
     private final NodeMetadata mockMetadata = context.mock(NodeMetadata.class);
     private final NovaApi mockNovaApi = context.mock(NovaApi.class);
-    private final AvailabilityZoneApi mockAZA = context.mock(AvailabilityZoneApi.class);
-    private final AvailabilityZone mockAvailZone = context.mock(AvailabilityZone.class, "mockAvailZone");
-    private final AvailabilityZone mockAvailZone2 = context.mock(AvailabilityZone.class, "mockAvailZone2");
-    private final ZoneState mockZoneState = context.mock(ZoneState.class);
-    private final FluentIterable<?> mockAvailZoneList = context.mock(FluentIterable.class);
     private final Predicate<NodeMetadata> mockFilter = context.mock(Predicate.class);
     private final RunNodesException mockException = context.mock(RunNodesException.class);
 
     private CloudComputeServiceNectar service;
-
-    private Optional<? extends AvailabilityZoneApi> mockOptAZA = context.mock(Optional.class);
 
     private CloudJob job;
 

@@ -20,7 +20,9 @@ import org.w3c.dom.Node;
  *
  */
 public class SimpleTimePeriod implements TemporalDomain {
-    private Date beginPosition;
+	private static final long serialVersionUID = 2445025919342477115L;
+	
+	private Date beginPosition;
     private Date endPosition;
     private String type;
 

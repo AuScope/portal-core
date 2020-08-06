@@ -13,7 +13,9 @@ import org.springframework.security.core.userdetails.User;
  */
 public class PortalUser extends User {
 
-    private String fullName;
+	private static final long serialVersionUID = -429197062076808168L;
+	
+	private String fullName;
     private String email;
 
     /**

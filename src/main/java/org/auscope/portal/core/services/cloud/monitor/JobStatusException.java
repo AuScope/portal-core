@@ -15,7 +15,9 @@ import org.auscope.portal.core.cloud.CloudJob;
  *
  */
 public class JobStatusException extends Exception {
-    List<Throwable> exceptions;
+	private static final long serialVersionUID = -7545429028086868801L;
+	
+	List<Throwable> exceptions;
     List<CloudJob> cloudJobs;
 
     public JobStatusException(Throwable t, CloudJob job) {

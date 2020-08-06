@@ -20,7 +20,7 @@ import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 public class TestGeonetworkService extends PortalTestClass {
 

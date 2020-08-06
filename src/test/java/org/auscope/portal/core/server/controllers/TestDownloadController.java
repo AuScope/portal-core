@@ -300,8 +300,7 @@ public class TestDownloadController extends PortalTestClass {
 
         // check that the zip file contains the correct data
         ZipInputStream zipInputStream = servletOutputStream.getZipInputStream();
-        ZipEntry ze = null;
-        while ((ze = zipInputStream.getNextEntry()) != null) {
+        while (zipInputStream.getNextEntry() != null) {
             ByteArrayOutputStream fout = new ByteArrayOutputStream();
             for (int c = zipInputStream.read(); c != -1; c = zipInputStream
                     .read()) {
@@ -364,8 +363,7 @@ public class TestDownloadController extends PortalTestClass {
 
         // check that the zip file contains the correct data
         ZipInputStream zipInputStream = servletOutputStream.getZipInputStream();
-        ZipEntry ze = null;
-        while ((ze = zipInputStream.getNextEntry()) != null) {
+        while (zipInputStream.getNextEntry() != null) {
 
             ByteArrayOutputStream fout = new ByteArrayOutputStream();
             for (int c = zipInputStream.read(); c != -1; c = zipInputStream

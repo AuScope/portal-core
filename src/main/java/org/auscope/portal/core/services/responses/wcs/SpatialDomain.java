@@ -18,7 +18,9 @@ import org.w3c.dom.NodeList;
  *
  */
 public class SpatialDomain implements Serializable {
-    public SimpleEnvelope[] envelopes;
+	private static final long serialVersionUID = -3424132932995678591L;
+	
+	public SimpleEnvelope[] envelopes;
     public RectifiedGrid rectifiedGrid;
 
     /**

@@ -3,10 +3,6 @@ package org.auscope.portal.core.services;
 import org.apache.jena.rdf.model.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.auscope.portal.core.server.http.HttpServiceCaller;
-import org.auscope.portal.core.services.methodmakers.VocabularyMethodMaker;
-import org.auscope.portal.core.services.namespaces.VocabNamespaceContext;
 import org.auscope.portal.core.services.vocabs.VocabularyServiceItem;
 
 import java.net.URISyntaxException;
@@ -28,7 +24,7 @@ public class VocabularyCacheService {
     protected boolean updateRunning;
 
     public VocabularyCacheService(Executor executor,
-                                  ArrayList serviceList) {
+                                  ArrayList<VocabularyServiceItem> serviceList) {
         this.executor = executor;
         this.serviceList = serviceList;
 

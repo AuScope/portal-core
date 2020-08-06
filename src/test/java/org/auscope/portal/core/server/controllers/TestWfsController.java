@@ -179,7 +179,7 @@ public class TestWfsController extends PortalTestClass {
         Integer dataObj = (Integer) modelAndView.getModel().get("data");
         Assert.assertTrue((Boolean) modelAndView.getModel().get("success"));
         Assert.assertNotNull(dataObj);
-        Assert.assertEquals(new Integer(featureCount), dataObj);
+        Assert.assertEquals(Integer.valueOf(featureCount), dataObj);
     }
 
     /**

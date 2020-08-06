@@ -13,7 +13,6 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.io.IOUtils;
 import org.auscope.portal.core.services.responses.ows.OWSException;
 import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
 import org.w3c.dom.Document;
@@ -24,7 +23,7 @@ public class DOMResponseUtil {
 
     public static int getNumberOfFeatures(InputStream gsmlResponse, NamespaceContext namespace) throws IOException, OWSException {
 
-        try {
+        try (gsmlResponse) {
             DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
             domFactory.setNamespaceAware(true); // never forget this!
             DocumentBuilder builder = domFactory.newDocumentBuilder();
@@ -43,8 +42,6 @@ public class DOMResponseUtil {
             throw new IOException(e.getMessage(), e);
         } catch (XPathExpressionException e) {
             throw new OWSException(e.getMessage(), e);
-        } finally {
-            IOUtils.closeQuietly(gsmlResponse);
         }
 
     }

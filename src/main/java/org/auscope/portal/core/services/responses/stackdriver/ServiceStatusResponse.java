@@ -11,7 +11,9 @@ import java.io.Serializable;
  */
 public class ServiceStatusResponse implements Serializable {
 
-    private boolean uptimeCheck;
+	private static final long serialVersionUID = 5744725809945393740L;
+	
+	private boolean uptimeCheck;
     private String serviceName;
 
     public ServiceStatusResponse(boolean passedCheck, String serviceName) {

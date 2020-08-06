@@ -27,7 +27,8 @@ import com.amazonaws.services.ec2.model.InstanceState;
 
 public class TestCloudComputeServiceAws extends PortalTestClass{
 
-    private class TestableJob extends CloudJob {
+    @SuppressWarnings("serial")
+	private class TestableJob extends CloudJob {
         // empty
     }
 
