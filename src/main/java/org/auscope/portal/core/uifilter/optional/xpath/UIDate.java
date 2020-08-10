@@ -3,8 +3,6 @@ package org.auscope.portal.core.uifilter.optional.xpath;
 import org.auscope.portal.core.uifilter.Predicate;
 
 
-import net.sf.json.JSONObject;
-
 public class UIDate extends AbstractXPathFilter{
 
     private static final String TYPE ="OPTIONAL.DATE";

@@ -408,13 +408,13 @@ public class TestLocalCSWFilterService extends PortalTestClass {
         Assert.assertNotNull(response.getRecords());
         Assert.assertNotNull(response.getStartIndexes());
 
-        Assert.assertEquals(new Integer(8), response.getNextIndexes().get("service1"));
-        Assert.assertEquals(new Integer(0), response.getNextIndexes().get("service2"));
-        Assert.assertEquals(new Integer(0), response.getNextIndexes().get("service3"));
+        Assert.assertEquals(Integer.valueOf(8), response.getNextIndexes().get("service1"));
+        Assert.assertEquals(Integer.valueOf(0), response.getNextIndexes().get("service2"));
+        Assert.assertEquals(Integer.valueOf(0), response.getNextIndexes().get("service3"));
 
-        Assert.assertEquals(new Integer(1), response.getStartIndexes().get("service1"));
-        Assert.assertEquals(new Integer(100), response.getStartIndexes().get("service2"));
-        Assert.assertEquals(new Integer(10), response.getStartIndexes().get("service3"));
+        Assert.assertEquals(Integer.valueOf(1), response.getStartIndexes().get("service1"));
+        Assert.assertEquals(Integer.valueOf(100), response.getStartIndexes().get("service2"));
+        Assert.assertEquals(Integer.valueOf(10), response.getStartIndexes().get("service3"));
 
         String[] expectedRecordOrdering = new String[] {"s1rec1","s3rec1","s1rec2","s3rec2","s1rec3","s3rec3","s1rec4","s3rec4","s1rec5","s1rec6","s1rec7"};
         Assert.assertEquals(expectedRecordOrdering.length, response.getRecords().size());
@@ -512,13 +512,13 @@ public class TestLocalCSWFilterService extends PortalTestClass {
         Assert.assertNotNull(response.getRecords());
         Assert.assertNotNull(response.getStartIndexes());
 
-        Assert.assertEquals(new Integer(0), response.getNextIndexes().get("service1"));
-        Assert.assertEquals(new Integer(0), response.getNextIndexes().get("service2"));
-        Assert.assertEquals(new Integer(0), response.getNextIndexes().get("service3"));
+        Assert.assertEquals(Integer.valueOf(0), response.getNextIndexes().get("service1"));
+        Assert.assertEquals(Integer.valueOf(0), response.getNextIndexes().get("service2"));
+        Assert.assertEquals(Integer.valueOf(0), response.getNextIndexes().get("service3"));
 
-        Assert.assertEquals(new Integer(1), response.getStartIndexes().get("service1"));
-        Assert.assertEquals(new Integer(100), response.getStartIndexes().get("service2"));
-        Assert.assertEquals(new Integer(10), response.getStartIndexes().get("service3"));
+        Assert.assertEquals(Integer.valueOf(1), response.getStartIndexes().get("service1"));
+        Assert.assertEquals(Integer.valueOf(100), response.getStartIndexes().get("service2"));
+        Assert.assertEquals(Integer.valueOf(10), response.getStartIndexes().get("service3"));
 
         String[] expectedRecordOrdering = new String[] {"s1rec1","s3rec1","s1rec2","s3rec2","s1rec3","s3rec3","s1rec4","s1rec5"};
         Assert.assertEquals(expectedRecordOrdering.length, response.getRecords().size());
@@ -600,13 +600,13 @@ public class TestLocalCSWFilterService extends PortalTestClass {
         Assert.assertNotNull(response.getRecords());
         Assert.assertNotNull(response.getStartIndexes());
 
-        Assert.assertEquals(new Integer(0), response.getNextIndexes().get("service1"));
-        Assert.assertEquals(new Integer(0), response.getNextIndexes().get("service2"));
-        Assert.assertEquals(new Integer(0), response.getNextIndexes().get("service3"));
+        Assert.assertEquals(Integer.valueOf(0), response.getNextIndexes().get("service1"));
+        Assert.assertEquals(Integer.valueOf(0), response.getNextIndexes().get("service2"));
+        Assert.assertEquals(Integer.valueOf(0), response.getNextIndexes().get("service3"));
 
-        Assert.assertEquals(new Integer(1), response.getStartIndexes().get("service1"));
-        Assert.assertEquals(new Integer(100), response.getStartIndexes().get("service2"));
-        Assert.assertEquals(new Integer(10), response.getStartIndexes().get("service3"));
+        Assert.assertEquals(Integer.valueOf(1), response.getStartIndexes().get("service1"));
+        Assert.assertEquals(Integer.valueOf(100), response.getStartIndexes().get("service2"));
+        Assert.assertEquals(Integer.valueOf(10), response.getStartIndexes().get("service3"));
 
         Assert.assertEquals(0, response.getRecords().size());
     }
@@ -722,13 +722,13 @@ public class TestLocalCSWFilterService extends PortalTestClass {
         Assert.assertNotNull(response.getRecords());
         Assert.assertNotNull(response.getStartIndexes());
 
-        Assert.assertEquals(new Integer(7), response.getNextIndexes().get("service1"));
-        Assert.assertEquals(new Integer(0), response.getNextIndexes().get("service2"));
-        Assert.assertEquals(new Integer(0), response.getNextIndexes().get("service3"));
+        Assert.assertEquals(Integer.valueOf(7), response.getNextIndexes().get("service1"));
+        Assert.assertEquals(Integer.valueOf(0), response.getNextIndexes().get("service2"));
+        Assert.assertEquals(Integer.valueOf(0), response.getNextIndexes().get("service3"));
 
-        Assert.assertEquals(new Integer(1), response.getStartIndexes().get("service1"));
-        Assert.assertEquals(new Integer(100), response.getStartIndexes().get("service2"));
-        Assert.assertEquals(new Integer(10), response.getStartIndexes().get("service3"));
+        Assert.assertEquals(Integer.valueOf(1), response.getStartIndexes().get("service1"));
+        Assert.assertEquals(Integer.valueOf(100), response.getStartIndexes().get("service2"));
+        Assert.assertEquals(Integer.valueOf(10), response.getStartIndexes().get("service3"));
 
         Assert.assertEquals(10, response.getRecords().size());
         Assert.assertEquals("s1rec1", response.getRecords().get(0).getFileIdentifier());

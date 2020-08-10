@@ -82,7 +82,7 @@ public class Resolution {
      */
     @Override
     public int hashCode() {
-        return new Double(x).hashCode() ^ new Double(y).hashCode();
+        return Double.valueOf(x).hashCode() ^ Double.valueOf(y).hashCode();
     }
 
 }

@@ -61,17 +61,21 @@ public class DownloadController extends BasePortalController {
             response.setContentType("application/zip");
 
             boolean csvSign = false;
-            ZipFile downloadZip = new ZipFile(downloadTracker.getFileHandle().getAbsolutePath());
-            Enumeration zipEntries = downloadZip.entries();
-            while (zipEntries.hasMoreElements()) {
-                String fileName = ((ZipEntry) zipEntries.nextElement()).getName();
-                if (fileName.contains("csv"))
-                {
-                    csvSign = true;
-                    break;
+            ZipFile downloadZip = null;
+            try {
+            	downloadZip = new ZipFile(downloadTracker.getFileHandle().getAbsolutePath());
+            	Enumeration<? extends ZipEntry> zipEntries = downloadZip.entries();
+                while (zipEntries.hasMoreElements()) {
+                    String fileName = ((ZipEntry) zipEntries.nextElement()).getName();
+                    if (fileName.contains("csv"))
+                    {
+                        csvSign = true;
+                        break;
+                    }
                 }
+            } finally {
+            	downloadZip.close();
             }
-
             if (csvSign == false)
                 response.setHeader("Content-Disposition",
                     "inline; filename=GMLDownload.zip;");

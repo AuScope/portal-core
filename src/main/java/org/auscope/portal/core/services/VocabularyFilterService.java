@@ -1,11 +1,8 @@
 package org.auscope.portal.core.services;
 
 import org.apache.jena.rdf.model.*;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.services.VocabularyCacheService;
 import org.auscope.portal.core.services.namespaces.VocabNamespaceContext;
-import org.springframework.stereotype.Service;
 
 import java.util.*;
 
@@ -14,8 +11,6 @@ import java.util.*;
  * Filters are either selectors on resources or properties, and also find narrower relationships with specified resources
  */
 public class VocabularyFilterService {
-
-    private final Log log = LogFactory.getLog(getClass());
 
     private VocabularyCacheService vocabularyCacheService;
 

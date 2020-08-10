@@ -275,7 +275,6 @@ public class TestCSWCacheService extends PortalTestClass {
         final Sequence t2Sequence = context.sequence("t2Sequence");
         final Sequence t3Sequence = context.sequence("t3Sequence");
 
-        final int totalRequestsMade = CONCURRENT_THREADS_TO_RUN + 1;
         try (final HttpClientInputStream t1r1 = new HttpClientInputStream(new ByteArrayInputStream(moreRecordsString.getBytes()), null);
                 final HttpClientInputStream t1r2 = new HttpClientInputStream(new ByteArrayInputStream(noMoreRecordsString.getBytes()), null);
                 final HttpClientInputStream t3r1 = new HttpClientInputStream(new ByteArrayInputStream(moreRecordsString.getBytes()), null);
@@ -788,7 +787,7 @@ public class TestCSWCacheService extends PortalTestClass {
             Map<String, Set<CSWRecord>> actualKeywordCache = this.cswCacheService.getKeywordCache();
             for (String keyword : expectedResult.keySet()) {
                 int actualCount = actualKeywordCache.get(keyword) == null ? 0 : actualKeywordCache.get(keyword).size();
-                Assert.assertEquals(keyword, expectedResult.get(keyword), new Integer(actualCount));
+                Assert.assertEquals(keyword, expectedResult.get(keyword), Integer.valueOf(actualCount));
             }
         }
     }

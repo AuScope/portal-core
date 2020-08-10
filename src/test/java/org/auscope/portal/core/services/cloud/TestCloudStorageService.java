@@ -247,7 +247,8 @@ public class TestCloudStorageService extends PortalTestClass {
         final PayloadBlobBuilder mockBuilder1 = context.mock(PayloadBlobBuilder.class, "mockBuilder1");
         final PayloadBlobBuilder mockBuilder2 = context.mock(PayloadBlobBuilder.class, "mockBuilder2");
 
-        final File[] mockFiles = new File[] {
+        @SuppressWarnings("serial")
+		final File[] mockFiles = new File[] {
                 new File("mockFile1") {
                     @Override
                     public String getName() {
@@ -406,12 +407,12 @@ public class TestCloudStorageService extends PortalTestClass {
      */
     @Test
     public void testBaseKeyNoSubstrings() {
-        CloudJob jobBase = new CloudJob(new Integer(5));
+        CloudJob jobBase = new CloudJob(Integer.valueOf(5));
         CloudJob[] jobsToTest = new CloudJob[] {
-                new CloudJob(new Integer(50)),
-                new CloudJob(new Integer(52)),
-                new CloudJob(new Integer(500)),
-                new CloudJob(new Integer(500000000)),
+                new CloudJob(Integer.valueOf(50)),
+                new CloudJob(Integer.valueOf(52)),
+                new CloudJob(Integer.valueOf(500)),
+                new CloudJob(Integer.valueOf(500000000)),
         };
 
         for (int i = 0; i < jobsToTest.length; i++) {

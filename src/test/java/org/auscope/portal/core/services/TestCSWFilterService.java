@@ -41,7 +41,6 @@ public class TestCSWFilterService extends PortalTestClass {
 
     private static final String IDFORMATSTRING = "id:%1$s";
     private static final String SERVICEURLFORMATSTRING = "http://cswservice.%1$s.url/";
-    private static final String PROPERTYNAME = "Subject";
 
     /**
      * Initialises each of our unit tests with a new CSWFilterService

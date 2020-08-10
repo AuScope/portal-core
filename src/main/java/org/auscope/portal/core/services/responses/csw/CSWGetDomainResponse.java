@@ -8,7 +8,6 @@ import java.util.Set;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathException;
-import javax.xml.xpath.XPathExpressionException;
 
 import org.auscope.portal.core.services.namespaces.IterableNamespace;
 import org.auscope.portal.core.util.DOMUtil;

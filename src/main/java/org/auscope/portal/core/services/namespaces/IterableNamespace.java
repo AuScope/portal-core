@@ -64,7 +64,7 @@ public abstract class IterableNamespace implements NamespaceContext {
      * @see javax.xml.namespace.NamespaceContext#getPrefixes(java.lang.String)
      */
     @Override
-    public Iterator getPrefixes(String namespace) {
+    public Iterator<String> getPrefixes(String namespace) {
         throw new NotImplementedException();
     }
 

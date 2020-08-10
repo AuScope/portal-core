@@ -11,7 +11,9 @@ import java.io.Serializable;
  *
  */
 public class MachineImage implements Serializable {
-    /** The unique id of the cloud image - will be used for spawning instances of this image */
+	private static final long serialVersionUID = -2005086055711041647L;
+	
+	/** The unique id of the cloud image - will be used for spawning instances of this image */
     private String imageId;
     /** Descriptive short name of this image */
     private String name;

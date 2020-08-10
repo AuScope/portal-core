@@ -30,15 +30,15 @@ public class Interval implements ValueEnumType {
 
         Node tempNode = (Node) DOMUtil.compileXPathExpr("wcs:min", nc).evaluate(node, XPathConstants.NODE);
         if (tempNode != null)
-            min = new Double(tempNode.getTextContent());
+            min = Double.valueOf(tempNode.getTextContent());
 
         tempNode = (Node) DOMUtil.compileXPathExpr("wcs:max", nc).evaluate(node, XPathConstants.NODE);
         if (tempNode != null)
-            max = new Double(tempNode.getTextContent());
+            max = Double.valueOf(tempNode.getTextContent());
 
         tempNode = (Node) DOMUtil.compileXPathExpr("wcs:resolution", nc).evaluate(node, XPathConstants.NODE);
         if (tempNode != null)
-            resolution = new Double(tempNode.getTextContent());
+            resolution = Double.valueOf(tempNode.getTextContent());
     }
 
     @Override

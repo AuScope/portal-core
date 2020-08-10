@@ -1,10 +1,7 @@
 package org.auscope.portal.core.uifilter;
 
 import java.util.List;
-
 import org.auscope.portal.core.uifilter.mandatory.AbstractMandatoryParamBinding;
-import org.auscope.portal.core.uifilter.mandatory.UIHiddenParam;
-import org.auscope.portal.core.uifilter.optional.xpath.AbstractXPathFilter;
 
 public class FilterCollection {
 

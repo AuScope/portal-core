@@ -276,7 +276,7 @@ public class WFSController extends BasePortalController {
             return generateExceptionResponse(ex, serviceUrl);
         }
 
-        return generateJSONResponseMAV(true, new Integer(response.getNumberOfFeatures()), "");
+        return generateJSONResponseMAV(true, Integer.valueOf(response.getNumberOfFeatures()), "");
     }
 
     /**

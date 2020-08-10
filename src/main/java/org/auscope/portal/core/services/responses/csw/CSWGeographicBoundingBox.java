@@ -189,11 +189,6 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
             eastBoundLongitudeExpr = DOMUtil.compileXPathExpr("gmd:northBoundLatitude",  nc);
             northBoundLatitudeExpr = DOMUtil.compileXPathExpr("gmd:eastBoundLongitude", nc);
             southBoundLatitudeExpr = DOMUtil.compileXPathExpr("gmd:westBoundLongitude", nc);
-
-            double west = (Double) westBoundLongitudeExpr.evaluate(node, XPathConstants.NUMBER);
-            double east = (Double) eastBoundLongitudeExpr.evaluate(node, XPathConstants.NUMBER);
-            double south = (Double) southBoundLatitudeExpr.evaluate(node, XPathConstants.NUMBER);
-            double north = (Double) northBoundLatitudeExpr.evaluate(node, XPathConstants.NUMBER);
             
             //logger.info("extracted values: " + west + "," + east + "," + south + "," + north);
         }

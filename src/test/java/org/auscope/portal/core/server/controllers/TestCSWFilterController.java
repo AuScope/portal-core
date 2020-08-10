@@ -61,7 +61,6 @@ public class TestCSWFilterController extends PortalTestClass {
      */
     @Test
     public void testGetFilteredRecords() throws Exception {
-        final String anyText = "any-text";
         final String cswServiceId = "my-csw-service-id";
         final double east = 0.1;
         final double west = 5.5;
@@ -144,7 +143,6 @@ public class TestCSWFilterController extends PortalTestClass {
      */
     @Test
     public void testGetFilteredRecordsError() throws Exception {
-        final String anyText = "any-text";
         final String cswServiceId = "my-csw-service-id";
         final double east = 0.1;
         final double west = 5.5;
@@ -576,11 +574,6 @@ public class TestCSWFilterController extends PortalTestClass {
      */
     @Test
     public void testGetFilteredCSWKeywordsEmptyCSWID() throws Exception {
-
-        final String[] cswServiceIds = {"serviceIdDNE"};
-        final ArrayList<CSWRecord> list = new ArrayList<CSWRecord>();
-        final CSWGetRecordResponse filteredResponse = context.mock(CSWGetRecordResponse.class, "cswResponse1");
-
         ModelAndView mav = controller.getFilteredCSWKeywords(null, "");
         Assert.assertNotNull(mav);
         Assert.assertTrue((Boolean) mav.getModel().get("success"));
@@ -607,10 +600,6 @@ public class TestCSWFilterController extends PortalTestClass {
             } else {
                 this.setRecordInformationUrl(recordInformationUrl);
             }
-        }
-
-        public CustomRegistry(String[] registryInfo) {
-            this(registryInfo[0], registryInfo[1], registryInfo[2], registryInfo[3]);
         }
 
         @Override
