@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * Utility class for converting Gml to a 'pretty' HTML representation
- * 
+ *
  * @author Josh Vote
  *
  */
@@ -39,10 +39,6 @@ public class GmlToHtml extends PortalXSLTTransformer {
         }
         stylesheetParams.setProperty("er", namespaces.getNamespaceURI("er"));
         return convert(wfs, stylesheetParams);
-    }
-
-    public String convert(String wfs) {
-    	return convert(wfs, new ErmlNamespaceContext());
     }
 
 }

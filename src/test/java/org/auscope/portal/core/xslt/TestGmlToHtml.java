@@ -1,5 +1,6 @@
 package org.auscope.portal.core.xslt;
 
+import org.auscope.portal.core.services.namespaces.ErmlNamespaceContext;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.util.ResourceUtil;
 import org.junit.Assert;
@@ -23,7 +24,7 @@ public class TestGmlToHtml extends PortalTestClass {
         final String wfs = ResourceUtil.loadResourceAsString("org/auscope/portal/core/erml/mine/mineGetFeatureResponse.xml");
         final String serviceUrl = "http://example.org/wfs";
 
-        final String response = gmlToHtml.convert(wfs, serviceUrl);
+        final String response = gmlToHtml.convert(wfs, new ErmlNamespaceContext());
         Assert.assertNotNull(response);
         Assert.assertFalse(response.isEmpty());
     }

@@ -9,6 +9,7 @@ import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker.ResultType;
+import org.auscope.portal.core.services.namespaces.ErmlNamespaceContext;
 import org.auscope.portal.core.services.responses.ows.OWSException;
 import org.auscope.portal.core.services.responses.wfs.WFSCountResponse;
 import org.auscope.portal.core.services.responses.wfs.WFSResponse;
@@ -270,7 +271,7 @@ public class TestWFSService extends PortalTestClass {
                 oneOf(mockMethodMaker).makeGetMethod(serviceUrl, typeName, featureId, BaseWFSService.DEFAULT_SRS, null);
                 will(returnValue(mockMethod));
 
-                oneOf(mockGmlToHtml).convert(responseString, serviceUrl);
+                oneOf(mockGmlToHtml).convert(with(any(String.class)), with(any(ErmlNamespaceContext.class)));
                 will(returnValue(responseHtml));
 
             }
@@ -349,13 +350,12 @@ public class TestWFSService extends PortalTestClass {
                 .loadResourceAsString("org/auscope/portal/core/test/responses/wfs/EmptyWFSResponse.xml");
         final String responseKml = "<kml:response/>"; //we aren't testing the validity of this
         final String serviceUrl = "http://service/wfs?request=GetFeature";
-
         context.checking(new Expectations() {
             {
                 oneOf(mockServiceCaller).getMethodResponseAsString(with(any(HttpGet.class)));
                 will(returnValue(responseString));
 
-                oneOf(mockGmlToHtml).convert(responseString, serviceUrl);
+                oneOf(mockGmlToHtml).convert(with(any(String.class)), with(any(ErmlNamespaceContext.class)));
                 will(returnValue(responseKml));
 
             }
