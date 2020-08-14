@@ -21,6 +21,7 @@ import org.auscope.portal.core.server.controllers.BaseCSWController;
 import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.WMSService;
+import org.auscope.portal.core.services.namespaces.ErmlNamespaceContext;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicElement;
@@ -548,12 +549,14 @@ public class WMSController extends BaseCSWController {
 
     @RequestMapping(value="transformToHtmlPopup.do", method = {RequestMethod.GET, RequestMethod.POST})
     public void transformToHtml(HttpServletResponse response, @RequestParam("gml") String gml) throws Exception {
-    	String responseString;
-    	if (gml != null) {
-            responseString = wmsService.transform(gml, null);
-        	InputStream responseStream = new ByteArrayInputStream(responseString.getBytes());
-            FileIOUtil.writeInputToOutputStream(responseStream, response.getOutputStream(), BUFFERSIZE, true);
+    	if (gml == null) {
+    		return;
     	}
+    	// all the ER(old) WMS layers at the moment only use ER1 and soon will be obsolete
+    	ErmlNamespaceContext namespaces = new ErmlNamespaceContext();
+    	String responseString = wmsService.transform(gml, namespaces);
+        InputStream responseStream = new ByteArrayInputStream(responseString.getBytes());
+        FileIOUtil.writeInputToOutputStream(responseStream, response.getOutputStream(), BUFFERSIZE, true);
     }
 
 }

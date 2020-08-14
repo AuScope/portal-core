@@ -13,6 +13,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WMSMethodMakerInterface;
+import org.auscope.portal.core.services.namespaces.ErmlNamespaceContext;
 import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord;
 import org.auscope.portal.core.xslt.GmlToHtml;
@@ -218,7 +219,7 @@ public class WMSService {
         return sldBody;
     }
 
-    public String transform(String document, String url) {
-    	return this.gmlToHtml.convert(document, url);
+    public String transform(String document, ErmlNamespaceContext namespaces) {
+    	return this.gmlToHtml.convert(document, namespaces);
     }
 }

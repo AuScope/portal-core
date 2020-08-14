@@ -47,6 +47,6 @@ public class WFSGml32Service extends WFSService {
         HttpRequestBase method = generateWFSRequest(wfsUrl, featureType, null, filterString, maxFeature, srs,
                 ResultType.Results, "gml32", null);
 
-        return super.doRequest(method, wfsUrl);
+        return super.doRequest(method);
     }
 }

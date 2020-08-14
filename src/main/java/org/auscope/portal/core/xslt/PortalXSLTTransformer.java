@@ -9,12 +9,16 @@ import java.util.Properties;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import net.sf.saxon.jaxp.SaxonTransformerFactory;
+import net.sf.saxon.om.StructuredQName;
+import net.sf.saxon.trans.CompilerInfo;
+import net.sf.saxon.value.StringValue;
 
 /**
  * Class for performing XSLT Transformations
@@ -63,19 +67,23 @@ public class PortalXSLTTransformer {
         // Ensure we resolve resources locally
         tFactory.setURIResolver(new ResourceURIResolver(getClass()));
 
+
+        // Set stylesheet parameters
+        CompilerInfo info = new CompilerInfo(tFactory.getConfiguration());
+        info.setURIResolver(uriResolver);
+        if (stylesheetParams != null) {
+        	for (String param : stylesheetParams.stringPropertyNames()) {
+                info.setParameter(new StructuredQName("", null, param),
+                		StringValue.makeStringValue(stylesheetParams.getProperty(param)));
+            }
+        }
+
         // Use the TransformerFactory to instantiate updateCSWRecords
         // transformer that will
         // work with the style sheet we specify. This method call also
         // processes
         // the style sheet into updateCSWRecords compiled Templates object.
-        Transformer transformer = tFactory.newTransformer(new StreamSource(xslt));
-
-        // Set stylesheet parameters
-        if (stylesheetParams != null) {
-            for (String param : stylesheetParams.stringPropertyNames()) {
-                transformer.setParameter(param, stylesheetParams.getProperty(param));
-            }
-        }
+        Transformer transformer = tFactory.newTemplates(new StreamSource(xslt), info).newTransformer();
 
         return transformer;
     }

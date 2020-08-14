@@ -5,10 +5,9 @@ import java.net.URISyntaxException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
-import org.auscope.portal.core.services.BaseWFSService;
-import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker.ResultType;
+import org.auscope.portal.core.services.namespaces.ErmlNamespaceContext;
 import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
 import org.auscope.portal.core.services.responses.wfs.WFSCountResponse;
 import org.auscope.portal.core.services.responses.wfs.WFSResponse;
@@ -48,7 +47,7 @@ public class WFSService extends BaseWFSService {
         this.gmlToHtml = gmlToHtml;
     }
 
-    protected WFSResponse doRequest(HttpRequestBase method, String serviceUrl)
+    protected WFSResponse doRequest(HttpRequestBase method)
             throws PortalServiceException {
         try {
             String wfs = httpServiceCaller.getMethodResponseAsString(method);
@@ -60,12 +59,19 @@ public class WFSService extends BaseWFSService {
         }
     }
 
-    private WFSTransformedResponse doRequestAndHtmlTransform(HttpRequestBase method, String serviceUrl)
+    protected WFSTransformedResponse doRequestAndHtmlTransform(HttpRequestBase method)
             throws PortalServiceException {
         try {
             String wfs = httpServiceCaller.getMethodResponseAsString(method);
             OWSExceptionParser.checkForExceptionResponse(wfs);
-            String kml = gmlToHtml.convert(wfs, serviceUrl);
+            ErmlNamespaceContext erml;
+            if (wfs.contains("http://xmlns.earthresourceml.org/EarthResource/2.0")) {
+            	// Tell the XSLT which ERML version to use
+            	erml = new ErmlNamespaceContext("2.0");
+            } else {
+            	erml = new ErmlNamespaceContext();
+            }
+            String kml = gmlToHtml.convert(wfs, erml);
 
             return new WFSTransformedResponse(wfs, kml, method);
         } catch (Exception ex) {
@@ -91,7 +97,7 @@ public class WFSService extends BaseWFSService {
     public WFSResponse getWfsResponse(String wfsUrl, String featureType, String featureId)
             throws PortalServiceException, URISyntaxException {
         HttpRequestBase method = generateWFSRequest(wfsUrl, featureType, featureId, null, null, null, null);
-        return doRequest(method, wfsUrl);
+        return doRequest(method);
     }
 
     /**
@@ -118,7 +124,7 @@ public class WFSService extends BaseWFSService {
         HttpRequestBase method = generateWFSRequest(wfsUrl, featureType, null, filterString, maxFeatures, srs,
                 ResultType.Results);
 
-        return doRequest(method, wfsUrl);
+        return doRequest(method);
     }
 
     /**
@@ -162,9 +168,9 @@ public class WFSService extends BaseWFSService {
      * @throws Exception
      */
     public WFSTransformedResponse getWfsResponseAsHtml(String wfsUrl, String featureType, String featureId)
-            throws PortalServiceException, URISyntaxException {
+    		throws PortalServiceException, URISyntaxException {
         HttpRequestBase method = generateWFSRequest(wfsUrl, featureType, featureId, null, null, null, null);
-        return doRequestAndHtmlTransform(method, wfsUrl);
+        return doRequestAndHtmlTransform(method);
     }
 
     /**
@@ -174,15 +180,11 @@ public class WFSService extends BaseWFSService {
      *
      * @param wfsUrl
      *            the web feature service url
-     * @param featureType
-     *            the type name
-     * @param featureId
-     *            A unique ID of a single feature type to query
      * @return
      * @throws Exception
      */
     public WFSTransformedResponse getWfsResponseAsHtml(String wfsUrl) throws PortalServiceException {
         HttpRequestBase method = new HttpGet(wfsUrl);
-        return doRequestAndHtmlTransform(method, wfsUrl);
+        return doRequestAndHtmlTransform(method);
     }
 }
