@@ -296,6 +296,7 @@ public class WMSController extends BaseCSWController {
      * @param latitude
      * @param longitude
      * @param queryLayers
+     * @param crs
      * @param x
      * @param y
      * @param bbox
@@ -318,6 +319,7 @@ public class WMSController extends BaseCSWController {
             @RequestParam("lat") String latitude,
             @RequestParam("lng") String longitude,
             @RequestParam("QUERY_LAYERS") String queryLayers,
+            @RequestParam("CRS") String crs,
             @RequestParam("x") String x,
             @RequestParam("y") String y,
             @RequestParam("BBOX") String bbox,
@@ -335,7 +337,7 @@ public class WMSController extends BaseCSWController {
         double lat1 = Double.parseDouble(bboxParts[1]);
         double lat2 = Double.parseDouble(bboxParts[3]);
 
-        String responseString = wmsService.getFeatureInfo(serviceUrl, infoFormat, queryLayers, "EPSG:3857",
+        String responseString = wmsService.getFeatureInfo(serviceUrl, infoFormat, queryLayers, crs,
                 Math.min(lng1, lng2), Math.min(lat1, lat2), Math.max(lng1, lng2), Math.max(lat1, lat2),
                 Integer.parseInt(width), Integer.parseInt(height), Double.parseDouble(longitude),
                 Double.parseDouble(latitude),
@@ -357,8 +359,8 @@ public class WMSController extends BaseCSWController {
     /**
     * get the default style for polygon Layer
     * @param response
-    * @param layerName 
-    * 			the layName 
+    * @param layerName
+    * 			the layName
     * @throws Exception
     */
     @RequestMapping("/getDefaultPolygonStyle.do")
