@@ -17,7 +17,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.auscope.portal.core.server.controllers.BaseCSWController;
 import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.WMSService;
@@ -482,10 +481,9 @@ public class WMSController extends BaseCSWController {
         response.setContentType("image/png");
   
         if (sldBody == null) {
-            sldUrl = request.getRequestURL().toString().replace(request.getServletPath(),"").replace("4200", "8080") + sldUrl;
+            sldUrl = getUrlBase(request) + sldUrl;
             log.debug(String.format("Retrieving style with URL: %s", sldUrl));
             sldBody = this.wmsService.getStyle(url, sldUrl, version);
-            log.debug(sldBody);
         }
         if (tiled !=null && tiled.equals("true")) requestCachedTile=true;
         HttpClientInputStream styleStream = this.wmsService.getMap(url, layer, bbox,sldBody, version,crs, requestCachedTile);
@@ -493,6 +491,20 @@ public class WMSController extends BaseCSWController {
         IOUtils.copy(styleStream,outputStream);
         styleStream.close();
         outputStream.close();
+    }
+
+    /**
+     * Extract scheme, hostname and port from request
+     * @param request servlet request
+     * @return url base address
+     */
+    private String getUrlBase(HttpServletRequest request) {
+        String hostname = request.getServerName();
+        boolean local = hostname.equalsIgnoreCase("localhost");
+        String protocol = local ? "http" : "https";
+        String port = local ? ":8080" : "";
+
+        return String.format("%s://%s%s", protocol, hostname, port);
     }
 
     public String getStyle(String name, String color, String spatialType) {
