@@ -12,6 +12,7 @@ public class CSWRecordSelector implements KnownLayerSelector {
 
     private String recordId;
     private String descriptiveKeyword;
+    private String serviceName;
 
     /**
      * @param descriptiveKeyword
@@ -20,12 +21,13 @@ public class CSWRecordSelector implements KnownLayerSelector {
     public CSWRecordSelector() {
         this.descriptiveKeyword = null;
         this.recordId = null;
+        this.serviceName = null;
     }
 
     /**
      * Matches a CSWRecord by an exact matching record id
      * 
-     * @return
+     * @return record id string
      */
     public String getRecordId() {
         return recordId;
@@ -34,6 +36,7 @@ public class CSWRecordSelector implements KnownLayerSelector {
     /**
      * Matches a CSWRecord by an exact matching record id
      * 
+     * @param recordId record id string
      * @return
      */
     public void setRecordId(String recordId) {
@@ -60,7 +63,27 @@ public class CSWRecordSelector implements KnownLayerSelector {
     }
 
     /**
-     * The relationship is defined on whether the record has a particular descriptive keyword
+     * Gets the service name (title) used to identify CSW records
+     *
+     * @return the service name
+     */
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    /**
+     * Sets the service name (title) used to identify CSW records
+     *
+     * @param serviceName the service name string to search for in CSW records
+     *
+     */
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
+
+    /**
+     * The relationship is defined as whether the record has a particular descriptive keyword,
+     * record id or service name
      */
     @Override
     public RelationType isRelatedRecord(CSWRecord record) {
@@ -71,6 +94,10 @@ public class CSWRecordSelector implements KnownLayerSelector {
         if (descriptiveKeyword != null && record.containsKeyword(descriptiveKeyword)) {
             return RelationType.Belongs;
         }
+
+	if (serviceName != null && serviceName.equals(record.getServiceName())) {
+            return RelationType.Belongs;
+	}
 
         return RelationType.NotRelated;
     }
