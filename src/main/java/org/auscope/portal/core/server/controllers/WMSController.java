@@ -480,8 +480,10 @@ public class WMSController extends BaseCSWController {
         response.setContentType("image/png");
   
         if (sldBody == null) {
-            sldUrl = request.getRequestURL().toString().replace(request.getServletPath(),"").replace("4200", "8080") + sldUrl;  
-            sldBody = this.wmsService.getStyle(url, sldUrl, version);            
+            sldUrl = request.getRequestURL().toString().replace(request.getServletPath(),"").replace("4200", "8080") + sldUrl;
+            log.debug(String.format("Retrieving style with URL: %s", sldUrl));
+            sldBody = this.wmsService.getStyle(url, sldUrl, version);
+            log.debug(sldBody);
         }
         if (tiled !=null && tiled.equals("true")) requestCachedTile=true;
         HttpClientInputStream styleStream = this.wmsService.getMap(url, layer, bbox,sldBody, version,crs, requestCachedTile);
