@@ -4,6 +4,7 @@ import java.util.Properties;
 
 import org.auscope.portal.core.services.namespaces.ErmlNamespaceContext;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /**
  * Utility class for converting Gml to a 'pretty' HTML representation
@@ -14,12 +15,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class GmlToHtml extends PortalXSLTTransformer {
 
+	/**
+	 * The base URL needed to build service calls from the XSLT
+	 */
 	private String portalBackendUrl;
-
-	public GmlToHtml(String url) {
-		super("/org/auscope/portal/core/xslt/WfsToHtml.xsl");
-		this.portalBackendUrl = url;
-	}
 
 	public GmlToHtml() {
 	    super("/org/auscope/portal/core/xslt/WfsToHtml.xsl");
@@ -30,13 +29,19 @@ public class GmlToHtml extends PortalXSLTTransformer {
      *
      * @param wfs
      *            WFS response to be transformed
+     * @param namespaces
+     *            EarthResourceML namespace context (v1.1 or v2.0)
      * @return html output string
      */
     public String convert(String wfs, ErmlNamespaceContext namespaces) {
     	Properties stylesheetParams = new Properties();
-        if (this.portalBackendUrl != null) {
-            stylesheetParams.setProperty("portalBaseURL", this.portalBackendUrl);
-        }
+
+    	if (this.portalBackendUrl == null) {
+            this.portalBackendUrl = ServletUriComponentsBuilder
+        		.fromCurrentContextPath().build().toUriString();
+    	}
+
+        stylesheetParams.setProperty("portalBaseURL", portalBackendUrl);
         stylesheetParams.setProperty("er", namespaces.getNamespaceURI("er"));
         return convert(wfs, stylesheetParams);
     }

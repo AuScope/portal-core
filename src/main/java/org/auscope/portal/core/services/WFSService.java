@@ -64,19 +64,30 @@ public class WFSService extends BaseWFSService {
         try {
             String wfs = httpServiceCaller.getMethodResponseAsString(method);
             OWSExceptionParser.checkForExceptionResponse(wfs);
-            ErmlNamespaceContext erml;
-            if (wfs.contains("http://xmlns.earthresourceml.org/EarthResource/2.0")) {
-            	// Tell the XSLT which ERML version to use
-            	erml = new ErmlNamespaceContext("2.0");
-            } else {
-            	erml = new ErmlNamespaceContext();
-            }
-            String kml = gmlToHtml.convert(wfs, erml);
-
-            return new WFSTransformedResponse(wfs, kml, method);
+            return transformToHtml(wfs, method);
         } catch (Exception ex) {
             throw new PortalServiceException(method, ex);
         }
+    }
+
+    /**
+	 * Transform WFS document into HTML format.
+	 *
+	 * @param wfs    GML feature string
+	 * @param method HttpRequestBase used to make the WFS request, or null if this
+	 *               comes from WMS GetFeatureInfo popup.
+	 * @return HTML converted response
+	 */
+    public WFSTransformedResponse transformToHtml(String wfs, HttpRequestBase method) {
+    	ErmlNamespaceContext erml;
+        if (wfs.contains("http://xmlns.earthresourceml.org/EarthResource/2.0")) {
+        	// Tell the XSLT which ERML version to use
+        	erml = new ErmlNamespaceContext("2.0");
+        } else {
+        	erml = new ErmlNamespaceContext();
+        }
+    	String html = this.gmlToHtml.convert(wfs, erml);
+    	return new WFSTransformedResponse(wfs, html, method);
     }
 
     /**

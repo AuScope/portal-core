@@ -68,7 +68,6 @@
                 </tr>
                 <tr>
                     <td class="our_row header">Source Reference:</td>
-                    <td class="our_row"><xsl:value-of select="./er:sourceReference/@xlink:title"/></td>
                     <td class="our_row" colspan="2"><xsl:call-template name="make-popup-url">
                             <xsl:with-param name="friendly-name" select="./er:sourceReference/@xlink:title"/>
                             <xsl:with-param name="real-url" select="./er:sourceReference/@xlink:href"/>

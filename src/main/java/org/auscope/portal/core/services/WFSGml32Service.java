@@ -41,6 +41,13 @@ public class WFSGml32Service extends WFSService {
         super(httpServiceCaller, wfsMethodMaker, gmlToHtml);
     }
 
+    /**
+     * Makes a WFS GetFeature request with gml32 outputFormat constrained by the specified parameters
+     *
+     * The response is returned as a String
+     *
+     * @see WFSService#getWfsResponse(String, String, String, Integer, String)
+     */
     @Override
 	public WFSResponse getWfsResponse(String wfsUrl, String featureType, String filterString,
             Integer maxFeature, String srs) throws PortalServiceException, URISyntaxException {

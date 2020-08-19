@@ -545,18 +545,4 @@ public class WMSController extends BaseCSWController {
         String style = header + rule + tail;
         return style;
     }
-
-
-    @RequestMapping(value="transformToHtmlPopup.do", method = {RequestMethod.GET, RequestMethod.POST})
-    public void transformToHtml(HttpServletResponse response, @RequestParam("gml") String gml) throws Exception {
-    	if (gml == null) {
-    		return;
-    	}
-    	// all the ER(old) WMS layers at the moment only use ER1 and soon will be obsolete
-    	ErmlNamespaceContext namespaces = new ErmlNamespaceContext();
-    	String responseString = wmsService.transform(gml, namespaces);
-        InputStream responseStream = new ByteArrayInputStream(responseString.getBytes());
-        FileIOUtil.writeInputToOutputStream(responseStream, response.getOutputStream(), BUFFERSIZE, true);
-    }
-
 }

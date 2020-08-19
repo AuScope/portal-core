@@ -23,6 +23,7 @@ import org.auscope.portal.core.util.FileIOUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -301,6 +302,29 @@ public class WFSController extends BasePortalController {
         } catch (Exception ex) {
             log.warn(String.format("Internal error requesting/writing popup for '%1$s' from '%2$s': %3$s", typeName,
                     serviceUrl, ex));
+            log.debug("Exception: ", ex);
+            response.sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * This method converts supplied WFS string from WMS pop up into HTML.
+     * @param gml    a WFS feature in GML format
+     * @throws Exception
+     */
+    @RequestMapping(value="transformToHtmlPopup.do", method = {RequestMethod.GET, RequestMethod.POST})
+    public void transformToHtml(HttpServletResponse response, @RequestParam("gml") String gml) throws Exception {
+        response.setContentType("text/html; charset=utf-8");
+        ServletOutputStream outputStream = response.getOutputStream();
+
+        //Make our request, transform and then return it.
+        WFSTransformedResponse htmlResponse = null;
+        WFSService service = wfsService;
+        try {
+        	htmlResponse = service.transformToHtml(gml, null);
+            outputStream.write(htmlResponse.getTransformed().getBytes());
+        } catch (Exception ex) {
+            log.warn(String.format("Internal error requesting/writing popup for '%1$s': %3$s", gml, ex));
             log.debug("Exception: ", ex);
             response.sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
