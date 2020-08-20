@@ -155,6 +155,7 @@ public class WMSService {
             //VT: a html response may not be xml valid therefore cannot go through the same validation process.
             //Rely on the service to return meaningful response to the user.
             if (format.toLowerCase().equals("text/html") ||
+                    format.toLowerCase().equals("application/json") ||
                     format.toLowerCase().equals("text/plain") ||
                     format.toLowerCase().equals("application/vnd.ogc.gml") ||
                     format.toLowerCase().equals("application/vnd.ogc.gml/3.1.1")) {
