@@ -101,6 +101,22 @@ public class TestKnownLayerSelectors extends PortalTestClass {
     }
 
     /**
+     * Asserts the keyword selector correctly picks records based on service name
+     */
+    @Test
+    public void testCSWServiceNameSelector() {
+        CSWRecordSelector selector = new CSWRecordSelector();
+        selector.setServiceName("name4");
+
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(0)));
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(1)));
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(2)));
+        Assert.assertEquals(RelationType.Belongs, selector.isRelatedRecord(recordList.get(3)));
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(4)));
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(5)));
+    }
+
+    /**
      * Asserts the keyword selector correctly picks records based on descriptive keywords
      */
     @Test
