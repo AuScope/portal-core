@@ -1,10 +1,14 @@
 package org.auscope.portal.core.xslt;
 
+import org.auscope.portal.core.services.namespaces.ErmlNamespaceContext;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.util.ResourceUtil;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 public class TestGmlToHtml extends PortalTestClass {
 
@@ -13,6 +17,9 @@ public class TestGmlToHtml extends PortalTestClass {
     @Before
     public void setup() {
         this.gmlToHtml = new GmlToHtml();
+        // Give it some request context for GmlToHtml convert()
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
     }
 
     /**
@@ -21,9 +28,8 @@ public class TestGmlToHtml extends PortalTestClass {
     @Test
     public void testNoErrors() throws Exception {
         final String wfs = ResourceUtil.loadResourceAsString("org/auscope/portal/core/erml/mine/mineGetFeatureResponse.xml");
-        final String serviceUrl = "http://example.org/wfs";
 
-        final String response = gmlToHtml.convert(wfs, serviceUrl);
+        final String response = gmlToHtml.convert(wfs, new ErmlNamespaceContext());
         Assert.assertNotNull(response);
         Assert.assertFalse(response.isEmpty());
     }

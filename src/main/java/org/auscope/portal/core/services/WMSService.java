@@ -29,11 +29,11 @@ public class WMSService {
 
     protected List<WMSMethodMakerInterface> listOfSupportedWMSMethodMaker;
 
+
     // ----------------------------------------------------------- Constructors
     public WMSService(HttpServiceCaller serviceCaller, List<WMSMethodMakerInterface> methodMaker) {
         this.serviceCaller = serviceCaller;
         this.listOfSupportedWMSMethodMaker = methodMaker;
-
     }
 
     // ------------------------------------------- Property Setters and Getters
