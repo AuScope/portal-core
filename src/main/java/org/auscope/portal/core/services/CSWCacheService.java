@@ -59,7 +59,7 @@ public class CSWCacheService {
      *
      * If a CSW has more records than this value then multiple requests will be made
      */
-    public static final int MAX_QUERY_LENGTH = 500;
+    public static final int MAX_QUERY_LENGTH = 100;
 
     /**
      * The frequency in which the cache updates (in milliseconds).
