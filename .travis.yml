@@ -8,7 +8,7 @@ deploy:
   skip_cleanup: true
   on:
     repo: AuScope/portal-core
-    branch: master
+    branch: RELEASE-2.3.2
 env:
   global:
   - secure: Nj1oM0hXLe+qn5Oc8zGK3p/p6zi2skzF2W9tYyhyWmWB30isWbV9FV1lEjZgB8ociV46c62CxSFBvIMdEZHDT4hGra4YxFYaHSQQ7QO4bH3G6VfGQd7AFMS2ygWVjtOc452Ac1ZjW87zm28XK64tSIEh3u8KloBfaNGxcB2Al3k=
