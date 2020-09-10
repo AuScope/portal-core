@@ -3,6 +3,7 @@ package org.auscope.portal.core.server.controllers;
 import java.net.URI;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.controllers.WFSController;
@@ -42,6 +43,8 @@ public class TestWfsController extends PortalTestClass {
     private WFSGml32Service mockWfs32Service = context.mock(WFSGml32Service.class);
 
     private HttpServletResponse mockResponse = context.mock(HttpServletResponse.class);
+
+    private HttpServletRequest mockRequest = context.mock(HttpServletRequest.class);
 
     @Before
     public void setUp() {
@@ -220,17 +223,17 @@ public class TestWfsController extends PortalTestClass {
         final String featureId = "idString";
         final String convertedData = "gmlToKMLResult";
         final String wfsResponse = "wfsResponseString";
+        final String baseUrl = "http://portal.org/api";
         final ByteBufferedServletOutputStream outputStream = new ByteBufferedServletOutputStream(
                 convertedData.getBytes().length);
 
         context.checking(new Expectations() {
             {
-                allowing(mockMethod).getURI();
-                will(returnValue(new URI(serviceUrl)));
-
+                allowing(mockRequest).getRequestURL();
+                will(returnValue(new StringBuffer("http://portal.org/api/wfsFeaturePopup.do")));
                 allowing(mockResponse).setContentType(with(any(String.class)));
 
-                oneOf(mockWfsService).getWfsResponseAsHtml(serviceUrl, typeName, featureId);
+                oneOf(mockWfsService).getWfsResponseAsHtml(serviceUrl, typeName, featureId, baseUrl);
                 will(returnValue(new WFSTransformedResponse(wfsResponse, convertedData, mockMethod)));
 
                 oneOf(mockResponse).getOutputStream();
@@ -238,7 +241,7 @@ public class TestWfsController extends PortalTestClass {
             }
         });
 
-        wfsController.wfsFeaturePopup(mockResponse, serviceUrl, typeName, featureId);
+        wfsController.wfsFeaturePopup(mockRequest, mockResponse, serviceUrl, typeName, featureId);
 
         Assert.assertArrayEquals(convertedData.getBytes(), outputStream.toByteArray());
     }
@@ -255,6 +258,7 @@ public class TestWfsController extends PortalTestClass {
         final String featureId = null;
         final String convertedData = "gmlToKMLResult";
         final String wfsResponse = "wfsResponseString";
+        final String baseUrl = "http://portal.org/api";
         final ByteBufferedServletOutputStream outputStream = new ByteBufferedServletOutputStream(
                 convertedData.getBytes().length);
 
@@ -262,7 +266,10 @@ public class TestWfsController extends PortalTestClass {
             {
                 allowing(mockResponse).setContentType(with(any(String.class)));
 
-                oneOf(mockWfsService).getWfsResponseAsHtml(serviceUrl);
+                allowing(mockRequest).getRequestURL();
+                will(returnValue(new StringBuffer("http://portal.org/api/wfsFeaturePopup.do")));
+
+                oneOf(mockWfsService).getWfsResponseAsHtml(serviceUrl, baseUrl);
                 will(returnValue(new WFSTransformedResponse(wfsResponse, convertedData, mockMethod)));
 
                 oneOf(mockResponse).getOutputStream();
@@ -270,7 +277,7 @@ public class TestWfsController extends PortalTestClass {
             }
         });
 
-        wfsController.wfsFeaturePopup(mockResponse, serviceUrl, typeName, featureId);
+        wfsController.wfsFeaturePopup(mockRequest, mockResponse, serviceUrl, typeName, featureId);
 
         Assert.assertArrayEquals(convertedData.getBytes(), outputStream.toByteArray());
     }
