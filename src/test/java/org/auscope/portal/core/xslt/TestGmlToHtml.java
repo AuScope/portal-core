@@ -28,8 +28,9 @@ public class TestGmlToHtml extends PortalTestClass {
     @Test
     public void testNoErrors() throws Exception {
         final String wfs = ResourceUtil.loadResourceAsString("org/auscope/portal/core/erml/mine/mineGetFeatureResponse.xml");
+        final String baseUrl = "https://portal.org/api";
 
-        final String response = gmlToHtml.convert(wfs, new ErmlNamespaceContext());
+        final String response = gmlToHtml.convert(wfs, new ErmlNamespaceContext(), baseUrl);
         Assert.assertNotNull(response);
         Assert.assertFalse(response.isEmpty());
     }
