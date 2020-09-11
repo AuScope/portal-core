@@ -47,6 +47,15 @@ public class WFSService extends BaseWFSService {
         this.gmlToHtml = gmlToHtml;
     }
 
+    /**
+     * Sends out WFS request and returns its response
+     * 
+     * @param method 
+     *         HttpRequestBase used to make the WFS request
+     * @return 
+     *         Response as WFSResponse object or PortalServiceException upon error
+     * @throws PortalServiceException
+     */
     protected WFSResponse doRequest(HttpRequestBase method)
             throws PortalServiceException {
         try {
@@ -59,12 +68,23 @@ public class WFSService extends BaseWFSService {
         }
     }
 
-    protected WFSTransformedResponse doRequestAndHtmlTransform(HttpRequestBase method)
+    /**
+     * Sends out WFS request and transforms its response to HTML
+     * 
+     * @param method 
+     *          HttpRequestBase used to make the WFS request
+     * @param baseUrl 
+     *          The base URL of the request e.g.  https://portal.org/api
+     * @return 
+     *          Response as WFSTransformedResponse object or PortalServiceException upon error
+     * @throws PortalServiceException
+     */
+    protected WFSTransformedResponse doRequestAndHtmlTransform(HttpRequestBase method, String baseUrl)
             throws PortalServiceException {
         try {
             String wfs = httpServiceCaller.getMethodResponseAsString(method);
             OWSExceptionParser.checkForExceptionResponse(wfs);
-            return transformToHtml(wfs, method);
+            return transformToHtml(wfs, method, baseUrl);
         } catch (Exception ex) {
             throw new PortalServiceException(method, ex);
         }
@@ -74,11 +94,14 @@ public class WFSService extends BaseWFSService {
 	 * Transform WFS document into HTML format.
 	 *
 	 * @param wfs    GML feature string
-	 * @param method HttpRequestBase used to make the WFS request, or null if this
-	 *               comes from WMS GetFeatureInfo popup.
+	 * @param method 
+     *          HttpRequestBase used to make the WFS request, or null if this
+	 *          comes from WMS GetFeatureInfo popup.
+     * @param baseUrl
+     *          The base URL of the request e.g.  https://portal.org/api
 	 * @return HTML converted response
 	 */
-    public WFSTransformedResponse transformToHtml(String wfs, HttpRequestBase method) {
+    public WFSTransformedResponse transformToHtml(String wfs, HttpRequestBase method, String baseUrl) {
     	ErmlNamespaceContext erml;
         if (wfs.contains("http://xmlns.earthresourceml.org/EarthResource/2.0")) {
         	// Tell the XSLT which ERML version to use
@@ -86,7 +109,7 @@ public class WFSService extends BaseWFSService {
         } else {
         	erml = new ErmlNamespaceContext();
         }
-    	String html = this.gmlToHtml.convert(wfs, erml);
+    	String html = this.gmlToHtml.convert(wfs, erml, baseUrl);
     	return new WFSTransformedResponse(wfs, html, method);
     }
 
@@ -168,20 +191,23 @@ public class WFSService extends BaseWFSService {
      *
      * The response is returned as a String in both GML and HTML forms.
      *
+
      * @param wfsUrl
-     *            the web feature service url
+     *            the web feature service URL
      * @param featureType
      *            the type name
      * @param featureId
      *            A unique ID of a single feature type to query
+     * @param baseUrl
+     *            The base URL of the request e.g.  https://portal.org/api
      * @return
      * @throws URISyntaxException
      * @throws Exception
      */
-    public WFSTransformedResponse getWfsResponseAsHtml(String wfsUrl, String featureType, String featureId)
+    public WFSTransformedResponse getWfsResponseAsHtml(String wfsUrl, String featureType, String featureId, String baseUrl)
     		throws PortalServiceException, URISyntaxException {
         HttpRequestBase method = generateWFSRequest(wfsUrl, featureType, featureId, null, null, null, null);
-        return doRequestAndHtmlTransform(method);
+        return doRequestAndHtmlTransform(method, baseUrl);
     }
 
     /**
@@ -190,12 +216,14 @@ public class WFSService extends BaseWFSService {
      * The response is returned as a String in both GML and HTML forms.
      *
      * @param wfsUrl
-     *            the web feature service url
+     *            the web feature service URL
+     * @param baseUrl
+     *            The base URL of the request e.g.  https://portal.org/api
      * @return
      * @throws Exception
      */
-    public WFSTransformedResponse getWfsResponseAsHtml(String wfsUrl) throws PortalServiceException {
+    public WFSTransformedResponse getWfsResponseAsHtml(String wfsUrl, String baseUrl) throws PortalServiceException {
         HttpRequestBase method = new HttpGet(wfsUrl);
-        return doRequestAndHtmlTransform(method);
+        return doRequestAndHtmlTransform(method, baseUrl);
     }
 }

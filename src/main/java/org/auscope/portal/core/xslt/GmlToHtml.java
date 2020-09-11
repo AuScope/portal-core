@@ -31,17 +31,15 @@ public class GmlToHtml extends PortalXSLTTransformer {
      *            WFS response to be transformed
      * @param namespaces
      *            EarthResourceML namespace context (v1.1 or v2.0)
+     * @param baseUrl
+     *            The base URL of the request e.g.  https://portal.org/api
+     * 
      * @return html output string
      */
-    public String convert(String wfs, ErmlNamespaceContext namespaces) {
+    public String convert(String wfs, ErmlNamespaceContext namespaces, String baseURL) {
     	Properties stylesheetParams = new Properties();
 
-    	if (this.portalBackendUrl == null) {
-            this.portalBackendUrl = ServletUriComponentsBuilder
-        		.fromCurrentContextPath().build().toUriString();
-    	}
-
-        stylesheetParams.setProperty("portalBaseURL", portalBackendUrl);
+        stylesheetParams.setProperty("portalBaseURL", baseURL);
         stylesheetParams.setProperty("er", namespaces.getNamespaceURI("er"));
         return convert(wfs, stylesheetParams);
     }
