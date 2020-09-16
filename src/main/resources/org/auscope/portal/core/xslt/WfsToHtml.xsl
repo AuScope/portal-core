@@ -491,7 +491,8 @@
                     <td class="our_row header">Collar Elevation:</td>
                     <td class="our_row">
                         <xsl:if test="./gsml:collarLocation/gsml:BoreholeCollar/gsml:elevation">                            
-                            <xsl:value-of select="concat(./gsml:collarLocation/gsml:BoreholeCollar/gsml:elevation, ' (m)')"/>
+                            <xsl:value-of select="concat(./gsml:collarLocation/gsml:BoreholeCollar/gsml:elevation, ' ',
+                                 ./gsml:collarLocation/gsml:BoreholeCollar/gsml:elevation/@uomLabels)"/>
                         </xsl:if>
                     </td>
                  </tr>
@@ -519,7 +520,8 @@
                      <td class="our_row header">Cored Interval (Upper Corner):</td>
                      <td class="our_row">
                         <xsl:if test="./gsml:indexData/gsml:BoreholeDetails/gsml:coredInterval/gml:Envelope/gml:upperCorner">                            
-                            <xsl:value-of select="concat(./gsml:indexData/gsml:BoreholeDetails/gsml:coredInterval/gml:Envelope/gml:upperCorner, ' m')"/>
+                            <xsl:value-of select="concat(./gsml:indexData/gsml:BoreholeDetails/gsml:coredInterval/gml:Envelope/gml:upperCorner, 
+                                ' ', ./gsml:indexData/gsml:BoreholeDetails/gsml:coredInterval/gml:Envelope/@uomLabels)"/>
                         </xsl:if>
                      </td>
                  </tr>
@@ -527,7 +529,8 @@
                      <td class="our_row header">Cored Interval (Lower Corner):</td>
                      <td class="our_row">
                         <xsl:if test="./gsml:indexData/gsml:BoreholeDetails/gsml:coredInterval/gml:Envelope/gml:lowerCorner">                            
-                            <xsl:value-of select="concat(./gsml:indexData/gsml:BoreholeDetails/gsml:coredInterval/gml:Envelope/gml:lowerCorner, ' m')"/>
+                            <xsl:value-of select="concat(./gsml:indexData/gsml:BoreholeDetails/gsml:coredInterval/gml:Envelope/gml:lowerCorner,
+                                ' ', ./gsml:indexData/gsml:BoreholeDetails/gsml:coredInterval/gml:Envelope/@uomLabels)"/>
                         </xsl:if>
                      </td>
                  </tr>
