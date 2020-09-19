@@ -262,6 +262,7 @@ public class TestWFSService extends PortalTestClass {
         final String serviceUrl = "http://service/wfs";
         final String featureId = "feature-Id-string";
         final String typeName = "type:Name";
+        final String baseUrl = "https://portal.org/api";
 
         context.checking(new Expectations() {
             {
@@ -271,13 +272,13 @@ public class TestWFSService extends PortalTestClass {
                 oneOf(mockMethodMaker).makeGetMethod(serviceUrl, typeName, featureId, BaseWFSService.DEFAULT_SRS, null);
                 will(returnValue(mockMethod));
 
-                oneOf(mockGmlToHtml).convert(with(any(String.class)), with(any(ErmlNamespaceContext.class)));
+                oneOf(mockGmlToHtml).convert(with(any(String.class)), with(any(ErmlNamespaceContext.class)), with(any(String.class)));
                 will(returnValue(responseHtml));
 
             }
         });
 
-        WFSTransformedResponse response = service.getWfsResponseAsHtml(serviceUrl, typeName, featureId);
+        WFSTransformedResponse response = service.getWfsResponseAsHtml(serviceUrl, typeName, featureId, baseUrl);
         Assert.assertNotNull(response);
         Assert.assertEquals(responseString, response.getGml());
         Assert.assertEquals(responseHtml, response.getTransformed());
@@ -292,6 +293,7 @@ public class TestWFSService extends PortalTestClass {
         final String serviceUrl = "http://service/wfs";
         final String featureId = "feature-Id-string";
         final String typeName = "type:Name";
+        final String baseUrl = "https://portal.org/api";
 
         context.checking(new Expectations() {
             {
@@ -304,7 +306,7 @@ public class TestWFSService extends PortalTestClass {
         });
 
         try {
-            service.getWfsResponseAsHtml(serviceUrl, typeName, featureId);
+            service.getWfsResponseAsHtml(serviceUrl, typeName, featureId, baseUrl);
             Assert.fail("Exception should have been thrown");
         } catch (PortalServiceException ex) {
             Assert.assertSame(exceptionThrown, ex.getCause());
@@ -322,6 +324,7 @@ public class TestWFSService extends PortalTestClass {
         final String serviceUrl = "http://service/wfs";
         final String featureId = "feature-Id-string";
         final String typeName = "type:Name";
+        final String baseUrl = "https://portal.org/api";
 
         context.checking(new Expectations() {
             {
@@ -333,7 +336,7 @@ public class TestWFSService extends PortalTestClass {
         });
 
         try {
-            service.getWfsResponseAsHtml(serviceUrl, typeName, featureId);
+            service.getWfsResponseAsHtml(serviceUrl, typeName, featureId, baseUrl);
             Assert.fail("Exception should have been thrown");
         } catch (PortalServiceException ex) {
             Assert.assertTrue(ex.getCause() instanceof OWSException);
@@ -350,18 +353,20 @@ public class TestWFSService extends PortalTestClass {
                 .loadResourceAsString("org/auscope/portal/core/test/responses/wfs/EmptyWFSResponse.xml");
         final String responseKml = "<kml:response/>"; //we aren't testing the validity of this
         final String serviceUrl = "http://service/wfs?request=GetFeature";
+        final String baseUrl = "https://portal.org/api";
+
         context.checking(new Expectations() {
             {
                 oneOf(mockServiceCaller).getMethodResponseAsString(with(any(HttpGet.class)));
                 will(returnValue(responseString));
 
-                oneOf(mockGmlToHtml).convert(with(any(String.class)), with(any(ErmlNamespaceContext.class)));
+                oneOf(mockGmlToHtml).convert(with(any(String.class)), with(any(ErmlNamespaceContext.class)), with(any(String.class)));
                 will(returnValue(responseKml));
 
             }
         });
 
-        WFSTransformedResponse response = service.getWfsResponseAsHtml(serviceUrl);
+        WFSTransformedResponse response = service.getWfsResponseAsHtml(serviceUrl, baseUrl);
         Assert.assertNotNull(response);
         Assert.assertEquals(responseString, response.getGml());
         Assert.assertEquals(responseKml, response.getTransformed());
@@ -374,6 +379,7 @@ public class TestWFSService extends PortalTestClass {
     public void testGetWfsResponseAsHtmlUrlConnectException() throws Exception {
         final ConnectException exceptionThrown = new ConnectException();
         final String serviceUrl = "http://service/wfs?request=GetFeature";
+        final String baseUrl = "https://portal.org/api";
 
         context.checking(new Expectations() {
             {
@@ -383,7 +389,7 @@ public class TestWFSService extends PortalTestClass {
         });
 
         try {
-            service.getWfsResponseAsHtml(serviceUrl);
+            service.getWfsResponseAsHtml(serviceUrl, baseUrl);
             Assert.fail("Exception should have been thrown");
         } catch (PortalServiceException ex) {
             Assert.assertSame(exceptionThrown, ex.getCause());
@@ -399,6 +405,7 @@ public class TestWFSService extends PortalTestClass {
         final String serviceUrl = "http://service/wfs";
         final String responseString = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/responses/ows/OWSExceptionSample1.xml");
+        final String baseUrl = "https://portal.org/api";
 
         context.checking(new Expectations() {
             {
@@ -408,7 +415,7 @@ public class TestWFSService extends PortalTestClass {
         });
 
         try {
-            service.getWfsResponseAsHtml(serviceUrl);
+            service.getWfsResponseAsHtml(serviceUrl, baseUrl);
             Assert.fail("Exception should have been thrown");
         } catch (PortalServiceException ex) {
             Assert.assertTrue(ex.getCause() instanceof OWSException);

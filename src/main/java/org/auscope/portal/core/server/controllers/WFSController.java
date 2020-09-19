@@ -8,6 +8,7 @@ import java.net.URLDecoder;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.http.HttpStatus;
 import org.auscope.portal.core.services.WFSGml32Service;
@@ -281,7 +282,7 @@ public class WFSController extends BasePortalController {
      * @throws IOException
      */
     @RequestMapping("wfsFeaturePopup.do")
-    public void wfsFeaturePopup(HttpServletResponse response,
+    public void wfsFeaturePopup(HttpServletRequest request, HttpServletResponse response,
             @RequestParam("url") String serviceUrl,
             @RequestParam(required = false, value = "typeName") String typeName,
             @RequestParam(required = false, value = "featureId") String featureId) throws IOException {
@@ -289,13 +290,18 @@ public class WFSController extends BasePortalController {
         response.setContentType("text/html; charset=utf-8");
         ServletOutputStream outputStream = response.getOutputStream();
 
+        // Create request base URL
+        StringBuffer requestUrl = request.getRequestURL();
+        int startPos = requestUrl.indexOf("/wfsFeaturePopup.do");
+        requestUrl.setLength(startPos);
+
         //Make our request, transform and then return it.
         WFSTransformedResponse htmlResponse = null;
         try {
             if (typeName == null) {
-                htmlResponse = wfsService.getWfsResponseAsHtml(serviceUrl);
+                htmlResponse = wfsService.getWfsResponseAsHtml(serviceUrl, requestUrl.toString());
             } else {
-                htmlResponse = wfsService.getWfsResponseAsHtml(serviceUrl, typeName, featureId);
+                htmlResponse = wfsService.getWfsResponseAsHtml(serviceUrl, typeName, featureId, requestUrl.toString());
             }
 
             outputStream.write(htmlResponse.getTransformed().getBytes());
@@ -313,15 +319,20 @@ public class WFSController extends BasePortalController {
      * @throws Exception
      */
     @RequestMapping(value="transformToHtmlPopup.do", method = {RequestMethod.GET, RequestMethod.POST})
-    public void transformToHtml(HttpServletResponse response, @RequestParam("gml") String gml) throws Exception {
+    public void transformToHtml(HttpServletRequest request, HttpServletResponse response, @RequestParam("gml") String gml) throws Exception {
         response.setContentType("text/html; charset=utf-8");
         ServletOutputStream outputStream = response.getOutputStream();
+
+        // Create request base URL
+        StringBuffer requestURL = request.getRequestURL();
+        int startPos = requestURL.lastIndexOf("/transformToHtmlPopup.do");
+        requestURL.setLength(startPos);
 
         //Make our request, transform and then return it.
         WFSTransformedResponse htmlResponse = null;
         WFSService service = wfsService;
         try {
-        	htmlResponse = service.transformToHtml(gml, null);
+            htmlResponse = service.transformToHtml(gml, null, requestURL.toString());
             outputStream.write(htmlResponse.getTransformed().getBytes());
         } catch (Exception ex) {
             log.warn(String.format("Internal error requesting/writing popup for '%1$s': %3$s", gml, ex));
