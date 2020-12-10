@@ -43,6 +43,7 @@ public class TestKnownLayerService extends PortalTestClass {
     private KnownLayerSelector mockSelector1;
     private KnownLayerSelector mockSelector2;
     private KnownLayerSelector mockSelector3;
+
     @SuppressWarnings("rawtypes")
     private ArrayList mockKnownLayerList;
     private CSWCacheService mockCacheService;
@@ -87,7 +88,7 @@ public class TestKnownLayerService extends PortalTestClass {
         });
 
         mockCacheService = context.mock(CSWCacheService.class);
-        knownLayerService = new KnownLayerService(mockKnownLayerList, mockCacheService);
+        knownLayerService = new KnownLayerService(mockKnownLayerList, mockCacheService, null, null);
     }
 
     @After
