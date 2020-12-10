@@ -1,21 +1,10 @@
 package org.auscope.portal.core.server.controllers;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
-import org.auscope.portal.core.services.GoogleCloudMonitoringCachedService;
-import org.auscope.portal.core.services.PortalServiceException;
-import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
-import org.auscope.portal.core.services.responses.stackdriver.ServiceStatusResponse;
 import org.auscope.portal.core.view.ViewCSWRecordFactory;
-import org.auscope.portal.core.view.ViewKnownLayerFactory;
-import org.auscope.portal.core.view.knownlayer.KnownLayer;
-import org.auscope.portal.core.view.knownlayer.KnownLayerAndRecords;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
 

@@ -241,7 +241,7 @@ public class KnownLayerService {
 
     public List<ModelMap> getKnownLayersCache() {
         synchronized (knownLayersCache) {
-            return knownLayersCache;
+            return new ArrayList<>(knownLayersCache);
         }
     }
 
