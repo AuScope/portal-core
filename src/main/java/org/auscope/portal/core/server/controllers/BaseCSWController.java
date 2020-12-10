@@ -29,12 +29,9 @@ public abstract class BaseCSWController extends BasePortalController {
     /** Used for converting data to something the view can understand */
     protected ViewCSWRecordFactory viewCSWRecordFactory;
 
-    /** Used for converting data to something the view can understand */
-    private ViewKnownLayerFactory viewKnownLayerFactory;
 
-    protected BaseCSWController(ViewCSWRecordFactory viewCSWRecordFactory, ViewKnownLayerFactory viewKnownLayerFactory) {
+    protected BaseCSWController(ViewCSWRecordFactory viewCSWRecordFactory) {
         this.viewCSWRecordFactory = viewCSWRecordFactory;
-        this.viewKnownLayerFactory = viewKnownLayerFactory;
     }
 
     /**
@@ -73,88 +70,6 @@ public abstract class BaseCSWController extends BasePortalController {
             return generateJSONResponseMAV(false, new CSWRecord[] {}, 0, "Error converting data records");
         }
         return generateJSONResponseMAV(true, recordRepresentations, matchedResults, "No errors");
-    }
-
-    /**
-     * Utility for generating a response model that represents a number of KnownLayerAndRecord objects
-     *
-     * @param knownLayers
-     *            The known layers to transform
-     * @return
-     */
-    protected ModelAndView generateKnownLayerResponse(List<KnownLayerAndRecords> knownLayers) {
-        return generateKnownLayerResponse(knownLayers, null);
-    }
-
-    /**
-     * Utility for generating a response model that represents a number of KnownLayerAndRecord objects. Also adds
-     * service failure information from nagios to the layers (if recorded in the known layer).
-     *
-     * @param knownLayers
-     *            The known layers to transform
-     * @return
-     */
-    protected ModelAndView generateKnownLayerResponse(List<KnownLayerAndRecords> knownLayers, GoogleCloudMonitoringCachedService stackDriverService) {
-        List<ModelMap> viewKnownLayers = new ArrayList<>();
-        for (KnownLayerAndRecords knownLayerAndRecords : knownLayers) {
-            KnownLayer kl = knownLayerAndRecords.getKnownLayer();
-            if (kl.isHidden()) {
-                continue; //any hidden layers will NOT be sent to the view
-            }
-            ModelMap viewKnownLayer = viewKnownLayerFactory.toView(knownLayerAndRecords.getKnownLayer());
-
-            List<ModelMap> viewMappedRecords = new ArrayList<>();
-
-            Set<String> onlineResourceEndpoints = new HashSet<>();
-            for (CSWRecord rec : knownLayerAndRecords.getBelongingRecords()) {
-
-                if (rec != null) {
-                    for (AbstractCSWOnlineResource onlineResource : rec.getOnlineResources()) {
-                        if (onlineResource.getLinkage() != null) {
-                            onlineResourceEndpoints.add(onlineResource.getLinkage().getHost());
-                        }
-                    }
-                    viewMappedRecords.add(viewCSWRecordFactory.toView(rec));
-                }
-            }
-
-            List<ModelMap> viewRelatedRecords = new ArrayList<>();
-            for (CSWRecord rec : knownLayerAndRecords.getRelatedRecords()) {
-                if (rec != null) {
-                    viewRelatedRecords.add(viewCSWRecordFactory.toView(rec));
-                }
-            }
-
-            viewKnownLayer.put("cswRecords", viewMappedRecords);
-            viewKnownLayer.put("relatedRecords", viewRelatedRecords);
-
-            if (stackDriverService != null && kl.getStackdriverServiceGroup() != null) {
-                try {
-                    Map<String, List<ServiceStatusResponse>> response = stackDriverService.getStatuses(kl.getStackdriverServiceGroup());
-                    List<String> failingHosts = new ArrayList<String>();
-                    for (Entry<String, List<ServiceStatusResponse>> entry : response.entrySet()) {
-                        for (ServiceStatusResponse status : entry.getValue()) {
-                            if (!status.isUp()) {
-                                if (onlineResourceEndpoints.contains(entry.getKey())) {
-                                    failingHosts.add(entry.getKey());
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-                    if (!failingHosts.isEmpty()) {
-                        viewKnownLayer.put("stackdriverFailingHosts", failingHosts);
-                    }
-                } catch (PortalServiceException ex) {
-                    log.error("Error updating stackdriver host info for " + kl.getName() + " :" + ex.getMessage());
-                }
-            }
-
-            viewKnownLayers.add(viewKnownLayer);
-        }
-
-        return generateJSONResponseMAV(true, viewKnownLayers, "");
     }
 
     /**
