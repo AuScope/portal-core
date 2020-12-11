@@ -246,7 +246,7 @@ public class KnownLayerService {
     }
 
     public void updateKnownLayersCache() {
-        
+        logger.trace("Updating service status for KnownLayers. Current size: "+knownLayers.size());
         ArrayList<ModelMap> newKnownLayersCache = new ArrayList<>();
         
         KnownLayerGrouping knownLayerGrouping = groupKnownLayerRecords();
@@ -313,6 +313,7 @@ public class KnownLayerService {
             knownLayersCache.clear();
             knownLayersCache.addAll(newKnownLayersCache);
         }
+        logger.info("Finished updating service status for KnownLayers. New size: "+knownLayers.size());
     }
   
 }

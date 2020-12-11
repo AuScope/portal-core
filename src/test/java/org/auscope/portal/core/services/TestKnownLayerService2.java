@@ -2,6 +2,7 @@ package org.auscope.portal.core.services;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -11,8 +12,11 @@ import org.auscope.portal.core.services.responses.csw.CSWOnlineResourceImpl;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.services.responses.stackdriver.ServiceStatusResponse;
 import org.auscope.portal.core.test.PortalTestClass;
+import org.auscope.portal.core.view.ViewCSWRecordFactory;
 import org.auscope.portal.core.view.ViewKnownLayerFactory;
 import org.auscope.portal.core.view.knownlayer.KnownLayer;
+import org.auscope.portal.core.view.knownlayer.KnownLayerAndRecords;
+import org.auscope.portal.core.view.knownlayer.KnownLayerGrouping;
 import org.auscope.portal.core.view.knownlayer.KnownLayerSelector;
 import org.jmock.Expectations;
 import org.junit.After;
@@ -22,26 +26,10 @@ import org.junit.Test;
 import org.springframework.ui.ModelMap;
 
 /**
- * Unit tests for KnownLayerService
+ * Unit tests for KnownLayerService stack driver integration
  * 
- * @author Josh Vote
- *
  */
 public class TestKnownLayerService2 extends PortalTestClass {
-
-    /**
-     * This fake class is used to test aspects of the KnownLayerService where the sought behaviour requires a descendant of KnownLayer.
-     * 
-     * @author bro879
-     *
-     */
-    class FakeKnownLayerChild extends KnownLayer {
-        private static final long serialVersionUID = -8469962130513009451L;
-
-        public FakeKnownLayerChild(String id, KnownLayerSelector knownLayerSelector) {
-            super(id, knownLayerSelector);
-        }
-    }
 
     private GoogleCloudMonitoringCachedService mockStackDriverService = context.mock(GoogleCloudMonitoringCachedService.class);
 
@@ -92,6 +80,14 @@ public class TestKnownLayerService2 extends PortalTestClass {
         kl2.setStackdriverServiceGroup("NVCL");
         kl4.setStackdriverServiceGroup("Tenements");
 
+        List<KnownLayerAndRecords> knownLayers = Arrays.asList(
+                new KnownLayerAndRecords(kl1, Arrays.asList(new CSWRecord[]{mockBelongingRecord}), new ArrayList<CSWRecord>()),
+                new KnownLayerAndRecords(kl2, Arrays.asList(new CSWRecord[]{mockBelongingRecord}), new ArrayList<CSWRecord>()),
+                new KnownLayerAndRecords(kl3, Arrays.asList(new CSWRecord[]{mockBelongingRecord}), new ArrayList<CSWRecord>()),
+                new KnownLayerAndRecords(kl4, Arrays.asList(new CSWRecord[]{mockBelongingRecord}), new ArrayList<CSWRecord>()));
+        
+        KnownLayerGrouping knownLayerGroupingMock = context.mock(KnownLayerGrouping.class);
+        
         final HashMap<String, List<ServiceStatusResponse>> servGroup1Response = new HashMap<String, List<ServiceStatusResponse>>();
         final HashMap<String, List<ServiceStatusResponse>> servGroup2Response = new HashMap<String, List<ServiceStatusResponse>>();
 
@@ -108,14 +104,20 @@ public class TestKnownLayerService2 extends PortalTestClass {
         CSWCacheService mockCacheService = context.mock(CSWCacheService.class);
 
         context.checking(new Expectations() {{
-            oneOf(mockCacheService).getRecordCache();will(returnValue(Arrays.asList(new CSWRecord(), new CSWRecord(), new CSWRecord(), new CSWRecord())));
             oneOf(mockStackDriverService).getStatuses("ERML");will(returnValue(servGroup1Response));
             oneOf(mockStackDriverService).getStatuses("NVCL");will(returnValue(servGroup2Response));
             oneOf(mockStackDriverService).getStatuses("Tenements");will(throwException(new PortalServiceException("tenements error")));
+            oneOf(knownLayerGroupingMock).getKnownLayers();will(returnValue(knownLayers));
         }});
 
 
-        knownLayerService = new KnownLayerService(Arrays.asList(kl1,kl2,kl3,kl4), mockCacheService, new ViewKnownLayerFactory(), null);
+        knownLayerService = new KnownLayerService(Arrays.asList(kl1,kl2,kl3,kl4), mockCacheService, 
+                new ViewKnownLayerFactory(), new ViewCSWRecordFactory()) {
+                    @Override
+                    public KnownLayerGrouping groupKnownLayerRecords() {
+                        return knownLayerGroupingMock;
+                    }
+        };
         knownLayerService.setCachedService(mockStackDriverService);
     }
 
