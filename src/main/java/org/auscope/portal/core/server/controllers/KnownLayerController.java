@@ -39,7 +39,7 @@ public class KnownLayerController extends BaseCSWController {
   
     /**
      * Utility for generating a response model that represents a number of KnownLayerAndRecord objects. Also adds
-     * service failure information from nagios to the layers (if recorded in the known layer).
+     * service failure information from StackDriver to the layers (if recorded in the known layer).
      *
      * @param knownLayers
      *            The known layers to transform

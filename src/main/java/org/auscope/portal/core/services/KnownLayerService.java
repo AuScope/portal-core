@@ -239,12 +239,25 @@ public class KnownLayerService {
 
     private List<ModelMap> knownLayersCache = new ArrayList<>();
 
+    /***
+     * Returns the list of known layers. This list is populated by {@link KnownLayerService#updateKnownLayersCache()}. 
+     * {@link KnownLayerService#updateKnownLayersCache()} is threadsafe and can be called directly or from a background
+     * thread
+     * 
+     * @return cached version of known layers
+     */
     public List<ModelMap> getKnownLayersCache() {
         synchronized (knownLayersCache) {
             return new ArrayList<>(knownLayersCache);
         }
     }
 
+    /***
+     * Updated the list of known layers depending on their status as obtained from StackDriver. This method is
+     * threadsafe and can be called directly or from a background thread.
+     * 
+     * To access the results of the update, call {@link KnownLayerService#getKnownLayersCache()}
+     */
     public void updateKnownLayersCache() {
         logger.trace("Updating service status for KnownLayers. Current size: "+knownLayers.size());
         ArrayList<ModelMap> newKnownLayersCache = new ArrayList<>();
