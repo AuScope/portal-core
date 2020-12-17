@@ -15,7 +15,6 @@ import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.test.jmock.CSWGetDataRecordsFilterMatcher;
 import org.auscope.portal.core.view.ViewCSWRecordFactory;
-import org.auscope.portal.core.view.ViewKnownLayerFactory;
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Before;
@@ -34,7 +33,6 @@ public class TestCSWFilterController extends PortalTestClass {
     private ViewCSWRecordFactory mockViewRecordFactory;
     private CSWFilterService mockService;
     private CSWFilterController controller;
-    private ViewKnownLayerFactory mockKnownLayerFactory;
     private CustomRegistry customRegistry;
 
     /**
@@ -43,9 +41,8 @@ public class TestCSWFilterController extends PortalTestClass {
     @Before
     public void init() {
         mockViewRecordFactory = context.mock(ViewCSWRecordFactory.class);
-        mockKnownLayerFactory = context.mock(ViewKnownLayerFactory.class);
         mockService = context.mock(CSWFilterService.class);
-        controller = new CSWFilterController(mockService, mockViewRecordFactory, mockKnownLayerFactory);
+        controller = new CSWFilterController(mockService, mockViewRecordFactory);
         customRegistry = new CustomRegistry("", "", "", "");
     }
 

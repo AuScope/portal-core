@@ -49,9 +49,6 @@ public class TestCSWCacheController extends PortalTestClass {
     /** The mock view csw record factory. */
     private ViewCSWRecordFactory mockViewCSWRecordFactory = context.mock(ViewCSWRecordFactory.class);
 
-    /** The mock view known layer factory. */
-    private ViewKnownLayerFactory mockViewKnownLayerFactory = context.mock(ViewKnownLayerFactory.class);
-
     /** The mock csw record1. */
     private CSWRecord mockCSWRecord1 = context.mock(CSWRecord.class, "mockCSWRecord1");
 
@@ -70,7 +67,7 @@ public class TestCSWCacheController extends PortalTestClass {
             oneOf(mockCSWService).updateCache();
         }});
 
-        cswController = new CSWCacheController(mockCSWService, mockViewCSWRecordFactory, mockViewKnownLayerFactory);
+        cswController = new CSWCacheController(mockCSWService, mockViewCSWRecordFactory);
     }
 
     private String renderMav(ModelAndView mav) throws Exception {

@@ -19,7 +19,6 @@ import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord;
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesWMSLayerRecord;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.view.ViewCSWRecordFactory;
-import org.auscope.portal.core.view.ViewKnownLayerFactory;
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Before;
@@ -49,7 +48,7 @@ public class TestCSWSearchController extends PortalTestClass {
 
         }});
 
-        controller = new CSWSearchController(new ViewCSWRecordFactory(), new ViewKnownLayerFactory(), mockFilterService, mockCSWService, mockWmsService, mockCswFilterService);
+        controller = new CSWSearchController(new ViewCSWRecordFactory(), mockFilterService, mockCSWService, mockWmsService, mockCswFilterService);
     }
 
     private <T, U> Map<T, U> singleKeyMap(T key, U value) {

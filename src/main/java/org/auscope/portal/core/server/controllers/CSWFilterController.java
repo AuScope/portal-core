@@ -61,9 +61,8 @@ public class CSWFilterController extends BaseCSWController {
      */
     @Autowired
     public CSWFilterController(CSWFilterService cswFilterService,
-            ViewCSWRecordFactory viewCSWRecordFactory,
-            ViewKnownLayerFactory viewKnownLayerFactory) {
-        super(viewCSWRecordFactory, viewKnownLayerFactory);
+            ViewCSWRecordFactory viewCSWRecordFactory) {
+        super(viewCSWRecordFactory);
         this.cswFilterService = cswFilterService;
 
     }

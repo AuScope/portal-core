@@ -12,7 +12,6 @@ import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord_1_3_
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.util.ResourceUtil;
 import org.auscope.portal.core.view.ViewCSWRecordFactory;
-import org.auscope.portal.core.view.ViewKnownLayerFactory;
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Before;
@@ -23,7 +22,6 @@ import org.springframework.web.servlet.ModelAndView;
 public class TestGetCapabilitiesController extends PortalTestClass {
 
     private ViewCSWRecordFactory viewCswFactory = context.mock(ViewCSWRecordFactory.class);
-    private ViewKnownLayerFactory viewKlFactory = context.mock(ViewKnownLayerFactory.class);
     private WMSService service;
     private WMSController controller;
 
@@ -31,7 +29,7 @@ public class TestGetCapabilitiesController extends PortalTestClass {
     public void setUp() {
         service = context.mock(WMSService.class);
 
-        controller = new WMSController(service, viewCswFactory, viewKlFactory, null);
+        controller = new WMSController(service, viewCswFactory, null);
     }
 
     @Test

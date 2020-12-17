@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
-import org.auscope.portal.core.server.controllers.BaseCSWController;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.CSWService;
 import org.auscope.portal.core.services.csw.CSWServiceItem;
@@ -14,7 +13,6 @@ import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecord
 import org.auscope.portal.core.services.responses.csw.CSWGetRecordResponse;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.view.ViewCSWRecordFactory;
-import org.auscope.portal.core.view.ViewKnownLayerFactory;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,9 +28,8 @@ public class CSWController extends BaseCSWController {
     @Autowired
     public CSWController(
             HttpServiceCaller serviceCaller,
-            ViewCSWRecordFactory viewCSWRecordFactory,
-            ViewKnownLayerFactory viewKnownLayerFactory) {
-        super(viewCSWRecordFactory, viewKnownLayerFactory);
+            ViewCSWRecordFactory viewCSWRecordFactory) {
+        super(viewCSWRecordFactory);
         this.serviceCaller = serviceCaller;
     }
 

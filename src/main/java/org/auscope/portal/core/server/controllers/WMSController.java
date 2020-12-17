@@ -17,11 +17,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.auscope.portal.core.server.controllers.BaseCSWController;
 import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.WMSService;
-import org.auscope.portal.core.services.namespaces.ErmlNamespaceContext;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicElement;
@@ -32,7 +30,6 @@ import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord;
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesWMSLayerRecord;
 import org.auscope.portal.core.util.FileIOUtil;
 import org.auscope.portal.core.view.ViewCSWRecordFactory;
-import org.auscope.portal.core.view.ViewKnownLayerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -66,8 +63,8 @@ public class WMSController extends BaseCSWController {
 
     @Autowired
     public WMSController(WMSService wmsService, ViewCSWRecordFactory viewCSWRecordFactory,
-            ViewKnownLayerFactory knownLayerFact, HttpServiceCaller serviceCaller) {
-        super(viewCSWRecordFactory, knownLayerFact);
+            HttpServiceCaller serviceCaller) {
+        super(viewCSWRecordFactory);
         this.wmsService = wmsService;
         this.serviceCaller = serviceCaller;
     }

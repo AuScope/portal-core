@@ -29,10 +29,9 @@ public class CSWCacheController extends BaseCSWController {
      */
     @Autowired
     public CSWCacheController(CSWCacheService cswService,
-                         ViewCSWRecordFactory viewCSWRecordFactory,
-                         ViewKnownLayerFactory viewKnownLayerFactory) {
+                         ViewCSWRecordFactory viewCSWRecordFactory) {
 
-        super(viewCSWRecordFactory, viewKnownLayerFactory);
+        super(viewCSWRecordFactory);
         this.cswService = cswService;
 
         cswService.updateCache();

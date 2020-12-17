@@ -3,18 +3,27 @@ package org.auscope.portal.core.services;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
+import org.auscope.portal.core.services.responses.stackdriver.ServiceStatusResponse;
+import org.auscope.portal.core.view.ViewCSWRecordFactory;
+import org.auscope.portal.core.view.ViewKnownLayerFactory;
 import org.auscope.portal.core.view.knownlayer.KnownLayer;
 import org.auscope.portal.core.view.knownlayer.KnownLayerAndRecords;
 import org.auscope.portal.core.view.knownlayer.KnownLayerGrouping;
 import org.auscope.portal.core.view.knownlayer.KnownLayerSelector;
 import org.auscope.portal.core.view.knownlayer.WMSSelector;
 import org.auscope.portal.core.view.knownlayer.WMSSelectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.ModelMap;
 
 /**
  * A service class performing that groups CSWRecord objects (from a CSWCacheService) according to a configured list of KnownLayers
@@ -27,6 +36,18 @@ public class KnownLayerService {
     private List<KnownLayer> knownLayers;
     private CSWCacheService cswCacheService;
 
+    private GoogleCloudMonitoringCachedService stackDriverService = null;
+
+    /** Used for converting data to something the view can understand */
+    private ViewKnownLayerFactory viewKnownLayerFactory;
+    
+    private ViewCSWRecordFactory viewCSWRecordFactory;
+    
+    @Autowired(required = false)
+    public void setCachedService(GoogleCloudMonitoringCachedService service) {
+        this.stackDriverService = service;
+    }
+
     /**
      * Creates a new instance of this class from an untyped list. All objects in knownTypes that can be cast into a KnownLayer will be included in the internal
      * known layer list
@@ -37,7 +58,8 @@ public class KnownLayerService {
      *            An instance of CSWCacheService
      */
     public KnownLayerService(@SuppressWarnings("rawtypes") List knownTypes,
-            CSWCacheService cswCacheService) {
+            CSWCacheService cswCacheService, ViewKnownLayerFactory viewFactory,
+            ViewCSWRecordFactory viewCSWRecordFactory) {
         this.knownLayers = new ArrayList<>();
         for (Object obj : knownTypes) {
             if (obj instanceof KnownLayer) {
@@ -46,6 +68,8 @@ public class KnownLayerService {
         }
 
         this.cswCacheService = cswCacheService;
+        this.viewKnownLayerFactory = viewFactory;
+        this.viewCSWRecordFactory= viewCSWRecordFactory;
     }
 
     /**
@@ -212,4 +236,97 @@ public class KnownLayerService {
         }
         return layerNames;
     }
+
+    private List<ModelMap> knownLayersCache = new ArrayList<>();
+
+    /***
+     * Returns the list of known layers. This list is populated by {@link KnownLayerService#updateKnownLayersCache()}. 
+     * {@link KnownLayerService#updateKnownLayersCache()} is threadsafe and can be called directly or from a background
+     * thread
+     * 
+     * @return cached version of known layers
+     */
+    public List<ModelMap> getKnownLayersCache() {
+        synchronized (knownLayersCache) {
+            return new ArrayList<>(knownLayersCache);
+        }
+    }
+
+    /***
+     * Updated the list of known layers depending on their status as obtained from StackDriver. This method is
+     * threadsafe and can be called directly or from a background thread.
+     * 
+     * To access the results of the update, call {@link KnownLayerService#getKnownLayersCache()}
+     */
+    public void updateKnownLayersCache() {
+        logger.trace("Updating service status for KnownLayers. Current size: "+knownLayers.size());
+        ArrayList<ModelMap> newKnownLayersCache = new ArrayList<>();
+        
+        KnownLayerGrouping knownLayerGrouping = groupKnownLayerRecords();
+        List<KnownLayerAndRecords> knownLayers = knownLayerGrouping.getKnownLayers();
+        for (KnownLayerAndRecords knownLayerAndRecords : knownLayers) {
+            KnownLayer kl = knownLayerAndRecords.getKnownLayer();
+            if (kl.isHidden()) {
+                continue; //any hidden layers will NOT be sent to the view
+            }
+            ModelMap viewKnownLayer = viewKnownLayerFactory.toView(knownLayerAndRecords.getKnownLayer());
+
+            List<ModelMap> viewMappedRecords = new ArrayList<>();
+
+            Set<String> onlineResourceEndpoints = new HashSet<>();
+            for (CSWRecord rec : knownLayerAndRecords.getBelongingRecords()) {
+
+                if (rec != null) {
+                    for (AbstractCSWOnlineResource onlineResource : rec.getOnlineResources()) {
+                        if (onlineResource.getLinkage() != null) {
+                            onlineResourceEndpoints.add(onlineResource.getLinkage().getHost());
+                        }
+                    }
+                    viewMappedRecords.add(viewCSWRecordFactory.toView(rec));
+                }
+            }
+
+            List<ModelMap> viewRelatedRecords = new ArrayList<>();
+            for (CSWRecord rec : knownLayerAndRecords.getRelatedRecords()) {
+                if (rec != null) {
+                    viewRelatedRecords.add(viewCSWRecordFactory.toView(rec));
+                }
+            }
+
+            viewKnownLayer.put("cswRecords", viewMappedRecords);
+            viewKnownLayer.put("relatedRecords", viewRelatedRecords);
+
+            if (stackDriverService != null && kl.getStackdriverServiceGroup() != null) {
+                try {
+                    Map<String, List<ServiceStatusResponse>> response = stackDriverService.getStatuses(kl.getStackdriverServiceGroup());
+                    List<String> failingHosts = new ArrayList<String>();
+                    for (Entry<String, List<ServiceStatusResponse>> entry : response.entrySet()) {
+                        for (ServiceStatusResponse status : entry.getValue()) {
+                            if (!status.isUp()) {
+                                if (onlineResourceEndpoints.contains(entry.getKey())) {
+                                    failingHosts.add(entry.getKey());
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (!failingHosts.isEmpty()) {
+                        viewKnownLayer.put("stackdriverFailingHosts", failingHosts);
+                    }
+                } catch (PortalServiceException ex) {
+                    logger.error("Error updating stackdriver host info for " + kl.getName() + " :" + ex.getMessage());
+                }
+            }
+
+            newKnownLayersCache.add(viewKnownLayer);
+        }
+        
+        synchronized (knownLayersCache) {
+            knownLayersCache.clear();
+            knownLayersCache.addAll(newKnownLayersCache);
+        }
+        logger.info("Finished updating service status for KnownLayers. New size: "+knownLayers.size());
+    }
+  
 }

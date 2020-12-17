@@ -56,8 +56,8 @@ public class CSWSearchController extends BaseCSWController {
     private WMSService wmsService;
 
     @Autowired
-    public CSWSearchController(ViewCSWRecordFactory viewCSWRecordFactory, ViewKnownLayerFactory viewKnownLayerFactory, LocalCSWFilterService filterService, CSWCacheService cacheService, WMSService wmsService, CSWFilterService cswFilterService) {
-        super(viewCSWRecordFactory, viewKnownLayerFactory);
+    public CSWSearchController(ViewCSWRecordFactory viewCSWRecordFactory, LocalCSWFilterService filterService, CSWCacheService cacheService, WMSService wmsService, CSWFilterService cswFilterService) {
+        super(viewCSWRecordFactory);
         this.filterService = filterService;
         this.cacheService = cacheService;
         this.wmsService = wmsService;
