@@ -3,8 +3,7 @@ jdk:
 - openjdk13
 deploy:
   provider: script
-  script: cp .travis.settings.xml $HOME/.m2/settings.xml && mvn deploy >/dev/null
-    2>&1
+  script: cp .travis.settings.xml $HOME/.m2/settings.xml && mvn deploy 
   skip_cleanup: true
   on:
     repo: AuScope/portal-core
