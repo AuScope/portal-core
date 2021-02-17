@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.http.client.methods.HttpRequestBase;
-import org.auscope.portal.core.server.controllers.WFSController;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.WFSGml32Service;
 import org.auscope.portal.core.services.WFSService;

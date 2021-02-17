@@ -1,7 +1,6 @@
 package org.auscope.portal.core.services;
 
 import org.apache.jena.rdf.model.*;
-import org.auscope.portal.core.services.VocabularyCacheService;
 import org.auscope.portal.core.services.namespaces.VocabNamespaceContext;
 
 import java.util.*;

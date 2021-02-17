@@ -201,7 +201,7 @@ public class TestVocabularyCacheService extends PortalTestClass {
     public void testMultiUpdateWithErrors() throws IOException, URISyntaxException {
         final String commodityVocabulary = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/vocabulary/commodityConcepts_MoreData.xml");
         final String noMorecommodityVocabulary = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/vocabulary/commodityConcepts_NoMoreData.xml");
-        final String noMoreMineStatusVocabulary = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/vocabulary/mineStatusConcepts_NoMoreData.xml");
+        // final String noMoreMineStatusVocabulary = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/vocabulary/mineStatusConcepts_NoMoreData.xml");
         final String timescaleVocabulary = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/vocabulary/timescaleConcepts_MoreData.xml");
         final String noMoreTimescaleVocabulary = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/vocabulary/timescaleConcepts_NoMoreData.xml");
 
