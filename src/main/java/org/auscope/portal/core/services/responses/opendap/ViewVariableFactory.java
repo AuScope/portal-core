@@ -4,12 +4,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.NullArgumentException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
 import ucar.ma2.InvalidRangeException;
@@ -28,7 +27,7 @@ public class ViewVariableFactory {
     private static final Log log = LogFactory.getLog(ViewVariableFactory.class);
 
     private static String attemptGetString(JSONObject obj, String key) {
-        if (obj.containsKey(key))
+        if (obj.has(key))
             return obj.getString(key);
         else
             return null;
@@ -108,41 +107,46 @@ public class ViewVariableFactory {
      */
     private static AbstractViewVariable parseJSONRecursive(JSONObject obj) {
 
-        if (obj == null || obj.isNullObject())
-            throw new NullArgumentException("obj");
+        if (obj == null || obj.isEmpty()) {
+            throw new IllegalArgumentException("Null object");
+        }
 
-        String type = obj.getString("type");
-        if (type == null)
+        String type = obj.optString("type");
+        if (type == null) {
             throw new IllegalArgumentException("Object missing type " + obj);
+        }
 
         //Parse a SimpleAxis
         if (type.equals(SimpleAxis.TYPE_STRING)) {
             SimpleAxis axis = new SimpleAxis(attemptGetString(obj, "name"), attemptGetString(obj, "dataType"),
                     attemptGetString(obj, "units"), null, null);
 
-            JSONObject dimensionBounds = obj.getJSONObject("dimensionBounds");
-            JSONObject valueBounds = obj.getJSONObject("valueBounds");
+            JSONObject dimensionBounds = obj.optJSONObject("dimensionBounds");
+            JSONObject valueBounds = obj.optJSONObject("valueBounds");
 
-            if (dimensionBounds != null && !dimensionBounds.isNullObject()) {
-                axis.setDimensionBounds(new SimpleBounds(dimensionBounds.getDouble("from"), dimensionBounds
-                        .getDouble("to")));
+            if (dimensionBounds != null && !dimensionBounds.isEmpty()) {
+                axis.setDimensionBounds(new SimpleBounds(dimensionBounds.optDouble("from"), dimensionBounds
+                        .optDouble("to")));
             }
 
-            if (valueBounds != null && !valueBounds.isNullObject()) {
-                axis.setValueBounds(new SimpleBounds(valueBounds.getDouble("from"), valueBounds.getDouble("to")));
+            if (valueBounds != null && !valueBounds.isEmpty()) {
+                axis.setValueBounds(new SimpleBounds(valueBounds.optDouble("from"), valueBounds.optDouble("to")));
             }
 
             return axis;
 
-            //Parse a SimpleGrid
+        //Parse a SimpleGrid
         } else if (type.equals(SimpleGrid.TYPE_STRING)) {
-            JSONArray axes = obj.getJSONArray("axes");
+            JSONArray axes = obj.optJSONArray("axes");
+            if (axes == null) {
+                throw new IllegalArgumentException("Object missing or cannot evaluate axes " + obj);
+            }
             SimpleGrid grid = new SimpleGrid(attemptGetString(obj, "name"), attemptGetString(obj, "dataType"),
                     attemptGetString(obj, "units"), null);
             List<AbstractViewVariable> childAxes = new ArrayList<>();
 
-            for (int i = 0; i < axes.size(); i++) {
-                AbstractViewVariable var = parseJSONRecursive(axes.getJSONObject(i));
+            for (int i = 0; i < axes.length(); i++) {
+                AbstractViewVariable var = parseJSONRecursive(axes.optJSONObject(i));
                 if (var != null)
                     childAxes.add(var);
             }
@@ -208,7 +212,7 @@ public class ViewVariableFactory {
     public static AbstractViewVariable[] fromJSONArray(JSONArray arr) {
         List<AbstractViewVariable> result = new ArrayList<>();
 
-        for (int i = 0; i < arr.size(); i++) {
+        for (int i = 0; i < arr.length(); i++) {
             AbstractViewVariable parsedViewVar = parseJSONRecursive(arr.getJSONObject(i));
             if (parsedViewVar != null)
                 result.add(parsedViewVar);

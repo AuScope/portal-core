@@ -3,7 +3,7 @@ package org.auscope.portal.core.services.responses.wms;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathException;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;

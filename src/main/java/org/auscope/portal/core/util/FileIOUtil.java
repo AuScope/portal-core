@@ -22,14 +22,13 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.server.http.download.DownloadResponse;
 
-import net.sf.json.JSONNull;
-import net.sf.json.JSONObject;
+import org.json.JSONObject;
 
 public class FileIOUtil {
 
@@ -417,27 +416,25 @@ public class FileIOUtil {
     public static void writeResponseJSONToZip(ArrayList<DownloadResponse> gmlDownloads, ZipOutputStream zout, String extension)
             throws IOException {
         StringBuilder errorMsg = new StringBuilder();
-
         for (int i = 0; i < gmlDownloads.size(); i++) {
             DownloadResponse download = gmlDownloads.get(i);
             //Check that attempt to request is successful
             if (!download.hasException()) {
-                JSONObject jsonObject = JSONObject.fromObject(download.getResponseAsString());
+                JSONObject jsonObject = new JSONObject(download.getResponseAsString());
                 //check that JSON reply is successful
                 if (jsonObject.get("success").toString().equals("false")) {
                     errorMsg.append("Unsuccessful JSON reply from: " + download.getRequestURL() + "\n");
-
-                    Object messageObject = jsonObject.get("msg");
-                    if (messageObject == null || messageObject.toString().length() == 0) {
+                    String messageStr = jsonObject.optString("msg");
+                    if (messageStr.length() == 0) {
                         errorMsg.append("No error message\n\n");
                     } else {
-                        errorMsg.append(messageObject.toString() + "\n\n");
+                        errorMsg.append(messageStr + "\n\n");
                     }
                 } else {
+                    // Successful
                     byte[] gmlBytes = new byte[] {};
-                    Object dataObject = jsonObject.get("data");
-                    if (dataObject != null && !JSONNull.getInstance().equals(dataObject)) {
-                        JSONObject dataObjectJson = JSONObject.fromObject(dataObject);
+                    JSONObject dataObjectJson = jsonObject.optJSONObject("data");
+                    if (dataObjectJson != null && !dataObjectJson.isEmpty()) {
                         Iterator<?> children = dataObjectJson.keys();
                         if (children.hasNext()) {
                             String firstChild = children.next().toString();

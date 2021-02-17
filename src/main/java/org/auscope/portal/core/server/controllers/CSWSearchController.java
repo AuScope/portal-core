@@ -40,7 +40,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.sf.json.JSONObject;
+import org.json.JSONObject;
 
 /**
  * Controller for handling search requests for a remote CSW
@@ -172,7 +172,7 @@ public class CSWSearchController extends BaseCSWController {
                 newFacet = new SearchFacet<OnlineResourceType>(Enum.valueOf(OnlineResourceType.class, rawValues[i]), rawFields[i], cmp);
                 break;
             case "bbox":
-                JSONObject jsonValue = JSONObject.fromObject(rawValues[i]);
+                JSONObject jsonValue = new JSONObject(rawValues[i]);
                 FilterBoundingBox bbox = FilterBoundingBox.parseFromValues("WGS:84", jsonValue.getDouble("northBoundLatitude"), jsonValue.getDouble("southBoundLatitude"), jsonValue.getDouble("eastBoundLongitude"), jsonValue.getDouble("westBoundLongitude"));
 
                 if (bbox == null) {

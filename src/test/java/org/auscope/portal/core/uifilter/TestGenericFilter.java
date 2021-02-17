@@ -2,7 +2,7 @@ package org.auscope.portal.core.uifilter;
 
 import java.util.List;
 
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
 import org.junit.Assert;
 import org.junit.Test;

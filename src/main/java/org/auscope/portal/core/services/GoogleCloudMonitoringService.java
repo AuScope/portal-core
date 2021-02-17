@@ -24,8 +24,8 @@ import com.google.api.client.http.HttpRequest;
 import com.google.auth.oauth2.AccessToken;
 import com.google.auth.oauth2.ServiceAccountCredentials;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * Service class for accessing the REST API of a Google StackDriver instance
@@ -132,7 +132,7 @@ public class GoogleCloudMonitoringService {
 	public HashMap<String, List<ServiceStatusResponse>> parseResponses(String responseString) throws PortalServiceException {
     	HashMap<String, List<ServiceStatusResponse>> parsedResponses = new HashMap<String, List<ServiceStatusResponse>>();
         try {
-            JSONObject result = JSONObject.fromObject(responseString);
+            JSONObject result = new JSONObject(responseString);
             // Check for errors, e.g.
             //{
             //	  "error": {
@@ -141,21 +141,23 @@ public class GoogleCloudMonitoringService {
             //	    "status": "INVALID_ARGUMENT"
             //	  }
             //	}
-            if (result.containsKey("error")) {
-            	JSONObject error = result.getJSONObject("error");
-                String message = error.getString("message");
-                throw new PortalServiceException("Response reports failure:" + error.getString("code") + " - " + message);
+            if (result.has("error")) {
+                JSONObject error = result.optJSONObject("error");
+                if (error != null) {
+                    throw new PortalServiceException("Response reports failure:" + error.optString("code") + " - " + error.optString("message"));
+                }
+                throw new PortalServiceException("Response reports failure: unspecified error");
             }
 
             JSONArray serviceList = result.getJSONArray("timeSeries");
 
             List<ServiceStatusResponse> statusResponses;
             for (Object service : serviceList) {
-            	JSONObject serviceJSON = ((JSONObject)service);
+                JSONObject serviceJSON = new JSONObject(service.toString());
             	// get the latest timeseries interval i.e. last 10 seconds
-                Object point = serviceJSON.getJSONArray("points").get(0);
-
-                boolean passedCheck = ((JSONObject) point).getJSONObject("value").getBoolean("boolValue");
+                JSONArray points = serviceJSON.getJSONArray("points");
+                JSONObject jPoint = points.getJSONObject(0);
+                boolean passedCheck = jPoint.getJSONObject("value").getBoolean("boolValue");
 
 //                "metric": {
 //                    "labels": {

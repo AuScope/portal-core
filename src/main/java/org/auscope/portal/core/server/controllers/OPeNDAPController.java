@@ -9,7 +9,7 @@ import java.util.zip.ZipOutputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONObject;
+import org.json.JSONObject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -137,7 +137,7 @@ public class OPeNDAPController extends BasePortalController {
         //Parse our constraint list (can be null)
         AbstractViewVariable[] constraints = new AbstractViewVariable[0];
         if (constraintsJson != null && !constraintsJson.isEmpty()) {
-            JSONObject obj = JSONObject.fromObject(constraintsJson);
+            JSONObject obj = new JSONObject(constraintsJson);
             constraints = ViewVariableFactory.fromJSONArray(obj.getJSONArray("constraints"));
         }
 

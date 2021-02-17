@@ -7,8 +7,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.server.OgcServiceProviderType;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * This class is only temporary - it is intended to be overridden by the geotools ogc filter library.
@@ -265,26 +265,26 @@ public class FilterBoundingBox implements Serializable {
      */
     public static FilterBoundingBox parseFromJSON(JSONObject obj, OgcServiceProviderType OgcServiceProviderType) {
         // Our filter bbox can come in a couple of formats
-        if (obj.containsKey("lowerCornerPoints") && obj.containsKey("upperCornerPoints")) {
+        if (obj.has("lowerCornerPoints") && obj.has("upperCornerPoints")) {
             FilterBoundingBox result = new FilterBoundingBox(obj.getString("bboxSrs"), null, null);
 
             JSONArray lowerCornerPoints = obj.getJSONArray("lowerCornerPoints");
             JSONArray upperCornerPoints = obj.getJSONArray("upperCornerPoints");
 
-            result.lowerCornerPoints = new double[lowerCornerPoints.size()];
-            result.upperCornerPoints = new double[upperCornerPoints.size()];
+            result.lowerCornerPoints = new double[lowerCornerPoints.length()];
+            result.upperCornerPoints = new double[upperCornerPoints.length()];
 
-            for (int i = 0; i < lowerCornerPoints.size(); i++) {
+            for (int i = 0; i < lowerCornerPoints.length(); i++) {
                 result.lowerCornerPoints[i] = lowerCornerPoints.getDouble(i);
             }
 
-            for (int i = 0; i < upperCornerPoints.size(); i++) {
+            for (int i = 0; i < upperCornerPoints.length(); i++) {
                 result.upperCornerPoints[i] = upperCornerPoints.getDouble(i);
             }
 
             return result;
-        } else if (obj.containsKey("eastBoundLongitude") && obj.containsKey("westBoundLongitude") &&
-                obj.containsKey("northBoundLatitude") && obj.containsKey("southBoundLatitude")) {
+        } else if (obj.has("eastBoundLongitude") && obj.has("westBoundLongitude") &&
+                obj.has("northBoundLatitude") && obj.has("southBoundLatitude")) {
 
             Double eastBound = obj.getDouble("eastBoundLongitude");
 
@@ -330,7 +330,7 @@ public class FilterBoundingBox implements Serializable {
         FilterBoundingBox bbox = null;
         try {
             if (json != null && !json.isEmpty()) {
-                JSONObject obj = JSONObject.fromObject(json);
+                JSONObject obj = new JSONObject(json);
                 bbox = FilterBoundingBox.parseFromJSON(obj, OgcServiceProviderType);
                 log.debug("bbox=" + bbox.toString());
             } else {
