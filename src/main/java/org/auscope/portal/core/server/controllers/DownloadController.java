@@ -20,7 +20,6 @@ import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.auscope.portal.core.configuration.ServiceConfiguration;
-import org.auscope.portal.core.server.controllers.BasePortalController;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.server.http.download.DownloadResponse;
 import org.auscope.portal.core.server.http.download.DownloadTracker;
