@@ -6,7 +6,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
 
-import org.auscope.portal.core.server.controllers.BaseCSWController;
 import org.auscope.portal.core.services.CSWFilterService;
 import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.csw.custom.CustomRegistryInt;
@@ -19,7 +18,6 @@ import org.auscope.portal.core.services.responses.csw.CSWGetDomainResponse;
 import org.auscope.portal.core.services.responses.csw.CSWGetRecordResponse;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.view.ViewCSWRecordFactory;
-import org.auscope.portal.core.view.ViewKnownLayerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Controller;

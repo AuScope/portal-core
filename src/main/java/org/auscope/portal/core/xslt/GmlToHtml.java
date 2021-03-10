@@ -4,7 +4,6 @@ import java.util.Properties;
 
 import org.auscope.portal.core.services.namespaces.ErmlNamespaceContext;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /**
  * Utility class for converting Gml to a 'pretty' HTML representation
@@ -18,8 +17,6 @@ public class GmlToHtml extends PortalXSLTTransformer {
 	/**
 	 * The base URL needed to build service calls from the XSLT
 	 */
-	private String portalBackendUrl;
-
 	public GmlToHtml() {
 	    super("/org/auscope/portal/core/xslt/WfsToHtml.xsl");
 	}

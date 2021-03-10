@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.auscope.portal.core.server.controllers.BasePortalController;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.WCSService;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;

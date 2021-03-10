@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.auscope.portal.core.server.controllers.BaseCSWController;
 import org.auscope.portal.core.services.CSWCacheService;
 import org.auscope.portal.core.services.CSWFilterService;
 import org.auscope.portal.core.services.LocalCSWFilterService;
@@ -29,7 +28,6 @@ import org.auscope.portal.core.services.responses.search.FacetedMultiSearchRespo
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord;
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesWMSLayerRecord;
 import org.auscope.portal.core.view.ViewCSWRecordFactory;
-import org.auscope.portal.core.view.ViewKnownLayerFactory;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -40,7 +38,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
-import net.sf.json.JSONObject;
+import org.json.JSONObject;
 
 /**
  * Controller for handling search requests for a remote CSW
@@ -172,7 +170,7 @@ public class CSWSearchController extends BaseCSWController {
                 newFacet = new SearchFacet<OnlineResourceType>(Enum.valueOf(OnlineResourceType.class, rawValues[i]), rawFields[i], cmp);
                 break;
             case "bbox":
-                JSONObject jsonValue = JSONObject.fromObject(rawValues[i]);
+                JSONObject jsonValue = new JSONObject(rawValues[i]);
                 FilterBoundingBox bbox = FilterBoundingBox.parseFromValues("WGS:84", jsonValue.getDouble("northBoundLatitude"), jsonValue.getDouble("southBoundLatitude"), jsonValue.getDouble("eastBoundLongitude"), jsonValue.getDouble("westBoundLongitude"));
 
                 if (bbox == null) {

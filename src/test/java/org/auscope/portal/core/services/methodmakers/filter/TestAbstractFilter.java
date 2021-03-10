@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 import org.auscope.portal.core.test.AbstractFilterTestUtilities;
 import org.junit.Assert;
 import org.junit.Test;

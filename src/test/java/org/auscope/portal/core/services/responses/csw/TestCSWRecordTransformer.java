@@ -1,10 +1,8 @@
 package org.auscope.portal.core.services.responses.csw;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
@@ -25,7 +23,6 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
 public class TestCSWRecordTransformer extends PortalTestClass {
@@ -260,43 +257,6 @@ public class TestCSWRecordTransformer extends PortalTestClass {
                 this.records[0].getDataSetURIs()[0]);
         Assert.assertEquals("http://geology.data.vic.gov.au/searchAssistant/reference.html?q=record_id:26151",
                 this.records[0].getDataSetURIs()[1]);
-    }
-
-    /**
-     * Generates an xpath-esque location for the current node for debug purposes
-     *
-     * @param node
-     * @return
-     */
-    private static String debugLocation(final Node node) {
-        final Stack<String> stack = new Stack<>();
-
-        Node current = node;
-        do {
-            stack.push(String.format("%1$s", current.getLocalName()));
-
-            current = current.getParentNode();
-        } while (current != null);
-
-        String result = "";
-        while (!stack.isEmpty()) {
-            result += stack.pop() + "/";
-        }
-
-        return result;
-    }
-
-    private static List<Node> getNonTextChildNodes(final Node node) {
-        final List<Node> nonTextChildren = new ArrayList<>();
-
-        final NodeList children = node.getChildNodes();
-        for (int i = 0; i < children.getLength(); i++) {
-            if (!(children.item(i) instanceof Text)) {
-                nonTextChildren.add(children.item(i));
-            }
-        }
-
-        return nonTextChildren;
     }
 
     @Test

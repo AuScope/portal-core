@@ -3,9 +3,8 @@ package org.auscope.portal.core.uifilter;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -86,39 +85,34 @@ public abstract class GenericFilter extends AbstractFilter {
 
     }
     
-    public List<String> generateParameterFragments(){
+    public List<String> generateParameterFragments() {
         List<String> results=new ArrayList<String>();
         final String unInitializedXPathFiltersMessage = "xPathFilters has not been properly initialized. Make sure you have initialized via the constructor.";
 
-        if(this.getxPathFilters()==null){
+        if (this.getxPathFilters()==null) {
             throw new IllegalStateException(unInitializedXPathFiltersMessage);
         }
 
-        JSONArray jArray = (JSONArray) JSONSerializer.toJSON("["+this.getxPathFilters()+"]");
+        JSONArray jArray = new JSONArray("["+this.getxPathFilters()+"]");
 
-        if(jArray.isEmpty()){
+        if (jArray.isEmpty()) {
             return results;
         }
 
-        if(jArray.isArray()){
-            for(int i=0;i<jArray.size();i++){
-                if(jArray.get(i) instanceof JSONObject){
-                    JSONObject jobj=(JSONObject)jArray.get(i);
-                    if (jobj.getString("value").equals("null")) {
-                        continue;
-                    }
-                    if(jobj.getString("type").equals("OPTIONAL.DATE")){
-                        results.add(parseDateType(jobj));
-                    }else if (jobj.getString("type").equals("OPTIONAL.POLYGONBBOX")) {
-                    	results.add(parsePolygonBBox(jobj));                    	
-                    }else if(jobj.getString("type").contains("OPTIONAL") && !jobj.getString("type").equals("OPTIONAL.PROVIDER")){
-                        results.add(parseTextType(jobj));
-                    }
-                }
+        for (int i=0; i < jArray.length(); i++) {
+            JSONObject jobj = jArray.getJSONObject(i);
+            if (jobj.optString("value") == null || jobj.optString("value") == null) {
+                continue;
             }
+            if (jobj.getString("type").equals("OPTIONAL.DATE")) {
+                results.add(parseDateType(jobj));
+            } else if (jobj.getString("type").equals("OPTIONAL.POLYGONBBOX")) {
+                results.add(parsePolygonBBox(jobj));
+            } else if (jobj.getString("type").contains("OPTIONAL") && !jobj.getString("type").equals("OPTIONAL.PROVIDER")) {
+                results.add(parseTextType(jobj));
+	    }
 
         }
-
 
         return results;
     }

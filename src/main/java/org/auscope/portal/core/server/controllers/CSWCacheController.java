@@ -5,11 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.auscope.portal.core.server.controllers.BaseCSWController;
 import org.auscope.portal.core.services.CSWCacheService;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.view.ViewCSWRecordFactory;
-import org.auscope.portal.core.view.ViewKnownLayerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;

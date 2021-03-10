@@ -10,15 +10,14 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import org.auscope.portal.core.services.CSWCacheService;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.test.ByteBufferedServletOutputStream;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.view.ViewCSWRecordFactory;
-import org.auscope.portal.core.view.ViewKnownLayerFactory;
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Before;
@@ -114,13 +113,13 @@ public class TestCSWCacheController extends PortalTestClass {
         //Run the method, get our response rendered as a JSONObject
         ModelAndView mav = cswController.getCSWRecords();
         String json = renderMav(mav);
-        JSONObject jsonObj = JSONObject.fromObject(json);
+        JSONObject jsonObj = new JSONObject(json);
 
         //Check our response contains useful info...
         Assert.assertEquals(true, jsonObj.getBoolean(SUCCESSJSON));
         JSONArray records = jsonObj.getJSONArray("data");
         Assert.assertNotNull(records);
-        Assert.assertEquals(2, records.size());
+        Assert.assertEquals(2, records.length());
 
         JSONObject jsonRec1 = records.getJSONObject(0);
         JSONObject jsonRec2 = records.getJSONObject(1);
@@ -155,13 +154,13 @@ public class TestCSWCacheController extends PortalTestClass {
         //Run the method, get our response rendered as a JSONObject
         ModelAndView mav = cswController.getCSWRecords();
         String json = renderMav(mav);
-        JSONObject jsonObj = JSONObject.fromObject(json);
+        JSONObject jsonObj = new JSONObject(json);
 
         //Check our response contains useful info...
         Assert.assertEquals(false, jsonObj.getBoolean(SUCCESSJSON));
-        JSONArray records = (JSONArray)jsonObj.get("data");
+        JSONArray records = jsonObj.getJSONArray("data");
         Assert.assertNotNull(records);
-        Assert.assertEquals(0, records.size());
+        Assert.assertEquals(0, records.length());
     }
 
     /**

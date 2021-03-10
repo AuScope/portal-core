@@ -4,7 +4,7 @@
     <groupId>org.auscope.portal</groupId>
     <artifactId>portal-core</artifactId>
     <packaging>jar</packaging>
-    <version>2.3.3-SNAPSHOT</version>
+    <version>2.3.4-SNAPSHOT</version>
     <name>Portal-Core</name>
     <description>Core functionality common to various AuScope portals.</description>
     <url>http://portal.auscope.org</url>
@@ -13,8 +13,8 @@
         <url>https://jira.csiro.au/browse/AUS</url>
     </issueManagement>
     <ciManagement>
-        <system>Jenkins</system>
-        <url>https://cgsrv8.arrc.csiro.au/jenkins</url>
+        <system>Travis-CI</system>
+        <url>https://travis-ci.com</url>
     </ciManagement>
     <scm>
         <connection>scm:git:https://github.com/AuScope/portal-core.git</connection>
@@ -34,115 +34,90 @@
         </snapshotRepository>
     </distributionManagement>
 
+    <organization>
+        <name>AuScope</name>
+        <url>http://www.auscope.org</url>
+    </organization>
+
+    <!-- Project properties -->
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <!--  Spring Boot -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.4.2</version>
+    </parent>
+
+    <!-- Repositories section -->
+    <repositories>
+        <repository>
+            <id>dcdp-deps</id>
+            <name>AuScope Nexus - New PortalRepo</name>
+            <url>https://cgmaven.it.csiro.au/nexus/repository/dcdp-deps/</url>
+        </repository>
+        <repository>
+            <id>osgeo</id>
+            <name>Open Source Geospatial Foundation Repository</name>
+            <url>http://download.osgeo.org/webdav/geotools</url>
+        </repository>
+        <repository>
+            <id>unidata</id>
+            <name>Unidata Repository</name>
+            <url>https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/</url>
+        </repository>
+        <repository>
+            <id>apache-releases</id>
+            <name>apache maven repo</name>
+            <url>https://repository.apache.org/content/repositories/releases</url>
+        </repository>
+        <!-- This is for AuScope specific builds of packages that aren't in Maven central -->
+        <repository>
+            <id>cgmaven.it.csiro.au</id>
+            <name>AuScope Nexus - New PortalRepo</name>
+            <url>https://cgmaven.it.csiro.au/nexus/repository/PortalRepository/</url>
+        </repository>
+    </repositories>
+
     <!-- Dependency Management -->
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>io.spring.platform</groupId>
-                <artifactId>platform-bom</artifactId>
-                <version>Cairo-SR8</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-    <!-- This is used to ensure we use up to date versions in         -->
-    <!-- 3rd party dependencies to avoid security issues              -->
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-web</artifactId>
-                <version>5.0.18.RELEASE</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-core</artifactId>
-                <version>5.0.16.RELEASE</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-		<version>2.11.0</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.dataformat</groupId>
-		<artifactId>jackson-dataformat-cbor</artifactId>
-		<version>2.11.0</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.dataformat</groupId>
-		<artifactId>jackson-dataformat-yaml</artifactId>
-		<version>2.11.0</version>
-            </dependency>
-	    <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-		    <artifactId>jackson-core</artifactId>
-		<version>2.11.0</version>
-	    </dependency>
-	    <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-		    <artifactId>jackson-annotations</artifactId>
-		<version>2.11.0</version>
-	    </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.jaxrs</groupId>
-		<artifactId>jackson-jaxrs-base</artifactId>
-		<version>2.11.0</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.jaxrs</groupId>
-		<artifactId>jackson-jaxrs-json-provider</artifactId>
-		<version>2.11.0</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.module</groupId>
-		<artifactId>jackson-module-jaxb-annotations</artifactId>
-		<version>2.11.0</version>
-            </dependency>
-            <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
-		<version>1.14</version>
-            </dependency>
-	    <dependency>
-		<groupId>com.google.guava</groupId>
-		<artifactId>guava</artifactId>
-		<version>29.0-jre</version>
-	    </dependency>
-	    <dependency>
-		<groupId>commons-beanutils</groupId>
-		<artifactId>commons-beanutils</artifactId>
-		<version>1.9.4</version>
-	    </dependency>
-	    <dependency>
-		<groupId>io.netty</groupId>
-		<artifactId>netty-codec-http</artifactId>
-		<version>4.1.46.Final</version>
-	    </dependency>
-	    <dependency>
-		<groupId>io.netty</groupId>
-		<artifactId>netty-codec</artifactId>
-		<version>4.1.46.Final</version>
-	    </dependency>
-	    <dependency>
-		<groupId>org.yaml</groupId>
-		<artifactId>snakeyaml</artifactId>
-		<version>1.26</version>
+                <version>1.15</version>
             </dependency>
             <dependency>
-                <groupId>com.squareup.okhttp</groupId>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>1.9.4</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-http</artifactId>
+                <version>4.1.59.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec</artifactId>
+                <version>4.1.59.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>1.27</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
                 <artifactId>okhttp</artifactId>
-                <version>2.7.5</version>
+                <version>4.9.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
 
     <!-- Build Configuration  -->
-    <organization>
-        <name>AuScope</name>
-        <url>http://www.auscope.org</url>
-    </organization>
-    <!-- Project properties -->
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
     <build>
         <finalName>${project.artifactId}-${project.version}</finalName>
         <plugins>
@@ -153,12 +128,12 @@
                 <inherited>true</inherited>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>2.2.1</version>
+                <version>3.2.1</version>
                 <configuration>
                     <attach>true</attach>
                 </configuration>
                 <executions>
-			        <execution>
+                    <execution>
                         <id>attach-sources</id>
                         <goals>
                             <goal>jar</goal>
@@ -168,7 +143,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.2</version>
+                <version>3.8.1</version>
                 <configuration>
                     <source>13</source>
                     <target>13</target>
@@ -213,12 +188,12 @@
                             <goal>jar</goal>
                         </goals>
                     </execution>
-					<execution>
+                    <execution>
                         <id>make-a-test-jar</id>
-			           <goals>
-			              <goal>test-jar</goal>
-			            </goals>
-			         </execution>                    
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
                 </executions>
             </plugin>
             <!-- This is for ensuring the JAR (see above maven-jar-plugin) gets installed properly -->
@@ -271,45 +246,7 @@
                     </classpathContainers>
                     <wtpversion>2.0</wtpversion>
                 </configuration>
-            </plugin>
-            <plugin>
-              <groupId>com.samaxes.maven</groupId>
-              <artifactId>minify-maven-plugin</artifactId>
-              <version>1.7.4</version>
-              <executions>
-                <execution>
-                  <id>default-minify</id>
-                  <configuration>
-                    <charset>UTF-8</charset>
-                    <!-- css bit -->
-                    <cssSourceDir>portal-core/css/</cssSourceDir>
-                    <jsTargetDir>../classes/portal-core/css</jsTargetDir>
-                    <cssSourceIncludes>
-                      <cssSourceInclude>**/*.css</cssSourceInclude>
-                    </cssSourceIncludes>
-                    <cssSourceExcludes>
-                      <cssSourceExclude>**/*.min.css</cssSourceExclude>
-                    </cssSourceExcludes>
-                    <cssFinalFile>portal-core-all.css</cssFinalFile>
-                    <!-- javascript bit -->
-                    <jsSourceDir>portal-core/js/portal/</jsSourceDir>
-                    <jsTargetDir>../classes/portal-core/js/portal</jsTargetDir>
-                    <jsSourceIncludes>
-                      <jsSourceInclude>**/*.js</jsSourceInclude>
-                    </jsSourceIncludes>
-                    <jsSourceExcludes>
-                      <jsSourceExclude>**/*.min.js</jsSourceExclude>
-                    </jsSourceExcludes>
-                    <jsFinalFile>portal-core-all.js</jsFinalFile>
-                    <jsEngine>CLOSURE</jsEngine>
-                    <closureSortDependencies>true</closureSortDependencies>
-                  </configuration>
-                  <goals>
-                    <goal>minify</goal>
-                  </goals>
-                </execution>
-              </executions>
-            </plugin>
+	</plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
@@ -319,68 +256,12 @@
                     <cacheFile>checkstyle.cache</cacheFile>
                 </configuration>
             </plugin>
-            <!-- This builds our GUI release plugin -->
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.2.0</version>
-                <configuration>
-                    <descriptors>
-                        <descriptor>src/assembly/webapp.xml</descriptor>
-                    </descriptors>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- This bundles our webresources into the output JAR-->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.1.0</version>
-            </plugin>
         </plugins>
         <resources>
          <resource>
            <directory>src/main/resources</directory>
          </resource>
-         <resource>
-           <directory>src/main/webapp</directory>
-         </resource>
        </resources>
-       <pluginManagement>
-          <plugins>
-            <plugin>
-             <groupId>org.eclipse.m2e</groupId>
-             <artifactId>lifecycle-mapping</artifactId>
-             <version>1.0.0</version>
-             <configuration>
-                <lifecycleMappingMetadata>
-                <pluginExecutions>
-                    <pluginExecution>
-                        <pluginExecutionFilter>
-                            <groupId>com.samaxes.maven</groupId>
-                          <artifactId>minify-maven-plugin</artifactId>
-                          <versionRange>[1.7,)</versionRange>
-                            <goals>
-                                <goal>minify</goal>
-                            </goals>
-                        </pluginExecutionFilter>
-                        <action>
-                            <ignore/>
-                        </action>
-                    </pluginExecution>
-                </pluginExecutions>
-               </lifecycleMappingMetadata>
-             </configuration>
-            </plugin>
-          </plugins>
-        </pluginManagement>
     </build>
     
     <reporting>
@@ -392,99 +273,46 @@
             </plugin>
         </plugins>
     </reporting>
-    <repositories>
-        <repository>
-            <id>dcdp-deps</id>
-            <name>AuScope Nexus - New PortalRepo</name>
-            <url>https://cgmaven.it.csiro.au/nexus/repository/dcdp-deps/</url>
-        </repository>
-        <repository>
-            <id>osgeo</id>
-            <name>Open Source Geospatial Foundation Repository</name>
-            <url>http://download.osgeo.org/webdav/geotools</url>
-        </repository>
-	<repository>
-            <id>unidata</id>
-            <name>Unidata Repository</name>
-            <url>https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/</url>
-        </repository>
-        <repository>
-            <id>apache-releases</id>
-            <name>apache maven repo</name>
-            <url>https://repository.apache.org/content/repositories/releases</url>
-        </repository>
-        <!-- This is for AuScope specific builds of packages that arent in Maven central -->
-        <repository>
-            <id>cgmaven.it.csiro.au</id>
-            <name>AuScope Nexus - New PortalRepo</name>
-            <url>https://cgmaven.it.csiro.au/nexus/repository/PortalRepository/</url>
-        </repository>
-        <!-- This is for AuScope specific snapshot builds of packages that arent in Maven central -->
-        
-    </repositories>
 
     <!-- Dependencies -->
     <dependencies>
-        <!-- Servlets 2.3 - JSTL 1.1 -->
-         <dependency>
-         	<groupId>org.ow2.asm</groupId>
-         	<artifactId>asm</artifactId>
-         	<version>[7.1,)</version>
-         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>jstl</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+	    <exclusions>
+                <exclusion>
+                    <groupId>com.vaadin.external.google</groupId>
+                    <artifactId>android-json</artifactId>
+                </exclusion>
+	    </exclusions>
+        </dependency>
+       <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
-	    <groupId>org.hibernate.javax.persistence</groupId>
-	    <artifactId>hibernate-jpa-2.1-api</artifactId>
-	</dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+	<dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk</artifactId>
-            <version>1.11.804</version>
-        </dependency>
+            <version>1.11.912</version>
+	</dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context-support</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-tx</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-        </dependency>
-        <dependency>
-           <groupId>org.springframework</groupId>
-           <artifactId>spring-orm</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-        </dependency>
-        <dependency>
-          <groupId>com.racquettrack</groupId>
-          <artifactId>spring-security-oauth2-client</artifactId>
-          <version>1.3-AUSCOPE-SNAPSHOT</version>
-          <exclusions>
+            <groupId>com.racquettrack</groupId>
+            <artifactId>spring-security-oauth2-client</artifactId>
+            <version>1.3-AUSCOPE-SNAPSHOT</version>
+            <exclusions>
                 <exclusion>
                     <groupId>asm</groupId>
                     <artifactId>asm</artifactId>
@@ -492,32 +320,36 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>net.sf.json-lib</groupId>
-            <artifactId>json-lib</artifactId>
-            <version>2.4</version>
-            <classifier>jdk15</classifier>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.11</version>
+        </dependency>
+	<dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20201115</version>
         </dependency>
         <dependency>
-	    <!-- Saxon needed for XPath 2 functionality. Java default is only XPath 1 -->
+        <!-- Saxon needed for XPath 2 functionality. Java default is only XPath 1 -->
             <groupId>net.sf.saxon</groupId>
             <artifactId>Saxon-HE</artifactId>
             <version>9.9.1-6</version>
         </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <optional>false</optional>
+	<dependency>
+            <groupId>org.xmlunit</groupId>
+            <artifactId>xmlunit-core</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>xmlunit</groupId>
-            <artifactId>xmlunit</artifactId>
-            <version>1.6</version><!--$NO-MVN-MAN-VER$-->
+            <groupId>org.xmlunit</groupId>
+            <artifactId>xmlunit-legacy</artifactId>
+            <version>2.6.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.14.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>javax.mail</groupId>
@@ -538,71 +370,29 @@
             </exclusions>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
+	<dependency>
             <groupId>org.jmock</groupId>
             <artifactId>jmock-junit4</artifactId>
             <version>2.12.0</version>
             <scope>test</scope>
             <exclusions>
-            	<exclusion>
-            		<groupId>org.ow2.asm</groupId>
-            		<artifactId>asm</artifactId>
-            	</exclusion>
+             <exclusion>
+              <groupId>org.ow2.asm</groupId>
+              <artifactId>asm</artifactId>
+             </exclusion>
             </exclusions>
-        </dependency>
-		<dependency>
-		    <groupId>org.jmock</groupId>
-		    <artifactId>jmock-imposters</artifactId>
-		    <version>2.12.0</version>
-		    <scope>test</scope>
-		</dependency>
-   		<dependency>
-                   <groupId>cglib</groupId>
-                   <artifactId>cglib</artifactId>
-                   <version>3.3.0</version>
-                   <scope>test</scope>
-   		</dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.objenesis</groupId>
-            <artifactId>objenesis</artifactId>
-            <version>[3.0.1,)</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpmime</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient-cache</artifactId>
-            <scope>compile</scope>
-        </dependency>
+	</dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <optional>false</optional>
         </dependency>
-        <dependency>
+	<dependency>
             <groupId>edu.ucar</groupId>
             <artifactId>netcdf4</artifactId>
             <version>5.3.3</version>
             <optional>false</optional>
-        </dependency>
+	</dependency>
         <dependency>
             <groupId>org.apache.jclouds</groupId>
             <artifactId>jclouds-all</artifactId>
@@ -620,66 +410,50 @@
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-fileupload</groupId>
-            <artifactId>commons-fileupload</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
+	    <artifactId>commons-io</artifactId>
+            <version>2.8.0</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
+	    <artifactId>joda-time</artifactId>
+            <version>2.10.9</version>
         </dependency>
-        <dependency>
+	<dependency>
           <groupId>org.apache.jena</groupId>
           <artifactId>jena-arq</artifactId>
-          <version>3.15.0</version>
+          <version>3.17.0</version>
           <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>jcl-over-slf4j</artifactId>
-                </exclusion>
+              <exclusion>
+                  <groupId>org.slf4j</groupId>
+                  <artifactId>jcl-over-slf4j</artifactId>
+              </exclusion>
           </exclusions>
-        </dependency>
-        <dependency>
-          <groupId>org.pacesys</groupId>
+	</dependency>
+	<dependency>
+          <groupId>com.github.openstack4j.core</groupId>
           <artifactId>openstack4j-core</artifactId>
-          <version>3.2.0</version>
+          <version>3.9</version>
         </dependency>
-        <dependency>
-          <groupId>org.pacesys.openstack4j.connectors</groupId>
-          <artifactId>openstack4j-httpclient</artifactId>
-          <version>3.2.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-csv</artifactId>
-            <version>1.8</version>
-        </dependency> 
-        <dependency>
+	<dependency>
             <groupId>com.google.auth</groupId>
             <artifactId>google-auth-library-oauth2-http</artifactId>
-            <version>0.20.0</version>
-        </dependency> 
-        <dependency>
-        <groupId>com.google.http-client</groupId>
-        <artifactId>google-http-client-apache-v2</artifactId>
-        <version>1.35.0</version>
-      </dependency> 
-        <dependency>
-	    <groupId>com.esotericsoftware</groupId>
-	    <artifactId>kryo</artifactId>
+            <version>0.23.0</version>
+	</dependency>
+	<dependency>
+            <groupId>com.google.http-client</groupId>
+            <artifactId>google-http-client-apache-v2</artifactId>
+            <version>1.38.1</version>
+	</dependency>
+	<dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
             <version>5.0.0-RC2</version>
-	        <exclusions>
-	        	<exclusion>
-	        		<groupId>org.ow2.asm</groupId>
-	        		<artifactId>asm</artifactId>
-	        	</exclusion>
-	        </exclusions>
-        </dependency>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.ow2.asm</groupId>
+                    <artifactId>asm</artifactId>
+                </exclusion>
+            </exclusions>
+	</dependency>
     </dependencies>
 </project>

@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.auscope.portal.core.services.CSWFilterService;
-import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.csw.SearchFacet;
 import org.auscope.portal.core.services.csw.SearchFacet.Comparison;
 import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;

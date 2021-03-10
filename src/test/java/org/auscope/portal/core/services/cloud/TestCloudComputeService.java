@@ -31,7 +31,7 @@ public class TestCloudComputeService extends PortalTestClass {
     private final Template mockTemplate = context.mock(Template.class);
     private final NodeMetadata mockMetadata = context.mock(NodeMetadata.class);
     private final NovaApi mockNovaApi = context.mock(NovaApi.class);
-    private final Predicate<NodeMetadata> mockFilter = context.mock(Predicate.class);
+    private final Predicate<NodeMetadata> mockFilter = (Predicate)context.mock(Predicate.class);
     private final RunNodesException mockException = context.mock(RunNodesException.class);
 
     private CloudComputeServiceNectar service;

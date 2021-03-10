@@ -7,8 +7,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import org.auscope.portal.core.test.ByteBufferedServletOutputStream;
 import org.auscope.portal.core.test.PortalTestClass;
@@ -137,7 +137,7 @@ public class TestViewVariableFactory extends PortalTestClass {
         view.render(map, mockHttpRequest, mockHttpResponse);
 
         String jsonText = rawResponse.getStream().toString("UTF-8");
-        AbstractViewVariable[] result = ViewVariableFactory.fromJSONArray(JSONObject.fromObject(jsonText).getJSONArray("vars"));
+        AbstractViewVariable[] result = ViewVariableFactory.fromJSONArray(new JSONObject(jsonText).getJSONArray("vars"));
         assertViewVariableEquals(result, vars);
     }
 
@@ -170,7 +170,7 @@ public class TestViewVariableFactory extends PortalTestClass {
      * Tests parsing from a JSON String where only SOME fields are specified
      */
     @Test
-    public void testParseJSONPartial1() {
+    public void testParseJSONPartial1() throws org.json.JSONException {
         SimpleAxis a1 = new SimpleAxis("time", null, null, null, new SimpleBounds(0, 3));
         SimpleAxis a2 = new SimpleAxis("isobaric", null, null, null, new SimpleBounds(5, 100));
         SimpleAxis a3 = new SimpleAxis("y", null, null, null, new SimpleBounds(-5.5, 22.33));
@@ -179,7 +179,7 @@ public class TestViewVariableFactory extends PortalTestClass {
         SimpleGrid g1 = new SimpleGrid("Geopotential_height", null, null, new AbstractViewVariable[] {a1, a2, a3, a4});
 
         String jsonString1 = "{\"constraints\":[{\"type\":\"grid\",\"name\":\"Geopotential_height\",\"axes\":[{\"type\":\"axis\",\"name\":\"time\",\"valueBounds\":{\"from\":0,\"to\":3}},{\"type\":\"axis\",\"name\":\"isobaric\",\"valueBounds\":{\"from\":5,\"to\":100}},{\"type\":\"axis\",\"name\":\"y\",\"valueBounds\":{\"from\":-5.5,\"to\":22.33}},{\"type\":\"axis\",\"name\":\"x\",\"valueBounds\":{\"from\":-40,\"to\":50}}]}]}";
-        JSONArray jsonArr1 = JSONObject.fromObject(jsonString1).getJSONArray("constraints");
+        JSONArray jsonArr1 = new JSONObject(jsonString1).getJSONArray("constraints");
         AbstractViewVariable[] result = ViewVariableFactory.fromJSONArray(jsonArr1);
 
         assertViewVariableEquals(result, g1);
@@ -189,11 +189,11 @@ public class TestViewVariableFactory extends PortalTestClass {
      * Tests parsing from a JSON String where only SOME fields are specified
      */
     @Test
-    public void testParseJSONPartial2() {
+    public void testParseJSONPartial2() throws org.json.JSONException {
         SimpleAxis a1 = new SimpleAxis("lat", null, null, new SimpleBounds(-2, 3), null);
 
         String jsonString2 = "{\"constraints\":[{\"type\":\"axis\",\"name\":\"lat\",\"dimensionBounds\":{\"from\":-2,\"to\":3}}]}";
-        JSONArray jsonArr2 = JSONObject.fromObject(jsonString2).getJSONArray("constraints");
+        JSONArray jsonArr2 = new JSONObject(jsonString2).getJSONArray("constraints");
         AbstractViewVariable[] result = ViewVariableFactory.fromJSONArray(jsonArr2);
 
         assertViewVariableEquals(result, a1);
