@@ -13,8 +13,8 @@
         <url>https://jira.csiro.au/browse/AUS</url>
     </issueManagement>
     <ciManagement>
-        <system></system>
-        <url></url>
+        <system>Travis-CI</system>
+        <url>https://travis-ci.com</url>
     </ciManagement>
     <scm>
         <connection>scm:git:https://github.com/AuScope/portal-core.git</connection>
