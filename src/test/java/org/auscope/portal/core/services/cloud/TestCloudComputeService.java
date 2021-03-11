@@ -20,7 +20,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.shaded.google.common.base.Predicate;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 
 public class TestCloudComputeService extends PortalTestClass {

@@ -34,7 +34,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.shaded.google.common.io.ByteSource;
+import com.google.common.io.ByteSource;
 
 
 public class TestCloudStorageService extends PortalTestClass {
