@@ -267,7 +267,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
             
             if (onlineResourceType != null && !onlineResourceType.isEmpty()) {
                 fragments.add(generateOrComparisonFragment(
-                        this.generatePropertyIsLikeFragment("onlineResourceType", "OGC:" + onlineResourceType + "*")),
+                        this.generatePropertyIsLikeFragment("onlineResourceType", "OGC:" + onlineResourceType + "*"),
                         this.generatePropertyIsLikeFragment("serviceType", "OGC:" + onlineResourceType + "*")));
             }
 
