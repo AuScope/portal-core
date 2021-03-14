@@ -359,7 +359,7 @@ public class CSWFilterController extends BaseCSWController {
         // AusGIN parameters
         String titleOrAbstract = parameters.get("titleOrAbstract");
         String authorSurname = parameters.get("authorSurname");
-        String serviceType = parameters.get("serviceType");
+        String onlineResourceType = parameters.get("onlineResourceType");
         String publicationDateFrom = parameters.get("publicationDateFrom");
         String publicationDateTo = parameters.get("publicationDateTo");
         String basicSearchTerm = parameters.get("basicSearchTerm");
@@ -375,7 +375,7 @@ public class CSWFilterController extends BaseCSWController {
         filter.setTitleOrAbstract(titleOrAbstract != null ? titleOrAbstract : null);
         filter.setAuthorSurname(authorSurname != null ? authorSurname : null);
         filter.setBasicSearchTerm(basicSearchTerm != null ? basicSearchTerm : null);
-        filter.setOnlineResourceType(serviceType != null ? serviceType : null);
+        filter.setOnlineResourceType(onlineResourceType != null ? onlineResourceType : null);
         filter.setPublicationDateFrom(
                 publicationDateFrom != null ? stringYearToDate(publicationDateFrom.trim(), false) : null);
         filter.setPublicationDateTo(publicationDateTo != null ? stringYearToDate(publicationDateTo.trim(), true) : null);
