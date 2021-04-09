@@ -1,6 +1,6 @@
 package org.auscope.portal.core.services.cloud;
 
-import static com.shaded.google.common.base.Predicates.not;
+import static com.google.common.base.Predicates.not;
 import static org.jclouds.compute.predicates.NodePredicates.RUNNING;
 import static org.jclouds.compute.predicates.NodePredicates.TERMINATED;
 import static org.jclouds.compute.predicates.NodePredicates.inGroup;
@@ -39,8 +39,8 @@ import org.openstack4j.api.OSClient;
 import org.openstack4j.model.common.Identifier;
 import org.openstack4j.openstack.OSFactory;
 
-import com.shaded.google.common.base.Predicate;
-import com.shaded.google.common.base.Predicates;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 
 /**

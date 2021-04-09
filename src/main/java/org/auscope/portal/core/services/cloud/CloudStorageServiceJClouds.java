@@ -35,9 +35,9 @@ import org.jclouds.sts.STSApi;
 import org.jclouds.sts.domain.UserAndSessionCredentials;
 import org.jclouds.sts.options.AssumeRoleOptions;
 
-import com.shaded.google.common.base.Supplier;
-import com.shaded.google.common.base.Suppliers;
-import com.shaded.google.common.io.Files;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import com.google.common.io.Files;
 
 
 /**
