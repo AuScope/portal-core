@@ -90,15 +90,24 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
 
     /** The title. */
     private String title = null;
-    
+
+    /** The title phrase search */
+    private String titlePhraseSearch = null;
+
     /** File Identifier */
     private String fileIdentifier = null;
 
     /** The abstract. */
     private String abstract_ = null;
 
+    /** The abstract phrase search */
+    private String abstractPhraseSearch = null;
+
     /** A field for title OR abstract, if we want to search on either */
     private String titleOrAbstract = null;
+
+    /** A field for title OR abstract, if we want to phrase search on either */
+    private String titleOrAbstractPhraseSearch = null;
 
     /** The Author's surname */
     private String authorSurname = null;
@@ -249,7 +258,11 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
             if (title != null && !title.isEmpty()) {
                 fragments.add(this.generatePropertyIsLikeFragment("title", this.title));
             }
-            
+
+            if (titlePhraseSearch != null && !titlePhraseSearch.isEmpty()) {
+                fragments.add(this.generatePropertyIsEqualToFragment("title", this.titlePhraseSearch));
+            }
+
             if (fileIdentifier != null && !fileIdentifier.isEmpty()) {
                 fragments.add(this.generatePropertyIsLikeFragment("identifier", this.fileIdentifier));
             }
@@ -258,6 +271,13 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
                 fragments.add(generateOrComparisonFragment(
                         this.generatePropertyIsLikeFragment("title", "*" + this.titleOrAbstract + "*"),
                         this.generatePropertyIsLikeFragment("abstract", "*" + this.titleOrAbstract + "*")));
+            }
+
+            if (titleOrAbstractPhraseSearch != null && !titleOrAbstractPhraseSearch.isEmpty()) {
+                fragments.add(generateOrComparisonFragment(
+                        this.generatePropertyIsEqualToFragment("title", this.titleOrAbstractPhraseSearch),
+                        this.generatePropertyIsEqualToFragment("abstract", this.titleOrAbstractPhraseSearch))
+                );
             }
 
             if (authorSurname != null && !authorSurname.isEmpty()) {
@@ -291,6 +311,10 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
 
             if (abstract_ != null && !abstract_.isEmpty()) {
                 fragments.add(this.generatePropertyIsLikeFragment("abstract", this.abstract_));
+            }
+
+            if (abstractPhraseSearch != null && !abstractPhraseSearch.isEmpty()) {
+                fragments.add(this.generatePropertyIsEqualToFragment("abstract", this.abstractPhraseSearch));
             }
 
             if (spatialBounds != null) {
@@ -453,8 +477,10 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
                 + ", titleOrAbstract=" + titleOrAbstract
                 + ", authorSurname=" + authorSurname
                 + ", publicationDateFrom=" + publicationDateFrom
-                + ", publicationDateTo=" + publicationDateTo + "]";
-
+                + ", publicationDateTo=" + publicationDateTo
+                + ", titlePhraseSearch=" + titlePhraseSearch
+                + ", abstractPhraseSearch=" + abstractPhraseSearch
+                + ", titleOrAbstractPhraseSearch=" + titleOrAbstractPhraseSearch + "]";
     }
 
     /** Gets the title. */
@@ -703,4 +729,27 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
         this.onlineResourceType = onlineResourceType;
     }
 
+    public String getTitlePhraseSearch() {
+        return titlePhraseSearch;
+    }
+
+    public void setTitlePhraseSearch(String titlePhraseSearch) {
+        this.titlePhraseSearch = titlePhraseSearch;
+    }
+
+    public String getAbstractPhraseSearch() {
+        return abstractPhraseSearch;
+    }
+
+    public void setAbstractPhraseSearch(String abstractPhraseSearch) {
+        this.abstractPhraseSearch = abstractPhraseSearch;
+    }
+
+    public String getTitleOrAbstractPhraseSearch() {
+        return titleOrAbstractPhraseSearch;
+    }
+
+    public void setTitleOrAbstractPhraseSearch(String titleOrAbstractPhraseSearch) {
+        this.titleOrAbstractPhraseSearch = titleOrAbstractPhraseSearch;
+    }
 }
