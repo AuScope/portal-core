@@ -260,7 +260,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
             }
 
             if (titlePhraseSearch != null && !titlePhraseSearch.isEmpty()) {
-                fragments.add(this.generatePropertyIsEqualToFragment("title", this.titlePhraseSearch));
+                fragments.add(this.generatePropertyIsLikeFragment("title", this.titlePhraseSearch));
             }
 
             if (fileIdentifier != null && !fileIdentifier.isEmpty()) {
@@ -275,8 +275,8 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
 
             if (titleOrAbstractPhraseSearch != null && !titleOrAbstractPhraseSearch.isEmpty()) {
                 fragments.add(generateOrComparisonFragment(
-                        this.generatePropertyIsEqualToFragment("title", this.titleOrAbstractPhraseSearch),
-                        this.generatePropertyIsEqualToFragment("abstract", this.titleOrAbstractPhraseSearch))
+                        this.generatePropertyIsLikeFragment("title", this.titleOrAbstractPhraseSearch),
+                        this.generatePropertyIsLikeFragment("abstract", this.titleOrAbstractPhraseSearch))
                 );
             }
 
@@ -314,7 +314,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
             }
 
             if (abstractPhraseSearch != null && !abstractPhraseSearch.isEmpty()) {
-                fragments.add(this.generatePropertyIsEqualToFragment("abstract", this.abstractPhraseSearch));
+                fragments.add(this.generatePropertyIsLikeFragment("abstract", this.abstractPhraseSearch));
             }
 
             if (spatialBounds != null) {
