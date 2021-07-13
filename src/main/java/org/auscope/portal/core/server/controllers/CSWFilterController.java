@@ -344,10 +344,9 @@ public class CSWFilterController extends BaseCSWController {
         String capturePlatform = parameters.get("capturePlatform");
         String sensor = parameters.get("sensor");
         String abstrac = parameters.get("abstract");
-        String abstractPhraseSearch = parameters.get("abstractPhraseSearch");
         String title = parameters.get("title");
-        String titlePhraseSearch = parameters.get("titlePhraseSearch");
         String fileIdentifier = parameters.get("fileIdentifier");
+
 
         if (parameters.get("keywordMatchType") != null) {
             if (parameters.get("keywordMatchType").toLowerCase().equals("any")) {
@@ -359,7 +358,6 @@ public class CSWFilterController extends BaseCSWController {
 
         // AusGIN parameters
         String titleOrAbstract = parameters.get("titleOrAbstract");
-        String titleOrAbstractPhraseSearch = parameters.get("titleOrAbstractPhraseSearch");
         String authorSurname = parameters.get("authorSurname");
         String onlineResourceType = parameters.get("onlineResourceType");
         String publicationDateFrom = parameters.get("publicationDateFrom");
@@ -374,18 +372,15 @@ public class CSWFilterController extends BaseCSWController {
                 sensor, keywordMatchType, abstrac, title, type) ;
 
         // Populate filter with AusGIN parameters
-        filter.setTitleOrAbstract(titleOrAbstract);
-        filter.setAuthorSurname(authorSurname);
-        filter.setBasicSearchTerm(basicSearchTerm);
-        filter.setOnlineResourceType(onlineResourceType);
+        filter.setTitleOrAbstract(titleOrAbstract != null ? titleOrAbstract : null);
+        filter.setAuthorSurname(authorSurname != null ? authorSurname : null);
+        filter.setBasicSearchTerm(basicSearchTerm != null ? basicSearchTerm : null);
+        filter.setOnlineResourceType(onlineResourceType != null ? onlineResourceType : null);
         filter.setPublicationDateFrom(
                 publicationDateFrom != null ? stringYearToDate(publicationDateFrom.trim(), false) : null);
         filter.setPublicationDateTo(publicationDateTo != null ? stringYearToDate(publicationDateTo.trim(), true) : null);
         filter.setSortType(SortType.getByStringValue(sortType));
-        filter.setAbstractPhraseSearch(abstractPhraseSearch);
-        filter.setTitlePhraseSearch(titlePhraseSearch);
-        filter.setTitleOrAbstractPhraseSearch(titleOrAbstractPhraseSearch);
-
+        
         filter.setFileIdentifier(fileIdentifier);
 
         log.debug(String.format("filter '%1$s'", filter));
