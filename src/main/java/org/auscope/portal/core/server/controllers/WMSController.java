@@ -482,7 +482,8 @@ public class WMSController extends BaseCSWController {
             @RequestParam(required = false, value = "sldUrl") String sldUrl,
             @RequestParam(required = false, value = "sldBody") String sldBody,            
             @RequestParam("version") String version,
-            @RequestParam("crs") String crs,
+            @RequestParam(required=false, value="crs") String crs,
+            @RequestParam(required=false, value="srs") String srs,
             @RequestParam(required = false, value = "tiled") String tiled,
             HttpServletResponse response,
             HttpServletRequest request)
@@ -491,6 +492,16 @@ public class WMSController extends BaseCSWController {
         if (sldBody == null && sldUrl == null) {
             throw new Exception("Has to setup sldUrl or sldBody.");
         }
+
+        // A WMS version 1.3+ request must have a CRS parameter, earlier 
+        // versions must have the SRS parameter. Leave it to the 
+        // WMSMethodMakers to determine whether the parameter set is valid.
+        if ((crs == null && srs == null) ||
+            (crs != null && srs != null)) {
+            throw new Exception("getWMSMapViaProxy.do requires one of CRS or SRS parameters to be set.");
+        }
+        String crsOrSrs = (crs != null) ? crs : srs;
+
         response.setContentType("image/png");
   
         if (sldBody == null) {
@@ -498,7 +509,7 @@ public class WMSController extends BaseCSWController {
             sldBody = this.wmsService.getStyle(url, sldUrl, version);            
         }
         if (tiled !=null && tiled.equals("true")) requestCachedTile=true;
-        HttpClientInputStream styleStream = this.wmsService.getMap(url, layer, bbox,sldBody, version,crs, requestCachedTile);
+        HttpClientInputStream styleStream = this.wmsService.getMap(url, layer, bbox,sldBody, version, crsOrSrs, requestCachedTile);
         OutputStream outputStream = response.getOutputStream();
         IOUtils.copy(styleStream,outputStream);
         styleStream.close();

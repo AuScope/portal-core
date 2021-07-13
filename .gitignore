@@ -7,3 +7,4 @@ target/
 /bin/
 *.iml
 .temp-*
+.factorypath
