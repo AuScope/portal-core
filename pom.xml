@@ -345,6 +345,19 @@
             </plugin>
         </plugins>
     </reporting>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>nexus</id>
+            <name>GA Nexus</name>
+            <url>https://nexus.flying-hellfish.cloud.ga.gov.au/repository/maven-public</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
     <repositories>
         <repository>
             <id>nexus</id>
