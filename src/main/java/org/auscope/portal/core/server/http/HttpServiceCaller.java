@@ -16,6 +16,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -60,6 +61,7 @@ public class HttpServiceCaller {
         RequestConfig requestConfig = RequestConfig.custom()
                 .setConnectTimeout(this.connectionTimeOut)
                 .setSocketTimeout(this.connectionTimeOut)
+                .setCookieSpec(CookieSpecs.STANDARD)
                 .build();
 
         HttpClientBuilder builder = HttpClientBuilder.create()
