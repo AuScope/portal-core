@@ -1,6 +1,7 @@
 package org.auscope.portal.core.server.controllers;
 
 import org.auscope.portal.core.services.KnownLayerService;
+import org.auscope.portal.core.services.WMSService;
 import org.auscope.portal.core.view.ViewCSWRecordFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
