@@ -30,6 +30,7 @@ import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord;
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesWMSLayerRecord;
 import org.auscope.portal.core.util.FileIOUtil;
 import org.auscope.portal.core.view.ViewCSWRecordFactory;
+import org.auscope.portal.core.view.ViewGetCapabilitiesFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -58,15 +59,17 @@ public class WMSController extends BaseCSWController {
     private final Log log = LogFactory.getLog(getClass());
     protected static int BUFFERSIZE = 1024 * 1024;
     HttpServiceCaller serviceCaller;
+    private ViewGetCapabilitiesFactory viewGetCapabilitiesFactory;
 
     // ----------------------------------------------------------- Constructors
 
     @Autowired
-    public WMSController(WMSService wmsService, ViewCSWRecordFactory viewCSWRecordFactory,
-            HttpServiceCaller serviceCaller) {
+    public WMSController(WMSService wmsService, ViewCSWRecordFactory viewCSWRecordFactory, 
+        ViewGetCapabilitiesFactory viewGetCapabilitiesFactory, HttpServiceCaller serviceCaller) {
         super(viewCSWRecordFactory);
         this.wmsService = wmsService;
         this.serviceCaller = serviceCaller;
+        this.viewGetCapabilitiesFactory = viewGetCapabilitiesFactory;
     }
     
     /**
@@ -106,13 +109,13 @@ public class WMSController extends BaseCSWController {
 
         CSWRecord[] records;
         int invalidLayerCount = 0;
+        GetCapabilitiesRecord capabilitiesRec = null;
         try {
             //VT:We have absolutely no way of finding out wms version in custom layer so we have to
             //guess the version by setting version to null.
-            GetCapabilitiesRecord capabilitiesRec = wmsService.getWmsCapabilities(serviceUrl, null);
+            capabilitiesRec = wmsService.getWmsCapabilities(serviceUrl, null);
 
             List<CSWRecord> cswRecords = new ArrayList<CSWRecord>();
-
             if (capabilitiesRec != null) {
                 //Make a best effort of parsing a WMS into a CSWRecord
                 for (GetCapabilitiesWMSLayerRecord rec : capabilitiesRec.getLayers()) {
@@ -194,9 +197,33 @@ public class WMSController extends BaseCSWController {
             return generateJSONResponseMAV(false, "Your WMS does not appear to support EPSG:3857 (WGS 84 / Pseudo-Mercator) or EPSG:4326 (WGS 84). This is required to be able to display your map in this Portal. If you are certain that your service supports EPSG:3857, click Yes for portal to attempt loading of the layer else No to exit.", null);
         }
 
-        ModelAndView mav = generateJSONResponseMAV(records);
-        mav.addObject("invalidLayerCount", invalidLayerCount);
-        return mav;
+        // Convert csw records to ModelMap
+        List<ModelMap> recordRepresentations = new ArrayList<>();
+        try {
+            for (CSWRecord record : records) {
+                recordRepresentations.add(viewCSWRecordFactory.toView(record));
+            }
+        } catch (Exception ex) {
+            log.error("Error converting csw data records", ex);
+            return generateJSONResponseMAV(false, "Error converting csw data records", null);
+        }
+
+        ModelMap mMap = new ModelMap();
+        mMap.addAttribute("cswRecords", recordRepresentations);
+
+        if (capabilitiesRec != null) {
+            // Convert capability records to ModelMap
+            List<ModelMap> viewCapabilityRecords = new ArrayList<>();
+            try {
+                viewCapabilityRecords.add(viewGetCapabilitiesFactory.toView(capabilitiesRec));
+            } catch (Exception ex) {
+                log.error("Error converting capability data records", ex);
+                return generateJSONResponseMAV(false, "Error converting capability data records", null);
+            }
+            mMap.addAttribute("capabilityRecords", viewCapabilityRecords);
+        }
+        mMap.addAttribute("invalidLayerCount", invalidLayerCount);
+        return generateJSONResponseMAV(true, mMap, "");
     }
 
     public String[] getSRSList(String[] layerSRS, String[] childLayerSRS) {
