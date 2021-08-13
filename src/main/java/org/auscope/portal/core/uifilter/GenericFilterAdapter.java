@@ -7,8 +7,8 @@ import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
 
 public class GenericFilterAdapter extends GenericFilter{
 	
-	 List<String> fragments;
-	 String spatialXpath;
+	 protected List<String> fragments;
+	 protected String spatialXpath;
 	
 	 /**
      * Given a mine name, this object will build a filter to a wild card search for mine names

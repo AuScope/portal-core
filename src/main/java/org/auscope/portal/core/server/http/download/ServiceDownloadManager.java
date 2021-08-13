@@ -262,7 +262,6 @@ public class ServiceDownloadManager {
                 // Our request may fail (due to timeout or otherwise)
                 // We need to ensure that this httpResponse is NOT closed. That is the responsibility of the
                 // classes using this service
-                @SuppressWarnings("resource")
                 HttpClientResponse httpResponse = serviceCaller.getMethodResponseAsHttpResponse(method);
 
                 resp.setResponseStream(httpResponse.getEntity().getContent());
