@@ -489,9 +489,6 @@ public class WMSController extends BaseCSWController {
             HttpServletRequest request)
                     throws Exception ,UnsupportedOperationException{
         boolean requestCachedTile=false;
-        if (sldBody == null && sldUrl == null) {
-            throw new Exception("Has to setup sldUrl or sldBody.");
-        }
 
         // A WMS version 1.3+ request must have a CRS parameter, earlier 
         // versions must have the SRS parameter. Leave it to the 
@@ -504,7 +501,7 @@ public class WMSController extends BaseCSWController {
 
         response.setContentType("image/png");
   
-        if (sldBody == null) {
+        if (sldBody == null && sldUrl!=null) {
             sldUrl = request.getRequestURL().toString().replace(request.getServletPath(),"").replace("4200", "8080") + sldUrl;  
             sldBody = this.wmsService.getStyle(url, sldUrl, version);            
         }
