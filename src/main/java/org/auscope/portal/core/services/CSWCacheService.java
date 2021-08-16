@@ -2,6 +2,7 @@ package org.auscope.portal.core.services;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -44,6 +45,8 @@ import com.esotericsoftware.kryo.Kryo;
  *
  */
 public class CSWCacheService {
+
+    private static final String CSW_CACHE_FILENAME = "csw_cache.ser";
 
     /**
      * Any records containing keywords prefixed by this value we be merged with other records containing the same keyword.
@@ -138,6 +141,61 @@ public class CSWCacheService {
         for (int i = 0; i < cswServiceList.size(); i++) {
             this.cswServiceList[i] = (CSWServiceItem) cswServiceList.get(i);
         }
+        
+        restoreCacheFromFile();
+    }
+    
+    /**
+     * Saves the current CSW cache to a temp file. This file is used to speed up start-up to serve as a temporary cache until the 
+     * actual endpoints have been re-harvested.
+     */
+    private void saveCacheToFile() {
+        Kryo kryo = new Kryo();
+        kryo.setRegistrationRequired(false);
+        com.esotericsoftware.kryo.io.Output output=null;
+        try {
+            output = new com.esotericsoftware.kryo.io.Output(new FileOutputStream( FileIOUtil.getTempDirURL() + CSW_CACHE_FILENAME));
+            kryo.writeObject(output, this.keywordCache);
+            kryo.writeObject(output, this.recordCache);
+            kryo.writeObject(output, this.keywordsByRegistry);
+            log.info("CSWCache has been serialized.");
+        } catch (FileNotFoundException e) {
+            log.error("Could not save CSW cache to file", e);
+        } finally {
+            if(output!=null) {
+                output.close();                
+            }
+        }
+    }
+
+
+    /**
+     * Loads the CSW cache to a temp file. This file is used to speed up start-up to serve as a temporary cache until the 
+     * actual endpoints have been re-harvested.
+     */
+    @SuppressWarnings("unchecked")
+    private void restoreCacheFromFile() {
+        if(new File(FileIOUtil.getTempDirURL() + CSW_CACHE_FILENAME).exists()) {
+            Kryo kryo = new Kryo();
+            kryo.setRegistrationRequired(false);
+            kryo.setInstantiatorStrategy(new com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
+            com.esotericsoftware.kryo.io.Input input = null;
+            try {
+                input = new com.esotericsoftware.kryo.io.Input(new FileInputStream(FileIOUtil.getTempDirURL() + CSW_CACHE_FILENAME));
+                this.keywordCache = kryo.readObject(input, HashMap.class);
+                this.recordCache = kryo.readObject(input, ArrayList.class);
+                this.keywordsByRegistry = kryo.readObject(input, HashMap.class);
+                log.info("CSWCache has been loaded from cache.");                
+            } catch (Exception e) {
+                log.warn(String.format("Failed loading CSW cache: %1$s, %2$s", FileIOUtil.getTempDirURL(), CSW_CACHE_FILENAME), e);
+            } finally {
+                if(input!=null) {
+                    input.close();
+                }
+            }
+        } else {
+            log.warn(String.format("No saved CSW cache found on disk on: %1$s, %2$s", FileIOUtil.getTempDirURL(), CSW_CACHE_FILENAME));
+        }
     }
 
     /**
@@ -180,7 +238,6 @@ public class CSWCacheService {
      * if newKeywordCache is NOT null it will update the internal cache. if newRecordCache is NOT null it will update the internal cache.
      */
     private synchronized void updateFinished(Map<String, Set<CSWRecord>> newKeywordCache, List<CSWRecord> newRecordCache, Map<String, Set<String>> newKeywordByEndpointCache) {
-        this.updateRunning = false;
         if (newKeywordCache != null) {
             this.keywordCache = newKeywordCache;
         }
@@ -190,7 +247,8 @@ public class CSWCacheService {
         if (newKeywordByEndpointCache != null) {
             this.keywordsByRegistry = newKeywordByEndpointCache;
         }
-
+        saveCacheToFile();
+        this.updateRunning = false;
         this.lastCacheUpdate = new Date();
 
         log.info(String.format("Keyword cache updated! Cache now has '%1$d' unique keyword names",
