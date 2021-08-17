@@ -45,7 +45,7 @@ public class SpatialDomain implements Serializable {
      */
     public SpatialDomain(Node node, WCSNamespaceContext nc) throws XPathException {
         NodeList envelopeNodes = (NodeList) DOMUtil.compileXPathExpr(
-                "wcs:Envelope | gml:Envelope | wcs:EnvelopeWithTimePeriod", nc).evaluate(node, XPathConstants.NODESET);
+                "wcs:Envelope | gml:Envelope | gml:EnvelopeWithTimePeriod", nc).evaluate(node, XPathConstants.NODESET);
         this.envelopes = new SimpleEnvelope[envelopeNodes.getLength()];
         for (int i = 0; i < envelopeNodes.getLength(); i++) {
             this.envelopes[i] = new SimpleEnvelope(envelopeNodes.item(i), nc);

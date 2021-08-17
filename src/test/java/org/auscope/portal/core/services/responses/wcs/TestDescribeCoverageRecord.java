@@ -67,12 +67,17 @@ public class TestDescribeCoverageRecord extends PortalTestClass {
         //This will need to be updated if we add support for more spatial domains
         Assert.assertNotNull(record.getSpatialDomain());
         Assert.assertEquals(2, record.getSpatialDomain().getEnvelopes().length);
-        for (SimpleEnvelope env : record.getSpatialDomain().getEnvelopes()) {
+        SimpleEnvelope[] envelopes = record.getSpatialDomain().getEnvelopes();
+        for (SimpleEnvelope env : envelopes) {
             Assert.assertEquals(358.875, env.getEastBoundLongitude(), 0.000001);
             Assert.assertEquals(-89.4375, env.getSouthBoundLatitude(), 0.000001);
             Assert.assertEquals(0.0, env.getWestBoundLongitude(), 0.000001);
             Assert.assertEquals(89.4375, env.getNorthBoundLatitude(), 0.000001);
         }
+        Assert.assertEquals(false, envelopes[0].hasTimePeriod());
+        Assert.assertEquals(true, envelopes[1].hasTimePeriod());
+        Assert.assertEquals("2005-05-10T00:05:10Z", envelopes[1].getTimePositionStart());
+        Assert.assertEquals("2006-05-10T00:05:10Z", envelopes[1].getTimePositionEnd());
 
         Assert.assertArrayEquals(new String[] {"none"}, record.getSupportedInterpolations());
 
