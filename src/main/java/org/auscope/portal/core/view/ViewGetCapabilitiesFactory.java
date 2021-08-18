@@ -19,7 +19,7 @@ import org.springframework.ui.ModelMap;
  */
 public class ViewGetCapabilitiesFactory {
 
-    public ModelMap toView(GetCapabilitiesRecord k) {
+    public ModelMap toView(GetCapabilitiesRecord k, String layerName) {
         ModelMap obj = new ModelMap();
 
         obj.put("serviceType", k.getServiceType());
@@ -33,7 +33,13 @@ public class ViewGetCapabilitiesFactory {
         List<Map<String, Object>> layers = new ArrayList<>();
         if (k.getLayers() != null) {
             for (GetCapabilitiesWMSLayerRecord rec : k.getLayers()) {
-                layers.add(this.toView(rec));
+                try {
+                    if (rec.getName().equals(layerName)) {
+                        layers.add(this.toView(rec));
+                    }
+                } catch (XPathException xe) {
+                    
+                }
             }
         }
         obj.put("layers", layers);

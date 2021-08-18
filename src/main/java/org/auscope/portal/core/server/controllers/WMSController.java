@@ -215,7 +215,7 @@ public class WMSController extends BaseCSWController {
             // Convert capability records to ModelMap
             List<ModelMap> viewCapabilityRecords = new ArrayList<>();
             try {
-                viewCapabilityRecords.add(viewGetCapabilitiesFactory.toView(capabilitiesRec));
+                viewCapabilityRecords.add(viewGetCapabilitiesFactory.toView(capabilitiesRec, null));
             } catch (Exception ex) {
                 log.error("Error converting capability data records", ex);
                 return generateJSONResponseMAV(false, "Error converting capability data records", null);
