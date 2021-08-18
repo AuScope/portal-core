@@ -19,6 +19,13 @@ import org.springframework.ui.ModelMap;
  */
 public class ViewGetCapabilitiesFactory {
 
+    /**
+     * Converts a GetCapabilitiesRecord to a ModelMap view
+     * @param k the GetCapabilitiesRecord to be converted
+     * @param layerName if not null, it will only include this layer name in the WMS layer list
+     *                  else all layers will be included
+     * @return ModelMap view of the GetCapabilitiesRecord
+     */
     public ModelMap toView(GetCapabilitiesRecord k, String layerName) {
         ModelMap obj = new ModelMap();
 
@@ -34,7 +41,7 @@ public class ViewGetCapabilitiesFactory {
         if (k.getLayers() != null) {
             for (GetCapabilitiesWMSLayerRecord rec : k.getLayers()) {
                 try {
-                    if (rec.getName().equals(layerName)) {
+                    if (layerName == null || rec.getName().equals(layerName)) {
                         layers.add(this.toView(rec));
                     }
                 } catch (XPathException xe) {

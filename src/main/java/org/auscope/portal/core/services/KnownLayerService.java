@@ -314,6 +314,7 @@ public class KnownLayerService {
             List<ModelMap> viewMappedRecords = new ArrayList<>();
 
             Set<String> onlineResourceEndpoints = new HashSet<>();
+            ArrayList<String> layerNames = new ArrayList<>();
             for (CSWRecord rec : knownLayerAndRecords.getBelongingRecords()) {
 
                 if (rec != null) {
@@ -321,6 +322,7 @@ public class KnownLayerService {
                         if (onlineResource.getLinkage() != null) {
                             onlineResourceEndpoints.add(onlineResource.getLinkage().getHost());
                         }
+                        layerNames.add(onlineResource.getName());
                     }
                     viewMappedRecords.add(viewCSWRecordFactory.toView(rec));
                 }
@@ -333,9 +335,14 @@ public class KnownLayerService {
                 }
             }
 
+            // Add in capability records, but only for the relevant layer
             List<ModelMap> viewCapabilityRecords = new ArrayList<>();
+            String layerName = null;
+            if (layerNames.size() > 0) {
+                layerName = layerNames.get(0);
+            }
             for (GetCapabilitiesRecord rec : knownLayerAndRecords.getCapabilitiesRecords()) {
-                viewCapabilityRecords.add(viewGetCapabilitiesFactory.toView(rec));
+                viewCapabilityRecords.add(viewGetCapabilitiesFactory.toView(rec, layerName));
             }
             viewKnownLayer.put("cswRecords", viewMappedRecords);
             viewKnownLayer.put("relatedRecords", viewRelatedRecords);

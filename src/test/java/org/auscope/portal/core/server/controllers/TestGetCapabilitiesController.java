@@ -51,7 +51,7 @@ public class TestGetCapabilitiesController extends PortalTestClass {
                     exactly(21).of(viewCswFactory).toView(with(any(CSWRecord.class)));
                     will(returnValue(new ModelMap()));
 
-                    exactly(1).of(viewCapabilityFactory).toView(with(any(GetCapabilitiesRecord.class)));
+                    exactly(1).of(viewCapabilityFactory).toView(with(any(GetCapabilitiesRecord.class)), with((String) null));
                     will(returnValue(new ModelMap()));
                 }
             });
@@ -94,7 +94,7 @@ public class TestGetCapabilitiesController extends PortalTestClass {
                     exactly(1).of(viewCswFactory).toView(with(any(CSWRecord.class)));
                     will(returnValue(new ModelMap()));
 
-                    exactly(1).of(viewCapabilityFactory).toView(with(any(GetCapabilitiesRecord.class)));
+                    exactly(1).of(viewCapabilityFactory).toView(with(any(GetCapabilitiesRecord.class)), with((String) null));
                     will(returnValue(new ModelMap()));
                 }
             });
