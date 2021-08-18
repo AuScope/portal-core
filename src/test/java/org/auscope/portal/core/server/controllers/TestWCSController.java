@@ -4,7 +4,7 @@ import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.text.ParseException;
+import java.time.format.DateTimeParseException;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -63,7 +63,7 @@ public class TestWCSController extends PortalTestClass {
             controller.downloadWCSAsZip("url", "layer", "GeoTIFF", "inputCrs", 1, 1, null, null, "outputCrs", 1, 2, 3,
                     4, timePositions, null, null, null, null, "", mockResponse);
             Assert.fail("Should've failed to parse time");
-        } catch (ParseException ex) {
+        } catch (DateTimeParseException ex) {
         }
 
         try {
@@ -72,7 +72,7 @@ public class TestWCSController extends PortalTestClass {
             controller.downloadWCSAsZip("url", "layer", "GeoTIFF", "inputCrs", 1, 1, null, null, "outputCrs", 1, 2, 3,
                     4, timePositions, null, null, null, null, "", mockResponse);
             Assert.fail("Should've failed to parse time");
-        } catch (ParseException ex) {
+        } catch (DateTimeParseException ex) {
         }
     }
 
@@ -174,7 +174,7 @@ public class TestWCSController extends PortalTestClass {
         final double southBoundLat = -0.2;
         final double eastBoundLng = 0.3;
         final double westBoundLng = -0.4;
-        final String[] timePositions = new String[] {"1986-10-09 12:34:56 GMT", "1986-05-29 12:34:56 GMT"};
+        final String[] timePositions = new String[] {"1986-10-09T12:34:56Z", "1986-05-29T12:34:56Z"};
         final TimeConstraint wcsTime = new TimeConstraint("1986-10-09T12:34:56Z,1986-05-29T12:34:56Z");
         final String timePeriodFrom = null;
         final String timePeriodTo = null;

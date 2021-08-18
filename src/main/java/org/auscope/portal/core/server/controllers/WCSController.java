@@ -2,10 +2,8 @@ package org.auscope.portal.core.server.controllers;
 
 import java.awt.Dimension;
 import java.io.InputStream;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.format.DateTimeParseException;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -40,9 +38,6 @@ import org.springframework.web.servlet.ModelAndView;
 public class WCSController extends BasePortalController {
     private final Log logger = LogFactory.getLog(getClass());
 
-    /** The format string view's are expected to use when working with this controller */
-    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss z";
-
     private WCSService wcsService;
 
     private int BUFFERSIZE = 1024 * 1024;
@@ -62,50 +57,47 @@ public class WCSController extends BasePortalController {
     }
 
     /**
-     * Parses an array of date strings that are conforming to DATE_FORMAT into date objects
+     * Parses an array of date strings that are conforming to ISO8601 UTC format into 'Instant' objects
      * 
      * @param dateStrings
      * @return
-     * @throws ParseException
+     * @throws DateTimeParseException
      */
-    private Date[] parseDates(final String[] dateStrings) throws ParseException {
-        Date[] dates = new Date[dateStrings.length];
-        DateFormat format = new SimpleDateFormat(DATE_FORMAT);
+    private Instant[] parseDates(final String[] dateStrings) throws DateTimeParseException {
+        Instant[] dates = new Instant[dateStrings.length];
 
         for (int i = 0; i < dateStrings.length; i++) {
-            dates[i] = format.parse(dateStrings[i]);
+            dates[i] = Instant.parse(dateStrings[i]);
         }
-
         return dates;
     }
 
     /**
      * Attempts to parse a time constraint from the listed time information. Returns null if no constraint can be generated
      * 
-     * @param timePositions
-     * @param timePeriodFrom
-     * @param timePeriodTo
-     * @param timePeriodResolution
+     * @param timePositions array of time strings in ISO8601 UTC format
+     * @param timePeriodFrom  from time strings in ISO8601 UTC format
+     * @param timePeriodTo  from time strings in ISO8601 UTC format
+     * @param timePeriodResolution resolution string as per WCS GetCoverate specification
      * @return
-     * @throws ParseException
+     * @throws DateTimeParseException
      */
     private TimeConstraint parseTimeConstraint(final String[] timePositions,
             final String timePeriodFrom,
             final String timePeriodTo,
-            final String timePeriodResolution) throws ParseException {
-        //We will receive a list of time positions
+            final String timePeriodResolution) throws DateTimeParseException {
+
+        // We will receive a list of time positions
         if (timePositions != null && timePositions.length > 0) {
             return TimeConstraint.parseTimeConstraint(parseDates(timePositions));
-            //or an actual time period
+
+        // Or an actual time period
         } else if (timePeriodFrom != null && timePeriodTo != null && !timePeriodFrom.isEmpty()
                 && !timePeriodTo.isEmpty()) {
-            DateFormat inputFormat = new SimpleDateFormat(DATE_FORMAT);
-            Date from = inputFormat.parse(timePeriodFrom);
-            Date to = inputFormat.parse(timePeriodTo);
-
+            Instant from = Instant.parse(timePeriodFrom);
+            Instant to = Instant.parse(timePeriodTo);
             return TimeConstraint.parseTimeConstraint(from, to, timePeriodResolution);
         }
-
         return null;
     }
 
