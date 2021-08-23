@@ -12,6 +12,7 @@ import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord_1_3_
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.util.ResourceUtil;
 import org.auscope.portal.core.view.ViewCSWRecordFactory;
+import org.auscope.portal.core.view.ViewGetCapabilitiesFactory;
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Before;
@@ -22,6 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class TestGetCapabilitiesController extends PortalTestClass {
 
     private ViewCSWRecordFactory viewCswFactory = context.mock(ViewCSWRecordFactory.class);
+    private ViewGetCapabilitiesFactory viewCapabilityFactory = context.mock(ViewGetCapabilitiesFactory.class);
     private WMSService service;
     private WMSController controller;
 
@@ -29,7 +31,7 @@ public class TestGetCapabilitiesController extends PortalTestClass {
     public void setUp() {
         service = context.mock(WMSService.class);
 
-        controller = new WMSController(service, viewCswFactory, null);
+        controller = new WMSController(service, viewCswFactory, viewCapabilityFactory, null);
     }
 
     @Test
@@ -48,14 +50,23 @@ public class TestGetCapabilitiesController extends PortalTestClass {
 
                     exactly(21).of(viewCswFactory).toView(with(any(CSWRecord.class)));
                     will(returnValue(new ModelMap()));
+
+                    exactly(1).of(viewCapabilityFactory).toView(with(any(GetCapabilitiesRecord.class)), with((String) null));
+                    will(returnValue(new ModelMap()));
                 }
             });
 
             Assert.assertNotNull(is);
-            ModelAndView mv = controller.getCustomLayers(serviceUrl,"Y");
-            Assert.assertNotNull(mv);
-            List<String> ls = (List) mv.getModelMap().get("data");
+            ModelAndView modelAndView = controller.getCustomLayers(serviceUrl,"Y");
+            Assert.assertNotNull(modelAndView);
+            Assert.assertTrue((Boolean) modelAndView.getModel().get("success"));
+
+            ModelMap mMap = (ModelMap) modelAndView.getModel().get("data");
+            List ls = (List) mMap.get("cswRecords");
             Assert.assertEquals(21, ls.size());
+            ls = (List) mMap.get("capabilityRecords");
+            Assert.assertEquals(1, ls.size());
+
         } finally {
             try {
                 is.close();
@@ -82,14 +93,23 @@ public class TestGetCapabilitiesController extends PortalTestClass {
 
                     exactly(1).of(viewCswFactory).toView(with(any(CSWRecord.class)));
                     will(returnValue(new ModelMap()));
+
+                    exactly(1).of(viewCapabilityFactory).toView(with(any(GetCapabilitiesRecord.class)), with((String) null));
+                    will(returnValue(new ModelMap()));
                 }
             });
 
             Assert.assertNotNull(is);
-            ModelAndView mv = controller.getCustomLayers(serviceUrl,"Y");
-            Assert.assertNotNull(mv);
-            List ls = (List) mv.getModelMap().get("data");
+            ModelAndView modelAndView = controller.getCustomLayers(serviceUrl,"Y");
+            Assert.assertNotNull(modelAndView);
+            Assert.assertTrue((Boolean) modelAndView.getModel().get("success"));
+
+            ModelMap mMap = (ModelMap) modelAndView.getModel().get("data");
+            List ls = (List) mMap.get("cswRecords");
             Assert.assertEquals(1, ls.size());
+            ls = (List) mMap.get("capabilityRecords");
+            Assert.assertEquals(1, ls.size());
+
         } finally {
             try {
                 is.close();

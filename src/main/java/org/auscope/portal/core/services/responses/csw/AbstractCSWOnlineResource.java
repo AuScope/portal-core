@@ -107,7 +107,7 @@ public abstract class AbstractCSWOnlineResource {
     public abstract String getApplicationProfile();
 
     /**
-     * provide the protocol version if possible. eg WMS 1.1.1 vs 1.3
+     * provide the protocol version if possible. eg WMS 1.1.1 vs 1.3.0
      * 
      * @return version if possible
      */

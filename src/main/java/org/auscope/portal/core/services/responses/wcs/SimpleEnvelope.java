@@ -12,7 +12,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * This is a "stupid" representation of the spatial elements of a <gml:Envelope> from a WCS DescribeCoverage response
+ * This is a "stupid" representation of the spatial elements of a <gml:Envelope> or <wcs:Envelope> or <gml:EnvelopeWithTimePeriod>
+ * from a WCS DescribeCoverage response
  *
  * @author vot002
  *
@@ -26,6 +27,8 @@ public class SimpleEnvelope implements Serializable {
     private double northBoundLatitude;
     private double eastBoundLongitude;
     private double westBoundLongitude;
+    private String timePositionStart = null;
+    private String timePositionEnd = null;
 
     /**
      *
@@ -39,7 +42,8 @@ public class SimpleEnvelope implements Serializable {
      */
     public SimpleEnvelope(String srsName, String type,
             double southBoundLatitude, double northBoundLatitude,
-            double eastBoundLongitude, double westBoundLongitude) {
+            double eastBoundLongitude, double westBoundLongitude,
+            String timePositionStart, String timePositionEnd) {
         super();
         this.srsName = srsName;
         this.type = type;
@@ -47,8 +51,17 @@ public class SimpleEnvelope implements Serializable {
         this.northBoundLatitude = northBoundLatitude;
         this.eastBoundLongitude = eastBoundLongitude;
         this.westBoundLongitude = westBoundLongitude;
+        this.timePositionStart = timePositionStart;
+        this.timePositionEnd = timePositionEnd;
     }
 
+    /**
+     * Constructor to parse the XML in 'node' and create a 'SimpleEnvelope' object
+     * 
+     * @param node can be one of: 'wcs:Envelope' or 'gml:Envelope' or 'gml:EnvelopeWithTimePeriod'
+     * @param nc namespace context
+     * @throws XPathException
+     */
     public SimpleEnvelope(Node node, WCSNamespaceContext nc) throws XPathException {
         //get our list of gml:Points and parse our spatial bounds
         NodeList tempNodeList = (NodeList) DOMUtil.compileXPathExpr("gml:pos", nc).evaluate(node, XPathConstants.NODESET);
@@ -69,6 +82,17 @@ public class SimpleEnvelope implements Serializable {
         srsName = (String) DOMUtil.compileXPathExpr("@srsName", new WCSNamespaceContext()).evaluate(node, XPathConstants.STRING);
 
         type = node.getLocalName();
+
+        // Parse any time position nodes if parent was "gml:EnvelopeWithTimePeriod"
+        if (type.equals("EnvelopeWithTimePeriod")) {
+            tempNodeList = (NodeList) DOMUtil.compileXPathExpr("gml:timePosition", nc).evaluate(node, XPathConstants.NODESET);
+            if (tempNodeList.getLength() != 2) {
+                throw new XPathExpressionException(String.format("%1$s:%2$s does not have 2 gml:timePosition nodes",
+                node.getNamespaceURI(), node.getLocalName()));
+            }
+            timePositionStart = tempNodeList.item(0).getTextContent();
+            timePositionEnd = tempNodeList.item(1).getTextContent();
+        }
     }
 
     /**
@@ -118,5 +142,30 @@ public class SimpleEnvelope implements Serializable {
 
     public String getType() {
         return type;
+    }
+
+    /**
+     * Test if this object has time period information
+     * 
+     * @return true iff this envelope object has time period information
+     */
+    public boolean hasTimePeriod() {
+        return type.equals("EnvelopeWithTimePeriod");
+    }
+
+    /**
+     * Gets the envelope's start time position
+     * will return null if none exists
+     */
+    public String getTimePositionStart() {
+        return timePositionStart;
+    }
+
+    /**
+     * Gets the envelope's end time position
+     * will return null if none exists 
+     */
+    public String getTimePositionEnd() {
+        return timePositionEnd;
     }
 }

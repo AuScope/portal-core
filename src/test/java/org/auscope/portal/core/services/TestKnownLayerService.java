@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.view.knownlayer.KnownLayer;
@@ -73,22 +74,33 @@ public class TestKnownLayerService extends PortalTestClass {
             {
                 allowing(cswRecordList.get(0)).getFileIdentifier();
                 will(returnValue("id1"));
+                allowing(cswRecordList.get(0)).getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType.WMS);
+
                 allowing(cswRecordList.get(1)).getFileIdentifier();
                 will(returnValue("id2"));
+                allowing(cswRecordList.get(0)).getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType.WMS);
+
                 allowing(cswRecordList.get(2)).getFileIdentifier();
                 will(returnValue("id3"));
+                allowing(cswRecordList.get(0)).getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType.WMS);
 
                 allowing(cswRecordList.get(0)).getOnlineResources();
                 will(returnValue(null));
+                allowing(cswRecordList.get(0)).getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType.WMS);
+
                 allowing(cswRecordList.get(1)).getOnlineResources();
                 will(returnValue(null));
+                allowing(cswRecordList.get(0)).getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType.WMS);
+
                 allowing(cswRecordList.get(2)).getOnlineResources();
                 will(returnValue(null));
+                allowing(cswRecordList.get(0)).getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType.WMS);
+
             }
         });
 
         mockCacheService = context.mock(CSWCacheService.class);
-        knownLayerService = new KnownLayerService(mockKnownLayerList, mockCacheService, null, null);
+        knownLayerService = new KnownLayerService(mockKnownLayerList, mockCacheService, null, null, null, null);
     }
 
     @After

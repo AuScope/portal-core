@@ -197,8 +197,9 @@ public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRec
      */
     @Override
     public String[] getTimeExtent() throws XPathException {
+        // WMS version 1.3.0 places its time values in a 'Dimension' element
     	if(timeExtent == null) {
-    		Node tempNode = (Node) DOMUtil.compileXPathExpr("Extent[@name='time']").evaluate(node, XPathConstants.NODE);
+    		Node tempNode = (Node) DOMUtil.compileXPathExpr("Dimension[@name='time']").evaluate(node, XPathConstants.NODE);
             String timeStr = tempNode != null ? tempNode.getTextContent() : null;
             if(timeStr != null) {
 	            timeExtent = timeStr.split(",");

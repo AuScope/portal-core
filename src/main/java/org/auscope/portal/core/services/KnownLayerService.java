@@ -1,5 +1,6 @@
 package org.auscope.portal.core.services;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -8,13 +9,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+import javax.xml.xpath.XPathException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.services.responses.stackdriver.ServiceStatusResponse;
+import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord;
+import org.auscope.portal.core.services.responses.wms.GetCapabilitiesWMSLayerRecord;
 import org.auscope.portal.core.view.ViewCSWRecordFactory;
+import org.auscope.portal.core.view.ViewGetCapabilitiesFactory;
 import org.auscope.portal.core.view.ViewKnownLayerFactory;
 import org.auscope.portal.core.view.knownlayer.KnownLayer;
 import org.auscope.portal.core.view.knownlayer.KnownLayerAndRecords;
@@ -35,12 +40,13 @@ public class KnownLayerService {
     private final Log logger = LogFactory.getLog(getClass());
     private List<KnownLayer> knownLayers;
     private CSWCacheService cswCacheService;
+    private WMSService wmsService;
 
     private GoogleCloudMonitoringCachedService stackDriverService = null;
 
     /** Used for converting data to something the view can understand */
     private ViewKnownLayerFactory viewKnownLayerFactory;
-    
+    private ViewGetCapabilitiesFactory viewGetCapabilitiesFactory;
     private ViewCSWRecordFactory viewCSWRecordFactory;
     
     @Autowired(required = false)
@@ -59,7 +65,8 @@ public class KnownLayerService {
      */
     public KnownLayerService(@SuppressWarnings("rawtypes") List knownTypes,
             CSWCacheService cswCacheService, ViewKnownLayerFactory viewFactory,
-            ViewCSWRecordFactory viewCSWRecordFactory) {
+            ViewCSWRecordFactory viewCSWRecordFactory,
+            ViewGetCapabilitiesFactory viewGetCapabilitiesFactory, WMSService wmsService) {
         this.knownLayers = new ArrayList<>();
         for (Object obj : knownTypes) {
             if (obj instanceof KnownLayer) {
@@ -69,7 +76,9 @@ public class KnownLayerService {
 
         this.cswCacheService = cswCacheService;
         this.viewKnownLayerFactory = viewFactory;
-        this.viewCSWRecordFactory= viewCSWRecordFactory;
+        this.viewCSWRecordFactory = viewCSWRecordFactory;
+        this.viewGetCapabilitiesFactory = viewGetCapabilitiesFactory;
+        this.wmsService = wmsService;
     }
 
     /**
@@ -113,6 +122,9 @@ public class KnownLayerService {
             KnownLayerSelector selector = knownLayer.getKnownLayerSelector();
             List<CSWRecord> relatedRecords = new ArrayList<>();
             List<CSWRecord> belongingRecords = new ArrayList<>();
+            List<GetCapabilitiesRecord> capabilitiesRecords = new ArrayList<>();
+            // Used to ensure we only send a 'GetCapabilites' request once to each service
+            List<String> capDoneList = new ArrayList<>();
 
             // For each record, mark it as being added to a known layer (if appropriate)
             // We also need to mark the record as being mapped using mappedRecordIDs
@@ -122,14 +134,42 @@ public class KnownLayerService {
                     switch (selector.isRelatedRecord(record)) {
                     case Related:
                         addToListConsiderWMSSelectors(relatedRecords, record, knownLayer);
-
-                        // relatedRecords.add(indexInWMSSelectorsList, record);
                         mappedRecordIDs.put(record.getFileIdentifier(), null);
                         break;
                     case Belongs:
                         addToListConsiderWMSSelectors(belongingRecords, record, knownLayer);
-                        // belongingRecords.add(record);
                         mappedRecordIDs.put(record.getFileIdentifier(), null);
+
+                        // Look for services for which require a GetCapabilitiesRecord
+                        AbstractCSWOnlineResource[] onlineResourceList = record.getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType.WMS);
+                        if (onlineResourceList.length > 0) {
+                            for (AbstractCSWOnlineResource onlineRes: onlineResourceList) {
+                                // So far only GSKY services require us to fetch a 'GetCapabilities' response 
+                                if (onlineRes.getApplicationProfile().contains("GSKY")) {
+                                    URL linkage = onlineRes.getLinkage();
+                                    String url = linkage.getProtocol() + "://" + linkage.getHost() + linkage.getPath();
+                                    if (!capDoneList.contains(url)) {
+                                        try {
+                                            // Send a 'GetCapabilities' request to the service
+                                            GetCapabilitiesRecord capabilitiesRec = wmsService.getWmsCapabilities(url, "1.3.0");
+
+                                            // Only collect the 'GetCapabilities' record if it contains a valid 'timeExtent' value in its WMS layers
+                                            for (GetCapabilitiesWMSLayerRecord wmsCapRec: capabilitiesRec.getLayers()) {
+                                                String[] timeExtArr = wmsCapRec.getTimeExtent();
+                                                if (timeExtArr != null && timeExtArr.length > 0) {
+                                                    capabilitiesRecords.add(capabilitiesRec);
+                                                    break;
+                                                }
+                                            }
+                                        } catch (XPathException e) {
+                                            logger.warn(String.format("Unable to retrieve WMS GetCapabilities for '%1$s'", url));
+                                            logger.warn(e);
+                                        }
+                                        capDoneList.add(url);
+                                    }
+                                }
+                            }
+                        }
                         break;
                     default:
                         // Ignore metadata CSW records - they have no named online resources and no geographic element BBOXes
@@ -163,7 +203,7 @@ public class KnownLayerService {
 
             // If the include flag got set then we can add this record:
             if (include) {
-                knownLayerAndRecords.add(new KnownLayerAndRecords(knownLayer, belongingRecords, relatedRecords));
+                knownLayerAndRecords.add(new KnownLayerAndRecords(knownLayer, belongingRecords, relatedRecords, capabilitiesRecords));
             }
         }
 
@@ -274,6 +314,7 @@ public class KnownLayerService {
             List<ModelMap> viewMappedRecords = new ArrayList<>();
 
             Set<String> onlineResourceEndpoints = new HashSet<>();
+            ArrayList<String> layerNames = new ArrayList<>();
             for (CSWRecord rec : knownLayerAndRecords.getBelongingRecords()) {
 
                 if (rec != null) {
@@ -281,6 +322,7 @@ public class KnownLayerService {
                         if (onlineResource.getLinkage() != null) {
                             onlineResourceEndpoints.add(onlineResource.getLinkage().getHost());
                         }
+                        layerNames.add(onlineResource.getName());
                     }
                     viewMappedRecords.add(viewCSWRecordFactory.toView(rec));
                 }
@@ -293,8 +335,18 @@ public class KnownLayerService {
                 }
             }
 
+            // Add in capability records, but only for the relevant layer
+            List<ModelMap> viewCapabilityRecords = new ArrayList<>();
+            String layerName = null;
+            if (layerNames.size() > 0) {
+                layerName = layerNames.get(0);
+            }
+            for (GetCapabilitiesRecord rec : knownLayerAndRecords.getCapabilitiesRecords()) {
+                viewCapabilityRecords.add(viewGetCapabilitiesFactory.toView(rec, layerName));
+            }
             viewKnownLayer.put("cswRecords", viewMappedRecords);
             viewKnownLayer.put("relatedRecords", viewRelatedRecords);
+            viewKnownLayer.put("capabilityRecords", viewCapabilityRecords);
 
             if (stackDriverService != null && kl.getStackdriverServiceGroup() != null) {
                 try {
