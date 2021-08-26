@@ -18,6 +18,13 @@ public class VocabularyFilterService {
         this.vocabularyCacheService = vocabularyCacheService;
     }
 
+    /**
+     * Returns a vocabulary model given an id
+     * @param vocabularyId  Cache ID of vocabulary model
+     */
+    public Model getModelById(String vocabularyId) {
+        return this.vocabularyCacheService.getVocabularyCacheById(vocabularyId);
+    }
 
     /**
      * Returns key-value pairs of vocabulary terms for the specified cache ID, filtered by
@@ -57,7 +64,6 @@ public class VocabularyFilterService {
      */
     private Map<String, String> getLabeledVocabulary(Model model) {
         Map<String, String> result = new HashMap<>();
-
         if (model != null) {
             Property prefLabelProperty = model.createProperty(VocabNamespaceContext.SKOS_NAMESPACE, "prefLabel");
 

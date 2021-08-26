@@ -189,4 +189,17 @@ public class TestVocabularyFilterService extends PortalTestClass {
 
         Assert.assertEquals(4, values.size());
     }
+
+    @Test
+    public void testGetModelById() {
+        context.checking(new Expectations() {
+            {
+                oneOf(mockCacheService).getVocabularyCacheById(mockVocabularyCacheId);
+                will(returnValue(mockModel1));
+            }
+        });
+        Model model = vocabularyFilterService.getModelById(mockVocabularyCacheId);
+
+        Assert.assertNotNull(model);
+    }
 }
