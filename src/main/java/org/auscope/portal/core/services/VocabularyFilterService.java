@@ -2,6 +2,7 @@ package org.auscope.portal.core.services;
 
 import org.apache.jena.rdf.model.*;
 import org.auscope.portal.core.services.namespaces.VocabNamespaceContext;
+import org.apache.jena.vocabulary.SKOS;
 
 import java.util.*;
 
@@ -19,11 +20,28 @@ public class VocabularyFilterService {
     }
 
     /**
-     * Returns a vocabulary model given an id
-     * @param vocabularyId  Cache ID of vocabulary model
+     * Returns a list of property value strings, given a vocab cache id, string value for the SKOS prefLabel, and a property type
+     * 
+     * @param vocabularyId  Cache ID of vocabulary
+     * @param prefLabelVal String value of SKOS prefLabel to search for
+     * @param property Property whose value will be returned in array
+     * @return list of Strings
      */
-    public Model getModelById(String vocabularyId) {
-        return this.vocabularyCacheService.getVocabularyCacheById(vocabularyId);
+    public ArrayList<String> getVocabularyById(String vocabularyId, String prefLabelVal, Property property) {
+        Model model = this.vocabularyCacheService.getVocabularyCacheById(vocabularyId);
+        ResIterator iterator = model.listResourcesWithProperty(SKOS.prefLabel);
+        ArrayList<String> result = new ArrayList<String>();
+        while (iterator.hasNext()) {
+            Resource res = iterator.next();
+            if (!res.getProperty(SKOS.prefLabel).getString().equals(prefLabelVal)) {
+                continue;
+            }
+            String defn = res.getProperty(property).getString();
+            if (defn != null) {
+                result.add(defn);
+            }
+        }
+        return result;
     }
 
     /**
@@ -65,12 +83,10 @@ public class VocabularyFilterService {
     private Map<String, String> getLabeledVocabulary(Model model) {
         Map<String, String> result = new HashMap<>();
         if (model != null) {
-            Property prefLabelProperty = model.createProperty(VocabNamespaceContext.SKOS_NAMESPACE, "prefLabel");
-
-            ResIterator iterator = model.listResourcesWithProperty(prefLabelProperty);
+            ResIterator iterator = model.listResourcesWithProperty(SKOS.prefLabel);
             while (iterator.hasNext()) {
                 Resource res = iterator.next();
-                StmtIterator prefLabelIt = res.listProperties(prefLabelProperty);
+                StmtIterator prefLabelIt = res.listProperties(SKOS.prefLabel);
                 while (prefLabelIt.hasNext()) {
                     Statement prefLabelStatement = prefLabelIt.next();
                     String prefLabel = prefLabelStatement.getString();

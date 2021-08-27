@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 
@@ -191,15 +192,17 @@ public class TestVocabularyFilterService extends PortalTestClass {
     }
 
     @Test
-    public void testGetModelById() {
+    public void testGetVocabularyByIdWithProperty() {
         context.checking(new Expectations() {
             {
                 oneOf(mockCacheService).getVocabularyCacheById(mockVocabularyCacheId);
-                will(returnValue(mockModel1));
+                will(returnValue(mockModel2));
             }
         });
-        Model model = vocabularyFilterService.getModelById(mockVocabularyCacheId);
+        ArrayList<String> defns = vocabularyFilterService.getVocabularyById(mockVocabularyCacheId, "prefLabel", mockDefaultProperty);
 
-        Assert.assertNotNull(model);
+        Assert.assertNotNull(defns);
+        Assert.assertEquals(defns.size(), 1);
+        Assert.assertEquals(defns.get(0), "example");
     }
 }
