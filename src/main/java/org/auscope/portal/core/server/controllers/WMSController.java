@@ -504,10 +504,12 @@ public class WMSController extends BaseCSWController {
     @RequestMapping(value = "/getWMSMapViaProxy.do", method = {RequestMethod.GET, RequestMethod.POST})
     public void getWMSMapViaProxy(
             @RequestParam("url") String url,
-            @RequestParam("layer") String layer,
+            @RequestParam(required = false, value="layer") String layer,
+            @RequestParam(required = false, value="layers") String layers,
             @RequestParam("bbox") String bbox,
             @RequestParam(required = false, value = "sldUrl") String sldUrl,
-            @RequestParam(required = false, value = "sldBody") String sldBody,            
+            @RequestParam(required = false, value = "sldBody") String sldBody,
+            @RequestParam(required = false, value = "sld_body") String sld_body,    
             @RequestParam("version") String version,
             @RequestParam(required=false, value="crs") String crs,
             @RequestParam(required=false, value="srs") String srs,
@@ -528,6 +530,13 @@ public class WMSController extends BaseCSWController {
 
         response.setContentType("image/png");
   
+        // the sldBody and layer parameters are non standard but have been in use for some time.  The correct parameters are sld_body and layers.
+        // I have added this check to overwrite the non standard parameters with the correct ones if they're present
+        // if not still accept the old ones.
+
+        if (sld_body!=null && sld_body.length() > 0) sldBody=sld_body;
+        if (layers!=null && layers.length() > 0) layer=layers;
+
         if (sldBody == null && sldUrl!=null) {
             sldUrl = request.getRequestURL().toString().replace(request.getServletPath(),"").replace("4200", "8080") + sldUrl;  
             sldBody = this.wmsService.getStyle(url, sldUrl, version);            
