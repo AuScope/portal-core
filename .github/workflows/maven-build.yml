@@ -1,7 +1,7 @@
 name: Build and Test portal-core package
 on: [push, pull_request]
 jobs:
-  publish:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
