@@ -1,8 +1,8 @@
 name: Build and Publish portal-core package to the cgmaven.it.csiro.au repository
 on:
   push:
-  branches:
-    - master
+    branches:
+      - master
 jobs:
   publish:
     if: ${{ github.repository_owner == 'AuScope' }}
