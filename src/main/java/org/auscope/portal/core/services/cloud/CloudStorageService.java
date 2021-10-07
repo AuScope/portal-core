@@ -10,6 +10,7 @@ import java.net.UnknownHostException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.auscope.portal.core.cloud.CloudDirectoryInformation;
 import org.auscope.portal.core.cloud.CloudFileInformation;
 import org.auscope.portal.core.cloud.CloudFileOwner;
 import org.auscope.portal.core.services.PortalServiceException;
@@ -25,6 +26,8 @@ public abstract class CloudStorageService {
     abstract public InputStream getJobFile(CloudFileOwner job, String logFile) throws PortalServiceException;
 
     abstract public CloudFileInformation[] listJobFiles(CloudFileOwner job) throws PortalServiceException;
+    
+    abstract public CloudDirectoryInformation listJobDirectoriesAndFiles(CloudFileOwner job, CloudDirectoryInformation cloudDirectory) throws PortalServiceException;
 
     abstract public void deleteJobFiles(CloudFileOwner job) throws PortalServiceException;
 
