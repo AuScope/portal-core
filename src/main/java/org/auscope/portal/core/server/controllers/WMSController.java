@@ -1,15 +1,18 @@
 package org.auscope.portal.core.server.controllers;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.naming.OperationNotSupportedException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,6 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
+import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.WMSService;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
@@ -39,8 +43,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
-import com.amazonaws.services.sqs.model.UnsupportedOperationException;
 
 /**
  * Handles GetCapabilites (WFS)WMS queries.
@@ -514,7 +516,7 @@ public class WMSController extends BaseCSWController {
             @RequestParam(required = false, value = "tiled") String tiled,
             HttpServletResponse response,
             HttpServletRequest request)
-                    throws Exception ,UnsupportedOperationException{
+                    throws PortalServiceException{
         boolean requestCachedTile=false;
 
         // A WMS version 1.3+ request must have a CRS parameter, earlier 
@@ -522,22 +524,28 @@ public class WMSController extends BaseCSWController {
         // WMSMethodMakers to determine whether the parameter set is valid.
         if ((crs == null && srs == null) ||
             (crs != null && srs != null)) {
-            throw new Exception("getWMSMapViaProxy.do requires one of CRS or SRS parameters to be set.");
+            throw new PortalServiceException("getWMSMapViaProxy.do requires one of CRS or SRS parameters to be set.");
         }
         String crsOrSrs = (crs != null) ? crs : srs;
-
         response.setContentType("image/png");
-  
-        if (sldBody == null && sldUrl!=null) {
-            sldUrl = request.getRequestURL().toString().replace(request.getServletPath(),"").replace("4200", "8080") + sldUrl;  
-            sldBody = this.wmsService.getStyle(url, sldUrl, version);            
-        }
+
+        try {
+            if (sldBody == null && sldUrl!=null) {
+                sldUrl = request.getRequestURL().toString().replace(request.getServletPath(),"").replace("4200", "8080") + sldUrl;  
+                sldBody = this.wmsService.getStyle(url, sldUrl, version);
+            }
+        } catch (OperationNotSupportedException | URISyntaxException | IOException e) {
+            throw new PortalServiceException("Exception during getWMSMapViaProxy.do "+e.getMessage(), e);
+        }            
+
         if (tiled !=null && tiled.equals("true")) requestCachedTile=true;
-        HttpClientInputStream styleStream = this.wmsService.getMap(url, layer, bbox,sldBody, version, crsOrSrs, requestCachedTile);
-        OutputStream outputStream = response.getOutputStream();
-        IOUtils.copy(styleStream,outputStream);
-        styleStream.close();
-        outputStream.close();
+
+        try (HttpClientInputStream styleStream = this.wmsService.getMap(url, layer, bbox,sldBody, version, crsOrSrs, requestCachedTile);
+             OutputStream outputStream = response.getOutputStream();)       {
+            IOUtils.copy(styleStream,outputStream);
+        } catch (IOException | OperationNotSupportedException | URISyntaxException e) {
+            throw new PortalServiceException("Exception during getWMSMapViaProxy.do "+e.getMessage(), e);
+        } 
     }
 
     public String getStyle(String name, String color, String spatialType) {
