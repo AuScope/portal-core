@@ -390,7 +390,6 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
             existingParam.add(new BasicNameValuePair("SLD_BODY", sldBody));
         }
         existingParam.add(new BasicNameValuePair("DISPLAYOUTSIDEMAXEXTENT", "TRUE"));
-        existingParam.add(new BasicNameValuePair("EXCEPTIONS", "BLANK"));
         existingParam.add(new BasicNameValuePair("LAYERS", layer));
         existingParam.add(new BasicNameValuePair("FORMAT", "image/png"));
         existingParam.add(new BasicNameValuePair("TRANSPARENT", "TRUE"));
