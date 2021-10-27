@@ -185,7 +185,10 @@ public class CSWCacheService {
                 this.keywordCache = kryo.readObject(input, HashMap.class);
                 this.recordCache = kryo.readObject(input, ArrayList.class);
                 this.keywordsByRegistry = kryo.readObject(input, HashMap.class);
-                log.info("CSWCache has been loaded from cache.");                
+                log.info("CSWCache has been loaded from cache.");
+                log.info(String.format("    Keyword cache updated! Cache now has '%1$d' unique keyword names",
+                        this.keywordCache.size()));
+                log.info(String.format("    Record cache updated! Cache now has '%1$d' records", this.recordCache.size()));
             } catch (Exception e) {
                 log.warn(String.format("Failed loading CSW cache: %1$s, %2$s", FileIOUtil.getTempDirURL(), CSW_CACHE_FILENAME), e);
             } finally {
