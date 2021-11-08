@@ -9,6 +9,7 @@ import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.auscope.portal.core.cloud.CloudDirectoryInformation;
 import org.auscope.portal.core.cloud.CloudFileInformation;
 import org.auscope.portal.core.cloud.CloudFileOwner;
 import org.auscope.portal.core.cloud.CloudJob;
@@ -458,6 +459,52 @@ public class CloudStorageServiceJClouds extends CloudStorageService {
             } while (nextMarker != null);
 
             return jobFiles.toArray(new CloudFileInformation[jobFiles.size()]);
+        } catch (Exception ex) {
+            log.error("Unable to list files for job:" + job.toString());
+            log.debug("error:", ex);
+            throw new PortalServiceException("Error retriving output file details", ex);
+        }
+    }
+
+    /**
+     * 
+     */
+    @Override
+    public CloudDirectoryInformation listJobDirectoriesAndFiles(CloudFileOwner job, CloudDirectoryInformation cloudDirectory) throws PortalServiceException {
+    	String arn = job.getProperty(CloudJob.PROPERTY_STS_ARN);
+        String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
+
+        try {
+            BlobStore bs = getBlobStore(arn, clientSecret);
+            String baseKey = jobToBaseKey(job);
+
+            String bucketName = getBucket(job);
+
+            //Paging is a little awkward - this list method may return an incomplete list requiring followup queries
+            PageSet<? extends StorageMetadata> currentMetadataPage = bs.list(bucketName, ListContainerOptions.Builder.inDirectory(baseKey));
+            String nextMarker = null;
+            List<CloudFileInformation> jobFiles = new ArrayList<>();
+            do {
+                if (nextMarker != null) {
+                    currentMetadataPage = bs.list(bucketName, ListContainerOptions.Builder
+                            .inDirectory(baseKey)
+                            .afterMarker(nextMarker));
+                }
+
+                //Turn our StorageMetadata objects into simpler CloudFileInformation objects
+                for (StorageMetadata md : currentMetadataPage) {
+                    CloudFileInformation info = metadataToCloudFile(md);
+                    if (info != null) {
+                        jobFiles.add(info);
+                    }
+                }
+
+                nextMarker = currentMetadataPage.getNextMarker();
+            } while (nextMarker != null);
+
+            CloudDirectoryInformation cloudDir = new CloudDirectoryInformation("", null);
+            cloudDir.setFiles((ArrayList<CloudFileInformation>)jobFiles);
+            return cloudDir;
         } catch (Exception ex) {
             log.error("Unable to list files for job:" + job.toString());
             log.debug("error:", ex);
