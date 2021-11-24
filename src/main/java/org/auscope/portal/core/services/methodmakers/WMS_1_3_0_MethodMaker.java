@@ -431,7 +431,6 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
     public boolean accepts(String wmsUrl, String version, StringBuilder errStr) {
         if (version != null) {
             if (version.equals(this.getSupportedVersion()) == false) {
-                log.error("WMS_1_3_0_MethodMaker::accepts() WMS version not supported");
                 errStr.delete(0, errStr.length());
                 errStr.append("I can resolve your WMS URL, but the WMS version is not supported");
                 return false;
