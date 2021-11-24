@@ -582,4 +582,29 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
         return method;
     }
+    /**
+     * Generates a method for requesting a WFS CSVDownload by Polygon filter response
+     *
+     * @param serviceUrl
+     * @param maxFeatures
+     * @return
+     * @throws URISyntaxException
+     */
+    public HttpRequestBase makeCSVDownloadByPolygonMethod(String serviceUrl, String typeName, String filterString, Integer maxFeatures)
+            throws URISyntaxException {
+        HttpGet method = new HttpGet();
+
+        URIBuilder builder = new URIBuilder(serviceUrl);
+        builder.setParameter("service", "WFS");
+        builder.setParameter("request", "GetFeature");
+        builder.setParameter("version", "1.0.0");
+        builder.setParameter("outputFormat", "csv");
+        builder.setParameter("typeName", typeName);
+        builder.setParameter("maxFeatures", maxFeatures.toString());
+        builder.setParameter("filter", filterString);
+        //attach them to the method
+        method.setURI(builder.build());
+        return method;
+    }
+
 }

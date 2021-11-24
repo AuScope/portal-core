@@ -288,4 +288,31 @@ public abstract class BaseWFSService {
             throw new PortalServiceException(method, "Error when attempting to download from:" + serviceUrl, ex);
         }
     }
+
+    /**
+     * Download a CSV based on the type and polygonFilter.
+     *
+     * @param serviceUrl
+     *            a Web Feature Service URL
+     * @param type
+     * @param filterString
+     *            Polygon OGC filter
+     * @param maxFeatures
+     *            The maximum number of features to request
+     * @return
+     * @throws PortalServiceException
+     */
+
+    public InputStream downloadCSVByPolygonFilter(String serviceUrl, String typeName, String filterString, Integer maxFeatures) 
+            throws PortalServiceException {
+        
+        HttpRequestBase method = null;
+        try {
+            method = wfsMethodMaker.makeCSVDownloadByPolygonMethod(serviceUrl, typeName, filterString, maxFeatures);
+            return httpServiceCaller.getMethodResponseAsStream(method);
+
+        } catch (Exception ex) {
+            throw new PortalServiceException(method, "Error when attempting to downloadCSVByPolygonFilter from:" + serviceUrl, ex);
+        }
+    }
 }
