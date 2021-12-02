@@ -13,6 +13,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          server-id: snapshots
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
           cache: 'maven'
