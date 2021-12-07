@@ -140,24 +140,29 @@ public class WFSController extends BasePortalController {
     public void getAllFeaturesInCSV(@RequestParam("serviceUrl") final String serviceUrl,
             @RequestParam("typeName") final String featureType,
             @RequestParam(required = false, value = "bbox") final String bboxJSONString,
-            @RequestParam(required = false, value = "maxFeatures", defaultValue = "0") int maxFeatures,
+            @RequestParam(required=false, value="filter") String filter,
+            @RequestParam(required=false, value="maxFeatures",defaultValue = "100000") Integer maxFeatures,
             HttpServletResponse response)
             throws Exception {
 
         FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxJSONString);
         response.setContentType("text/csv");
         OutputStream outputStream = response.getOutputStream();
-        SimpleBBoxFilter filter = new SimpleBBoxFilter();
+        SimpleBBoxFilter bboxFilter = new SimpleBBoxFilter();
         String filterString = null;
-        if (bbox == null) {
-            filterString = filter.getFilterStringAllRecords();
-        } else {
-            filterString = filter.getFilterStringBoundingBox(bbox);
-        }
-
         InputStream result = null;
         try {
-        	result = wfsService.downloadCSV(serviceUrl, featureType, filterString, maxFeatures);
+            if (filter != null && filter.indexOf("ogc:Filter")>0) { //Polygon filter
+                filterString = filter.replace("gsmlp:shape","erl:shape");
+                result = wfsService.downloadCSVByPolygonFilter(serviceUrl, featureType, filterString, maxFeatures);
+            } else{ //BBox or no filter
+                if (bbox == null) {
+                    filterString = bboxFilter.getFilterStringAllRecords();
+                } else {
+                    filterString = bboxFilter.getFilterStringBoundingBox(bbox);
+                }
+                result = wfsService.downloadCSV(serviceUrl, featureType, filterString, maxFeatures);
+            }
         } catch (Exception ex) {
             log.warn(String.format("Exception getting '%2$s' from '%1$s': %3$s", serviceUrl, featureType, ex));
             log.debug("Exception: ", ex);           
