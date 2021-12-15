@@ -3,6 +3,7 @@ package org.auscope.portal.core.services;
 import org.apache.jena.rdf.model.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.jena.vocabulary.SKOS;
 import org.auscope.portal.core.services.VocabularyCacheService;
 import org.auscope.portal.core.services.namespaces.VocabNamespaceContext;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,31 @@ public class VocabularyFilterService {
         this.vocabularyCacheService = vocabularyCacheService;
     }
 
+
+    /**
+     * Returns a list of property value strings, given a vocab cache id, string value for the SKOS prefLabel, and a property type
+     *
+     * @param vocabularyId  Cache ID of vocabulary
+     * @param prefLabelVal String value of SKOS prefLabel to search for
+     * @param property Property whose value will be returned in array
+     * @return list of Strings
+     */
+    public ArrayList<String> getVocabularyById(String vocabularyId, String prefLabelVal, Property property) {
+        Model model = this.vocabularyCacheService.getVocabularyCacheById(vocabularyId);
+        ResIterator iterator = model.listResourcesWithProperty(SKOS.prefLabel);
+        ArrayList<String> result = new ArrayList<String>();
+        while (iterator.hasNext()) {
+            Resource res = iterator.next();
+            if (!res.getProperty(SKOS.prefLabel).getString().equals(prefLabelVal)) {
+                continue;
+            }
+            String defn = res.getProperty(property).getString();
+            if (defn != null) {
+                result.add(defn);
+            }
+        }
+        return result;
+    }
 
     /**
      * Returns key-value pairs of vocabulary terms for the specified cache ID, filtered by
