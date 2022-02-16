@@ -24,3 +24,18 @@ steps:
     mavenAuthenticateFeed: false
     effectivePomSkip: false
     sonarQubeRunAnalysis: false
+- task: MavenAuthenticate@0
+  inputs:
+    artifactsFeeds: 'aus-mvn'
+- task: Maven@3
+  inputs:
+    mavenPomFile: 'pom.xml'
+    goals: 'deploy'
+    publishJUnitResults: false
+    javaHomeOption: 'path'
+    jdkDirectory: '/usr/local/openjdk-17'
+    mavenVersionOption: 'Default'
+    mavenAuthenticateFeed: false
+    effectivePomSkip: false
+    sonarQubeRunAnalysis: false
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
