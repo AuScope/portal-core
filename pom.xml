@@ -23,15 +23,15 @@
     </scm>
     <distributionManagement>
         <repository>
-            <id>deployment</id>
-            <name>cgmaven release</name>
-            <url>https://cgmaven.it.csiro.au/nexus/repository/PortalRelease/</url>
+            <id>aus-mvn</id>
+            <url>https://pkgs.dev.azure.com/CSIROMineralResources/40352a90-4ca9-4028-b1e6-953538e003b4/_packaging/aus-mvn/maven/v1</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
-        <snapshotRepository>
-            <id>snapshots</id>
-            <name>cgmaven snapshots</name>
-            <url>https://cgmaven.it.csiro.au/nexus/repository/PortalSnapshot/</url>
-        </snapshotRepository>
     </distributionManagement>
 
     <organization>
@@ -54,14 +54,14 @@
     <!-- Repositories section -->
     <repositories>
         <repository>
-            <id>dcdp-deps</id>
-            <name>AuScope Nexus - New PortalRepo</name>
-            <url>https://cgmaven.it.csiro.au/nexus/repository/dcdp-deps/</url>
-        </repository>
-        <repository>
-            <id>osgeo</id>
-            <name>Open Source Geospatial Foundation Repository</name>
-            <url>http://download.osgeo.org/webdav/geotools</url>
+            <id>aus-mvn</id>
+            <url>https://pkgs.dev.azure.com/CSIROMineralResources/40352a90-4ca9-4028-b1e6-953538e003b4/_packaging/aus-mvn/maven/v1</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
         <repository>
             <id>unidata</id>
@@ -72,12 +72,6 @@
             <id>apache-releases</id>
             <name>apache maven repo</name>
             <url>https://repository.apache.org/content/repositories/releases</url>
-        </repository>
-        <!-- This is for AuScope specific builds of packages that aren't in Maven central -->
-        <repository>
-            <id>cgmaven.it.csiro.au</id>
-            <name>AuScope Nexus - New PortalRepo</name>
-            <url>https://cgmaven.it.csiro.au/nexus/repository/PortalRepository/</url>
         </repository>
     </repositories>
 
