@@ -68,7 +68,12 @@ public abstract class AbstractCSWOnlineResource {
         /**
          * A NetCDF Subset Service.
          */
-        NCSS
+        NCSS,
+
+        /**
+         * DOI
+         */
+        DOI
     }
 
     /**
@@ -157,8 +162,10 @@ public abstract class AbstractCSWOnlineResource {
             return OnlineResourceType.CSWService;
         } else if (lowerProtocol.contains("ncss")) {
             return OnlineResourceType.NCSS;
+        } else if (lowerProtocol.contains("doi")) {
+            return OnlineResourceType.DOI;
         }
-
+ 
         return OnlineResourceType.Unsupported;
     }
 
