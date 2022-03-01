@@ -484,6 +484,18 @@ public class FileIOUtil {
 		return tempdir;
 	}
 
+     /**
+     * Get the absolute url of a os specific working directory 
+     * @return absolute url of a temp directory
+     */
+	public static String getUserDirURL() {
+		String userdir = System.getProperty("user.dir");
+
+		if (!(userdir.endsWith("/") || userdir.endsWith("\\"))) {
+			userdir = userdir + System.getProperty("file.separator");
+		}
+		return userdir;
+	}
     /**
      * VT: Have to think of a better way to handle exception rather then just encapsulating the error in xml
      *

@@ -47,6 +47,8 @@ import com.esotericsoftware.kryo.Kryo;
 public class CSWCacheService {
 
     private static final String CSW_CACHE_FILENAME = "csw_cache.ser";
+    private static String CSW_CACHE_PATH = FileIOUtil.getUserDirURL();
+
 
     /**
      * Any records containing keywords prefixed by this value we be merged with other records containing the same keyword.
@@ -112,7 +114,7 @@ public class CSWCacheService {
     public CSWCacheService(Executor executor,
             HttpServiceCaller serviceCaller,
             @SuppressWarnings("rawtypes") ArrayList cswServiceList) {
-        this(executor, serviceCaller, cswServiceList, new CSWRecordTransformerFactory());
+        this(executor, serviceCaller, cswServiceList, new CSWRecordTransformerFactory(), CSW_CACHE_PATH);
     }
 
     /**
@@ -124,11 +126,13 @@ public class CSWCacheService {
      *            Will be involved in actually making a HTTP request
      * @param cswServiceList
      *            Must be an untyped array of CSWServiceItem objects (for bean autowiring) representing CSW URL endpoints
+     * @param cacheDirectory
      */
     public CSWCacheService(Executor executor,
             HttpServiceCaller serviceCaller,
             @SuppressWarnings("rawtypes") ArrayList cswServiceList,
-            CSWRecordTransformerFactory transformerFactory) {
+            CSWRecordTransformerFactory transformerFactory,
+            String cacheDirectory) {
         this.updateRunning = false;
         this.executor = executor;
         this.serviceCaller = serviceCaller;
@@ -138,6 +142,9 @@ public class CSWCacheService {
         this.cswRecordCache = new HashMap<String, Map<String, CSWRecord>>();
         this.transformerFactory = transformerFactory;
         this.cswServiceList = new CSWServiceItem[cswServiceList.size()];
+        if (cacheDirectory != null) 
+            CSW_CACHE_PATH = cacheDirectory;
+
         for (int i = 0; i < cswServiceList.size(); i++) {
             this.cswServiceList[i] = (CSWServiceItem) cswServiceList.get(i);
         }
@@ -154,10 +161,11 @@ public class CSWCacheService {
         kryo.setRegistrationRequired(false);
         com.esotericsoftware.kryo.io.Output output=null;
         try {
-            output = new com.esotericsoftware.kryo.io.Output(new FileOutputStream( FileIOUtil.getTempDirURL() + CSW_CACHE_FILENAME));
+            output = new com.esotericsoftware.kryo.io.Output(new FileOutputStream( CSW_CACHE_PATH + CSW_CACHE_FILENAME));
             kryo.writeObject(output, this.keywordCache);
             kryo.writeObject(output, this.recordCache);
             kryo.writeObject(output, this.keywordsByRegistry);
+            log.info("CSWCache:saveCacheToFile:" + CSW_CACHE_PATH + CSW_CACHE_FILENAME);
             log.info("CSWCache has been serialized.");
         } catch (FileNotFoundException e) {
             log.error("Could not save CSW cache to file", e);
@@ -175,13 +183,13 @@ public class CSWCacheService {
      */
     @SuppressWarnings("unchecked")
     private void restoreCacheFromFile() {
-        if(new File(FileIOUtil.getTempDirURL() + CSW_CACHE_FILENAME).exists()) {
+        if(new File(CSW_CACHE_PATH + CSW_CACHE_FILENAME).exists()) {
             Kryo kryo = new Kryo();
             kryo.setRegistrationRequired(false);
             kryo.setInstantiatorStrategy(new com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
             com.esotericsoftware.kryo.io.Input input = null;
             try {
-                input = new com.esotericsoftware.kryo.io.Input(new FileInputStream(FileIOUtil.getTempDirURL() + CSW_CACHE_FILENAME));
+                input = new com.esotericsoftware.kryo.io.Input(new FileInputStream(CSW_CACHE_PATH + CSW_CACHE_FILENAME));
                 this.keywordCache = kryo.readObject(input, HashMap.class);
                 this.recordCache = kryo.readObject(input, ArrayList.class);
                 this.keywordsByRegistry = kryo.readObject(input, HashMap.class);
@@ -189,15 +197,17 @@ public class CSWCacheService {
                 log.info(String.format("    Keyword cache updated! Cache now has '%1$d' unique keyword names",
                         this.keywordCache.size()));
                 log.info(String.format("    Record cache updated! Cache now has '%1$d' records", this.recordCache.size()));
+                log.info("CSWCache:restoreCacheFromFile:" + CSW_CACHE_PATH + CSW_CACHE_FILENAME);
+
             } catch (Exception e) {
-                log.warn(String.format("Failed loading CSW cache: %1$s, %2$s", FileIOUtil.getTempDirURL(), CSW_CACHE_FILENAME), e);
+                log.warn(String.format("Failed loading CSW cache: %1$s, %2$s", CSW_CACHE_PATH, CSW_CACHE_FILENAME), e);
             } finally {
                 if(input!=null) {
                     input.close();
                 }
             }
         } else {
-            log.warn(String.format("No saved CSW cache found on disk on: %1$s, %2$s", FileIOUtil.getTempDirURL(), CSW_CACHE_FILENAME));
+            log.warn(String.format("No saved CSW cache found on disk on: %1$s, %2$s", CSW_CACHE_PATH, CSW_CACHE_FILENAME));
         }
     }
 
@@ -664,21 +674,21 @@ public class CSWCacheService {
             // Before querying the endpoint, see if there is a serialised cache of endpoint
             // saved to disk, deserialise it and retain in memory in case there is a failure.
             Map<String, CSWRecord> serialisedCSWRecordMap = new HashMap<>();
-            if(new File(FileIOUtil.getTempDirURL() + endpoint.getId() +".ser").exists()) {
+            if(new File(CSW_CACHE_PATH + endpoint.getId() +".ser").exists()) {
                 Kryo kryo = new Kryo();
                 kryo.setRegistrationRequired(false);
 //                kryo.setInstantiatorStrategy(new Kryo.DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
                 kryo.setInstantiatorStrategy(new com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
                 com.esotericsoftware.kryo.io.Input input = null;
                 try {
-                    input = new com.esotericsoftware.kryo.io.Input(new FileInputStream(FileIOUtil.getTempDirURL() + endpoint.getId() + ".ser"));
+                    input = new com.esotericsoftware.kryo.io.Input(new FileInputStream(CSW_CACHE_PATH + endpoint.getId() + ".ser"));
                     serialisedCSWRecordMap = kryo.readObject(input, HashMap.class);
                     input.close();
                 } catch (Exception e) {
-                    threadLog.warn(String.format("Failed deserialising cached registry: %1$s, %2$s", FileIOUtil.getTempDirURL(), endpoint.getId() + ".ser"), e);
+                    threadLog.warn(String.format("Failed deserialising cached registry: %1$s, %2$s", CSW_CACHE_PATH, endpoint.getId() + ".ser"), e);
                 }
             } else {
-                threadLog.warn(String.format("No saved registry found on disk on: %1$s, %2$s", FileIOUtil.getTempDirURL(), endpoint.getId() + ".ser"));
+                threadLog.warn(String.format("No saved registry found on disk on: %1$s, %2$s", CSW_CACHE_PATH, endpoint.getId() + ".ser"));
             }
 
             //Query the endpoint and cache
@@ -761,7 +771,7 @@ public class CSWCacheService {
                         if (cswRecordMap.size() > 0) {
 	                        Kryo kryo = new Kryo();
 	                        kryo.setRegistrationRequired(false);
-	                        com.esotericsoftware.kryo.io.Output output = new com.esotericsoftware.kryo.io.Output(new FileOutputStream( FileIOUtil.getTempDirURL() + endpoint.getId() +".ser"));
+	                        com.esotericsoftware.kryo.io.Output output = new com.esotericsoftware.kryo.io.Output(new FileOutputStream( CSW_CACHE_PATH + endpoint.getId() +".ser"));
 	                        kryo.writeObject(output, cswRecordMap);
 	                        output.close();
 	                        threadLog.info(endpoint.getServiceUrl() + " has been serialized.");
@@ -780,7 +790,7 @@ public class CSWCacheService {
                 if (cswRecordMap != null) {
                     updateAppCache(cswRecordMap);
                 } else if (serialisedCSWRecordMap != null) {
-                    threadLog.info(String.format("Endpoint failed for CSW %1$s, falling back to saved cached on disk:" + FileIOUtil.getTempDirURL() + endpoint.getId() + ".ser", this.endpoint.getServiceUrl()));
+                    threadLog.info(String.format("Endpoint failed for CSW %1$s, falling back to saved cached on disk:" + CSW_CACHE_PATH + endpoint.getId() + ".ser", this.endpoint.getServiceUrl()));
                     updateAppCache(serialisedCSWRecordMap);
                 } else {
                     threadLog.warn(String.format("No cached results available for failed CSW %1$s", this.endpoint.getServiceUrl()));
