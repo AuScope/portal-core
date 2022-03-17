@@ -81,9 +81,9 @@ public class TestCSWCacheService extends PortalTestClass {
     public void tearDown() {
         this.threadExecutor = null;
         this.cswCacheService = null;
-        File f1 = new File(FileIOUtil.getTempDirURL() + "id-1.ser");
-        File f2 = new File(FileIOUtil.getTempDirURL() + "id-2.ser");
-        File f3 = new File(FileIOUtil.getTempDirURL() + "id-3.ser");
+        File f1 = new File(FileIOUtil.getUserDirURL() + "id-1.ser");
+        File f2 = new File(FileIOUtil.getUserDirURL() + "id-2.ser");
+        File f3 = new File(FileIOUtil.getUserDirURL() + "id-3.ser");
 
 		if (f1.exists()) {
 			f1.delete();
@@ -325,8 +325,8 @@ public class TestCSWCacheService extends PortalTestClass {
                 Assert.fail("Exception whilst waiting for update to finish " + ex.getMessage());
             }
 
-            File f1 = new File(FileIOUtil.getTempDirURL() + "id-1.ser");
-            File f3 = new File(FileIOUtil.getTempDirURL() + "id-3.ser");
+            File f1 = new File(FileIOUtil.getUserDirURL() + "id-1.ser");
+            File f3 = new File(FileIOUtil.getUserDirURL() + "id-3.ser");
             
            Assert.assertTrue(f1.exists());
            
