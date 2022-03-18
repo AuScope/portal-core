@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.NameValuePair;
@@ -354,11 +355,16 @@ public class WMSMethodMaker extends AbstractMethodMaker implements WMSMethodMake
 
     @Override
     public HttpRequestBase getMap(String url,String layer,String bbox, String sldBody, String crs) throws URISyntaxException, IOException {
-        return this.getMap(url, layer, bbox,  sldBody, crs, false);
+        return this.getMap(url, layer, bbox,  sldBody, crs, false, null);
+    }
+    
+    @Override
+    public HttpRequestBase getMap(String url,String layer,String bbox, String sldBody, String crs, boolean requestCachedTile) throws URISyntaxException, IOException {
+    	return this.getMap(url, layer, bbox, sldBody, crs, requestCachedTile, null);
     }
 	
 	@Override
-    public HttpRequestBase getMap(String url,String layer,String bbox, String sldBody, String crs, boolean requestCachedTile) throws URISyntaxException, IOException {
+    public HttpRequestBase getMap(String url,String layer,String bbox, String sldBody, String crs, boolean requestCachedTile, String time) throws URISyntaxException, IOException {
 
         List<NameValuePair> existingParam = this.extractQueryParams(url); //preserve any existing query params
 
@@ -373,12 +379,13 @@ public class WMSMethodMaker extends AbstractMethodMaker implements WMSMethodMake
         existingParam.add(new BasicNameValuePair("LAYERS", layer));
         existingParam.add(new BasicNameValuePair("FORMAT", "image/png"));
         existingParam.add(new BasicNameValuePair("TRANSPARENT", "TRUE"));
-        if (requestCachedTile) existingParam.add(new BasicNameValuePair("tiled","true"));
+        if (requestCachedTile) existingParam.add(new BasicNameValuePair("tiled", "true"));
         existingParam.add(new BasicNameValuePair("SRS", crs));
         existingParam.add(new BasicNameValuePair("BBOX", bbox));
         existingParam.add(new BasicNameValuePair("WIDTH", "256"));
         existingParam.add(new BasicNameValuePair("HEIGHT", "256"));
         existingParam.add(new BasicNameValuePair("STYLES", ""));
+        if (StringUtils.isNotBlank(time)) existingParam.add(new BasicNameValuePair("time", time));
 
         HttpPost method = new HttpPost(url);
         UrlEncodedFormEntity entity;

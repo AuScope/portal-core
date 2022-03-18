@@ -196,14 +196,14 @@ public class WMSService {
     }
 
     public HttpClientInputStream getMap(String url,String layer,String bbox,String sldBody, String version, String crs) throws OperationNotSupportedException, URISyntaxException, IOException{
-        return this.getMap(url,layer,bbox, sldBody, version, crs, false);
+        return this.getMap(url,layer,bbox, sldBody, version, crs, false, null);
     }
 
-    public HttpClientInputStream getMap(String url, String layer, String bbox, String sldBody, String version, String crs, boolean requestCachedTile) throws OperationNotSupportedException, URISyntaxException, IOException {
+    public HttpClientInputStream getMap(String url, String layer, String bbox, String sldBody, String version, String crs, boolean requestCachedTile, String time) throws OperationNotSupportedException, URISyntaxException, IOException {
 
         WMSMethodMakerInterface methodMaker;
         methodMaker = getSupportedMethodMaker(url, version);
-        HttpRequestBase method = methodMaker.getMap(url, layer, bbox, sldBody, crs, requestCachedTile);
+        HttpRequestBase method = methodMaker.getMap(url, layer, bbox, sldBody, crs, requestCachedTile, time);
         HttpClientInputStream response = serviceCaller.getMethodResponseAsStream(method);
         return response;
     }
