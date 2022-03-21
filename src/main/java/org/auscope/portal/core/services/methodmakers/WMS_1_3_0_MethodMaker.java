@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.NameValuePair;
@@ -377,9 +378,14 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
     public HttpRequestBase getMap(String url,String layer,String bbox, String sldBody, String crs) throws URISyntaxException, IOException {
         return this.getMap(url, layer, bbox, sldBody, crs, false);
     }
-	
+    
     @Override
     public HttpRequestBase getMap(String url,String layer,String bbox, String sldBody, String crs, boolean requestCachedTile) throws URISyntaxException, IOException {
+    	return this.getMap(url, layer, bbox, sldBody, crs, requestCachedTile, null);
+    }
+	
+    @Override
+    public HttpRequestBase getMap(String url,String layer,String bbox, String sldBody, String crs, boolean requestCachedTile, String time) throws URISyntaxException, IOException {
 
         List<NameValuePair> existingParam = this.extractQueryParams(url); //preserve any existing query params
 
@@ -399,6 +405,7 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
         existingParam.add(new BasicNameValuePair("WIDTH", "256"));
         existingParam.add(new BasicNameValuePair("HEIGHT", "256"));
         existingParam.add(new BasicNameValuePair("STYLES", ""));
+        if (StringUtils.isNotBlank(time)) existingParam.add(new BasicNameValuePair("time", time));
 
 
         HttpPost method = new HttpPost(url);

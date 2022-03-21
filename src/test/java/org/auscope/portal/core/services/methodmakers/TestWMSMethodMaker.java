@@ -31,7 +31,7 @@ public class TestWMSMethodMaker extends PortalTestClass {
         HttpRequestBase getMapMethod = mm.getMapMethod("http://example.com", "layer", "imageMimeType", "srs", 1.0, 2.0,
                 3.0, 4.0, 100, 200, "styles", "styleBody");
         HttpRequestBase getMapPost = mm.getMap("http://example.com", "layer","0,0,1,1", null, "srs");
-        HttpRequestBase getMapPostwithTiled = mm.getMap("http://example.com", "layer","0,0,1,1", null, "srs", true);
+        HttpRequestBase getMapPostwithTiled = mm.getMap("http://example.com", "layer","0,0,1,1", null, "srs", true, null);
         HttpRequestBase getLegendMethod = mm.getLegendGraphic("http://example.com", "layerName", 100, 200, "styles");
         HttpRequestBase getFeatureMethodPost = mm.getFeatureInfoPost("http://example.com", "format", "layer",
                 "EPSG:4326", 1.0, 2.0, 3.0, 4.0, 100, 200, 6.0, 7.0, 20, 30, "styles", null, "0");
@@ -106,7 +106,7 @@ public class TestWMSMethodMaker extends PortalTestClass {
         HttpRequestBase getMapMethod = mm.getMapMethod("http://example.com", "layer", "imageMimeType", "srs", 1.0, 2.0,
                 3.0, 4.0, 100, 200, "styles", "styleBody");
         HttpRequestBase getMapPost = mm.getMap("http://example.com", "layer","0,0,1,1", null, "srs");
-        HttpRequestBase getMapPostwithTiled = mm.getMap("http://example.com", "layer","0,0,1,1", null, "srs", true);
+        HttpRequestBase getMapPostwithTiled = mm.getMap("http://example.com", "layer","0,0,1,1", null, "srs", true, null);
         HttpRequestBase getLegendMethod = mm.getLegendGraphic("http://example.com", "layerName", 100, 200, "styles");
         HttpRequestBase getFeatureMethodPost = mm.getFeatureInfoPost("http://example.com", "format", "layer",
                 "EPSG:4326", 1.0, 2.0, 3.0, 4.0, 100, 200, 6.0, 7.0, 20, 30, "styles", null, "0");

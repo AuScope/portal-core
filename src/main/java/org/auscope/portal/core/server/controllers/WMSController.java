@@ -516,6 +516,7 @@ public class WMSController extends BaseCSWController {
             @RequestParam(required=false, value="crs") String crs,
             @RequestParam(required=false, value="srs") String srs,
             @RequestParam(required = false, value = "tiled") String tiled,
+            @RequestParam(required = false, value = "time") String time,
             HttpServletResponse response,
             HttpServletRequest request)
                     throws PortalServiceException{
@@ -548,7 +549,7 @@ public class WMSController extends BaseCSWController {
 
         if (tiled !=null && tiled.equals("true")) requestCachedTile=true;
 
-        try (HttpClientInputStream styleStream = this.wmsService.getMap(url, layer, bbox,sldBody, version, crsOrSrs, requestCachedTile);
+        try (HttpClientInputStream styleStream = this.wmsService.getMap(url, layer, bbox,sldBody, version, crsOrSrs, requestCachedTile, time);
              OutputStream outputStream = response.getOutputStream();)       {
             IOUtils.copy(styleStream,outputStream);
         } catch (IOException | OperationNotSupportedException | URISyntaxException e) {
