@@ -158,6 +158,9 @@ public class TestGetCapabilitiesRecord extends PortalTestClass {
             // Get layer 4 (an 'empty' layer)
             wmsRec = rec.getLayers().get(0);
             Assert.assertEquals("", wmsRec.getName());
+            
+            Assert.assertArrayEquals(new String[] { "NONE"} , rec.getAccessConstraints());
+
         }
     }
 }
