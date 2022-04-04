@@ -4,7 +4,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.UriUtils;
 
 /**
  * Acts as a proxy to WFS's
@@ -275,6 +281,19 @@ public class WFSController extends BasePortalController {
     }
 
     /**
+     * Encodes the url, so that any space characters are encoded as %20
+     * note: tried various encoding libraries but they encode other characters in the url, i.e. /
+     * 
+     * @param value
+     * @return
+     * @throws UnsupportedEncodingException
+     */
+    private static String encodeValue(String value) throws UnsupportedEncodingException {
+        String rawPath = value.replace(" " ,  "%20");
+        return rawPath;
+    }
+    
+    /**
      * This method can be utilised by specifying a WFS url, typeName and featureId (in which a WFS request will be generated) OR just by specifying a URL which
      * will be resolved (such as in the case of a resolvable URN which maps to a WFS request at a remote server).
      *
@@ -299,7 +318,7 @@ public class WFSController extends BasePortalController {
         StringBuffer requestUrl = request.getRequestURL();
         int startPos = requestUrl.indexOf("/wfsFeaturePopup.do");
         requestUrl.setLength(startPos);
-
+        serviceUrl = encodeValue(serviceUrl);
         //Make our request, transform and then return it.
         WFSTransformedResponse htmlResponse = null;
         try {
