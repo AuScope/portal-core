@@ -44,7 +44,7 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord {
      * The vendor of the service
      */
     private String applicationProfile = "";
-
+    
     private String[] getMapFormats = new String[] {};
 
     /** The layers. */
@@ -52,6 +52,9 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord {
 
     /** The layer srs. */
     private String[] layerSRS = null;
+    
+    /** The accessConstraints. */
+    public String[] accessConstraints= new String[] {};   
 
     /** The extract organisation expression. */
     private static final String EXTRACTORGANISATIONEXPRESSION = "/WMS_Capabilities/Service/ContactInformation/ContactPersonPrimary/ContactOrganization";
@@ -71,7 +74,8 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord {
     private static final String METADATAURLREXPRESSION = "/WMS_Capabilities/Capability/Layer/MetadataURL/OnlineResource";
     
     
-
+    /** The extract AccessConstraints expression. */
+    private static final String ACCESSCONSTRAINS = "/WMS_Capabilities/Service/AccessConstraints";
 
     /**
      * Constructor.
@@ -95,6 +99,7 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord {
             this.layerSRS = getWMSLayerSRS(doc);
             this.getMapFormats = getWMSGetMapFormats(doc);
             this.applicationProfile = getApplicationProfile(doc);
+            this.accessConstraints=getAccessConstraints(doc);
             if (isWMS()) {
                 this.layers = getWMSLayers(doc);
             } else {
@@ -216,6 +221,16 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord {
     @Override
     public String getApplicationProfile() {
         return this.applicationProfile;
+    }
+    
+    /**
+     * Gets the AccessConstraints.
+     *
+     * @return the AccessConstraints
+     */
+    @Override
+    public String[] getAccessConstraints() {
+        return this.accessConstraints;
     }
 
     // ------------------------------------------------------ Protected Methods
@@ -422,6 +437,34 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord {
         }
         return "OSGeo:GeoServer";
     }
+    
+    /**
+     * Gets the AccessConstraints.
+     *
+     * @param xPath
+     *            the x path
+     * @param doc
+     *            the doc
+     * @return the AccessConstraints
+     */
+    private String[] getAccessConstraints(Document doc) {
+        String[] formatList = null;
+        try {
+            NodeList nodes = (NodeList) DOMUtil.compileXPathExpr(ACCESSCONSTRAINS).evaluate(doc,
+                    XPathConstants.NODESET);
+
+            formatList = new String[nodes.getLength()];
+
+            for (int i = 0; i < nodes.getLength(); i++) {
+                Node formatNode = nodes.item(i);
+                formatList[i] = formatNode != null ? formatNode.getTextContent() : "";
+            }
+        } catch (XPathException e) {
+            log.error("GetCapabilities - getAccessConstraints xml parsing error: " + e.getMessage());
+        }
+        return formatList;
+    }
+
 
     @Override
     public String getVersion() {
