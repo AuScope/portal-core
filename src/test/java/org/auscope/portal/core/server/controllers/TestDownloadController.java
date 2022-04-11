@@ -263,7 +263,6 @@ public class TestDownloadController extends PortalTestClass {
 
         final String[] serviceUrls = {"http://someUrl"};
         final String dummyData = "dummyData";
-        //final Header header = new BasicHeader("Content-Type", "text/xml");
         final MyServletOutputStream servletOutputStream = new MyServletOutputStream(dummyData.length());
 
         final HttpResponse httpResponse = context.mock(HttpResponse.class);
@@ -318,14 +317,14 @@ public class TestDownloadController extends PortalTestClass {
 
     /**
      * Test that this function makes all of the approriate calls, and see if it returns png file zipped up
-     *
+     * Also tests if it can cope with spaces in filename
+     * 
      * @throws Exception
      */
     @Test
     public void testDownloadDataAsZipWithPNG() throws Exception {
-        final String[] serviceUrls = {"http://someUrl"};
+        final String[] serviceUrls = {"http://someUrl/Test File.PNG"};
         final String dummyData = "dummyData";
-        //final Header header = new BasicHeader("Content-Type", "image/png");
         final MyServletOutputStream servletOutputStream = new MyServletOutputStream(dummyData.length());
 
         final HttpResponse httpResponse = context.mock(HttpResponse.class);
