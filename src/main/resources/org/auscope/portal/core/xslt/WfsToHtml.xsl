@@ -60,6 +60,10 @@
                         font-size:medium;
                         color: #4f94cd;
                     }
+                    td.our_row a {
+                        text-decoration: none;
+                        color: #15428B;
+                    }
                     td.header {
                         font-weight: bold;
                         color: #15428B;
