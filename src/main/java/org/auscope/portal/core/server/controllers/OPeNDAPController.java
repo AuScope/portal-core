@@ -90,7 +90,7 @@ public class OPeNDAPController extends BasePortalController {
         } catch (Exception ex) {
             log.error(String.format("Error parsing from '%1$s'", opendapUrl), ex);
             return generateJSONResponseMAV(false, null,
-                    String.format("An error has occured whilst reading data from '%1$s'", opendapUrl));
+                    String.format("An error has occurred whilst reading data from '%1$s'", opendapUrl));
         }
     }
 

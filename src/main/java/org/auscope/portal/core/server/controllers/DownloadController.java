@@ -31,6 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.google.common.io.Files;
 
@@ -202,9 +204,9 @@ public class DownloadController extends BasePortalController {
     /**
      * Given a list of WMS URL's, this function will collate the responses into a zip file and send the response back to the browser.
      *
-     * @param serviceUrls
-     * @param filename
-     * @param response
+     * @param serviceUrls URLs which will be called upon to create the collation
+     * @param filename suggested filename for the zip file
+     * @param response response parameter, used to set up the response
      * @throws Exception
      */
     @RequestMapping("/downloadDataAsZip.do")
@@ -218,24 +220,26 @@ public class DownloadController extends BasePortalController {
             ext = "zip";
         }
 
-        //set the content type for zip files
+        // Set the content type for zip files
         response.setContentType("application/zip");
         response.setHeader("Content-Disposition", "inline; filename=" + Files.getNameWithoutExtension(filenameStr)
                 + "." + ext + ";");
 
-        //create the output stream
+        // Create the output stream
         ZipOutputStream zout = new ZipOutputStream(response.getOutputStream());
 
         for (int i = 0; i < serviceUrls.length; i++) {
+            // Some file names have spaces, they need to be encoded
+            UriComponents uri = UriComponentsBuilder.fromHttpUrl(serviceUrls[i]).build().encode();
 
-            HttpGet method = new HttpGet(serviceUrls[i]);
+            HttpGet method = new HttpGet(uri.toString());
             HttpResponse httpResponse = serviceCaller.getMethodResponseAsHttpResponse(method);
 
             Header contentType = httpResponse.getEntity().getContentType();
 
             byte[] responseBytes = IOUtils.toByteArray(httpResponse.getEntity().getContent());
 
-            //create a new entry in the zip file with a timestamped name
+            // Create a new entry in the zip file with a timestamped name
             String mime = null;
             if (contentType != null) {
                 mime = contentType.getValue();
