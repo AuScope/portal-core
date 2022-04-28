@@ -250,13 +250,10 @@ public abstract class BaseWFSService {
      */
     public InputStream downloadWFS(String serviceUrl, String type, String filterString, Integer maxFeatures)
             throws PortalServiceException {
-
         HttpRequestBase method = null;
         try {
-
             method = generateWFSRequest(serviceUrl, type, null, filterString, maxFeatures, null, ResultType.Results);
             return httpServiceCaller.getMethodResponseAsStream(method);
-
         } catch (Exception ex) {
             throw new PortalServiceException(method, "Error when attempting to download from:" + serviceUrl, ex);
         }
@@ -274,16 +271,14 @@ public abstract class BaseWFSService {
      * @return
      * @throws PortalServiceException
      */
-    public InputStream downloadCSV(String serviceUrl, String type, String filterString, Integer maxFeatures)
+    public WFSResponse downloadCSV(String serviceUrl, String type, String filterString, Integer maxFeatures)
             throws PortalServiceException {
-
-        HttpRequestBase method = null;
+    	HttpRequestBase method = null;
         try {
-
             method = generateWFSRequest(serviceUrl, type, null, filterString, maxFeatures, null, ResultType.Results,
                     "csv");
-            return httpServiceCaller.getMethodResponseAsStream(method);
-
+            String responseCSV = httpServiceCaller.getMethodResponseAsString(method);
+            return new WFSResponse(responseCSV, method);
         } catch (Exception ex) {
             throw new PortalServiceException(method, "Error when attempting to download from:" + serviceUrl, ex);
         }
@@ -302,17 +297,16 @@ public abstract class BaseWFSService {
      * @return
      * @throws PortalServiceException
      */
-
-    public InputStream downloadCSVByPolygonFilter(String serviceUrl, String typeName, String filterString, Integer maxFeatures) 
+    public WFSResponse downloadCSVByPolygonFilter(String serviceUrl, String typeName, String filterString, Integer maxFeatures) 
             throws PortalServiceException {
-        
-        HttpRequestBase method = null;
+    	HttpRequestBase method = null;
         try {
-            method = wfsMethodMaker.makeCSVDownloadByPolygonMethod(serviceUrl, typeName, filterString, maxFeatures);
-            return httpServiceCaller.getMethodResponseAsStream(method);
-
+        	method = wfsMethodMaker.makeCSVDownloadByPolygonMethod(serviceUrl, typeName, filterString, maxFeatures);
+            String responseCSV = this.httpServiceCaller.getMethodResponseAsString(method);
+            return new WFSResponse(responseCSV, method);
         } catch (Exception ex) {
-            throw new PortalServiceException(method, "Error when attempting to downloadCSVByPolygonFilter from:" + serviceUrl, ex);
+            throw new PortalServiceException(method, ex);
         }
     }
+
 }

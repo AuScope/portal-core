@@ -156,7 +156,7 @@ public class WFSController extends BasePortalController {
         OutputStream outputStream = response.getOutputStream();
         SimpleBBoxFilter bboxFilter = new SimpleBBoxFilter();
         String filterString = null;
-        InputStream result = null;
+        WFSResponse result = null;
         try {
             if (filter != null && filter.indexOf("ogc:Filter")>0) { //Polygon filter
                 filterString = filter.replace("gsmlp:shape","erl:shape");
@@ -173,10 +173,7 @@ public class WFSController extends BasePortalController {
             log.warn(String.format("Exception getting '%2$s' from '%1$s': %3$s", serviceUrl, featureType, ex));
             log.debug("Exception: ", ex);           
         }
-        
-        
-
-        FileIOUtil.writeInputToOutputStream(result, outputStream, 8 * 1024, true);
+        FileIOUtil.writeInputToOutputStream(new ByteArrayInputStream(result.getData().getBytes()), outputStream, 8 * 1024, true);
         outputStream.close();
     }
 

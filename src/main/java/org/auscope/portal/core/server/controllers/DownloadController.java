@@ -181,7 +181,7 @@ public class DownloadController extends BasePortalController {
             ZipOutputStream zout = new ZipOutputStream(response.getOutputStream());
             //VT: threadpool is closed within downloadAll();
             ArrayList<DownloadResponse> gmlDownloads = downloadManager.downloadAll();
-            FileIOUtil.writeResponseToZip(gmlDownloads, zout,outputFormat);
+            FileIOUtil.writeResponseToZip(gmlDownloads, zout, outputFormat);
             zout.finish();
             zout.flush();
             zout.close();

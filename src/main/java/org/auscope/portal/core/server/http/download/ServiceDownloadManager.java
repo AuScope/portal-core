@@ -1,6 +1,7 @@
 package org.auscope.portal.core.server.http.download;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -27,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.util.EntityUtils;
 import org.auscope.portal.core.configuration.ServiceConfiguration;
 import org.auscope.portal.core.configuration.ServiceConfigurationItem;
 import org.auscope.portal.core.server.http.HttpClientResponse;
@@ -124,7 +126,9 @@ public class ServiceDownloadManager {
         ArrayList<DownloadResponse> responses = new ArrayList<>();
         for (GMLDownload gmlDownload : gmlDownloads) {
             try {
-                responses.add(gmlDownload.getGMLDownload());
+            	if (gmlDownload.getHasFeatures()) {
+            		responses.add(gmlDownload.getGMLDownload());
+            	}
             } catch (InCompleteDownloadException ex) {
                 continue;
             }
@@ -164,6 +168,7 @@ public class ServiceDownloadManager {
         private Semaphore endPointSem, processSem;
         private int id;
         private String downloadFileExtensionOverride;
+        private boolean hasFeatures = true;
 
         public GMLDownload(String url, Semaphore sem, int id,
                 Semaphore processSem, String fileExtensionOverride) throws URISyntaxException {
@@ -240,6 +245,10 @@ public class ServiceDownloadManager {
         public boolean isDownloadComplete() {
             return downloadComplete;
         }
+        
+        public boolean getHasFeatures() {
+        	return hasFeatures;
+        }
 
         public void download(DownloadResponse resp, String theUrl) {
             if (ServiceDownloadManager.this.serviceConfiguration != null) {
@@ -263,13 +272,16 @@ public class ServiceDownloadManager {
                 // We need to ensure that this httpResponse is NOT closed. That is the responsibility of the
                 // classes using this service
                 HttpClientResponse httpResponse = serviceCaller.getMethodResponseAsHttpResponse(method);
-
-                resp.setResponseStream(httpResponse.getEntity().getContent());
+                // Skip responses that didn't find any results within the specified bounds
+                String responseString = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
+                if (responseString.lines().count() < 1) {
+                	this.hasFeatures = false;
+                }
+                resp.setResponseStream(new ByteArrayInputStream(responseString.getBytes()));
                 Header header = httpResponse.getEntity().getContentType();
                 if (header != null && header.getValue().length() > 0) {
                     resp.setContentType(httpResponse.getEntity().getContentType().getValue());
                 }
-
             } catch (Throwable ex) {
                 logger.error(ex, ex);
                 resp.setException(ex);
