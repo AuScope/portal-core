@@ -12,6 +12,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import javax.naming.OperationNotSupportedException;
@@ -507,119 +508,47 @@ public class WMSController extends BaseCSWController {
         outputStream.close();
     }
 
-    // /**
-    //  * A proxy to make http post request to get map.
-    //  * @param response
-    //  * @param layerName
-    //  * @throws Exception
-    //  */
-    // @RequestMapping(value = "/getWMSMapViaProxy.do", method = {RequestMethod.GET, RequestMethod.POST})
-    // public void getWMSMapViaProxy(
-    //         @RequestParam("url") String url,
-    //         @RequestParam(required = false, value="layer") String layer,
-    //         @RequestParam(required = false, value="layers") String layers,
-    //         @RequestParam("bbox") String bbox,
-    //         @RequestParam(required = false, value = "sldUrl") String sldUrl,
-    //         @RequestParam(required = false, value = "sldBody") String sldBody,
-    //         @RequestParam(required = false, value = "sld_body") String sld_body,    
-    //         @RequestParam("version") String version,
-    //         @RequestParam(required=false, value="crs") String crs,
-    //         @RequestParam(required=false, value="srs") String srs,
-    //         @RequestParam(required = false, value = "tiled") String tiled,
-    //         @RequestParam(required = false, value = "time") String time,
-    //         HttpServletResponse response,
-    //         HttpServletRequest request)
-    //                 throws PortalServiceException{
-    //     boolean requestCachedTile=false;
-
-    //     // A WMS version 1.3+ request must have a CRS parameter, earlier 
-    //     // versions must have the SRS parameter. Leave it to the 
-    //     // WMSMethodMakers to determine whether the parameter set is valid.
-    //     if ((crs == null && srs == null) ||
-    //         (crs != null && srs != null)) {
-    //         throw new PortalServiceException("getWMSMapViaProxy.do requires one of CRS or SRS parameters to be set.");
-    //     }
-    //     String crsOrSrs = (crs != null) ? crs : srs;
-    //     response.setContentType("image/png");
-  
-    //     // the sldBody and layer parameters are non standard but have been in use for some time.  The correct parameters are sld_body and layers.
-    //     // I have added this check to overwrite the non standard parameters with the correct ones if they're present
-    //     // if not still accept the old ones.
-
-    //     if (sld_body!=null && sld_body.length() > 0) sldBody=sld_body;
-    //     if (layers!=null && layers.length() > 0) layer=layers;
-    //     try {
-    //         if (sldBody == null && sldUrl!=null) {
-    //             sldUrl = request.getRequestURL().toString().replace(request.getServletPath(),"").replace("4200", "8080") + sldUrl;  
-    //             sldBody = this.wmsService.getStyle(url, sldUrl, version);            
-    //         }
-    //     } catch (OperationNotSupportedException | URISyntaxException | IOException e) {
-    //         throw new PortalServiceException("Exception during getWMSMapViaProxy.do "+e.getMessage(), e);
-    //     }  
-
-    //     if (tiled !=null && tiled.equals("true")) requestCachedTile=true;
-
-    //     try (HttpClientInputStream styleStream = this.wmsService.getMap(url, layer, bbox,sldBody, version, crsOrSrs, requestCachedTile, time);
-    //          OutputStream outputStream = response.getOutputStream();)       {
-    //         IOUtils.copy(styleStream,outputStream);
-    //     } catch (IOException | OperationNotSupportedException | URISyntaxException e) {
-    //         throw new PortalServiceException("Exception during getWMSMapViaProxy.do "+e.getMessage(), e);
-    //     } 
-    // }
-
     /**
      * A proxy to make http post request to get map.
-     * @param response
-     * @param layerName
+     * @param response response object
+     * @param request incoming request object
+     * @param url the URL to be proxied
      * @throws Exception
      */
     @RequestMapping(value = "/getWMSMapViaProxy.do", method = {RequestMethod.GET, RequestMethod.POST})
     public void getWMSMapViaProxy(
             HttpServletResponse response, 
             HttpServletRequest request,
-            @RequestParam("url") String url,
-            @RequestParam(required = false, value="layer") String layer,
-            @RequestParam("bbox") String bbox,
-            @RequestParam(required = false, value = "sldBody") String sldBody,
-            @RequestParam(required = false, value = "sld_body") String sld_body,    
-            @RequestParam("version") String version,
-            @RequestParam(required=false, value="crs") String crs,
-            @RequestParam(required=false, value="srs") String srs,
-            @RequestParam(required = false, value = "tiled") String tiled,
-            @RequestParam(required = false, value = "time") String time
-            ) throws PortalServiceException, OperationNotSupportedException, URISyntaxException, IOException{
+            @RequestParam("url") String url
+            ) throws PortalServiceException, OperationNotSupportedException, URISyntaxException, IOException {
 
-        boolean isTrue = false;  
-        // get the URL whitelist from application.yml
+        // Check if on whitelist
+        boolean isTrue = false;
+        URL aUrl = new URL(url);
+        String host = aUrl.getHost();
+        // get the URL whitelist from application.yaml
         String[] urlList = whitelist.split(" ");
         if (url != null) {
             // set a whitelist for the request URL only from the Commonwealth Government or the State Governments or Universities or Octopus will pass
             Stream<String> whiteListStream = Stream.of(urlList);
-            isTrue = whiteListStream.anyMatch(parameter -> url.contains(parameter));   
+            isTrue = whiteListStream.anyMatch(parameter -> host.endsWith(parameter));   
         }
+        // Return if not on whitelist
         if (!isTrue) return;
-        BasicNameValuePair crsOrSrs = (crs != null) ? (new BasicNameValuePair("CRS", crs)) : (new BasicNameValuePair("SRS", srs));
-        List<NameValuePair> existingParam = extractQueryParams(url); //preserve any existing query params
-
-        existingParam.add(new BasicNameValuePair("service", "WMS"));
-        existingParam.add(new BasicNameValuePair("request", "GetMap"));
-        existingParam.add(new BasicNameValuePair("version", version));
-        if (sldBody != null && sldBody.trim().length() > 0) {
-            existingParam.add(new BasicNameValuePair("SLD_BODY", sldBody));
-        }       
-        existingParam.add(new BasicNameValuePair("DISPLAYOUTSIDEMAXEXTENT", "TRUE"));
-        existingParam.add(new BasicNameValuePair("LAYERS", layer));
-        existingParam.add(new BasicNameValuePair("FORMAT", "image/png"));
-        existingParam.add(new BasicNameValuePair("TRANSPARENT", "TRUE"));
-        existingParam.add(crsOrSrs);
-        existingParam.add(new BasicNameValuePair("BBOX", bbox));
-        existingParam.add(new BasicNameValuePair("WIDTH", "256"));
-        existingParam.add(new BasicNameValuePair("HEIGHT", "256"));
-        existingParam.add(new BasicNameValuePair("STYLES", ""));
+        // Use old request parameters to assemble new request
+        Map<String, String[]> pMap = request.getParameterMap();
+        List<NameValuePair> nvpList = new ArrayList<>(pMap.size());
+        for (Map.Entry<String, String[]> entry : pMap.entrySet()) {
+            if (!entry.getKey().equalsIgnoreCase("url")) {
+                for(String val: entry.getValue()) {
+                    nvpList.add(new BasicNameValuePair(entry.getKey(), val));
+                }
+            }
+        }
         UrlEncodedFormEntity entity;
         HttpPost method = new HttpPost(url);
         try {
-            entity = new UrlEncodedFormEntity(existingParam, "UTF-8");
+            entity = new UrlEncodedFormEntity(nvpList, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             throw new URISyntaxException(e.getMessage(), "Error parsing UrlEncodedFormEntity");
         }
@@ -631,29 +560,6 @@ public class WMSController extends BaseCSWController {
         } catch (IOException e) {
             throw new PortalServiceException("Exception during getWMSMapViaProxy.do "+e.getMessage(), e);
         }
-    }
-
-    /**
-     * Returns a list of NameValuePair objects representing the URL query parameters of url (if any)
-     * 
-     * @param url
-     * @return
-     */
-    public List<NameValuePair> extractQueryParams(String url) {
-        List<NameValuePair> params = new ArrayList<>();
-
-        String[] parts = url.split("\\?");
-        if (parts.length != 2) {
-            return params;
-        }
-        String[] queryParams = parts[1].split("&");
-        for (String queryParam : queryParams) {
-            String[] kvp = queryParam.split("=");
-            if (kvp.length == 2) {
-                params.add(new BasicNameValuePair(kvp[0], kvp[1]));
-            }
-        }
-        return params;
     }
 
     public String getStyle(String name, String color, String spatialType) {
