@@ -10,6 +10,7 @@ import java.util.concurrent.Executors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.configuration.ServiceConfiguration;
@@ -59,7 +60,8 @@ public class TestServiceDownloadManager extends PortalTestClass {
                     mockServiceConfiguration);
             ArrayList<DownloadResponse> gmlDownloads = sdm.downloadAll();
             for (DownloadResponse response : gmlDownloads) {
-                Assert.assertEquals(dummyJSONResponseIS, response.getResponseAsStream());
+            	dummyJSONResponseIS.reset();
+            	Assert.assertTrue(IOUtils.contentEquals(dummyJSONResponseIS,response.getResponseAsStream()));
                 Assert.assertFalse(response.hasException());
                 Assert.assertNull(response.getException());
             }
@@ -178,7 +180,8 @@ public class TestServiceDownloadManager extends PortalTestClass {
                     Assert.assertNotNull(response.getException());
                     Assert.assertTrue("test exception".equals(response.getException().getMessage()));
                 } else {
-                    Assert.assertEquals(dummyJSONResponseIS, response.getResponseAsStream());
+                	dummyJSONResponseIS.reset();
+                	Assert.assertTrue(IOUtils.contentEquals(dummyJSONResponseIS,response.getResponseAsStream()));
                     Assert.assertNull(response.getException());
                 }
             }
@@ -308,7 +311,8 @@ public class TestServiceDownloadManager extends PortalTestClass {
                 mockServiceConfiguration);
         ArrayList<DownloadResponse> gmlDownloads = sdm.downloadAll();
         for (DownloadResponse response : gmlDownloads) {
-            Assert.assertEquals(dummyJSONResponseIS, response.getResponseAsStream());
+        	dummyJSONResponseIS.reset();
+        	Assert.assertTrue(IOUtils.contentEquals(dummyJSONResponseIS,response.getResponseAsStream()));
             Assert.assertFalse(response.hasException());
             Assert.assertNull(response.getException());
         }
