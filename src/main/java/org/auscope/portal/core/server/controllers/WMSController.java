@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -11,6 +12,8 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 import javax.naming.OperationNotSupportedException;
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +23,10 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.message.BasicNameValuePair;
 import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.PortalServiceException;
@@ -36,6 +43,7 @@ import org.auscope.portal.core.util.FileIOUtil;
 import org.auscope.portal.core.view.ViewCSWRecordFactory;
 import org.auscope.portal.core.view.ViewGetCapabilitiesFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -61,10 +69,13 @@ public class WMSController extends BaseCSWController {
     private final Log log = LogFactory.getLog(getClass());
     protected static int BUFFERSIZE = 1024 * 1024;
     HttpServiceCaller serviceCaller;
+
+    @Value("${access.whitelist}")
+    private String whitelist;
+
     private ViewGetCapabilitiesFactory viewGetCapabilitiesFactory;
 
     // ----------------------------------------------------------- Constructors
-
     @Autowired
     public WMSController(WMSService wmsService, ViewCSWRecordFactory viewCSWRecordFactory, 
         ViewGetCapabilitiesFactory viewGetCapabilitiesFactory, HttpServiceCaller serviceCaller) {
@@ -73,7 +84,7 @@ public class WMSController extends BaseCSWController {
         this.serviceCaller = serviceCaller;
         this.viewGetCapabilitiesFactory = viewGetCapabilitiesFactory;
     }
-    
+
     /**
 	 * Gets the GetCapabilities response for the given WMS URL
 	 *
@@ -499,62 +510,56 @@ public class WMSController extends BaseCSWController {
 
     /**
      * A proxy to make http post request to get map.
-     * @param response
-     * @param layerName
+     * @param response response object
+     * @param request incoming request object
+     * @param url the URL to be proxied
      * @throws Exception
      */
     @RequestMapping(value = "/getWMSMapViaProxy.do", method = {RequestMethod.GET, RequestMethod.POST})
     public void getWMSMapViaProxy(
-            @RequestParam("url") String url,
-            @RequestParam(required = false, value="layer") String layer,
-            @RequestParam(required = false, value="layers") String layers,
-            @RequestParam("bbox") String bbox,
-            @RequestParam(required = false, value = "sldUrl") String sldUrl,
-            @RequestParam(required = false, value = "sldBody") String sldBody,
-            @RequestParam(required = false, value = "sld_body") String sld_body,    
-            @RequestParam("version") String version,
-            @RequestParam(required=false, value="crs") String crs,
-            @RequestParam(required=false, value="srs") String srs,
-            @RequestParam(required = false, value = "tiled") String tiled,
-            @RequestParam(required = false, value = "time") String time,
-            HttpServletResponse response,
-            HttpServletRequest request)
-                    throws PortalServiceException{
-        boolean requestCachedTile=false;
+            HttpServletResponse response, 
+            HttpServletRequest request,
+            @RequestParam("url") String url
+            ) throws PortalServiceException, OperationNotSupportedException, URISyntaxException, IOException {
 
-        // A WMS version 1.3+ request must have a CRS parameter, earlier 
-        // versions must have the SRS parameter. Leave it to the 
-        // WMSMethodMakers to determine whether the parameter set is valid.
-        if ((crs == null && srs == null) ||
-            (crs != null && srs != null)) {
-            throw new PortalServiceException("getWMSMapViaProxy.do requires one of CRS or SRS parameters to be set.");
+        // Check if on whitelist
+        boolean isTrue = false;
+        URL aUrl = new URL(url);
+        String host = aUrl.getHost();
+        // get the URL whitelist from application.yaml
+        String[] urlList = whitelist.split(" ");
+        if (url != null) {
+            // set a whitelist for the request URL only from the Commonwealth Government or the State Governments or Universities or Octopus will pass
+            Stream<String> whiteListStream = Stream.of(urlList);
+            isTrue = whiteListStream.anyMatch(parameter -> host.endsWith(parameter));   
         }
-        String crsOrSrs = (crs != null) ? crs : srs;
-        response.setContentType("image/png");
-  
-        // the sldBody and layer parameters are non standard but have been in use for some time.  The correct parameters are sld_body and layers.
-        // I have added this check to overwrite the non standard parameters with the correct ones if they're present
-        // if not still accept the old ones.
-
-        if (sld_body!=null && sld_body.length() > 0) sldBody=sld_body;
-        if (layers!=null && layers.length() > 0) layer=layers;
-        try {
-            if (sldBody == null && sldUrl!=null) {
-                sldUrl = request.getRequestURL().toString().replace(request.getServletPath(),"").replace("4200", "8080") + sldUrl;  
-                sldBody = this.wmsService.getStyle(url, sldUrl, version);            
+        // Return if not on whitelist
+        if (!isTrue) return;
+        // Use old request parameters to assemble new request
+        Map<String, String[]> pMap = request.getParameterMap();
+        List<NameValuePair> nvpList = new ArrayList<>(pMap.size());
+        for (Map.Entry<String, String[]> entry : pMap.entrySet()) {
+            if (!entry.getKey().equalsIgnoreCase("url")) {
+                for(String val: entry.getValue()) {
+                    nvpList.add(new BasicNameValuePair(entry.getKey(), val));
+                }
             }
-        } catch (OperationNotSupportedException | URISyntaxException | IOException e) {
+        }
+        UrlEncodedFormEntity entity;
+        HttpPost method = new HttpPost(url);
+        try {
+            entity = new UrlEncodedFormEntity(nvpList, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new URISyntaxException(e.getMessage(), "Error parsing UrlEncodedFormEntity");
+        }
+        method.setEntity(entity);
+       
+        HttpClientInputStream result = serviceCaller.getMethodResponseAsStream(method);
+        try (OutputStream outputStream = response.getOutputStream();) {
+            IOUtils.copy(result, outputStream);
+        } catch (IOException e) {
             throw new PortalServiceException("Exception during getWMSMapViaProxy.do "+e.getMessage(), e);
-        }  
-
-        if (tiled !=null && tiled.equals("true")) requestCachedTile=true;
-
-        try (HttpClientInputStream styleStream = this.wmsService.getMap(url, layer, bbox,sldBody, version, crsOrSrs, requestCachedTile, time);
-             OutputStream outputStream = response.getOutputStream();)       {
-            IOUtils.copy(styleStream,outputStream);
-        } catch (IOException | OperationNotSupportedException | URISyntaxException e) {
-            throw new PortalServiceException("Exception during getWMSMapViaProxy.do "+e.getMessage(), e);
-        } 
+        }
     }
 
     public String getStyle(String name, String color, String spatialType) {
