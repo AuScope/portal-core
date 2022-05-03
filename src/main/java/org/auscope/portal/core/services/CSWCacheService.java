@@ -244,6 +244,18 @@ public class CSWCacheService {
         this.updateRunning = true;
         return true;
     }
+    
+    /**
+     * Checks if a cache update is already running.
+     *
+     * Used by the health monitor.
+     *
+     * @return boolean true if update is already running. Otherwise false.
+     */
+
+    public boolean getUpdateRunning() {
+        return this.updateRunning;
+    }
 
     /**
      * Called by the update thread whenever an update finishes (successful or not)
