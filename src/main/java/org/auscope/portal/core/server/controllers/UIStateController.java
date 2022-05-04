@@ -40,7 +40,7 @@ public class UIStateController extends BasePortalController {
      * @throws IOException
      */
     @RequestMapping("/saveUIState.do")
-    public ModelAndView saveUIState(HttpServletResponse response,
+    public ModelAndView saveUIState(
             @RequestParam("id") final String id,
             @RequestParam("state") final String state) throws IOException {
         try {
@@ -62,7 +62,7 @@ public class UIStateController extends BasePortalController {
      * @throws IOException
      */
     @RequestMapping("/fetchUIState.do")
-    public ModelAndView fetchUIState(HttpServletResponse response,
+    public ModelAndView fetchUIState(
             @RequestParam("id") final String id) throws IOException {
         try {
             String state = stateService.fetch(id);
