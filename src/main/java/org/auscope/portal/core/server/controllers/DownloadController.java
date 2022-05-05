@@ -42,7 +42,10 @@ import com.google.common.io.Files;
 
 @Controller
 public class DownloadController extends BasePortalController {
+	
     private final Log logger = LogFactory.getLog(getClass());
+    // Minimum number of lines we expect a download to be (header file plus at least one data row)
+    private final static Integer MINIMUM_NUMBER_OF_LINES = 2;
     private HttpServiceCaller serviceCaller;
     private ServiceConfiguration serviceConfiguration;
 
@@ -181,7 +184,7 @@ public class DownloadController extends BasePortalController {
             ZipOutputStream zout = new ZipOutputStream(response.getOutputStream());
             //VT: threadpool is closed within downloadAll();
             ArrayList<DownloadResponse> gmlDownloads = downloadManager.downloadAll();
-            FileIOUtil.writeResponseToZip(gmlDownloads, zout,outputFormat);
+            FileIOUtil.writeResponseToZip(gmlDownloads, zout,outputFormat, MINIMUM_NUMBER_OF_LINES);
             zout.finish();
             zout.flush();
             zout.close();
@@ -193,7 +196,7 @@ public class DownloadController extends BasePortalController {
             ZipOutputStream zout = new ZipOutputStream(response.getOutputStream());
             //VT: threadpool is closed within downloadAll();
             ArrayList<DownloadResponse> gmlDownloads = downloadManager.downloadAll();
-            FileIOUtil.writeResponseToZip(gmlDownloads, zout);
+            FileIOUtil.writeResponseToZip(gmlDownloads, zout, MINIMUM_NUMBER_OF_LINES);
             zout.finish();
             zout.flush();
             zout.close();

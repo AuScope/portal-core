@@ -76,14 +76,16 @@ public class TestDownloadController extends PortalTestClass {
     }
 
     /**
-     * Test that this function makes all of the approriate calls, and see if it returns gml given some dummy data
+     * Test that this function makes all of the appropriate calls, and see if it returns gml given some dummy data
      */
     @Test
     public void testDownloadGMLAsZip() throws Exception {
         final String[] serviceUrls = {"http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://nvclwebservices.vm.csiro.au:80/geoserverBH/wfs"};
         final String outputFormat = "gml";
-        final String dummyGml = "<someGmlHere/>";
-        final String dummyJSONResponse = "{\"data\":{\"gml\":\"" + dummyGml + "\"},\"success\":true}";
+        // We need to pass in dummy GML with an escaped newline to parse as JSON, but return value won't be escaped  
+        final String dummyGmlWithEscapedLineBreak = "<someGmlHere/>\\n<someMoreGmlHere/>";
+        final String dummyGmlReturned = "<someGmlHere/>\n<someMoreGmlHere/>";
+        final String dummyJSONResponse = "{\"data\":{\"gml\":\"" + dummyGmlWithEscapedLineBreak + "\"},\"success\":true}";
         final MyServletOutputStream servletOutputStream = new MyServletOutputStream(dummyJSONResponse.length());
         final InputStream dummyJSONResponseIS = new ByteArrayInputStream(dummyJSONResponse.getBytes());
 
@@ -116,18 +118,19 @@ public class TestDownloadController extends PortalTestClass {
         Assert.assertNotNull(ze);
         Assert.assertTrue(ze.getName().endsWith(".xml"));
 
-        byte[] uncompressedData = new byte[dummyGml.getBytes().length];
+        byte[] uncompressedData = new byte[dummyGmlReturned.getBytes().length];
         int dataRead = in.read(uncompressedData);
 
-        Assert.assertEquals(dummyGml.getBytes().length, dataRead);
-        Assert.assertArrayEquals(dummyGml.getBytes(), uncompressedData);
+        // 
+        Assert.assertEquals(dummyGmlReturned.getBytes().length, dataRead);
+        Assert.assertArrayEquals(dummyGmlReturned.getBytes(), uncompressedData);
 
         in.close();
 
     }
 
     /**
-     * Test that this function makes all of the approriate calls, and see if it returns gml given some dummy data
+     * Test that this function makes all of the appropriate calls, and see if it returns gml given some dummy data
      *
      * This dummy data is missing the data element but contains a msg property (This added in response to JIRA AUS-1575)
      */
@@ -201,7 +204,7 @@ public class TestDownloadController extends PortalTestClass {
         final String[] serviceUrls = {
                 "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://nvclwebservices.vm.csiro.au:80/geoserverBH/wfs",
                 "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://www.mrt.tas.gov.au:80/web-services/wfs"};
-        final String dummyGml = "<someGmlHere/>";
+        final String dummyGml = "<someGmlHere/>\\n<someMoreGmlHere/>";
         final String dummyJSONResponse = "{\"data\":{\"gml\":\""
                 + dummyGml + "\"},\"success\":true}";
         final MyServletOutputStream servletOutputStream = new MyServletOutputStream(dummyJSONResponse.length());
