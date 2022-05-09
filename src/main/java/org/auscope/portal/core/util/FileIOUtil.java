@@ -2,6 +2,8 @@ package org.auscope.portal.core.util;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -217,10 +219,13 @@ public class FileIOUtil {
      *            - a list of DownloadResponse
      * @param zout
      *            - the ZipOutputStream to write the response
+     * @param minimumLines
+     *            - the minimum number of lines for the file to contain, won't be written if null or -1 
      * @throws IOException
      */
-    public static void writeResponseToZip(ArrayList<DownloadResponse> gmlDownloads, ZipOutputStream zout) throws IOException {
-        writeResponseJSONToZip(gmlDownloads, zout, null);
+    public static void writeResponseToZip(ArrayList<DownloadResponse> gmlDownloads, ZipOutputStream zout,
+    		Integer minimumLines) throws IOException {
+        writeResponseJSONToZip(gmlDownloads, zout, null, minimumLines);
     }
 
     /**
@@ -231,9 +236,11 @@ public class FileIOUtil {
      *            - a list of DownloadResponse
      * @param zout
      *            - the ZipOutputStream to write the response
+     * @param minimumLines
+     *            - the minimum number of lines for the file to contain, won't be written if null or -1
      * @throws IOException
      */
-    public static void writeResponseToZip(ArrayList<DownloadResponse> gmlDownloads, ZipOutputStream zout, String extension)
+    public static void writeResponseToZip(ArrayList<DownloadResponse> gmlDownloads, ZipOutputStream zout, String extension, Integer minimumLines)
             throws IOException {
         //VT: this assume all files will be of the sme extension. With paging, we have .zip in the mix.
         //JV: Let's make sure we use the first actual content type in case the first download fails
@@ -248,11 +255,11 @@ public class FileIOUtil {
 
         if (firstValidContentType != null &&
            (firstValidContentType.contains("text") || firstValidContentType.contains("zip"))) {
-            writeResponseToZip(gmlDownloads, zout, true, extension);
+            writeResponseToZip(gmlDownloads, zout, true, extension, minimumLines);
         } else { //VT: TODO: the different response type should be handled differently.
                  //VT: eg. handle application/json and a final catch all.
             log.warn("No content type found, defaulting to handling JSON responses");
-            writeResponseJSONToZip(gmlDownloads, zout, extension);
+            writeResponseJSONToZip(gmlDownloads, zout, extension, minimumLines);
         }
     }
 
@@ -267,9 +274,12 @@ public class FileIOUtil {
      *            The stream to receive the zip entries
      * @param closeInput
      *            true to close all the input stream in the gmlDownloads
+     * @param minimumLines
+     *            The minimum number of lines for the file to contain, won't be written if null or -1
      */
-    public static void writeResponseToZip(List<DownloadResponse> gmlDownloads, ZipOutputStream zout, boolean closeInputs) throws IOException {
-        writeResponseToZip(gmlDownloads, zout, closeInputs, null);
+    public static void writeResponseToZip(List<DownloadResponse> gmlDownloads, ZipOutputStream zout,
+    		boolean closeInputs, Integer minimumLines) throws IOException {
+        writeResponseToZip(gmlDownloads, zout, closeInputs, null, minimumLines);
     }
 
     /**
@@ -283,9 +293,11 @@ public class FileIOUtil {
      *            The stream to receive the zip entries
      * @param closeInput
      *            true to close all the input stream in the gmlDownloads
+     * @param minimumLines
+     *            The minimum number of lines for the file to contain, won't be written if null or -1
      */
-    public static void writeResponseToZip(List<DownloadResponse> gmlDownloads, ZipOutputStream zout, boolean closeInputs, String extensionOverride)
-            throws IOException {
+    public static void writeResponseToZip(List<DownloadResponse> gmlDownloads, ZipOutputStream zout, boolean closeInputs,
+    		String extensionOverride, Integer minimumLines) throws IOException {
         for (int i = 0; i < gmlDownloads.size(); i++) {
             DownloadResponse download = gmlDownloads.get(i);
 
@@ -308,7 +320,17 @@ public class FileIOUtil {
             if (!download.hasException()) {
                 @SuppressWarnings("resource") // closed in writeInputToOutputStream or intentionally left open
                 InputStream stream = download.getResponseAsStream();
-
+                // Copy stream so we can make sure it meets minimum line requirements
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                stream.transferTo(baos);
+                byte[] streamBytes = baos.toByteArray();
+                String streamString = new String(streamBytes);
+                long lineCount = streamString.lines().count();
+                if (minimumLines != null && minimumLines != -1 && lineCount < minimumLines) {
+                	log.debug("No features located within specified bounds for " + download.getRequestURL());
+                	continue;
+                }                
+                stream = new ByteArrayInputStream(streamBytes);
                 //Write stream into the zip entry
                 zout.putNextEntry(new ZipEntry(entryName));
                 writeInputToOutputStream(stream, zout, 8 * 1024, closeInputs);
@@ -396,11 +418,13 @@ public class FileIOUtil {
      *            - a list of DownloadResponse
      * @param zout
      *            - the ZipOutputStream to write the response
+     * @param minimumLines
+     *            - The minimum number of lines for the file to contain, won't be written if null or -1
      * @throws IOException
      */
-    public static void writeResponseJSONToZip(ArrayList<DownloadResponse> gmlDownloads, ZipOutputStream zout)
-            throws IOException {
-        writeResponseJSONToZip(gmlDownloads, zout, ".xml");
+    public static void writeResponseJSONToZip(ArrayList<DownloadResponse> gmlDownloads, ZipOutputStream zout,
+    		Integer minimumLines) throws IOException {
+        writeResponseJSONToZip(gmlDownloads, zout, ".xml", minimumLines);
     }
 
     /**
@@ -411,15 +435,20 @@ public class FileIOUtil {
      *            - a list of DownloadResponse
      * @param zout
      *            - the ZipOutputStream to write the response
+     * @param minimumLines
+     *            - The minimum number of lines for the file to contain, won't be written null or -1
      * @throws IOException
      */
-    public static void writeResponseJSONToZip(ArrayList<DownloadResponse> gmlDownloads, ZipOutputStream zout, String extension)
-            throws IOException {
+    public static void writeResponseJSONToZip(ArrayList<DownloadResponse> gmlDownloads, ZipOutputStream zout,
+    		String extension, Integer minimumLines) throws IOException {
         StringBuilder errorMsg = new StringBuilder();
         for (int i = 0; i < gmlDownloads.size(); i++) {
             DownloadResponse download = gmlDownloads.get(i);
             //Check that attempt to request is successful
             if (!download.hasException()) {
+         
+            	
+            	
                 JSONObject jsonObject = new JSONObject(download.getResponseAsString());
                 //check that JSON reply is successful
                 if (jsonObject.get("success").toString().equals("false")) {
@@ -438,10 +467,14 @@ public class FileIOUtil {
                         Iterator<?> children = dataObjectJson.keys();
                         if (children.hasNext()) {
                             String firstChild = children.next().toString();
+                            long lineCount = dataObjectJson.get(firstChild).toString().lines().count();
+                            if (minimumLines != null && minimumLines != -1 && lineCount < minimumLines) {
+                            	log.debug("No features located within specified bounds for " + download.getRequestURL());
+                            	continue;
+                            }
                             gmlBytes = dataObjectJson.get(firstChild).toString().getBytes();
                         }
                     }
-
                     URI downloadURI = null;
                     try {
                         downloadURI = new URI(download.getRequestURL());
@@ -457,7 +490,6 @@ public class FileIOUtil {
                     zout.write(gmlBytes);
                     zout.closeEntry();
                 }
-
             } else {
                 errorMsg.append("Exception thrown while attempting to download from: " + download.getRequestURL()
                         + "\n");

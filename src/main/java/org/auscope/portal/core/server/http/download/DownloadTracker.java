@@ -27,6 +27,8 @@ import org.auscope.portal.core.util.FileIOUtil;
  */
 public class DownloadTracker {
     protected final Log logger = LogFactory.getLog(getClass());
+    // Minimum number of lines we expect a download to be (header file plus at least one data row)
+    private final static Integer MINIMUM_NUMBER_OF_LINES = 2;
     private String email;
     public String getEmail() {
         return email;
@@ -238,7 +240,7 @@ public class DownloadTracker {
             try (FileOutputStream fos = new FileOutputStream(file);
                  ZipOutputStream zout = new ZipOutputStream(fos)) {
                 ArrayList<DownloadResponse> gmlDownloads = sdm.downloadAll();
-                FileIOUtil.writeResponseToZip(gmlDownloads, zout, this.extensionOverride);
+                FileIOUtil.writeResponseToZip(gmlDownloads, zout, this.extensionOverride, MINIMUM_NUMBER_OF_LINES);
                 zout.finish();
                 zout.flush();
                 zout.close();
