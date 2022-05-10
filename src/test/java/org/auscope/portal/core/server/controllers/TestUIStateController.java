@@ -116,5 +116,4 @@ public class TestUIStateController extends PortalTestClass {
         ModelAndView modelAndView = controller.fetchUIState(id);
         Assert.assertFalse((Boolean) modelAndView.getModel().get("success"));
     }
-
 }

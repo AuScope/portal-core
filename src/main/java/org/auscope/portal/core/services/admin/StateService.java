@@ -15,26 +15,44 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Service class providing a permanent storage for application state, e.g. user interface state
+ * Will limit the number of states stored according to a constructor parameter
  */
 public class StateService {
     private final Log logger = LogFactory.getLog(getClass());
     private Connection con;
     private static String DB_NAME = "state.db";
+    private int limitRows; // Row limit in state table
 
     /**
      * Constructor - creates an SQLite db in memory
+     * 
+     * @param maxStates limit to the number of states stored in the database
+     *                  will set a limit of 1000 if incorrect value given
      */
-    public StateService() {
+    public StateService(int maxStates) {
         startDb("jdbc:sqlite::memory:");
+        if (maxStates > 1) {
+            this.limitRows = maxStates - 1;
+        } else {
+            this.limitRows = 999;
+        }
+          
     }
 
     /**
      * Constructor - creates an SQLite db in local filesystem
      *
      * @param localDir local filesystem directory to save SQLite db
+     * @param maxStates limit to the number of states stored in the database
+     *                  will set a limit of 1000 if incorrect value given
      */
-    public StateService(String localDir) {
+    public StateService(String localDir, int maxStates) {
         startDb("jdbc:sqlite:" + localDir + DB_NAME);
+        if (maxStates > 1) {
+            this.limitRows = maxStates - 1;
+        } else {
+            this.limitRows = 999;
+        }
     }
 
     /**
@@ -75,6 +93,17 @@ public class StateService {
         if (!testState.equals("") || id == null || state == null) {
             return false;
         }
+        // Remove all but the most recent 'maxRows' records
+        try {
+            Statement statement = this.con.createStatement();
+            String pruneSQL = "DELETE FROM STATES WHERE ROWID NOT IN (SELECT ROWID FROM STATES ORDER BY CREATE_DATE DESC LIMIT " + 
+                               Integer.toString(this.limitRows) + ");";
+            statement.executeUpdate(pruneSQL);
+        } catch (SQLException ex) {
+            logger.error("Cannot prune database: id=" + id + " & state=" + state + " to state db: ", ex);
+            return false;
+        }
+        // Insert new record into db
         try {
             PreparedStatement prepStmt = this.con.prepareStatement("INSERT INTO STATES (id, state, create_date) VALUES(?,?,?)");
             prepStmt.setString(1, id);

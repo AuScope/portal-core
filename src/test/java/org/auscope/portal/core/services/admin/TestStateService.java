@@ -20,7 +20,7 @@ public class TestStateService extends PortalTestClass {
         final String state = "ABCDEF";
 
         // Create service with in memory database
-        StateService stateService = new StateService();
+        StateService stateService = new StateService(1000);
 
         // Save new state value
         Assert.assertTrue(stateService.save(id, state));
@@ -44,7 +44,7 @@ public class TestStateService extends PortalTestClass {
         final String state2 = "ABCDEFG";
 
         // Create service with in memory database
-        StateService stateService = new StateService();
+        StateService stateService = new StateService(1000);
 
         // Save
         Assert.assertTrue(stateService.save(id, state));
@@ -69,5 +69,46 @@ public class TestStateService extends PortalTestClass {
 
     }
 
+    @Test 
+    public void testDatabaseLimit() throws Exception {
+        final String id1 = "1";
+        final String id2 = "2";
+        final String id3 = "3";
+        final String id4 = "4";
+        final String id5 = "5";
+
+        final String state1 = "ABCDEF1";
+        final String state2 = "ABCDEF2";
+        final String state3 = "ABCDEF3";
+        final String state4 = "ABCDEF4";
+        final String state5 = "ABCDEF5";
+
+        // Create service with in memory database, but with a four state limit 
+        StateService stateService = new StateService(4);
+
+        // Save 4 new state values
+        Assert.assertTrue(stateService.save(id1, state1));
+        Assert.assertTrue(stateService.save(id2, state2));
+        Assert.assertTrue(stateService.save(id3, state3));
+        Assert.assertTrue(stateService.save(id4, state4));
+
+        // Test them
+        Assert.assertEquals(stateService.fetch(id1), state1);
+        Assert.assertEquals(stateService.fetch(id2), state2);
+        Assert.assertEquals(stateService.fetch(id3), state3);
+        Assert.assertEquals(stateService.fetch(id4), state4);
+
+        // Add a 5th state
+        Assert.assertTrue(stateService.save(id5, state5));
+
+        // Test it 
+        Assert.assertEquals(stateService.fetch(id5), state5);
+
+        // Test the first 4, except first one should be missing because of the limit
+        Assert.assertEquals(stateService.fetch(id1), "");
+        Assert.assertEquals(stateService.fetch(id2), state2);
+        Assert.assertEquals(stateService.fetch(id3), state3);
+        Assert.assertEquals(stateService.fetch(id4), state4);
+    }
 
 }
