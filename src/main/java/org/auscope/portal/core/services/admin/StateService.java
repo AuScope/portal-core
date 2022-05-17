@@ -60,6 +60,14 @@ public class StateService {
      * @param url SQLite JDBC connection string 
      */
     private void startDb(String url) {
+        // Try to resolve class name, sometimes required for the connection process
+        try {
+            Class.forName("org.sqlite.JDBC");
+        } catch(ClassNotFoundException e) {
+            logger.error("Unable to load JDBC SQLite driver");
+            return;
+        }
+
         // SQL statement for creating a new table
         String sql = "CREATE TABLE IF NOT EXISTS STATES (\n"
         + " id text PRIMARY KEY,\n"
