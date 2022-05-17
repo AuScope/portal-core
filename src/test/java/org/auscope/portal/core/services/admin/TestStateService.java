@@ -88,9 +88,13 @@ public class TestStateService extends PortalTestClass {
 
         // Save 4 new state values
         Assert.assertTrue(stateService.save(id1, state1));
+        Thread.sleep(1000);
         Assert.assertTrue(stateService.save(id2, state2));
+        Thread.sleep(1000);
         Assert.assertTrue(stateService.save(id3, state3));
+        Thread.sleep(1000);
         Assert.assertTrue(stateService.save(id4, state4));
+        Thread.sleep(1000);
 
         // Test them
         Assert.assertEquals(stateService.fetch(id1), state1);
@@ -100,6 +104,7 @@ public class TestStateService extends PortalTestClass {
 
         // Add a 5th state
         Assert.assertTrue(stateService.save(id5, state5));
+        
 
         // Test it 
         Assert.assertEquals(stateService.fetch(id5), state5);
