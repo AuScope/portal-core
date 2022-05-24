@@ -110,7 +110,7 @@ public class DownloadController extends BasePortalController {
             htmlResponse = "<html><p>Your download has successfully completed.</p><p><a href='getGmlDownload.do?email="
                     + email + "'>Click on this link to download</a></p></html>";
         } else {
-            htmlResponse = "<html><p>Serious error has occured, Please contact our Administrator on cg-admin@csiro.au</p></html>";
+            htmlResponse = "<html><p>A serious error has occurred, please contact our Administrator on cg-admin@csiro.au</p></html>";
         }
 
         response.getOutputStream().write(htmlResponse.getBytes());
@@ -176,7 +176,7 @@ public class DownloadController extends BasePortalController {
 
             response.getOutputStream().write(htmlResponse.getBytes());
 
-        } else if(outputFormat.equals("csv")){
+        } else if (outputFormat.equals("csv")) {
             // set the content type for zip files
             response.setContentType("application/zip");
             response.setHeader("Content-Disposition",

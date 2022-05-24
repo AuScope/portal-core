@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -605,20 +606,34 @@ public class CSWCacheService {
                         for (AbstractCSWOnlineResource wXSOnlineRes : record
                                 .getOnlineResourcesByType(OnlineResourceType.WFS, OnlineResourceType.WMS)) {
 
-                            if (StringUtils.isEmpty(record.getLayerName())) break;
+                            if (StringUtils.isEmpty(record.getLayerName())) {
+                                break;
+                            }
                             
-                            // Skip null or empty urls and layernames
+                            // Skip null or empty urls and layer names
                             if (wXSOnlineRes.getLinkage() == null
-                                    || StringUtils.isEmpty(wXSOnlineRes.getLinkage().toString()))
+                                    || StringUtils.isEmpty(wXSOnlineRes.getLinkage().toString())) {
+                                        continue;
+                                    }
+                            String longRecURL = wXSOnlineRes.getLinkage().toString();
+                            String recURL;
+
+                            // Trim off any parameters from URL for comparison
+                            try {
+                                URL url = new URL(longRecURL);
+                                recURL = url.getHost() + url.getPath();
+                            } catch (MalformedURLException e) {
                                 continue;
-                            String recURL = wXSOnlineRes.getLinkage().toString();
-                            // trim interface name from url for comparison
+                            }
+                            // Trim interface name from url for comparison
                             recURL = StringUtils.substring(recURL, 0, recURL.lastIndexOf('/'));
 
-                            // loop through existing records
+                            // Loop through existing records
                             for (CSWRecord existingRec : newRecordCache) {
-                                // loop through online resources of each record
-                                if (StringUtils.isEmpty(existingRec.getLayerName())) continue;
+                                // Loop through online resources of each record
+                                if (StringUtils.isEmpty(existingRec.getLayerName())) {
+                                    continue;
+                                }
 
                                 String existingRecLayerName = existingRec.getLayerName();
                                 String recLayerName = record.getLayerName();
@@ -632,22 +647,33 @@ public class CSWCacheService {
                                     existingRecLayerName = existingRecLayerName.substring(
                                             existingRecLayerName.indexOf(':') + 1, existingRecLayerName.length());
                                 }
-
-                                if (!recLayerName.equals(existingRecLayerName)) continue;
+                                if (!recLayerName.equals(existingRecLayerName)) {
+                                    continue;
+                                }
 
                                 for (AbstractCSWOnlineResource existingRes : existingRec
                                         .getOnlineResourcesByType(OnlineResourceType.WFS, OnlineResourceType.WMS)) {
                                     // Skip null or empty urls and layernames
                                     if (existingRes.getLinkage() == null
-                                            || StringUtils.isEmpty(existingRes.getLinkage().toString()))
-                                        continue;
+                                            || StringUtils.isEmpty(existingRes.getLinkage().toString())) {
+                                                continue;
+                                            }
 
                                     String existingURL = existingRes.getLinkage().toString();
+
+                                    // Trim off any parameters from URL for comparison.
+                                    // Harvested geonetwork records often contain parameters in their URLs
+                                    try {
+                                        URL url = new URL(existingURL);
+                                        existingURL = url.getHost() + url.getPath();
+                                    } catch (MalformedURLException e) {
+                                        continue;
+                                    }
                                     
-                                    // trim interface name from url for comparison
+                                    // Trim interface name from url for comparison
                                     existingURL = StringUtils.substring(existingURL, 0, existingURL.lastIndexOf('/'));
                                     
-                                    // compare Layer Names and URLs
+                                    // Compare Layer Names and URLs
                                     if (recURL.equals(existingURL)) {
                                         threadLog.debug("Merging CSW records " + record.getRecordInfoUrl() + " and "
                                                 + existingRec.getRecordInfoUrl());
