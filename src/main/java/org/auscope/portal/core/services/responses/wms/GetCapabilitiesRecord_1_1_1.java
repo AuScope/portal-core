@@ -44,7 +44,7 @@ public class GetCapabilitiesRecord_1_1_1 implements GetCapabilitiesRecord {
      * The vendor of the service
      */
     private String applicationProfile = "";
-
+    
     private String[] getMapFormats = new String[] {};
 
     /** The layers. */
@@ -52,6 +52,10 @@ public class GetCapabilitiesRecord_1_1_1 implements GetCapabilitiesRecord {
 
     /** The layer srs. */
     private String[] layerSRS = null;
+    
+    
+    /** The accessConstraints. */
+    private String[] accessConstraints= new String[] {};
 
     /** The extract organisation expression. */
     private static final String EXTRACTORGANISATIONEXPRESSION = "/WMT_MS_Capabilities/Service/ContactInformation/ContactPersonPrimary/ContactOrganization";
@@ -212,6 +216,15 @@ public class GetCapabilitiesRecord_1_1_1 implements GetCapabilitiesRecord {
         return this.applicationProfile;
     }
 
+    /**
+     * Returns an array of strings representing the AccessConstraints
+     *
+     * @return
+     */
+    @Override
+    public String[] getAccessConstraints() {
+        return this.accessConstraints;
+    }
     // ------------------------------------------------------ Protected Methods
 
     /**

@@ -54,6 +54,7 @@ public class ViewGetCapabilitiesFactory {
         obj.put("layerSRS", k.getLayerSRS());
         obj.put("mapFormats", k.getGetMapFormats());
         obj.put("applicationProfile", k.getApplicationProfile());
+        obj.put("accessConstraints", k.getAccessConstraints());
         return obj;
     }
 
