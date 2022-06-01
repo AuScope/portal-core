@@ -54,5 +54,25 @@ public class HttpUtil {
         }
         return false;
     }
+    
+    /**
+     * Encode a URL
+     * 
+     * @param unencodedUrl the unencoded URL
+     * @return the encoded URL
+     */
+    public static String encodeURL(String unencodedUrl) throws RuntimeException {
+    	String encodedUrl = null;
+    	try {
+	    	URL url = new URL(unencodedUrl);
+	    	URI uri = new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(), url.getQuery(), url.getRef());
+	    	encodedUrl = uri.toURL().toString();
+    	} catch(URISyntaxException use) {
+    		throw new RuntimeException("Bad URI Syntax", use);
+    	} catch (MalformedURLException mue) {
+    		throw new RuntimeException("Malformed URL", mue);
+    	}
+    	return encodedUrl;
+    }
 
 }

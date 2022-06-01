@@ -9,6 +9,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 import javax.servlet.ServletOutputStream;
@@ -26,6 +27,7 @@ import org.auscope.portal.core.services.responses.wfs.WFSGetCapabilitiesResponse
 import org.auscope.portal.core.services.responses.wfs.WFSResponse;
 import org.auscope.portal.core.services.responses.wfs.WFSTransformedResponse;
 import org.auscope.portal.core.util.FileIOUtil;
+import org.auscope.portal.core.util.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -150,7 +152,8 @@ public class WFSController extends BasePortalController {
             @RequestParam(required=false, value="maxFeatures",defaultValue = "100000") Integer maxFeatures,
             HttpServletResponse response)
             throws Exception {
-
+    	// Some WFS URL had type/subtypes with spaces, need to URI encode
+    	String url = HttpUtil.encodeURL(serviceUrl);
         FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxJSONString);
         response.setContentType("text/csv");
         OutputStream outputStream = response.getOutputStream();
@@ -160,17 +163,17 @@ public class WFSController extends BasePortalController {
         try {
             if (filter != null && filter.indexOf("ogc:Filter")>0) { //Polygon filter
                 filterString = filter.replace("gsmlp:shape","erl:shape");
-                result = wfsService.downloadCSVByPolygonFilter(serviceUrl, featureType, filterString, maxFeatures);
+                result = wfsService.downloadCSVByPolygonFilter(url.toString(), featureType, filterString, maxFeatures);
             } else{ //BBox or no filter
                 if (bbox == null) {
                     filterString = bboxFilter.getFilterStringAllRecords();
                 } else {
                     filterString = bboxFilter.getFilterStringBoundingBox(bbox);
                 }
-                result = wfsService.downloadCSV(serviceUrl, featureType, filterString, maxFeatures);
+                result = wfsService.downloadCSV(url.toString(), featureType, filterString, maxFeatures);
             }
         } catch (Exception ex) {
-            log.warn(String.format("Exception getting '%2$s' from '%1$s': %3$s", serviceUrl, featureType, ex));
+            log.warn(String.format("Exception getting '%2$s' from '%1$s': %3$s", url.toString(), featureType, ex));
             log.debug("Exception: ", ex);           
         }
         
