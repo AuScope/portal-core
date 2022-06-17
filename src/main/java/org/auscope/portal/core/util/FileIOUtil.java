@@ -227,6 +227,44 @@ public class FileIOUtil {
     		Integer minimumLines) throws IOException {
         writeResponseJSONToZip(gmlDownloads, zout, null, minimumLines);
     }
+    /**
+     * This util will allow us to write JSON/XML responses to String
+     *
+     * @param download
+     *            - a DownloadResponse
+     * @throws IOException
+     */    
+    public static String writeResponseToString(DownloadResponse download) throws IOException {
+        String strResponse = "";
+        try {
+            URI downloadURI = new URI(download.getRequestURL());
+        } catch (URISyntaxException e1) {
+            throw new IOException(e1.getMessage(), e1);
+        }
+
+        if (!download.hasException()) {
+            strResponse += download.getResponseAsString();
+        } else {
+            String message = null;
+            StringWriter sw = null;
+            PrintWriter pw = null;
+            try {
+                sw = new StringWriter();
+                pw = new PrintWriter(sw);
+                download.getException().printStackTrace(pw);
+                message = String.format(
+                        "An exception occured whilst requesting/parsing your download.\r\n%1$s\r\nMessage=%2$s\r\n%3$s",
+                        download.getRequestURL(), download.getException().getMessage(), sw.toString());
+            } finally {
+                FileIOUtil.closeQuietly(pw);
+                FileIOUtil.closeQuietly(sw);
+            }
+            System.out.println(message.getBytes());
+            strResponse = null;
+        }
+        return strResponse;
+}
+    
 
     /**
      * This util will allow us to write JSON/XML responses to zip file
