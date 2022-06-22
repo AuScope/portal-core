@@ -25,7 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
  *
  */
 public class TestBasePortalController extends PortalTestClass {
-
+	
     private class BasePortalControllerImpl extends BasePortalController {
         // empty
     }
@@ -136,7 +136,7 @@ public class TestBasePortalController extends PortalTestClass {
         ZipOutputStream zout = new ZipOutputStream(outputStream);
 
         //Write our data out
-        FileIOUtil.writeResponseToZip(Arrays.asList(dr1, dr2), zout, false);
+        FileIOUtil.writeResponseToZip(Arrays.asList(dr1, dr2), zout, false, null);
         zout.finish();
         zout.close();
         outputStream.close();

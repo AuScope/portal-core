@@ -82,7 +82,16 @@ public interface GetCapabilitiesRecord {
      * @return
      */
     public String getApplicationProfile();
-
+    
+    
+    /**
+     * Returns AccessConstraints
+     *
+     * @return AccessConstraints
+     */
+    public String[] getAccessConstraints();
+    
+    
     // ------------------------------------------------------ Protected Methods
 
 }
