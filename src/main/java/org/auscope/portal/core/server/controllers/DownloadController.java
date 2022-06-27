@@ -9,6 +9,8 @@ import java.util.concurrent.Executors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -205,6 +207,24 @@ public class DownloadController extends BasePortalController {
     }
 
     /**
+     * Searches for a filename in the download URL
+     * 
+     * @param uri
+     * @return an empty string if not found else return the filename without the extension
+     */
+    private String getFileName(UriComponents uri) {
+        String path = uri.getPath();
+        Pattern pattern = Pattern.compile("/([^/ ]+)\\.\\w{3}$");
+        Matcher matcher = pattern.matcher(path);
+        boolean matchFound = matcher.find();
+        if  (matchFound) {
+            return matcher.group(1);
+        } else {
+           return "";
+        }
+    }
+
+    /**
      * Given a list of WMS URL's, this function will collate the responses into a zip file and send the response back to the browser.
      *
      * @param serviceUrls URLs which will be called upon to create the collation
@@ -251,8 +271,12 @@ public class DownloadController extends BasePortalController {
             if (fileExtension != null && !fileExtension.isEmpty()) {
                 fileExtension = "." + fileExtension;
             }
-            zout.putNextEntry(new ZipEntry(new SimpleDateFormat((i + 1) + "_yyyyMMdd_HHmmss").format(new Date())
-                    + fileExtension));
+            // Is there no filename in the download URL? If so, use a date format as the zip filename
+            String zipFilename = getFileName(uri);
+            if (zipFilename.equals("")) {
+                zipFilename = new SimpleDateFormat((i + 1) + "_yyyyMMdd_HHmmss").format(new Date());
+            }
+            zout.putNextEntry(new ZipEntry(zipFilename + fileExtension));
 
             zout.write(responseBytes);
             zout.closeEntry();
