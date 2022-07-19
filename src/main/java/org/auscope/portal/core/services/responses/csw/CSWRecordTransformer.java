@@ -750,7 +750,7 @@ public class CSWRecordTransformer {
             Node accessConstraint;
             for (int j = 0; j < tempNodeList.getLength(); j++) {
             	accessConstraint = tempNodeList.item(j);
-            	final String accessConstraintText = "MD_RestrictionCode:" + accessConstraint.getTextContent();
+            	final String accessConstraintText = "RestrictionCode: " + accessConstraint.getTextContent();
             	if (!accessConstraintsList.contains(accessConstraintText)) {
             		accessConstraintsList.add(accessConstraintText);
             	}
@@ -776,7 +776,7 @@ public class CSWRecordTransformer {
         if (tempNodeList != null && tempNodeList.getLength() > 0) {
             for (int j = 0; j < tempNodeList.getLength(); j++) {
             	useLimitConstraint = tempNodeList.item(j);
-            	final String useLimitConstraintText = "MD_RestrictionCode:" + useLimitConstraint.getTextContent();
+            	final String useLimitConstraintText = "RestrictionCode: " + useLimitConstraint.getTextContent();
             	if(!useLimitConstraintsList.contains(useLimitConstraintText)) {
             		useLimitConstraintsList.add(useLimitConstraintText);
             	}
@@ -981,7 +981,7 @@ public class CSWRecordTransformer {
                 Node accessConstraint;
                 for (int j = 0; j < tempNodeList.getLength(); j++) {
                 	accessConstraint = tempNodeList.item(j);
-                	final String accessConstraintText = "MD_RestrictionCode:" + accessConstraint.getTextContent();
+                	final String accessConstraintText = "RestrictionCode: " + accessConstraint.getTextContent();
                 	if (!accessConstraintsList.contains(accessConstraintText)) {
                 		accessConstraintsList.add(accessConstraintText);
                 	}
@@ -1007,7 +1007,7 @@ public class CSWRecordTransformer {
             if (tempNodeList != null && tempNodeList.getLength() > 0) {
                 for (int j = 0; j < tempNodeList.getLength(); j++) {
                 	useLimitConstraint = tempNodeList.item(j);
-                	final String useLimitConstraintText = "MD_RestrictionCode:" + useLimitConstraint.getTextContent();
+                	final String useLimitConstraintText = "RestrictionCode: " + useLimitConstraint.getTextContent();
                 	if(!useLimitConstraintsList.contains(useLimitConstraintText)) {
                 		useLimitConstraintsList.add(useLimitConstraintText);
                 	}
@@ -1265,7 +1265,7 @@ public class CSWRecordTransformer {
                 Node accessConstraint;
                 for (int j = 0; j < tempNodeList.getLength(); j++) {
                 	accessConstraint = tempNodeList.item(j);
-                	final String accessConstraintText = "MD_RestrictionCode:" + accessConstraint.getTextContent();
+                	final String accessConstraintText = "RestrictionCode: " + accessConstraint.getTextContent();
                 	if (!accessConstraintsList.contains(accessConstraintText)) {
                 		accessConstraintsList.add(accessConstraintText);
                 	}
@@ -1291,7 +1291,7 @@ public class CSWRecordTransformer {
             if (tempNodeList != null && tempNodeList.getLength() > 0) {
                 for (int j = 0; j < tempNodeList.getLength(); j++) {
                 	useLimitConstraint = tempNodeList.item(j);
-                	final String useLimitConstraintText = "MD_RestrictionCode:" + useLimitConstraint.getTextContent();
+                	final String useLimitConstraintText = "RestrictionCode: " + useLimitConstraint.getTextContent();
                 	if(!useLimitConstraintsList.contains(useLimitConstraintText)) {
                 		useLimitConstraintsList.add(useLimitConstraintText);
                 	}
