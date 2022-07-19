@@ -61,13 +61,6 @@ public class CSWCacheService {
     public static final String KEYWORD_MERGE_PREFIX = "association:";
 
     /**
-     * The maximum number of records that will be requested from a CSW at a given time.
-     *
-     * If a CSW has more records than this value then multiple requests will be made
-     */
-    public static final int MAX_QUERY_LENGTH = 500;
-
-    /**
      * The frequency in which the cache updates (in milliseconds).
      */
     public static final long CACHE_UPDATE_FREQUENCY_MS = 1000L * 60L * 5L; //Set to 5 minutes
@@ -536,7 +529,7 @@ public class CSWCacheService {
          * @param keyword
          * @param record
          */
-        private void addToKeywordCache(CSWServiceItem endpoint, String keyword, CSWRecord record, Map<String, Set<CSWRecord>> cache, Map<String, Set<String>> cacheByEndpoints) {
+        private void addToKeywordCache(CSWServiceItem cswService, String keyword, CSWRecord record, Map<String, Set<CSWRecord>> cache, Map<String, Set<String>> cacheByEndpoints) {
             if (keyword == null || keyword.isEmpty()) {
                 return;
             }
@@ -549,10 +542,10 @@ public class CSWCacheService {
 
             existingRecsWithKeyword.add(record);
 
-            Set<String> keywordsForEndpoint = cacheByEndpoints.get(endpoint.getId());
+            Set<String> keywordsForEndpoint = cacheByEndpoints.get(cswService.getId());
             if (keywordsForEndpoint == null) {
                 keywordsForEndpoint = new HashSet<String>();
-                cacheByEndpoints.put(endpoint.getId(), keywordsForEndpoint);
+                cacheByEndpoints.put(cswService.getId(), keywordsForEndpoint);
             }
             keywordsForEndpoint.add(keyword);
         }
@@ -567,7 +560,7 @@ public class CSWCacheService {
          * @param cache
          *            will be updated with destination referenced by source's keywords
          */
-        private void mergeRecords(CSWServiceItem endpoint, CSWRecord destination, CSWRecord source, Map<String, Set<CSWRecord>> cache, Map<String, Set<String>> cacheByEndpoints) {
+        private void mergeRecords(CSWServiceItem cswService, CSWRecord destination, CSWRecord source, Map<String, Set<CSWRecord>> cache, Map<String, Set<String>> cacheByEndpoints) {
             //Merge onlineresources
             AbstractCSWOnlineResource[] merged = (AbstractCSWOnlineResource[]) ArrayUtils.addAll(
                     destination.getOnlineResources(), source.getOnlineResources());
@@ -580,7 +573,7 @@ public class CSWCacheService {
             destination.setDescriptiveKeywords(keywordSet.toArray(new String[keywordSet.size()]));
 
             for (String sourceKeyword : source.getDescriptiveKeywords()) {
-                addToKeywordCache(endpoint, sourceKeyword, destination, cache, cacheByEndpoints);
+                addToKeywordCache(cswService, sourceKeyword, destination, cache, cacheByEndpoints);
             }
         }
 
@@ -677,7 +670,7 @@ public class CSWCacheService {
                                     if (recURL.equals(existingURL)) {
                                         threadLog.debug("Merging CSW records " + record.getRecordInfoUrl() + " and "
                                                 + existingRec.getRecordInfoUrl());
-                                        mergeRecords(endpoint, existingRec, record, newKeywordCache,
+                                        mergeRecords(this.endpoint, existingRec, record, newKeywordCache,
                                                 newKeywordByEndpointCache);
                                         recordMerged = true;
                                         break;
@@ -695,7 +688,7 @@ public class CSWCacheService {
                         if (!recordMerged) {
                             //Update the keyword cache
                             for (String keyword : record.getDescriptiveKeywords()) {
-                                addToKeywordCache(endpoint, keyword, record, newKeywordCache, newKeywordByEndpointCache);
+                                addToKeywordCache(this.endpoint, keyword, record, newKeywordCache, newKeywordByEndpointCache);
                             }
 
                             //Add record to record list
@@ -712,21 +705,21 @@ public class CSWCacheService {
             // Before querying the endpoint, see if there is a serialised cache of endpoint
             // saved to disk, deserialise it and retain in memory in case there is a failure.
             Map<String, CSWRecord> serialisedCSWRecordMap = new HashMap<>();
-            if(new File(CSW_CACHE_PATH + endpoint.getId() +".ser").exists()) {
+            if(new File(CSW_CACHE_PATH + this.endpoint.getId() +".ser").exists()) {
                 Kryo kryo = new Kryo();
                 kryo.setRegistrationRequired(false);
 //                kryo.setInstantiatorStrategy(new Kryo.DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
                 kryo.setInstantiatorStrategy(new com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
                 com.esotericsoftware.kryo.io.Input input = null;
                 try {
-                    input = new com.esotericsoftware.kryo.io.Input(new FileInputStream(CSW_CACHE_PATH + endpoint.getId() + ".ser"));
+                    input = new com.esotericsoftware.kryo.io.Input(new FileInputStream(CSW_CACHE_PATH + this.endpoint.getId() + ".ser"));
                     serialisedCSWRecordMap = kryo.readObject(input, HashMap.class);
                     input.close();
                 } catch (Exception e) {
-                    threadLog.warn(String.format("Failed deserialising cached registry: %1$s, %2$s", CSW_CACHE_PATH, endpoint.getId() + ".ser"), e);
+                    threadLog.warn(String.format("Failed deserialising cached registry: %1$s, %2$s", CSW_CACHE_PATH, this.endpoint.getId() + ".ser"), e);
                 }
             } else {
-                threadLog.warn(String.format("No saved registry found on disk on: %1$s, %2$s", CSW_CACHE_PATH, endpoint.getId() + ".ser"));
+                threadLog.warn(String.format("No saved registry found on disk on: %1$s, %2$s", CSW_CACHE_PATH, this.endpoint.getId() + ".ser"));
             }
 
             //Query the endpoint and cache
@@ -766,7 +759,7 @@ public class CSWCacheService {
                     HashMap<String, CSWRecord> cswRecordMap = new HashMap<>();
                     do {
                         CSWGetRecordResponse response = this.cswService.queryCSWEndpoint(startPosition,
-                                MAX_QUERY_LENGTH, this.connectionAttempts, this.timeBtwConnectionAttempts);
+                               this.endpoint.getPageSize(), this.connectionAttempts, this.timeBtwConnectionAttempts);
                         for (CSWRecord rec : response.getRecords()) {
                             cswRecordMap.put(rec.getFileIdentifier(), rec);
                         }
@@ -803,16 +796,16 @@ public class CSWCacheService {
                     // Cache the contents for this endpoint so we can use it in
                     // case of errors later.
                     synchronized(this.cswRecordsCache) {
-                        this.cswRecordsCache.put(endpoint.getId(), cswRecordMap);
+                        this.cswRecordsCache.put(this.endpoint.getId(), cswRecordMap);
 
                         // If there are records returned, serialise the cache and saved it to disk
                         if (cswRecordMap.size() > 0) {
 	                        Kryo kryo = new Kryo();
 	                        kryo.setRegistrationRequired(false);
-	                        com.esotericsoftware.kryo.io.Output output = new com.esotericsoftware.kryo.io.Output(new FileOutputStream( CSW_CACHE_PATH + endpoint.getId() +".ser"));
+	                        com.esotericsoftware.kryo.io.Output output = new com.esotericsoftware.kryo.io.Output(new FileOutputStream( CSW_CACHE_PATH + this.endpoint.getId() +".ser"));
 	                        kryo.writeObject(output, cswRecordMap);
 	                        output.close();
-	                        threadLog.info(endpoint.getServiceUrl() + " has been serialized.");
+	                        threadLog.info(this.endpoint.getServiceUrl() + " has been serialized.");
                         }
                     }
                 }
@@ -824,7 +817,7 @@ public class CSWCacheService {
             } finally {
                 // Update the cache using the new records, if successfully
                 // retrieved, or the cached version if not.
-                Map<String, CSWRecord> cswRecordMap = this.cswRecordsCache.get(endpoint.getId());
+                Map<String, CSWRecord> cswRecordMap = this.cswRecordsCache.get(this.endpoint.getId());
                 if (cswRecordMap != null) {
                     updateAppCache(cswRecordMap);
                 } else if (serialisedCSWRecordMap != null) {
