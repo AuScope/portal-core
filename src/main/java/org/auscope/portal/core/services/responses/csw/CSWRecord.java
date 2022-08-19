@@ -68,6 +68,9 @@ public class CSWRecord {
 
     /** The contact. */
     private CSWResponsibleParty contact;
+    
+    /** The funder. */
+    private CSWResponsibleParty funder;
 
     /** The date. */
     private Date date;
@@ -513,6 +516,25 @@ public class CSWRecord {
     public void setContact(CSWResponsibleParty contact) {
         this.contact = contact;
     }
+    
+    /**
+     * Gets the funder.
+     *
+     * @return the funder
+     */
+    public CSWResponsibleParty getFunder() {
+        return funder;
+    }
+
+    /**
+     * Sets the funder.
+     *
+     * @param funder
+     *            the new funder
+     */
+    public void setFunder(CSWResponsibleParty funder) {
+        this.funder = funder;
+    }
 
     /**
      * Gets the date.
@@ -632,6 +654,7 @@ public class CSWRecord {
                 + ", supplementalInformation=" + supplementalInformation
                 + ", language=" + language + ", constraints="
                 + Arrays.toString(constraints) + ", use limit constraints="+ Arrays.toString(useLimitConstraints) + ", access constraints=" + Arrays.toString(accessConstraints)+ ", contact=" + contact
+                + (this.funder != null ? "funder: " + funder + ", " : "")
                 + ", date=" + date + ", childRecords="
                 + childRecords + ", layerName=" + layerName + "]";
     }

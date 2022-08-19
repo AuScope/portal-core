@@ -48,7 +48,7 @@ public class CSWContactFactory {
      *
      * @param node
      *            Must be a gmd_CI_Contact node
-     * @return the cSW contact
+     * @return the CSW contact
      * @throws XPathExpressionException
      *             the x path expression exception
      */
