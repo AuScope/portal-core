@@ -57,6 +57,7 @@ public class CSWRecordTransformer {
     protected static final String ABSTRACTEXPRESSION = "/gmd:abstract/gco:CharacterString";
 
     protected static final String CONTACTEXPRESSION = "gmd:contact/gmd:CI_ResponsibleParty";
+    protected static final String FUNDEREXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty[./gmd:role[./gmd:CI_RoleCode[@codeListValue = 'funder']]]";
     protected static final String RESOURCEPROVIDEREXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty[./gmd:role[./gmd:CI_RoleCode[@codeListValue = 'resourceProvider']]]/gmd:organisationName/gco:CharacterString";
     protected static final String FILEIDENTIFIEREXPRESSION = "gmd:fileIdentifier/gco:CharacterString";
     protected static final String PARENTIDENTIFIEREXPRESSION = "gmd:parentIdentifier/gco:CharacterString";
@@ -315,7 +316,7 @@ public class CSWRecordTransformer {
      * @return
      */
     private void appendChildResponsibleParty(Node parent, String namespaceUri, String name,
-            CSWResponsibleParty rp) {
+            String role, CSWResponsibleParty rp) {
         Node child = createChildNode(parent, namespaceUri, name);
         Node rpNode = createChildNode(child, nc.getNamespaceURI("gmd"), "CI_ResponsibleParty");
 
@@ -329,13 +330,13 @@ public class CSWRecordTransformer {
         }
 
         //Add our constant role node
-        Element role = createChildNode(rpNode, nc.getNamespaceURI("gmd"), "role");
-        Element roleCode = createChildNode(role, nc.getNamespaceURI("gmd"), "CI_RoleCode");
+        Element roleEl = createChildNode(rpNode, nc.getNamespaceURI("gmd"), "role");
+        Element roleCode = createChildNode(roleEl, nc.getNamespaceURI("gmd"), "CI_RoleCode");
         roleCode.setAttributeNS("", "codeList",
                 "http://www.isotc211.org/2005/resources/codelist/codeList.xml#CI_RoleCode");
-        roleCode.setAttributeNS("", "codeListValue", "pointOfContact");
+        roleCode.setAttributeNS("", "codeListValue", role);
     }
-
+    
     /**
      * Transforms the specified CSWRecord back into a MD_Metadata element represented by Node.
      *
@@ -361,9 +362,9 @@ public class CSWRecordTransformer {
 
         CSWResponsibleParty responsibleParty = record.getContact();
         if (responsibleParty != null) {
-            appendChildResponsibleParty(root, nc.getNamespaceURI("gmd"), "contact", responsibleParty);
+            appendChildResponsibleParty(root, nc.getNamespaceURI("gmd"), "contact", "pointOfContact", responsibleParty);
         }
-
+        
         appendChildDate(root, nc.getNamespaceURI("gmd"), "dateStamp", record.getDate());
         appendChildCharacterString(root, nc.getNamespaceURI("gmd"), "metadataStandardName", "ISO 19115:2003/19139");
         appendChildCharacterString(root, nc.getNamespaceURI("gmd"), "metadataStandardVersion", "1.0");
@@ -431,7 +432,13 @@ public class CSWRecordTransformer {
         //DataIdentification -> pointOfContact
         if (responsibleParty != null) {
             appendChildResponsibleParty(mdDataIdentification, nc.getNamespaceURI("gmd"), "pointOfContact",
-                    responsibleParty);
+                    "pointOfContact", responsibleParty);
+        }
+        
+        CSWResponsibleParty fundingParty = record.getFunder();
+        if (fundingParty != null) {
+        	appendChildResponsibleParty(mdDataIdentification, nc.getNamespaceURI("gmd"), "pointOfContact",
+                    "funder", responsibleParty);
         }
 
         //DataIdentification -> descriptiveKeywords
@@ -743,6 +750,17 @@ public class CSWRecordTransformer {
             }
         }
         
+        tempNode = evalXPathNode(this.mdMetadataNode, FUNDEREXPRESSION);
+        if (tempNode != null) {
+            try {
+                CSWResponsibleParty respParty = CSWResponsiblePartyFactory.generateResponsiblePartyFromNode(tempNode);
+                record.setFunder(respParty);
+            } catch (Exception ex) {
+                logger.debug(String.format("Unable to parse funder for serviceName='%1$s' %2$s",
+                        record.getServiceName(), ex));
+            }
+        }
+        
         // Parse access constraints, currently only looking for MD_RestrictionCodes
         tempNodeList = evalXPathNodeList(this.mdMetadataNode, ACCESSCONSTRAINTSRESTRICTIONCODEEXPRESSION);
         List<String> accessConstraintsList = new ArrayList<>();
@@ -970,6 +988,17 @@ public class CSWRecordTransformer {
                     record.setContact(respParty);
                 } catch (Exception ex) {
                     logger.debug(String.format("Unable to parse contact for serviceName='%1$s' %2$s",
+                            record.getServiceName(), ex));
+                }
+            }
+            
+            tempNode = evalXPathNode(mdMetadataNode, FUNDEREXPRESSION);
+            if (tempNode != null) {
+                try {
+                    CSWResponsibleParty fundingParty = CSWResponsiblePartyFactory.generateResponsiblePartyFromNode(tempNode);
+                    record.setFunder(fundingParty);
+                } catch (Exception ex) {
+                    logger.debug(String.format("Unable to parse funder for serviceName='%1$s' %2$s",
                             record.getServiceName(), ex));
                 }
             }
@@ -1254,6 +1283,17 @@ public class CSWRecordTransformer {
                     record.setContact(respParty);
                 } catch (Exception ex) {
                     logger.debug(String.format("Unable to parse contact for serviceName='%1$s' %2$s",
+                            record.getServiceName(), ex));
+                }
+            }
+            
+            tempNode = evalXPathNode(mdMetadataNode, FUNDEREXPRESSION);
+            if (tempNode != null) {
+                try {
+                    CSWResponsibleParty fundingParty = CSWResponsiblePartyFactory.generateResponsiblePartyFromNode(tempNode);
+                    record.setFunder(fundingParty);
+                } catch (Exception ex) {
+                    logger.debug(String.format("Unable to parse funder for serviceName='%1$s' %2$s",
                             record.getServiceName(), ex));
                 }
             }
