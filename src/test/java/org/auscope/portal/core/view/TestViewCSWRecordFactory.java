@@ -79,6 +79,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         expectation.put("name", serviceName);
         expectation.put("adminArea", administrativeArea);
         expectation.put("contactOrg", contactOrg);
+        expectation.put("funderOrg", contactOrg);
         expectation.put("resourceProvider", resourceProvider);
         expectation.put("id", fileId);
         expectation.put("recordInfoUrl", recordInfoUrl);
@@ -142,6 +143,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         childRecordExpectation.put("name", serviceName_1);
         childRecordExpectation.put("adminArea", null);
         childRecordExpectation.put("contactOrg", contactOrg_1);
+        childRecordExpectation.put("funderOrg",  contactOrg_1);
         childRecordExpectation.put("resourceProvider", resourceProvider_1);
         childRecordExpectation.put("id", fileId_1);
         childRecordExpectation.put("recordInfoUrl", recordInfoUrl_1);
@@ -175,6 +177,8 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 allowing(mockCSWRecord).getNoCache();
                 will(returnValue(false));
                 allowing(mockCSWRecord).getContact();
+                will(returnValue(mockResponsibleParty));
+                allowing(mockCSWRecord).getFunder();
                 will(returnValue(mockResponsibleParty));
                 allowing(mockCSWRecord).getResourceProvider();
                 will(returnValue(resourceProvider));
@@ -218,6 +222,8 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 allowing(mockCSWChildRecord1).getNoCache();
                 will(returnValue(false));
                 allowing(mockCSWChildRecord1).getContact();
+                will(returnValue(null));
+                allowing(mockCSWChildRecord1).getFunder();
                 will(returnValue(null));
                 allowing(mockCSWChildRecord1).getResourceProvider();
                 will(returnValue(resourceProvider_1));
@@ -297,6 +303,10 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 will(returnValue(contactOrg));
                 allowing(mockResponsibleParty).getContactInfo();
                 will(returnValue(mockContact));
+                
+                allowing(mockResponsibleParty).getOrganisationName();
+                will(returnValue(contactOrg));
+                
                 oneOf(mockContact).getAddressAdministrativeArea();
                 will(returnValue(administrativeArea));
             }
@@ -348,6 +358,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         expectation.put("name", serviceName);
         expectation.put("adminArea", administrativeArea);
         expectation.put("contactOrg", contactOrg);
+        expectation.put("funderOrg", contactOrg);
         expectation.put("resourceProvider", resourceProvider);
         expectation.put("id", fileId);
         expectation.put("recordInfoUrl", recordInfoUrl);
@@ -379,6 +390,8 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 allowing(mockCSWRecord).getNoCache();
                 will(returnValue(false));
                 allowing(mockCSWRecord).getContact();
+                will(returnValue(mockResponsibleParty));
+                allowing(mockCSWRecord).getFunder();
                 will(returnValue(mockResponsibleParty));
                 allowing(mockCSWRecord).getResourceProvider();
                 will(returnValue(resourceProvider));
@@ -436,11 +449,17 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 will(returnValue(applicationProfile));
 
                 allowing(mockResponsibleParty).getOrganisationName();
-                will(returnValue(contactOrg));
+                will(returnValue(contactOrg));                
                 allowing(mockResponsibleParty).getContactInfo();
                 will(returnValue(mockContact));
+                
+                allowing(mockResponsibleParty).getOrganisationName();
+                will(returnValue(contactOrg));
+                
                 oneOf(mockContact).getAddressAdministrativeArea();
                 will(returnValue(administrativeArea));
+                
+                
             }
         });
 
@@ -497,6 +516,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         expectation.put("name", serviceName);
         expectation.put("adminArea", null);
         expectation.put("contactOrg", "Unknown");
+        expectation.put("funderOrg",  "Unknown");
         expectation.put("resourceProvider", resourceProvider);
         expectation.put("id", fileId);
         expectation.put("recordInfoUrl", recordInfoUrl);
@@ -536,6 +556,8 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 allowing(mockCSWRecord).getNoCache();
                 will(returnValue(false));
                 allowing(mockCSWRecord).getContact();
+                will(returnValue(null));
+                allowing(mockCSWRecord).getFunder();
                 will(returnValue(null));
                 allowing(mockCSWRecord).getResourceProvider();
                 will(returnValue(resourceProvider));
@@ -597,6 +619,9 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 allowing(mockOnlineRes).getApplicationProfile();
                 will(returnValue(applicationProfile));
 
+                allowing(mockResponsibleParty).getOrganisationName();
+                will(returnValue(contactOrg));
+                
                 allowing(mockResponsibleParty).getOrganisationName();
                 will(returnValue(contactOrg));
             }
