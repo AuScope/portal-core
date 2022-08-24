@@ -43,7 +43,7 @@ jobs:
             echo "jacoco.exe missing"
          fi
          chmod +x scripts/coverage_percentage.sh
-         percent=`scripts/coverage_percentage.sh
+         percent=`scripts/coverage_percentage.sh`
          echo "percent="$percent
          echo $percent > coverage/percentage.txt
          echo coverage = $percent
