@@ -36,6 +36,12 @@ jobs:
           mvn test --file pom.xml
       - name: Run coverage parse script
         run: |
+         if [ -e /home/runner/work/portal-core/portal-core/target/jacoco.exec ]
+         then
+            echo "jacoco.exec found"
+         else
+            echo "jacoco.exe missing"
+         fi
          chmod +x scripts/coverage_percentage.sh
          percent=`scripts/coverage_percentage.sh`
          echo $percent > coverage/percentage.txt
