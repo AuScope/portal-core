@@ -36,8 +36,8 @@ jobs:
           mvn test --file pom.xml
       - name: Run coverage parse script
         run: |
-         chmod +x scripts/coverage_percentage_git.sh
-         percent=`scripts/coverage_percentage_git.sh`
+         chmod +x scripts/coverage_percentage.sh
+         percent=`scripts/coverage_percentage.sh`
          echo $percent > coverage/percentage.txt
          echo coverage = $percent
          cat /home/runner/work/portal-core/portal-core/target/site/jacoco/jacoco.csv > coverage/jacoco.csv
