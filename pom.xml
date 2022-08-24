@@ -166,7 +166,7 @@
                 <version>2.18.1</version>
                 <configuration>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                    <argLine>-Dfile.encoding=UTF-8</argLine>
+                    <argLine>@{surefireArgLine} -Xmx1024m -noverify</argLine> 
                 </configuration>
             </plugin>
             <plugin>
@@ -219,6 +219,12 @@
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
+                    <configuration>
+                        <append>true</append>
+                        <destFile>${sonar.jacoco.reportPath}</destFile>
+                        <!-- Sets the VM argument line used when unit tests are run. -->
+                        <propertyName>surefireArgLine</propertyName>
+                    </configuration>
                     </execution>
                     <execution>
                         <id>report</id>
