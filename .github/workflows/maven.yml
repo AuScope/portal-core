@@ -33,7 +33,7 @@ jobs:
       - run: echo "maven step"
       - name: run tests with Maven
         run: |
-          mvn test --file pom.xml
+          mvn verify --file pom.xml
       - name: Run coverage parse script
         run: |
          if [ -e /home/runner/work/portal-core/portal-core/target/jacoco.exec ]
