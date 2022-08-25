@@ -2,7 +2,7 @@
 # This file is then parsed to generate a coverage percentage.
 # readme.MD is then updated with this value to make a coverage badge.
 
-name: Test workflow
+name: coverage
 
 # Controls when the action will run. Workflow runs when manually triggered using the UI
 # or API.
@@ -13,8 +13,8 @@ on:
 # 
   
 jobs:
-  # This workflow contains a single job called "test"
-  test:
+  # This workflow contains a single job called "coverage"
+  coverage:
     runs-on: ubuntu-latest
 
     steps:
