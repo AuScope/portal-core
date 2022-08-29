@@ -1,17 +1,17 @@
-# Workflow that is manually triggered - to generate coverage in the file jacaco.csv. 
+#This workflow will build a Java project with Maven - to generate coverage in the file jacaco.csv. 
 # This file is then parsed to generate a coverage percentage.
 # readme.MD is then updated with this value to make a coverage badge.
 
 name: coverage
-
+      
 # Controls when the action will run. Workflow runs when manually triggered using the UI
 # or API.
 on:
-  workflow_dispatch:
+  push:
+    branches: [ "master" ]
 
 # runs tests and generate Jacoco report
 # 
-  
 jobs:
   # This workflow contains a single job called "coverage"
   coverage:
