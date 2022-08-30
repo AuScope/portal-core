@@ -1,4 +1,4 @@
-[![Coverage](.github/badges/jacoco.svg)](coverage/jacoco.csv)
+[![Coverage](.github/badges/jacoco.svg)](.github/coverage/jacoco.csv)
 
 # Portal-Core Developer's Guide
 
