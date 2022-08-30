@@ -18,9 +18,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Show GitHub context   
+      - name: Show GitHub context   
         env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}   
+           GITHUB_CONTEXT: ${{ toJson(github) }}   
         run: echo "$GITHUB_CONTEXT" ```
       - run: echo "Start step"
       - uses: actions/checkout@v2
