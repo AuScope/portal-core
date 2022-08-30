@@ -24,7 +24,8 @@ jobs:
         run: |
            echo "$GITHUB_CONTEXT"
            echo ${{ github.actor }}
-           echo ${{ github.event.commits.author.email }}
+           echo ${{ github.event.commits }}
+           echo ${{ github.event.commits[0].author.email }}
       - run: echo "Start step"
       - uses: actions/checkout@v2
       - name: Set up JDK 1.17
