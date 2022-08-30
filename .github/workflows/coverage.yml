@@ -21,7 +21,10 @@ jobs:
       - name: Show GitHub context   
         env:
            GITHUB_CONTEXT: ${{ toJson(github) }}   
-        run: echo "$GITHUB_CONTEXT" ```
+        run: |
+           #echo "$GITHUB_CONTEXT"
+           echo {{ github.actor }}
+           echo {{ github.author.email }}
       - run: echo "Start step"
       - uses: actions/checkout@v2
       - name: Set up JDK 1.17
