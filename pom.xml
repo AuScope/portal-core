@@ -166,7 +166,7 @@
                 <version>2.18.1</version>
                 <configuration>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                    <argLine>-Dfile.encoding=UTF-8</argLine>
+                    <argLine>@{surefireArgLine} -Xmx1024m -noverify</argLine> 
                 </configuration>
             </plugin>
             <plugin>
@@ -213,16 +213,21 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.0</version>
+                <version>0.8.8</version>
                 <executions>
                     <execution>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
+                    <configuration>
+                        <append>true</append>
+                        <destFile>${sonar.jacoco.reportPath}</destFile>
+                        <!-- Sets the VM argument line used when unit tests are run. -->
+                        <propertyName>surefireArgLine</propertyName>
+                    </configuration>
                     </execution>
                     <execution>
                         <id>report</id>
-                        <phase>prepare-package</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
