@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -328,7 +327,7 @@ public class CSWCacheService {
      * If an update is already running this function will have no effect
      *
      * The update will occur on a separate thread so this function will return immediately with true if an update has started or false if an update is already
-     * running default to make 3 attemps at 15 seconds interval if fail to connect.
+     * running default to make 3 attempts at 15 seconds interval if fail to connect.
      */
     public boolean updateCache() {
         return updateCache(3, 15000);
@@ -561,12 +560,14 @@ public class CSWCacheService {
          *            will be updated with destination referenced by source's keywords
          */
         private void mergeRecords(CSWServiceItem cswService, CSWRecord destination, CSWRecord source, Map<String, Set<CSWRecord>> cache, Map<String, Set<String>> cacheByEndpoints) {
-            //Merge onlineresources
-            AbstractCSWOnlineResource[] merged = (AbstractCSWOnlineResource[]) ArrayUtils.addAll(
-                    destination.getOnlineResources(), source.getOnlineResources());
+            // Merge OnlineResources using "HashSet" to weed out duplicates
+            Set<AbstractCSWOnlineResource> targetSet = new HashSet<AbstractCSWOnlineResource>();
+            Collections.addAll(targetSet, destination.getOnlineResources());
+            Collections.addAll(targetSet, source.getOnlineResources());
+            AbstractCSWOnlineResource[] merged = targetSet.toArray(new AbstractCSWOnlineResource[targetSet.size()]);
             destination.setOnlineResources(merged);
 
-            //Merge keywords (get rid of duplicates)
+            // Merge keywords (get rid of duplicates)
             Set<String> keywordSet = new HashSet<>();
             keywordSet.addAll(Arrays.asList(destination.getDescriptiveKeywords()));
             keywordSet.addAll(Arrays.asList(source.getDescriptiveKeywords()));
