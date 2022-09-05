@@ -172,4 +172,76 @@ public abstract class AbstractCSWOnlineResource {
     public boolean accept(CSWRecordsFilterVisitor visitor) {
         return visitor.visit(this);
     }
+
+    /**
+     * Override hashCode to support value-based comparison by "HashSet" and similar classes
+     */
+    @Override
+    public int hashCode() {
+        int result = 17;
+        if (getLinkage() != null) {
+            result = 31 * result + getLinkage().hashCode();
+        }
+        if (getProtocol() != null) {
+            result = 31 * result + getProtocol().hashCode();
+        }
+        if (getName() != null) {
+            result = 31 * result + getName().hashCode();
+        }
+        if (getDescription() != null) {
+            result = 31 * result + getDescription().hashCode();
+        }
+        if (getApplicationProfile() != null) {
+            result = 31 * result + getApplicationProfile().hashCode();
+        }
+        if (getVersion() != null) {
+            result = 31 * result + getVersion().hashCode();
+        }
+        if (getProtocolRequest() != null) {
+            result = 31 * result + getProtocolRequest().hashCode();
+        }
+        return result;
+    }
+
+
+    /**
+     * Override equals() to compare two objects by value instead of by reference
+     * @param o object
+     *
+     * @return true if two objects have same value, even if they are not the same object
+     */
+    @Override
+    public boolean equals(Object o) {
+
+        // If the object is compared with itself then return true
+        if (o == this) {
+            return true;
+        }
+
+        // Check if o is an instance of AbstractCSWOnlineResource
+        if (!(o instanceof AbstractCSWOnlineResource)) {
+            return false;
+        }
+
+        // Typecast o to AbstractCSWOnlineResource so that we can access data members
+        AbstractCSWOnlineResource cswOnlineRes = (AbstractCSWOnlineResource) o;
+        boolean result = true;
+        // If both linkages are non-null they can be compared
+        if (getLinkage() != null && cswOnlineRes.getLinkage() != null) {
+            String linkage = getLinkage().toString();
+            result = result && linkage.equals(cswOnlineRes.getLinkage().toString());
+        // If either linkage is non-null then the other will be null - so they aren't the same
+        } else if (getLinkage() != null || cswOnlineRes.getLinkage() != null) {
+            return false;
+        }
+
+        // Compare the values of all the other data members
+        result = result && getProtocol().equals(cswOnlineRes.getProtocol()) &&
+               getName().equals(cswOnlineRes.getName()) &&
+               getDescription().equals(cswOnlineRes.getDescription()) &&
+               getApplicationProfile().equals(cswOnlineRes.getApplicationProfile()) &&
+               getVersion().equals(cswOnlineRes.getVersion()) &&
+               getProtocolRequest().equals(cswOnlineRes.getProtocolRequest());
+        return result;
+    }
 }
