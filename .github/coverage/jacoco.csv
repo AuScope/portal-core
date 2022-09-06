@@ -213,7 +213,7 @@ Portal-Core,org.auscope.portal.core.services,LocalCSWFilterService.FilterRunner,
 Portal-Core,org.auscope.portal.core.services,WMSService,131,195,13,11,27,36,14,6,3,5
 Portal-Core,org.auscope.portal.core.services,WFSGml32Service,22,0,0,0,4,0,2,0,2,0
 Portal-Core,org.auscope.portal.core.services,KnownLayerService,392,323,48,33,82,73,28,21,3,5
-Portal-Core,org.auscope.portal.core.services,CSWCacheService,27,490,10,26,5,105,11,27,1,19
+Portal-Core,org.auscope.portal.core.services,CSWCacheService,29,488,9,27,6,104,10,28,1,19
 Portal-Core,org.auscope.portal.core.services,GoogleCloudMonitoringCachedService,84,19,6,0,19,7,6,3,3,3
 Portal-Core,org.auscope.portal.core.services,PortalServiceException,24,34,0,0,10,14,4,6,4,6
 Portal-Core,org.auscope.portal.core.services,CSWService,46,156,3,9,13,34,3,7,0,4
