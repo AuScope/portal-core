@@ -349,17 +349,24 @@ public class WFSController extends BasePortalController {
     public void transformToHtml(HttpServletRequest request, HttpServletResponse response, @RequestParam("gml") String gml) throws Exception {
         response.setContentType("text/html; charset=utf-8");
         ServletOutputStream outputStream = response.getOutputStream();
-
+        
         // Create request base URL
         StringBuffer requestURL = request.getRequestURL();
         int startPos = requestURL.lastIndexOf("/transformToHtmlPopup.do");
         requestURL.setLength(startPos);
-
+        
+        // If a System portalUrl property has been set, use that instead of the
+        // request URL which may be missing the "/api" path fragment
+        String portalUrl= requestURL.toString();
+        if (System.getProperty("portalUrl") != null) {
+        	portalUrl = System.getProperty("portalUrl");
+        }
+        
         //Make our request, transform and then return it.
         WFSTransformedResponse htmlResponse = null;
         WFSService service = wfsService;
         try {
-            htmlResponse = service.transformToHtml(gml, null, requestURL.toString());
+            htmlResponse = service.transformToHtml(gml, null, portalUrl);
             outputStream.write(htmlResponse.getTransformed().getBytes());
         } catch (Exception ex) {
             log.warn(String.format("Internal error requesting/writing popup for '%1$s': %3$s", gml, ex));
