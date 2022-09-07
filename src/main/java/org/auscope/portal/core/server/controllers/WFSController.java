@@ -355,8 +355,8 @@ public class WFSController extends BasePortalController {
         int startPos = requestURL.lastIndexOf("/transformToHtmlPopup.do");
         requestURL.setLength(startPos);
         
-        // If a System portalUrl property has been set, use that instead of the
-        // request URL which may be missing the "/api" path fragment
+        // If a system portalUrl property has been set, use that instead of the
+        // request URL which may be missing path fragments
         String portalUrl= requestURL.toString();
         if (System.getProperty("portalUrl") != null) {
         	portalUrl = System.getProperty("portalUrl");
