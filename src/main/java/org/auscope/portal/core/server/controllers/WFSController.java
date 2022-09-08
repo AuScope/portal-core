@@ -322,13 +322,21 @@ public class WFSController extends BasePortalController {
         int startPos = requestUrl.indexOf("/wfsFeaturePopup.do");
         requestUrl.setLength(startPos);
         serviceUrl = encodeValue(serviceUrl);
+        
+        // If a system portalUrl property has been set, use that instead of the
+        // request URL which may be missing path fragments
+        String portalUrl = requestUrl.toString();
+        if (System.getProperty("portalUrl") != null) {
+        	portalUrl = System.getProperty("portalUrl");
+        }
+        
         //Make our request, transform and then return it.
         WFSTransformedResponse htmlResponse = null;
         try {
             if (typeName == null) {
-                htmlResponse = wfsService.getWfsResponseAsHtml(serviceUrl, requestUrl.toString());
+                htmlResponse = wfsService.getWfsResponseAsHtml(serviceUrl, portalUrl);
             } else {
-                htmlResponse = wfsService.getWfsResponseAsHtml(serviceUrl, typeName, featureId, requestUrl.toString());
+                htmlResponse = wfsService.getWfsResponseAsHtml(serviceUrl, typeName, featureId, portalUrl);
             }
 
             outputStream.write(htmlResponse.getTransformed().getBytes());
