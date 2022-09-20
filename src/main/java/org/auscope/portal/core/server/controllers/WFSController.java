@@ -6,14 +6,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.http.HttpStatus;
@@ -34,7 +30,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.UriUtils;
 
 /**
  * Acts as a proxy to WFS's
@@ -344,7 +339,8 @@ public class WFSController extends BasePortalController {
             log.warn(String.format("Internal error requesting/writing popup for '%1$s' from '%2$s': %3$s", typeName,
                     serviceUrl, ex));
             log.debug("Exception: ", ex);
-            response.sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            // Create a wrapper for the servlet response as the output stream has already been consumed
+            new HttpServletResponseWrapper(response).sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -379,7 +375,8 @@ public class WFSController extends BasePortalController {
         } catch (Exception ex) {
             log.warn(String.format("Internal error requesting/writing popup for '%1$s': %3$s", gml, ex));
             log.debug("Exception: ", ex);
-            response.sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            // Create a wrapper for the servlet response as the output stream has already been consumed
+            new HttpServletResponseWrapper(response).sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
