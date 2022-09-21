@@ -70,7 +70,7 @@ Portal-Core,org.auscope.portal.core.uifilter.mandatory,UIHiddenParam,11,0,0,0,5,
 Portal-Core,org.auscope.portal.core.uifilter.mandatory,UITextBox,14,0,0,0,6,0,2,0,2,0
 Portal-Core,org.auscope.portal.core.server.controllers,OPeNDAPController,311,0,24,0,66,0,16,0,4,0
 Portal-Core,org.auscope.portal.core.server.controllers,CSWFilterController,186,750,44,66,38,140,40,27,2,10
-Portal-Core,org.auscope.portal.core.server.controllers,WFSController,411,219,9,5,80,52,9,9,4,7
+Portal-Core,org.auscope.portal.core.server.controllers,WFSController,428,223,12,6,84,54,11,9,4,7
 Portal-Core,org.auscope.portal.core.server.controllers,UIStateController,0,74,0,0,0,16,0,3,0,3
 Portal-Core,org.auscope.portal.core.server.controllers,DownloadController,187,220,29,17,59,57,23,8,3,5
 Portal-Core,org.auscope.portal.core.server.controllers,WCSController,167,338,34,26,36,70,22,16,1,7
