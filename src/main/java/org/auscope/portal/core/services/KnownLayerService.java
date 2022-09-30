@@ -41,6 +41,7 @@ public class KnownLayerService {
     private List<KnownLayer> knownLayers;
     private CSWCacheService cswCacheService;
     private WMSService wmsService;
+    private SearchService searchService;
 
     private GoogleCloudMonitoringCachedService stackDriverService = null;
 
@@ -66,7 +67,7 @@ public class KnownLayerService {
     public KnownLayerService(@SuppressWarnings("rawtypes") List knownTypes,
             CSWCacheService cswCacheService, ViewKnownLayerFactory viewFactory,
             ViewCSWRecordFactory viewCSWRecordFactory,
-            ViewGetCapabilitiesFactory viewGetCapabilitiesFactory, WMSService wmsService) {
+            ViewGetCapabilitiesFactory viewGetCapabilitiesFactory, WMSService wmsService, SearchService searchService) {
         this.knownLayers = new ArrayList<>();
         for (Object obj : knownTypes) {
             if (obj instanceof KnownLayer) {
@@ -79,6 +80,7 @@ public class KnownLayerService {
         this.viewCSWRecordFactory = viewCSWRecordFactory;
         this.viewGetCapabilitiesFactory = viewGetCapabilitiesFactory;
         this.wmsService = wmsService;
+        this.searchService = searchService;
     }
 
     /**
@@ -215,6 +217,9 @@ public class KnownLayerService {
             }
         }
 
+        // Index collated layers and records for searching
+        this.searchService.indexKnownLayersAndRecords(knownLayerAndRecords);
+        
         return new KnownLayerGrouping(knownLayerAndRecords, unmappedRecords, originalRecordList);
     }
 

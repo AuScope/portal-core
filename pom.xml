@@ -244,7 +244,7 @@
                     </classpathContainers>
                     <wtpversion>2.0</wtpversion>
                 </configuration>
-	</plugin>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
@@ -310,17 +310,17 @@
     	<groupId>org.springframework.boot</groupId>
     		<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
-	<dependency>
+        <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk</artifactId>
             <version>1.12.196</version>
-	</dependency>
+	    </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.11</version>
         </dependency>
-	<dependency>
+	    <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20201115</version>
@@ -331,7 +331,7 @@
             <artifactId>Saxon-HE</artifactId>
             <version>9.9.1-6</version>
         </dependency>
-	<dependency>
+	    <dependency>
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-core</artifactId>
             <scope>test</scope>
@@ -366,7 +366,7 @@
             </exclusions>
             <scope>runtime</scope>
         </dependency>
-	<dependency>
+	    <dependency>
             <groupId>org.jmock</groupId>
             <artifactId>jmock-junit4</artifactId>
             <version>2.12.0</version>
@@ -377,18 +377,18 @@
               <artifactId>asm</artifactId>
              </exclusion>
             </exclusions>
-	</dependency>
+	    </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <optional>false</optional>
         </dependency>
-	<dependency>
+	    <dependency>
             <groupId>edu.ucar</groupId>
             <artifactId>netcdf4</artifactId>
             <version>5.3.3</version>
             <optional>false</optional>
-	</dependency>
+	    </dependency>
         <dependency>
             <groupId>org.apache.jclouds</groupId>
             <artifactId>jclouds-all</artifactId>
@@ -414,7 +414,7 @@
 	    <artifactId>joda-time</artifactId>
             <version>2.10.9</version>
         </dependency>
-	<dependency>
+	    <dependency>
           <groupId>org.apache.jena</groupId>
           <artifactId>jena-arq</artifactId>
           <version>4.2.0</version>
@@ -424,23 +424,33 @@
                   <artifactId>jcl-over-slf4j</artifactId>
               </exclusion>
           </exclusions>
-	</dependency>
-    <dependency>
-        <groupId>org.xerial</groupId>
-        <artifactId>sqlite-jdbc</artifactId>
-        <version>3.36.0</version>
-     </dependency>
-	<dependency>
+	    </dependency>
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.36.0</version>
+        </dependency>
+	    <dependency>
           <groupId>com.github.openstack4j.core</groupId>
           <artifactId>openstack4j-core</artifactId>
           <version>3.9</version>
         </dependency>
-	<dependency>
+	    <dependency>
             <groupId>com.google.auth</groupId>
             <artifactId>google-auth-library-oauth2-http</artifactId>
             <version>0.23.0</version>
-	</dependency>
-	<dependency>
+	    </dependency>
+	    <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>9.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-queryparser</artifactId>
+            <version>9.3.0</version>
+        </dependency>
+	    <dependency>
             <groupId>com.google.http-client</groupId>
             <artifactId>google-http-client-apache-v2</artifactId>
             <version>1.38.1</version>
