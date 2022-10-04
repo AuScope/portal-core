@@ -4,10 +4,10 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker;
 import org.auscope.portal.core.services.namespaces.ErmlNamespaceContext;
@@ -25,7 +25,6 @@ public class TestHttpServiceCaller extends PortalTestClass {
     private WFSGetFeatureMethodMaker methodMaker;
     private HttpServiceCaller httpServiceCaller;
     private static final String SERVICE_URL = "http://localhost?";
-    private static final String SERVICE_URL_HTTPS = "https://localhost?";
     private static final String FEATURE_TYPE = "gh:SomeType";
     private static final String FILTER_STRING = "<filter></filter>";
 
@@ -58,32 +57,6 @@ public class TestHttpServiceCaller extends PortalTestClass {
 
         Assert.assertEquals(dummyJSONResponse, httpServiceCaller.getMethodResponseAsString(method, client));
 
-    }
-
-    /**
-     * Test that it will redirect after receiving an HTTP Moved Permanently 301 error code
-     * @throws IOException
-     */
-    @Test
-    public void testHttpServiceCallerRequestWithRedirect() throws IOException {
-        HttpPost method = (HttpPost) methodMaker.makePostMethod(SERVICE_URL, FEATURE_TYPE, FILTER_STRING, 0);
-        String dummyJSONResponse = "<xml>This is a test xml response</xml>";
-        final InputStream dummyJSONResponseIS = new ByteArrayInputStream(dummyJSONResponse.getBytes());
-        final HttpClient client = context.mock(HttpClient.class);
-
-        context.checking(new Expectations() {
-            {
-                // The first time execute() is called it will return error 301 
-                oneOf(client).execute(with(any(HttpRequestBase.class)));
-                will(returnValue(new org.auscope.portal.core.server.http.download.MyHttpResponse(dummyJSONResponseIS, 301, SERVICE_URL_HTTPS)));
-
-                // The second time execute() is called it will return a normal 200 code
-                oneOf(client).execute(with(any(HttpRequestBase.class)));
-                will(returnValue(new org.auscope.portal.core.server.http.download.MyHttpResponse(dummyJSONResponseIS)));
-            }
-        });
-
-        Assert.assertEquals(dummyJSONResponse, httpServiceCaller.getMethodResponseAsString(method, client));
     }
 
     /**
