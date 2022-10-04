@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.nio.charset.StandardCharsets;
 
@@ -14,6 +16,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
+import org.apache.http.Header;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.CookieSpecs;
@@ -292,14 +295,36 @@ public class HttpServiceCaller {
             }
         }
 
-        // make the call
+        // Make the call
         HttpResponse response = client.execute(method);
-
         StatusLine statusLine = response.getStatusLine();
         int statusCode = statusLine.getStatusCode();
-        String statusCodeText =statusLine.getReasonPhrase();
+        String statusCodeText = statusLine.getReasonPhrase();
         log.trace("Status code text: '" + statusCodeText + "'");
 
+        // Try again if moved permanently or temporarily
+        // It is assumed that the method and body remain unchanged as per spec.
+        if (statusCode == HttpStatus.SC_MOVED_PERMANENTLY ||  // 301
+            statusCode == 308 ||  // 308 = Permanent Redirect
+            statusCode == HttpStatus.SC_MOVED_TEMPORARILY || // 302
+            statusCode == HttpStatus.SC_TEMPORARY_REDIRECT) { // 307
+            Header location = response.getFirstHeader("Location");
+            String locationStr = location.getValue();
+            try {
+                method.setURI(new URI(locationStr));
+            } catch (URISyntaxException use) {
+                log.error("Bad Location returned in moved/redirect response: " + locationStr);
+                throw new IOException(statusCodeText);
+            }
+            log.trace("Retrying with new URL: " + locationStr);
+            response = client.execute(method);
+            statusLine = response.getStatusLine();
+            statusCode = statusLine.getStatusCode();
+            statusCodeText = statusLine.getReasonPhrase();
+            log.trace("Status code text: '" + statusCodeText + "'");
+        }
+
+        // If it is not a successful status code
         if (statusCode != HttpStatus.SC_OK &&
                 statusCode != HttpStatus.SC_CREATED &&
                 statusCode != HttpStatus.SC_ACCEPTED) {
