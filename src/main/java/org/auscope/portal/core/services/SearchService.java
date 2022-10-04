@@ -29,6 +29,8 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
+import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.view.knownlayer.KnownLayerAndRecords;
 
@@ -206,8 +208,18 @@ public class SearchService {
 			document.add(new Field("date", record.getDate().toString(), TextField.TYPE_STORED));
 		}
 		
-		if(record.getDescriptiveKeywords() != null && record.getDescriptiveKeywords().length > 0) {
-			document.add(new Field("keywords", String.join(",", record.getDescriptiveKeywords()), TextField.TYPE_STORED));
+		for(String keyword: record.getDescriptiveKeywords()) {
+			document.add(new Field("keyword", keyword, TextField.TYPE_STORED));
+		}
+		
+		List<OnlineResourceType> services = new ArrayList<OnlineResourceType>();
+		for(AbstractCSWOnlineResource resource: record.getOnlineResources()) {
+			if(!services.contains(resource.getType())) {
+				services.add(resource.getType());
+			}
+		}
+		for(OnlineResourceType ort: services) {
+			document.add(new Field("service", ort.toString(), TextField.TYPE_STORED));
 		}
 		
 		// TODO: Look at LatLon types (see IndexableField)
