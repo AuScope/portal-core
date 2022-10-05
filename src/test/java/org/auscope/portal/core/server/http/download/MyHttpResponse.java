@@ -5,17 +5,27 @@ import java.util.Locale;
 
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
+import org.apache.http.message.BasicHeaderIterator;
 import org.apache.http.HttpEntity;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.StatusLine;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicStatusLine;
 import org.apache.http.params.HttpParams;
 import org.auscope.portal.core.server.http.HttpClientResponse;
 
+
+/*
+ *
+ * This is a dummy class used for testing purposes only
+ *
+ */
 @SuppressWarnings("deprecation")
 public class MyHttpResponse extends HttpClientResponse {
+    private static final String LOCATION_HDR = "Location";
     InputStream content;
     int statusCode;
+    String location;
 
     public MyHttpResponse(InputStream is) {
         super(null, null);
@@ -27,6 +37,13 @@ public class MyHttpResponse extends HttpClientResponse {
         super(null, null);
         this.content = is;
         this.statusCode = statusCode;
+    }
+
+    public MyHttpResponse(InputStream is, int statusCode, String location) {
+        super(null, null);
+        this.content = is;
+        this.statusCode = statusCode;
+        this.location = location;
     }
 
     @Override
@@ -46,61 +63,95 @@ public class MyHttpResponse extends HttpClientResponse {
 
     @Override
     public Header getFirstHeader(String name) {
+        if (name.equals("Location")) {
+            return new BasicHeader(LOCATION_HDR, this.location);
+        }
         return null;
     }
 
     @Override
     public Header getLastHeader(String name) {
+        if (name.equals("Location")) {
+            return new BasicHeader(LOCATION_HDR, this.location);
+        }
         return null;
     }
 
     @Override
     public Header[] getAllHeaders() {
+        if (this.location != null) {
+            Header[] headerArr = {new BasicHeader(LOCATION_HDR, this.location)};
+            return headerArr;
+        }
         return null;
     }
 
     @Override
     public void addHeader(Header header) {
-        // empty
+        if (header.getName().equals(LOCATION_HDR)) {
+            this.location = header.getValue();
+        }
     }
 
     @Override
     public void addHeader(String name, String value) {
-        // empty
+        if (name.equals(LOCATION_HDR)) {
+            this.location = value;
+        }
     }
 
     @Override
     public void setHeader(Header header) {
-        // empty
+        if (header.getName().equals(LOCATION_HDR)) {
+            this.location = header.getValue();
+        }
     }
 
     @Override
     public void setHeader(String name, String value) {
-        // empty
+        if (name.equals(LOCATION_HDR)) {
+            this.location = value;
+        }
     }
 
     @Override
     public void setHeaders(Header[] headers) {
-        // empty
+        for (Header header: headers) {
+            if (header.getName().equals(LOCATION_HDR)) {
+                this.location = header.getValue();
+            }
+        }
     }
 
     @Override
     public void removeHeader(Header header) {
-        // empty
+        if (header.getName().equals(LOCATION_HDR)) {
+            this.location = null;
+        }
     }
 
     @Override
     public void removeHeaders(String name) {
-        // empty
+        if (name.equals(LOCATION_HDR)) {
+            this.location = null;
+        }
     }
 
     @Override
     public HeaderIterator headerIterator() {
-        return null;
+        if (this.location == null) {
+            return null;
+        }
+        Header[] headers=new Header[] {new BasicHeader(LOCATION_HDR,this.location)};
+        return new BasicHeaderIterator(headers,null);
     }
 
     @Override
     public HeaderIterator headerIterator(String name) {
+        if (name.equals(LOCATION_HDR)) {
+            Header[] headers=new Header[] {new BasicHeader(LOCATION_HDR,this.location)};
+            return new BasicHeaderIterator(headers,null);
+        }
         return null;
     }
 
