@@ -24,7 +24,9 @@ public class TestHttpServiceCaller extends PortalTestClass {
 
     private WFSGetFeatureMethodMaker methodMaker;
     private HttpServiceCaller httpServiceCaller;
+    private HttpServiceCaller httpServiceCallerNoSSLChk;
     private static final String SERVICE_URL = "http://localhost?";
+    private static final String SERVICE_URL_HTTPS = "https://localhost?";
     private static final String FEATURE_TYPE = "gh:SomeType";
     private static final String FILTER_STRING = "<filter></filter>";
 
@@ -32,13 +34,14 @@ public class TestHttpServiceCaller extends PortalTestClass {
     public void setUp() {
 
         httpServiceCaller = new HttpServiceCaller(9000);
+        httpServiceCallerNoSSLChk = new HttpServiceCaller(9000, true);
         methodMaker = new WFSGetFeatureMethodMaker();
         methodMaker.setNamespaces(new ErmlNamespaceContext());
     }
 
     /**
      * Test a normal service successful call
-     * @throws IOException 
+     * @throws IOException
      */
     @Test
     public void testHttpServiceCallerRequest() throws IOException {
@@ -56,7 +59,28 @@ public class TestHttpServiceCaller extends PortalTestClass {
         });
 
         Assert.assertEquals(dummyJSONResponse, httpServiceCaller.getMethodResponseAsString(method, client));
+    }
 
+    /**
+     * Test a normal HTTPS service call, without SSL cert checks
+     * @throws IOException
+     */
+    @Test
+    public void testHttpServiceCallerRequestNoSSLChk() throws IOException {
+        HttpPost method = (HttpPost) methodMaker.makePostMethod(SERVICE_URL_HTTPS, FEATURE_TYPE, FILTER_STRING, 0);
+        String dummyJSONResponse = "<xml>This is a test xml response</xml>";
+        final InputStream dummyJSONResponseIS = new ByteArrayInputStream(dummyJSONResponse.getBytes());
+
+        final HttpClient client = context.mock(HttpClient.class);
+
+        context.checking(new Expectations() {
+            {
+                oneOf(client).execute(with(any(HttpRequestBase.class)));
+                will(returnValue(new org.auscope.portal.core.server.http.download.MyHttpResponse(dummyJSONResponseIS)));
+            }
+        });
+
+        Assert.assertEquals(dummyJSONResponse, httpServiceCallerNoSSLChk.getMethodResponseAsString(method, client));
     }
 
     /**
