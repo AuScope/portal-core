@@ -51,15 +51,6 @@ public class CSWCacheService {
 
 
     /**
-     * Any records containing keywords prefixed by this value we be merged with other records containing the same keyword.
-     *
-     * This is AuScope's workaround for a lack of functionality for supporting related or associated services.
-     *
-     * See also - https://jira.csiro.au/browse/SISS-1292
-     */
-    public static final String KEYWORD_MERGE_PREFIX = "association:";
-
-    /**
      * The frequency in which the cache updates (in milliseconds).
      */
     public static final long CACHE_UPDATE_FREQUENCY_MS = 1000L * 60L * 5L; //Set to 5 minutes
