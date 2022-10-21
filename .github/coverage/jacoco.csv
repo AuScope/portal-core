@@ -52,7 +52,7 @@ Portal-Core,org.auscope.portal.core.services.responses.wcs,SimpleTimePosition,0,
 Portal-Core,org.auscope.portal.core.services.responses.wcs,RectifiedGrid,89,244,0,8,17,63,1,21,1,17
 Portal-Core,org.auscope.portal.core.services.responses.wcs,AxisDescriptionImpl,4,79,1,3,1,16,1,6,0,5
 Portal-Core,org.auscope.portal.core.services.csw.custom,CustomRegistry,78,0,8,0,23,0,15,0,11,0
-Portal-Core,org.auscope.portal.core.server.http,HttpServiceCaller,218,140,13,15,50,35,21,9,12,4
+Portal-Core,org.auscope.portal.core.server.http,HttpServiceCaller,241,163,15,15,57,41,22,10,12,5
 Portal-Core,org.auscope.portal.core.server.http,DistributedHTTPServiceCaller,14,172,1,25,4,42,2,19,1,7
 Portal-Core,org.auscope.portal.core.server.http,HttpClientInputStream,26,31,1,1,8,10,6,5,5,5
 Portal-Core,org.auscope.portal.core.server.http,DistributedHTTPServiceCallerException,0,4,0,0,0,2,0,1,0,1
@@ -173,8 +173,8 @@ Portal-Core,org.auscope.portal.core.services.responses.csw,CSWGetDomainResponse.
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWRecordTransformerFactory,9,14,0,0,2,3,2,2,2,2
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWOnlineResourceFactory,3,109,2,4,1,28,3,3,1,2
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWTemporalExtent,26,0,0,0,11,0,6,0,6,0
-Portal-Core,org.auscope.portal.core.services.responses.csw,CSWGetCapabilities.CSWGetCapabilitiesNamespace,0,18,0,0,0,4,0,1,0,1
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWGetRecordResponse,0,160,3,5,0,36,3,7,0,6
+Portal-Core,org.auscope.portal.core.services.responses.csw,CSWGetCapabilities.CSWGetCapabilitiesNamespace,0,18,0,0,0,4,0,1,0,1
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWContact,3,83,0,0,1,28,1,19,1,19
 Portal-Core,org.auscope.portal.core.services.responses.csw,AbstractCSWOnlineResource.OnlineResourceType,0,75,0,0,0,13,0,1,0,1
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWRecordTransformer.Scope,0,15,0,0,0,2,0,1,0,1
