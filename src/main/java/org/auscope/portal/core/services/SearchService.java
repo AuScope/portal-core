@@ -217,13 +217,11 @@ public class SearchService {
 	 * @return the escaped query string
 	 */
 	private String escapeQueryText(String queryText) {
-		System.out.println("Escaping: " + queryText);
 		for(String c: ESCAPE_CHARACTERS) {
 			if(queryText.contains(c)) {
 				queryText = queryText.replace(c, "\\" + c);
 			}
 		}
-		System.out.println("Escaped: " + queryText);
 		return queryText;
 	}
 	
