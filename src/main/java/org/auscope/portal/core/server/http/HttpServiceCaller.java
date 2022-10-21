@@ -8,6 +8,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -24,6 +27,9 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.TrustAllStrategy;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
@@ -40,9 +46,27 @@ public class HttpServiceCaller {
     private final Log log = LogFactory.getLog(getClass());
     private HttpClientConnectionManager connectionManager;
     private int connectionTimeOut;
+    private boolean noSSLCheck = false;
 
+    /**
+     * Default constructor
+     *
+     * @param connectionTimeout  connection timeout (milliseconds)
+     */
     public HttpServiceCaller(int connectionTimeOut) {
         this.connectionTimeOut = connectionTimeOut;
+        this.noSSLCheck = false;
+    }
+
+    /**
+     * Constructor
+     *
+     * @param connectionTimeout  connection timeout (milliseconds)
+     * @param noSSLCheck boolean, set to true to ignore SSL Cert errors - INTERNAL USE ONLY
+     */
+    public HttpServiceCaller(int connectionTimeOut, boolean noSSLCheck) {
+        this.connectionTimeOut = connectionTimeOut;
+        this.noSSLCheck = noSSLCheck;
     }
 
     /**
@@ -77,6 +101,18 @@ public class HttpServiceCaller {
 
         if (credentialsProvider != null) {
             builder.setDefaultCredentialsProvider(credentialsProvider);
+        }
+
+        // Disable SSL Cert checking, for locally signed SSL certs
+        if (this.noSSLCheck) {
+            try {
+                builder
+                    .setSSLContext(new SSLContextBuilder().loadTrustMaterial(null, TrustAllStrategy.INSTANCE).build())
+                    .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE);
+            } catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException e1) {
+                // Log the error
+                log.error("Error setting SSL context: " + e1.getMessage());
+            }
         }
 
         return builder.build();
