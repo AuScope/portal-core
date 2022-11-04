@@ -41,7 +41,7 @@ public class SearchController extends BasePortalController {
 			@RequestParam("searchFields") String[] searchFields, @RequestParam("query") String query, @RequestParam(value="spatialRelation", required=false) String spatialRelation,
 			@RequestParam(value="southBoundLatitude", required=false) Double southBoundLatitude, @RequestParam(value="westBoundLongitude", required=false) Double westBoundLongitude,
 			@RequestParam(value="eastBoundLongitude", required=false) Double eastBoundLongitude, @RequestParam(value="northBoundLatitude", required=false) Double northBoundLatitude) {
-		ArrayList<String> idResults = new ArrayList<String>();
+		List<String> idResults = new ArrayList<String>();
 		try {
 			List<Document> docs = this.searchService.searchIndex(searchFields, query, spatialRelation, southBoundLatitude, westBoundLongitude, northBoundLatitude, eastBoundLongitude);			
 			for(Document d: docs) {
@@ -56,6 +56,25 @@ public class SearchController extends BasePortalController {
 			return generateJSONResponseMAV(false, null, ioe.getLocalizedMessage());
 		}
 		return generateHTMLResponseMAV(true, idResults.toArray(), null);
+	}
+	
+	/**
+	 * Suggest terms from the index
+	 *
+	 * @param term the term used to suggest further terms
+	 * @param num the number of suggested terms to return
+	 * @return a list of suggested terms
+	 * @throws IOException
+	 */
+	@RequestMapping("/suggestTerms.do")
+	public ModelAndView suggestTerms(@RequestParam("term") String term, @RequestParam("num") int num) {
+		List<String> suggestions = new ArrayList<String>();
+		try {
+			suggestions = this.searchService.suggestTerms(term, num);
+		} catch(IOException e) {
+			return generateJSONResponseMAV(false, null, e.getLocalizedMessage());
+		}
+		return generateJSONResponseMAV(true, suggestions, "");
 	}
 
 	/**

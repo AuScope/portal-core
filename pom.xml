@@ -443,12 +443,17 @@
 	    <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-core</artifactId>
-            <version>9.3.0</version>
+            <version>9.4.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-queryparser</artifactId>
-            <version>9.3.0</version>
+            <version>9.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-suggest</artifactId>
+            <version>9.4.1</version>
         </dependency>
 	    <dependency>
             <groupId>com.google.http-client</groupId>

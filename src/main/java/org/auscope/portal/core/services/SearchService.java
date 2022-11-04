@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -31,6 +32,9 @@ import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.spell.LuceneDictionary;
+import org.apache.lucene.search.suggest.Lookup;
+import org.apache.lucene.search.suggest.analyzing.AnalyzingSuggester;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
@@ -54,10 +58,26 @@ public class SearchService {
 	private final Log logger = LogFactory.getLog(getClass());
 	private String localCacheDir;
 	private StandardAnalyzer analyzer = new StandardAnalyzer();
+	private AnalyzingSuggester analyzingSuggester;
 	
 	
 	public SearchService(String localCacheDir) {
 		this.localCacheDir = localCacheDir;
+	}
+	
+	/**
+	 * 
+	 * @param autocompleteDirectory
+	 * @param autocompleteAnalyzer
+	 * @throws IOException
+	 */
+	public void buildAnalyzingSuggester(Directory autocompleteDirectory, Analyzer autocompleteAnalyzer)
+	        throws IOException {
+	    DirectoryReader sourceReader = DirectoryReader.open(autocompleteDirectory);
+	    LuceneDictionary dict = new LuceneDictionary(sourceReader, "description");
+	    analyzingSuggester = new AnalyzingSuggester(autocompleteDirectory, "autocomplete_temp",
+	            autocompleteAnalyzer);
+	    analyzingSuggester.build(dict);
 	}
 	
 	/**
@@ -111,6 +131,9 @@ public class SearchService {
 				}
 			}
 			iwriter.close();
+			
+			// Build the analyzing suggester
+			buildAnalyzingSuggester(directory, analyzer);
 		} catch(ParseException pe) {
 			logger.error("Parse error indexing known layers for search: " + pe.getLocalizedMessage());
 		} catch(IOException ioe) {
@@ -313,6 +336,20 @@ public class SearchService {
 	    	}
 	    }
 	    return terms;
+	}
+	
+	/**
+	 * Suggest terms from the index
+	 *
+	 * @param term the term used to suggest further terms
+	 * @param num the number of suggested terms to return
+	 * @return a list of suggested terms
+	 * @throws IOException
+	 */
+	public List<String> suggestTerms(String term, int num) throws IOException {
+	    List<Lookup.LookupResult> lookup = analyzingSuggester.lookup(term, false, num);
+	    List<String> suggestions = lookup.stream().map(a -> a.key.toString()).collect(Collectors.toList());
+	    return suggestions;
 	}
 	
 }
