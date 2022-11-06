@@ -48,6 +48,7 @@ public class TestKnownLayerService extends PortalTestClass {
     @SuppressWarnings("rawtypes")
     private ArrayList mockKnownLayerList;
     private CSWCacheService mockCacheService;
+    private SearchService mockSearchService;
     private KnownLayerService knownLayerService;
 
     /**
@@ -69,6 +70,10 @@ public class TestKnownLayerService extends PortalTestClass {
         cswRecordList.add(context.mock(CSWRecord.class, "mockRecord1"));
         cswRecordList.add(context.mock(CSWRecord.class, "mockRecord2"));
         cswRecordList.add(context.mock(CSWRecord.class, "mockRecord3"));
+        
+        mockCacheService = context.mock(CSWCacheService.class);
+        mockSearchService = context.mock(SearchService.class);
+        knownLayerService = new KnownLayerService(mockKnownLayerList, mockCacheService, null, null, null, null, mockSearchService);
 
         context.checking(new Expectations() {
             {
@@ -95,12 +100,9 @@ public class TestKnownLayerService extends PortalTestClass {
                 allowing(cswRecordList.get(2)).getOnlineResources();
                 will(returnValue(null));
                 allowing(cswRecordList.get(0)).getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType.WMS);
-
             }
         });
 
-        mockCacheService = context.mock(CSWCacheService.class);
-        knownLayerService = new KnownLayerService(mockKnownLayerList, mockCacheService, null, null, null, null);
     }
 
     @After
@@ -171,6 +173,8 @@ public class TestKnownLayerService extends PortalTestClass {
                 will(returnValue(true));
                 allowing(cswRecordList.get(2)).hasNamedOnlineResources();
                 will(returnValue(true));
+                
+                ignoring(mockSearchService);
             }
         });
 
@@ -236,6 +240,8 @@ public class TestKnownLayerService extends PortalTestClass {
                 will(returnValue(true));
                 allowing(cswRecordList.get(2)).hasNamedOnlineResources();
                 will(returnValue(true));
+                
+                ignoring(mockSearchService);
             }
         });
 
@@ -288,6 +294,8 @@ public class TestKnownLayerService extends PortalTestClass {
                 will(returnValue(false));
                 allowing(cswRecordList.get(2)).hasGeographicElements();
                 will(returnValue(true));
+                
+                ignoring(mockSearchService);
             }
         });
 
