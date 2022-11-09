@@ -41,7 +41,9 @@ public class TestViewKnownLayerFactory extends PortalTestClass {
         //add our optional params
         knownLayer.setIconUrl("http://icon.url.test");
         knownLayer.setIconSize(d1);
-        knownLayer.setIconAnchor(p1);       knownLayer.setStackdriverServiceGroup("EarthResourcesLayers");
+        knownLayer.setIconAnchor(p1);
+        knownLayer.setStackdriverServiceGroup("EarthResourcesLayers");
+        knownLayer.setSupportsCsvDownloads(true);
 
         //Test with all optional params
         model = factory.toView(knownLayer);
@@ -62,5 +64,6 @@ public class TestViewKnownLayerFactory extends PortalTestClass {
         Assert.assertEquals(height, (Double) iconSize.get("height"), 0.01);
 
         Assert.assertEquals("EarthResourcesLayers", model.get("stackdriverServiceGroup"));
+        Assert.assertEquals(true, (Boolean) model.get("supportsCsvDownloads"));
     }
 }

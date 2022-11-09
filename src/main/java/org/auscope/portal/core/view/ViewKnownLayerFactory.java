@@ -78,6 +78,9 @@ public class ViewKnownLayerFactory {
         if (k.getStackdriverServiceGroup() != null) {
             obj.put("stackdriverServiceGroup", k.getStackdriverServiceGroup());
         }
+        if (k.getSupportsCsvDownloads()) {
+            obj.put("supportsCsvDownloads", k.getSupportsCsvDownloads());
+        }
 
         return obj;
     }
