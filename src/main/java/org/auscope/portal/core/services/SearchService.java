@@ -52,8 +52,6 @@ public class SearchService {
 	static final int NUMBER_OF_RECORDS_TO_SEARCH = 1000;
 	// Limit unique terms
 	static final int NUMBER_OF_UNIQUE_TERMS = 10000;
-	// Characters that need to be escaped for Lucene search (omitted '?', '*' and '"' for wildcards/phrases)
-	static final String[] ESCAPE_CHARACTERS= {"\\", "+", "-", "&", "|", "!", "(", ")", "{", "}", "[", "]", "^", "~", ":", "/"};
 	
 	private final Log logger = LogFactory.getLog(getClass());
 	private String localCacheDir;
@@ -234,21 +232,6 @@ public class SearchService {
 	}
 	
 	/**
-	 * Escape query text strings by adding a '\' character before special characters
-	 * 
-	 * @param queryText the query text
-	 * @return the escaped query string
-	 */
-	private String escapeQueryText(String queryText) {
-		for(String c: ESCAPE_CHARACTERS) {
-			if(queryText.contains(c)) {
-				queryText = queryText.replace(c, "\\" + c);
-			}
-		}
-		return queryText;
-	}
-	
-	/**
 	 * Search the index including spatial information
 	 * 
 	 * @param searchFields the fields of the index to search
@@ -271,7 +254,7 @@ public class SearchService {
 		// Text field query
 		Query textQuery = null;
 		if(!StringUtils.isEmpty(queryString)) {
-			textQuery = new MultiFieldQueryParser(searchFields, analyzer).parse(escapeQueryText(queryString));
+			textQuery = new MultiFieldQueryParser(searchFields, analyzer).parse(queryString);
 		}
 	    
 	    // Spatial query (if requested)
