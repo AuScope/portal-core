@@ -227,7 +227,7 @@ Portal-Core,org.auscope.portal.core.services,CSWFilterService,203,360,10,18,40,6
 Portal-Core,org.auscope.portal.core.services,CSWCacheService.CSWCacheUpdateThread,114,829,13,65,24,169,13,34,0,8
 Portal-Core,org.auscope.portal.core.services,SISSVoc2Service,0,151,2,4,0,35,2,4,0,3
 Portal-Core,org.auscope.portal.core.services,VocabularyCacheService.VocabularyCacheUpdateThread,0,121,0,6,0,33,0,8,0,5
-Portal-Core,org.auscope.portal.core.services,SearchService,818,68,97,0,140,1,59,1,10,1
+Portal-Core,org.auscope.portal.core.services,SearchService,788,0,93,0,136,0,56,0,9,0
 Portal-Core,org.auscope.portal.core.services,GoogleCloudMonitoringCachedService.CacheEntry,51,0,0,0,21,0,8,0,8,0
 Portal-Core,org.auscope.portal.core.services,VocabularyFilterService,8,345,8,24,2,85,8,21,0,13
 Portal-Core,org.auscope.portal.core.services,WFSService,6,137,1,1,1,27,1,9,0,9
