@@ -85,7 +85,6 @@ public class SearchService {
 	 */
 	public void indexKnownLayersAndRecords(List<KnownLayerAndRecords> knownLayersAndRecords) {
 		logger.info("Indexing collated layers and records for search");
-		Analyzer analyzer = new StandardAnalyzer();
 		try {
 			Path indexPath = new File(localCacheDir).toPath();
 		    Directory directory = FSDirectory.open(indexPath);
@@ -220,7 +219,11 @@ public class SearchService {
 	 * @return true if documents are equal, false if not
 	 */
 	private boolean documentsAreEqual(Document docA, Document docB) {
-		// Iterate first document's fields
+		// Documents must have the same number of fields
+		if (docA.getFields().size() != docB.getFields().size()) {
+			return false;
+		}
+		// Iterate first document's fields and compare to second's
 		List<IndexableField> fields = docA.getFields();
         for (IndexableField field : fields) {
         	if(docA.get(field.name()) != null && docB.get(field.name()) != null &&
