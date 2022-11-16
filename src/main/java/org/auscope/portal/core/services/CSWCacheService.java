@@ -557,6 +557,20 @@ public class CSWCacheService {
             Collections.addAll(targetSet, source.getOnlineResources());
             AbstractCSWOnlineResource[] merged = targetSet.toArray(new AbstractCSWOnlineResource[targetSet.size()]);
             destination.setOnlineResources(merged);
+            
+            // Merge constraints, accessConstraints and useLimitConstraints (no dupes)
+            Set<String> constraintSet = new HashSet<>();
+            constraintSet.addAll(Arrays.asList(destination.getConstraints()));
+            constraintSet.addAll(Arrays.asList(source.getConstraints()));
+            destination.setConstraints(constraintSet.toArray(new String[constraintSet.size()]));
+            constraintSet = new HashSet<>();
+            constraintSet.addAll(Arrays.asList(destination.getAccessConstraints()));
+            constraintSet.addAll(Arrays.asList(source.getAccessConstraints()));
+            destination.setAccessConstraints(constraintSet.toArray(new String[constraintSet.size()]));
+            constraintSet = new HashSet<>();
+            constraintSet.addAll(Arrays.asList(destination.getUseLimitConstraints()));
+            constraintSet.addAll(Arrays.asList(source.getUseLimitConstraints()));
+            destination.setUseLimitConstraints(constraintSet.toArray(new String[constraintSet.size()]));
 
             // Merge keywords (get rid of duplicates)
             Set<String> keywordSet = new HashSet<>();
@@ -615,6 +629,14 @@ public class CSWCacheService {
 
                             // Loop through existing records
                             for (CSWRecord existingRec : newRecordCache) {
+                            	
+                            	/*
+                            	if (record.getLayerName().equals("gsmlp:BoreholeView") && existingRec.getLayerName().equals("gsmlp:BoreholeView") &&
+                            			(record.getFileIdentifier().equals("20f0650cc4cb09a1aaa06b7077c584130f9a502e") || record.getFileIdentifier().equals("49a7dce44a3520e465a5ce103941791908de692c"))) {
+                            		System.out.println("CSWCacheServiuce: SA Borehole: " + existingRec.getFileIdentifier());
+                            	}
+                            	*/
+                            	
                                 // Loop through online resources of each record
                                 if (StringUtils.isEmpty(existingRec.getLayerName())) {
                                     continue;
@@ -678,12 +700,12 @@ public class CSWCacheService {
 
                         //If the record was NOT merged into an existing record we then update the record cache
                         if (!recordMerged) {
-                            //Update the keyword cache
+                            // Update the keyword cache
                             for (String keyword : record.getDescriptiveKeywords()) {
                                 addToKeywordCache(this.endpoint, keyword, record, newKeywordCache, newKeywordByEndpointCache);
                             }
 
-                            //Add record to record list
+                            // Add record to record list
                             newRecordCache.add(record);
                         }
                     }
