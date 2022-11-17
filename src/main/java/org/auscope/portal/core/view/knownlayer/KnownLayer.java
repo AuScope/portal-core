@@ -84,6 +84,10 @@ public class KnownLayer implements Serializable {
 
     /** If specified, the service group to match the check_id in Google Monitoring uptime checks */
 	private String stackdriverServiceGroup;
+
+    /** If true supports CSV downloads of WFS features */
+    private Boolean supportsCsvDownloads;
+
     /**
      * Creates a new KnownLayer
      *
@@ -95,6 +99,7 @@ public class KnownLayer implements Serializable {
     public KnownLayer(String id, KnownLayerSelector knownLayerSelector) {
         this.knownLayerSelector = knownLayerSelector;
         this.id = id;
+        this.supportsCsvDownloads = false;
     }
 
     /**
@@ -402,6 +407,23 @@ public class KnownLayer implements Serializable {
     	return this.stackdriverServiceGroup;
     }
 
+    /**
+     * Gets a boolean indicating if it supports CSV downloads of WFS features
+     *
+     * @return boolean flag
+     */
+    public Boolean getSupportsCsvDownloads() {
+        return this.supportsCsvDownloads;
+    }
+
+    /**
+     * Sets a boolean indicating if it supports CSV downloads of WFS features
+     *
+     */
+    public void setSupportsCsvDownloads(Boolean csvFlag) {
+        this.supportsCsvDownloads = csvFlag;
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
@@ -412,7 +434,8 @@ public class KnownLayer implements Serializable {
                 + ", proxyStyleUrl=" + proxyStyleUrl + ", proxyDownloadUrl=" + proxyDownloadUrl
                 + ", knownLayerSelector=" + knownLayerSelector + ", iconUrl=" + iconUrl + ", polygonColor="
                 + polygonColor + ", iconAnchor=" + iconAnchor + ", iconSize=" + iconSize + ", styles=" + mapStyles +", feature_count="
-                + feature_count + ", order=" + order + ", singleTile=" + singleTile + ", staticLegendUrl=" + staticLegendUrl + "]";
+                + feature_count + ", order=" + order + ", singleTile=" + singleTile + ", staticLegendUrl=" + staticLegendUrl
+                + ", supportsCsvDownloads=" + supportsCsvDownloads + ']';
     }
 
     public FilterCollection getFilterCollection() {
