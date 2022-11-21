@@ -182,7 +182,7 @@ Portal-Core,org.auscope.portal.core.services.responses.csw,CSWRecordTransformer.
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWGeographicBoundingBox,16,290,1,37,4,53,1,33,0,15
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWRecordTransformer.GeoServerHelper,355,416,57,31,72,77,41,6,0,3
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWRecordTransformer.PyCSWHelper,357,508,59,41,73,90,43,12,0,5
-Portal-Core,org.auscope.portal.core.services.responses.csw,CSWRecord,72,519,13,35,21,140,16,75,8,59
+Portal-Core,org.auscope.portal.core.services.responses.csw,CSWRecord,68,523,13,35,19,142,15,76,7,60
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWOnlineResourceImpl,0,83,0,4,0,29,0,12,0,10
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWResponsibleParty,0,41,0,0,0,14,0,10,0,10
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWRecordTransformer,905,1294,72,104,146,246,65,43,6,14
@@ -224,7 +224,7 @@ Portal-Core,org.auscope.portal.core.services,VocabularyService,51,225,7,11,16,65
 Portal-Core,org.auscope.portal.core.services,SISSVoc3Service,6,203,1,9,2,57,3,11,2,7
 Portal-Core,org.auscope.portal.core.services,GoogleCloudMonitoringService,190,127,3,7,52,32,10,7,8,4
 Portal-Core,org.auscope.portal.core.services,CSWFilterService,203,360,10,18,40,66,11,17,5,9
-Portal-Core,org.auscope.portal.core.services,CSWCacheService.CSWCacheUpdateThread,114,829,13,65,24,169,13,34,0,8
+Portal-Core,org.auscope.portal.core.services,CSWCacheService.CSWCacheUpdateThread,114,901,13,65,24,181,13,34,0,8
 Portal-Core,org.auscope.portal.core.services,SISSVoc2Service,0,151,2,4,0,35,2,4,0,3
 Portal-Core,org.auscope.portal.core.services,VocabularyCacheService.VocabularyCacheUpdateThread,0,121,0,6,0,33,0,8,0,5
 Portal-Core,org.auscope.portal.core.services,SearchService,796,0,95,0,137,0,57,0,9,0
