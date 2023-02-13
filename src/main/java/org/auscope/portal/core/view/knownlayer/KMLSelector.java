@@ -4,29 +4,21 @@ import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 /**
- * Used for selecting individual KMLs
+ * Used for selecting individual KML layers using the name of the layer
  *
  */
 public class KMLSelector implements KnownLayerSelector {
 
     /** The URL of the KML file to be displayed */
-    private URL serviceEndpoint;
+    private String layerName;
 
     /**
      * @param serviceEndpoint
      *            The serviceEndpoint that identifies which KML this KnownLayer is identifying
      */
-    public KMLSelector(String serviceEndpoint) throws MalformedURLException {
-        try {
-            this.serviceEndpoint = new URL(serviceEndpoint);
-        } catch (MalformedURLException muex) {
-            
-        }
-        
+    public KMLSelector(String layerName) {
+            this.layerName = layerName;
     }
 
     /**
@@ -34,8 +26,8 @@ public class KMLSelector implements KnownLayerSelector {
      *
      * @return the service end point
      */
-    public URL getServiceEndpoint() {
-        return this.serviceEndpoint;
+    public String getLayerName() {
+        return this.layerName;
     }
 
     /**
@@ -44,8 +36,8 @@ public class KMLSelector implements KnownLayerSelector {
      * @param layerName
      *            the service end point to set
      */
-    public void setServiceEndpoint(String serviceEndpoint) throws MalformedURLException {
-        this.serviceEndpoint = new URL(serviceEndpoint);
+    public void setLayerName(String layerName) {
+        this.layerName = layerName;
     }
 
 
@@ -58,12 +50,11 @@ public class KMLSelector implements KnownLayerSelector {
         AbstractCSWOnlineResource[] onlineResources = record.getOnlineResourcesByType(OnlineResourceType.KML);
         if (onlineResources.length > 0) {
             for (AbstractCSWOnlineResource onlineResource : onlineResources) {
-                if (serviceEndpoint.sameFile(onlineResource.getLinkage())) {
+                if (this.layerName.equals(onlineResource.getName())) {
                     return RelationType.Belongs;
                 }
             }
         }
-
         return RelationType.NotRelated;
     }
 
@@ -72,6 +63,6 @@ public class KMLSelector implements KnownLayerSelector {
      */
     @Override
     public String toString() {
-        return "KMLSelector [serviceEndpoint=" + this.serviceEndpoint + "]";
+        return "KMLSelector [layerName=" + this.layerName + "]";
     }
 }
