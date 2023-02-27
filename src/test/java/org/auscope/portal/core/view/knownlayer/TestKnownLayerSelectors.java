@@ -82,6 +82,20 @@ public class TestKnownLayerSelectors extends PortalTestClass {
         };
         rec = new CSWRecord("name6", "id6", "", "", resources, null);
         recordList.add(rec);
+
+        // The seventh record is a KML
+        resources = new CSWOnlineResourceImpl[] {
+            new CSWOnlineResourceImpl(new URL("https://test.url4/blah.kml"), "KML", "kml1","")
+        };
+        rec = new CSWRecord("name7", "id7", "", "", resources, null);
+        recordList.add(rec);
+
+        // The eighth record is a KML
+        resources = new CSWOnlineResourceImpl[] {
+            new CSWOnlineResourceImpl(new URL("https://test.url4/blah.kml"), "KML", "kml2","")
+        };
+        rec = new CSWRecord("name8", "id8", "", "", resources, null);
+        recordList.add(rec);
     }
 
     /**
@@ -98,6 +112,8 @@ public class TestKnownLayerSelectors extends PortalTestClass {
         Assert.assertEquals(RelationType.Belongs, selector.isRelatedRecord(recordList.get(3)));
         Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(4)));
         Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(5)));
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(6)));
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(7)));
     }
 
     /**
@@ -114,6 +130,8 @@ public class TestKnownLayerSelectors extends PortalTestClass {
         Assert.assertEquals(RelationType.Belongs, selector.isRelatedRecord(recordList.get(3)));
         Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(4)));
         Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(5)));
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(6)));
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(7)));
     }
 
     /**
@@ -130,6 +148,8 @@ public class TestKnownLayerSelectors extends PortalTestClass {
         Assert.assertEquals(RelationType.Belongs, selector.isRelatedRecord(recordList.get(3)));
         Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(4)));
         Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(5)));
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(6)));
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(7)));
     }
 
     /**
@@ -146,6 +166,8 @@ public class TestKnownLayerSelectors extends PortalTestClass {
         Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(3)));
         Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(4)));
         Assert.assertEquals(RelationType.Related, selector.isRelatedRecord(recordList.get(5)));
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(6)));
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(7)));
     }
 
     /**
@@ -161,6 +183,8 @@ public class TestKnownLayerSelectors extends PortalTestClass {
         Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(3)));
         Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(4)));
         Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(5)));
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(6)));
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(7)));
     }
 
     /**
@@ -177,6 +201,8 @@ public class TestKnownLayerSelectors extends PortalTestClass {
         Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(3)));
         Assert.assertEquals(RelationType.Related, selector.isRelatedRecord(recordList.get(4)));
         Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(5)));
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(6)));
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(7)));
     }
 
     /**
@@ -192,6 +218,8 @@ public class TestKnownLayerSelectors extends PortalTestClass {
         Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(3)));
         Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(4)));
         Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(5)));
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(6)));
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(7)));
 
         selector = new WFSSelector("type:name1", new String[] {"http://test.url2/wfs"}, true);
 
@@ -201,6 +229,22 @@ public class TestKnownLayerSelectors extends PortalTestClass {
         Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(3)));
         Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(4)));
         Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(5)));
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(6)));
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(7)));
+    }
+
+    @Test
+    public void testKMLSelector() {
+        KMLSelector selector = new KMLSelector("kml1");
+
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(0)));
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(1)));
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(2)));
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(3)));
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(4)));
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(5)));
+        Assert.assertEquals(RelationType.Belongs, selector.isRelatedRecord(recordList.get(6)));
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(7)));
     }
 
 }

@@ -73,7 +73,12 @@ public abstract class AbstractCSWOnlineResource {
         /**
          * DOI
          */
-        DOI
+        DOI,
+
+        /**
+         * KML Layer
+         */
+        KML
     }
 
     /**
@@ -164,6 +169,8 @@ public abstract class AbstractCSWOnlineResource {
             return OnlineResourceType.NCSS;
         } else if (lowerProtocol.contains("doi")) {
             return OnlineResourceType.DOI;
+        } else if (lowerProtocol.contains("kml")) {
+            return OnlineResourceType.KML;
         }
  
         return OnlineResourceType.Unsupported;
