@@ -77,8 +77,8 @@ public class KnownLayer implements Serializable {
      */
     private Boolean singleTile = Boolean.FALSE;
 
-    /** A URL to use to grab a canned legend graphic for the layer (optional). */
-    private String staticLegendUrl;
+    /** Filename for a canned legend graphic residing on the server (optional) */
+    private String legendImg;
 
     private FilterCollection filterCollection;
 
@@ -391,14 +391,14 @@ public class KnownLayer implements Serializable {
         this.singleTile = singleTile;
     }
 
-    public String getStaticLegendUrl() {
-        return staticLegendUrl;
+    public String getLegendImg() {
+        return legendImg;
     }
 
-    public void setStaticLegendUrl(String staticLegendUrl) {
-        this.staticLegendUrl = staticLegendUrl;
+    public void setLegendImg(String legendImg) {
+        this.legendImg= legendImg;
     }
-
+    
     public void setStackdriverServiceGroup(String serviceGroup) {
     	this.stackdriverServiceGroup = serviceGroup;
     }
@@ -434,7 +434,7 @@ public class KnownLayer implements Serializable {
                 + ", proxyStyleUrl=" + proxyStyleUrl + ", proxyDownloadUrl=" + proxyDownloadUrl
                 + ", knownLayerSelector=" + knownLayerSelector + ", iconUrl=" + iconUrl + ", polygonColor="
                 + polygonColor + ", iconAnchor=" + iconAnchor + ", iconSize=" + iconSize + ", styles=" + mapStyles +", feature_count="
-                + feature_count + ", order=" + order + ", singleTile=" + singleTile + ", staticLegendUrl=" + staticLegendUrl
+                + feature_count + ", order=" + order + ", singleTile=" + singleTile + ", legendImg=" + legendImg
                 + ", supportsCsvDownloads=" + supportsCsvDownloads + ']';
     }
 
