@@ -162,10 +162,10 @@ public class WFSController extends BasePortalController {
             } else{ //BBox or no filter
                 if (bbox == null) {
                     filterString = bboxFilter.getFilterStringAllRecords();
+                    result = wfsService.downloadCSV(url.toString(), featureType, filterString, maxFeatures);
                 } else {
-                    filterString = bboxFilter.getFilterStringBoundingBox(bbox);
+                    result = wfsService.downloadCSVByBBox(url.toString(), featureType, bbox.toBBoxString(), maxFeatures);
                 }
-                result = wfsService.downloadCSV(url.toString(), featureType, filterString, maxFeatures);
             }
         } catch (Exception ex) {
             log.warn(String.format("Exception getting '%2$s' from '%1$s': %3$s", url.toString(), featureType, ex));
