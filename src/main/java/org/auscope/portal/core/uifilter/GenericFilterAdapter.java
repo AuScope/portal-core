@@ -18,9 +18,14 @@ public class GenericFilterAdapter extends GenericFilter{
      */
     public GenericFilterAdapter(String optionalFilters, String spatialXpath) {
        super(optionalFilters);
+       
+       // Optional filters aren't always specified
+       if(optionalFilters == null) {
+    	   this.setxPathFilters("");
+       }
+       
        this.spatialXpath = spatialXpath;
        fragments = this.generateParameterFragments();
-       
     }
 
 

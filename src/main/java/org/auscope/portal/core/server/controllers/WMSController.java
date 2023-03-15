@@ -1,35 +1,23 @@
 package org.auscope.portal.core.server.controllers;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
 
-import javax.naming.OperationNotSupportedException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.message.BasicNameValuePair;
-import org.auscope.portal.core.server.http.HttpClientInputStream;
+
 import org.auscope.portal.core.server.http.HttpServiceCaller;
-import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.WMSService;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
@@ -43,7 +31,6 @@ import org.auscope.portal.core.util.FileIOUtil;
 import org.auscope.portal.core.view.ViewCSWRecordFactory;
 import org.auscope.portal.core.view.ViewGetCapabilitiesFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -69,9 +56,6 @@ public class WMSController extends BaseCSWController {
     private final Log log = LogFactory.getLog(getClass());
     protected static int BUFFERSIZE = 1024 * 1024;
     HttpServiceCaller serviceCaller;
-
-    @Value("${access.whitelist}")
-    private String whitelist;
 
     private ViewGetCapabilitiesFactory viewGetCapabilitiesFactory;
 
@@ -506,60 +490,6 @@ public class WMSController extends BaseCSWController {
 
         styleStream.close();
         outputStream.close();
-    }
-
-    /**
-     * A proxy to make http post request to get map.
-     * @param response response object
-     * @param request incoming request object
-     * @param url the URL to be proxied
-     * @throws Exception
-     */
-    @RequestMapping(value = "/getWMSMapViaProxy.do", method = {RequestMethod.GET, RequestMethod.POST})
-    public void getWMSMapViaProxy(
-            HttpServletResponse response, 
-            HttpServletRequest request,
-            @RequestParam("url") String url
-            ) throws PortalServiceException, OperationNotSupportedException, URISyntaxException, IOException {
-
-        // Check if on whitelist
-        boolean isTrue = false;
-        URL aUrl = new URL(url);
-        String host = aUrl.getHost();
-        // get the URL whitelist from application.yaml
-        String[] urlList = whitelist.split(" ");
-        if (url != null) {
-            // set a whitelist for the request URL only from the Commonwealth Government or the State Governments or Universities or Octopus will pass
-            Stream<String> whiteListStream = Stream.of(urlList);
-            isTrue = whiteListStream.anyMatch(parameter -> host.endsWith(parameter));   
-        }
-        // Return if not on whitelist
-        if (!isTrue) return;
-        // Use old request parameters to assemble new request
-        Map<String, String[]> pMap = request.getParameterMap();
-        List<NameValuePair> nvpList = new ArrayList<>(pMap.size());
-        for (Map.Entry<String, String[]> entry : pMap.entrySet()) {
-            if (!entry.getKey().equalsIgnoreCase("url")) {
-                for(String val: entry.getValue()) {
-                    nvpList.add(new BasicNameValuePair(entry.getKey(), val));
-                }
-            }
-        }
-        UrlEncodedFormEntity entity;
-        HttpPost method = new HttpPost(url);
-        try {
-            entity = new UrlEncodedFormEntity(nvpList, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new URISyntaxException(e.getMessage(), "Error parsing UrlEncodedFormEntity");
-        }
-        method.setEntity(entity);
-       
-        HttpClientInputStream result = serviceCaller.getMethodResponseAsStream(method);
-        try (OutputStream outputStream = response.getOutputStream();) {
-            IOUtils.copy(result, outputStream);
-        } catch (IOException e) {
-            throw new PortalServiceException("Exception during getWMSMapViaProxy.do "+e.getMessage(), e);
-        }
     }
 
     public String getStyle(String name, String color, String spatialType) {
