@@ -4,8 +4,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -14,6 +19,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
+import org.apache.http.Header;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.CookieSpecs;
@@ -21,6 +27,9 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.TrustAllStrategy;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
@@ -37,9 +46,27 @@ public class HttpServiceCaller {
     private final Log log = LogFactory.getLog(getClass());
     private HttpClientConnectionManager connectionManager;
     private int connectionTimeOut;
+    private boolean noSSLCheck = false;
 
+    /**
+     * Default constructor
+     *
+     * @param connectionTimeout  connection timeout (milliseconds)
+     */
     public HttpServiceCaller(int connectionTimeOut) {
         this.connectionTimeOut = connectionTimeOut;
+        this.noSSLCheck = false;
+    }
+
+    /**
+     * Constructor
+     *
+     * @param connectionTimeout  connection timeout (milliseconds)
+     * @param noSSLCheck boolean, set to true to ignore SSL Cert errors - INTERNAL USE ONLY
+     */
+    public HttpServiceCaller(int connectionTimeOut, boolean noSSLCheck) {
+        this.connectionTimeOut = connectionTimeOut;
+        this.noSSLCheck = noSSLCheck;
     }
 
     /**
@@ -74,6 +101,18 @@ public class HttpServiceCaller {
 
         if (credentialsProvider != null) {
             builder.setDefaultCredentialsProvider(credentialsProvider);
+        }
+
+        // Disable SSL Cert checking, for locally signed SSL certs
+        if (this.noSSLCheck) {
+            try {
+                builder
+                    .setSSLContext(new SSLContextBuilder().loadTrustMaterial(null, TrustAllStrategy.INSTANCE).build())
+                    .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE);
+            } catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException e1) {
+                // Log the error
+                log.error("Error setting SSL context: " + e1.getMessage());
+            }
         }
 
         return builder.build();
@@ -292,14 +331,36 @@ public class HttpServiceCaller {
             }
         }
 
-        // make the call
+        // Make the call
         HttpResponse response = client.execute(method);
-
         StatusLine statusLine = response.getStatusLine();
         int statusCode = statusLine.getStatusCode();
-        String statusCodeText =statusLine.getReasonPhrase();
+        String statusCodeText = statusLine.getReasonPhrase();
         log.trace("Status code text: '" + statusCodeText + "'");
 
+        // Try again if moved permanently or temporarily
+        // It is assumed that the method and body remain unchanged as per spec.
+        if (statusCode == HttpStatus.SC_MOVED_PERMANENTLY ||  // 301
+            statusCode == 308 ||  // 308 = Permanent Redirect
+            statusCode == HttpStatus.SC_MOVED_TEMPORARILY || // 302
+            statusCode == HttpStatus.SC_TEMPORARY_REDIRECT) { // 307
+            Header location = response.getFirstHeader("Location");
+            String locationStr = location.getValue();
+            try {
+                method.setURI(new URI(locationStr));
+            } catch (URISyntaxException use) {
+                log.error("Bad Location returned in moved/redirect response: " + locationStr);
+                throw new IOException(statusCodeText);
+            }
+            log.trace("Retrying with new URL: " + locationStr);
+            response = client.execute(method);
+            statusLine = response.getStatusLine();
+            statusCode = statusLine.getStatusCode();
+            statusCodeText = statusLine.getReasonPhrase();
+            log.trace("Status code text: '" + statusCodeText + "'");
+        }
+
+        // If it is not a successful status code
         if (statusCode != HttpStatus.SC_OK &&
                 statusCode != HttpStatus.SC_CREATED &&
                 statusCode != HttpStatus.SC_ACCEPTED) {

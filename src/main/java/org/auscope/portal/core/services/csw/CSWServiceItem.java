@@ -13,6 +13,8 @@ import org.auscope.portal.core.server.OgcServiceProviderType;
  * @author Josh Vote
  */
 public class CSWServiceItem {
+
+    static int DEF_PAGE_SZ = 500; /* Default maximum number of CSW records per request  */
 	
     private String id;
     private String title;
@@ -27,6 +29,7 @@ public class CSWServiceItem {
     private OgcServiceProviderType serverType = OgcServiceProviderType.Default;
     private boolean noCache = false;
     private boolean hideFromCatalogue = false;
+    private int pageSize = DEF_PAGE_SZ; /* Maximum number of CSW records per request */
 
     /**
      * No arg constructor necessary for binding
@@ -41,6 +44,7 @@ public class CSWServiceItem {
      * @param id
      *            Must be unique per service
      * @param serviceUrl
+     *            CSW Service URL
      */
     public CSWServiceItem(String id, String serviceUrl) {
         this(id, serviceUrl, "");
@@ -52,7 +56,9 @@ public class CSWServiceItem {
      * @param id
      *            Must be unique per service
      * @param serviceUrl
+     *            CSW Service URL
      * @param recordInformationUrl
+     *            URL template for requesting CSW record information
      */
     public CSWServiceItem(String id, String serviceUrl, String recordInformationUrl) {
         this(id, serviceUrl, recordInformationUrl, "");
@@ -64,11 +70,16 @@ public class CSWServiceItem {
      * @param id
      *            Must be unique per service
      * @param serviceUrl
+     *            CSW Service URL
      * @param recordInformationUrl
+     *            URL template for requesting CSW record information
      * @param title
+     *            Name of CSW Service
+     * @param pageSize 
+     *            Maximum number of CSW records per request
      */
     public CSWServiceItem(String id, String serviceUrl, String recordInformationUrl, String title) {
-        this(id, serviceUrl, recordInformationUrl, title, OgcServiceProviderType.Default);
+        this(id, serviceUrl, recordInformationUrl, title, OgcServiceProviderType.Default, DEF_PAGE_SZ);
     }
     
     /**
@@ -77,16 +88,23 @@ public class CSWServiceItem {
      * @param id
      *            Must be unique per service
      * @param serviceUrl
+     *            CSW Service URL
      * @param recordInformationUrl
+     *            URL template for requesting CSW record information
      * @param title
+     *            Name of CSW Service
      * @param serverType
+     *            Type of CSW service (e.g. GeoServer, ArcGis, PyCSW)
+     * @param pageSize 
+     *            Maximum number of CSW records per request
      */
-    public CSWServiceItem(String id, String serviceUrl, String recordInformationUrl, String title, OgcServiceProviderType serverType) {
+    public CSWServiceItem(String id, String serviceUrl, String recordInformationUrl, String title, OgcServiceProviderType serverType, int pageSize) {
         this.id = id;
         this.serviceUrl = serviceUrl;
         this.recordInformationUrl = recordInformationUrl;
         this.title = title;
         this.serverType = serverType;
+        this.pageSize = pageSize;
     }
     
     /**
@@ -95,22 +113,30 @@ public class CSWServiceItem {
      * @param id
      *            Must be unique per service
      * @param serviceUrl
+     *            CSW Service URL
      * @param recordInformationUrl
+     *            URL template for requesting CSW record information
      * @param title
+     *            Name of CSW Service
      * @param cqlText
+     *            A CQL text query used to restrict the downloaded CSW records
+     * @param pageSize
+     *            Maximum number of CSW records per request
      */
-    public CSWServiceItem(String id, String serviceUrl, String recordInformationUrl, String title, String cqlText) {
+    public CSWServiceItem(String id, String serviceUrl, String recordInformationUrl, String title, String cqlText, int pageSize) {
         this.id = id;
         this.serviceUrl = serviceUrl;
         this.recordInformationUrl = recordInformationUrl;
         this.title = title;
         this.cqlText = cqlText;
+        this.pageSize = pageSize;
     }
 
     /**
      * Creates a new service item that is restricted to users with ANY of the specified roles
      * 
      * @param serviceUrl
+     *            CSW Service URL
      * @param restrictedToRoles
      *            the list of roles (the toString method will be called on each element and stored)
      */
@@ -139,6 +165,7 @@ public class CSWServiceItem {
      * Set service URL
      * 
      * @param serviceUrl
+     *            CSW Service URL
      */
     public void setServiceUrl(String serviceUrl) {
     	this.serviceUrl = serviceUrl;
@@ -234,17 +261,22 @@ public class CSWServiceItem {
      * Set record information URL
      * 
      * @param recordInformationUrl
+     *              URL template for requesting CSW record information
      */
     public void setRecordInformationUrl(String recordInformationUrl) {
     	this.recordInformationUrl = recordInformationUrl;
     }
 
+    /**
+     * Returns string version of CSWServiceItem
+     */
     @Override
     public String toString() {
         return "CSWServiceItem [id=" + id + ", title=" + title
                 + ", serviceUrl=" + serviceUrl + ", restrictedRoleList="
                 + Arrays.toString(restrictedRoleList)
-                + ", recordInformationUrl=" + recordInformationUrl + "]";
+                + ", recordInformationUrl=" + recordInformationUrl
+                + ", pageSize=" + pageSize + "]";
     }
 
     /**
@@ -262,7 +294,7 @@ public class CSWServiceItem {
     }
 
     /**
-     * Compares these items based on id
+     * Compares CSWServiceItems based on id
      * 
      * @param item
      * @return
@@ -289,6 +321,9 @@ public class CSWServiceItem {
         }
     }
 
+    /**
+     * Returns a hashcode integer
+     */
     @Override
     public int hashCode() {
         if (id == null) {
@@ -298,7 +333,7 @@ public class CSWServiceItem {
     }
 
     /**
-     * Gets the user name part of the credentials for this geonetwork (can be null)
+     * Gets the user name part of the credentials for this service (can be null)
      * 
      * @return
      */
@@ -307,7 +342,7 @@ public class CSWServiceItem {
     }
 
     /**
-     * Sets the user name part of the credentials for this geonetwork (can be null)
+     * Sets the user name part of the credentials for this service (can be null)
      * 
      * @param userName
      */
@@ -316,7 +351,7 @@ public class CSWServiceItem {
     }
 
     /**
-     * Gets the password part of the credentials for this geonetwork (can be null)
+     * Gets the password part of the credentials for this service (can be null)
      * 
      * @return
      */
@@ -325,7 +360,7 @@ public class CSWServiceItem {
     }
 
     /**
-     * Sets the password part of the credentials for this geonetwork (can be null)
+     * Sets the password part of the credentials for this service (can be null)
      * 
      * @param password
      */
@@ -421,6 +456,25 @@ public class CSWServiceItem {
      */
     public OgcServiceProviderType getServerType() {
         return serverType;
+    }
+
+    /**
+     * Set page size for the CSW service
+     * 
+     * @param pageSize
+     *            Maximum number of CSW records per request
+     */
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    /**
+     * Get page size for the CSW service
+     * 
+     * @return int
+     */
+    public int getPageSize() {
+        return pageSize;
     }
 
     /**

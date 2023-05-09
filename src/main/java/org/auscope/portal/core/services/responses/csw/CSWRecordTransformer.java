@@ -57,6 +57,7 @@ public class CSWRecordTransformer {
     protected static final String ABSTRACTEXPRESSION = "/gmd:abstract/gco:CharacterString";
 
     protected static final String CONTACTEXPRESSION = "gmd:contact/gmd:CI_ResponsibleParty";
+    protected static final String FUNDEREXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty[./gmd:role[./gmd:CI_RoleCode[@codeListValue = 'funder']]]";
     protected static final String RESOURCEPROVIDEREXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty[./gmd:role[./gmd:CI_RoleCode[@codeListValue = 'resourceProvider']]]/gmd:organisationName/gco:CharacterString";
     protected static final String FILEIDENTIFIEREXPRESSION = "gmd:fileIdentifier/gco:CharacterString";
     protected static final String PARENTIDENTIFIEREXPRESSION = "gmd:parentIdentifier/gco:CharacterString";
@@ -67,9 +68,10 @@ public class CSWRecordTransformer {
     protected static final String DATASETURIEXPRESSION = "gmd:dataSetURI/gco:CharacterString";
     protected static final String SUPPLEMENTALINFOEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:supplementalInformation/gco:CharacterString";
     protected static final String LANGUAGEEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:language/gco:CharacterString";
-    protected static final String OTHERCONSTRAINTSEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_LegalConstraints/(gmd:otherConstraints/gco:CharacterString | gmd:useLimitation/gco:CharacterString | gmd:accessConstraints/gmd:MD_RestrictionCode[(text())]/@codeList | gmd:reference/gmd:CI_Citation/gmd:title/gco:CharacterString)";  
-    protected static final String USELIMITCONSTRAINTSEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_LegalConstraints/gmd:useLimitation/gco:CharacterString";
-    protected static final String ACCESSCONSTRAINTSEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_LegalConstraints/gmd:accessConstraints/gmd:MD_RestrictionCode[(text())]/@codeList";    
+    protected static final String OTHERCONSTRAINTSEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_LegalConstraints/(gmd:otherConstraints/gco:CharacterString | gmd:reference/gmd:CI_Citation/gmd:title/gco:CharacterString)";
+    protected static final String USELIMITCONSTRAINTSEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_LegalConstraints/(gmd:useLimitation/gco:CharacterString | gmd:useConstraints//gco:CharacterString)";
+    protected static final String USELIMITCONSTRAINTSRESTRICTIONCODEEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_LegalConstraints/gmd:useConstraints/gmd:MD_RestrictionCode[(text())]/@codeListValue";
+    protected static final String ACCESSCONSTRAINTSRESTRICTIONCODEEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_LegalConstraints/gmd:accessConstraints/gmd:MD_RestrictionCode[(text())]/@codeListValue";    
     protected static final String DATAQUALITYSTATEMENTEXPRESSION = "gmd:dataQualityInfo/gmd:DQ_DataQuality/gmd:lineage/gmd:LI_Lineage/gmd:statement/gco:CharacterString";
     protected static final String LAYERNAME = "gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource/gmd:name/gco:CharacterString";
 
@@ -314,7 +316,7 @@ public class CSWRecordTransformer {
      * @return
      */
     private void appendChildResponsibleParty(Node parent, String namespaceUri, String name,
-            CSWResponsibleParty rp) {
+            String role, CSWResponsibleParty rp) {
         Node child = createChildNode(parent, namespaceUri, name);
         Node rpNode = createChildNode(child, nc.getNamespaceURI("gmd"), "CI_ResponsibleParty");
 
@@ -328,13 +330,13 @@ public class CSWRecordTransformer {
         }
 
         //Add our constant role node
-        Element role = createChildNode(rpNode, nc.getNamespaceURI("gmd"), "role");
-        Element roleCode = createChildNode(role, nc.getNamespaceURI("gmd"), "CI_RoleCode");
+        Element roleEl = createChildNode(rpNode, nc.getNamespaceURI("gmd"), "role");
+        Element roleCode = createChildNode(roleEl, nc.getNamespaceURI("gmd"), "CI_RoleCode");
         roleCode.setAttributeNS("", "codeList",
                 "http://www.isotc211.org/2005/resources/codelist/codeList.xml#CI_RoleCode");
-        roleCode.setAttributeNS("", "codeListValue", "pointOfContact");
+        roleCode.setAttributeNS("", "codeListValue", role);
     }
-
+    
     /**
      * Transforms the specified CSWRecord back into a MD_Metadata element represented by Node.
      *
@@ -360,9 +362,9 @@ public class CSWRecordTransformer {
 
         CSWResponsibleParty responsibleParty = record.getContact();
         if (responsibleParty != null) {
-            appendChildResponsibleParty(root, nc.getNamespaceURI("gmd"), "contact", responsibleParty);
+            appendChildResponsibleParty(root, nc.getNamespaceURI("gmd"), "contact", "pointOfContact", responsibleParty);
         }
-
+        
         appendChildDate(root, nc.getNamespaceURI("gmd"), "dateStamp", record.getDate());
         appendChildCharacterString(root, nc.getNamespaceURI("gmd"), "metadataStandardName", "ISO 19115:2003/19139");
         appendChildCharacterString(root, nc.getNamespaceURI("gmd"), "metadataStandardVersion", "1.0");
@@ -430,7 +432,13 @@ public class CSWRecordTransformer {
         //DataIdentification -> pointOfContact
         if (responsibleParty != null) {
             appendChildResponsibleParty(mdDataIdentification, nc.getNamespaceURI("gmd"), "pointOfContact",
-                    responsibleParty);
+                    "pointOfContact", responsibleParty);
+        }
+        
+        CSWResponsibleParty fundingParty = record.getFunder();
+        if (fundingParty != null) {
+        	appendChildResponsibleParty(mdDataIdentification, nc.getNamespaceURI("gmd"), "pointOfContact",
+                    "funder", responsibleParty);
         }
 
         //DataIdentification -> descriptiveKeywords
@@ -741,46 +749,85 @@ public class CSWRecordTransformer {
                         record.getServiceName(), ex));
             }
         }
-
-        //Parse any legal constraints
-        tempNodeList = evalXPathNodeList(this.mdMetadataNode, OTHERCONSTRAINTSEXPRESSION);
-        if (tempNodeList != null && tempNodeList.getLength() > 0) {
-            List<String> constraintsList = new ArrayList<>();
-            Node constraint;
-            for (int j = 0; j < tempNodeList.getLength(); j++) {
-                constraint = tempNodeList.item(j);
-                constraintsList.add(constraint.getTextContent());
+        
+        tempNode = evalXPathNode(this.mdMetadataNode, FUNDEREXPRESSION);
+        if (tempNode != null) {
+            try {
+                CSWResponsibleParty respParty = CSWResponsiblePartyFactory.generateResponsiblePartyFromNode(tempNode);
+                record.setFunder(respParty);
+            } catch (Exception ex) {
+                logger.debug(String.format("Unable to parse funder for serviceName='%1$s' %2$s",
+                        record.getServiceName(), ex));
             }
-            record.setConstraints(constraintsList.toArray(new String[constraintsList.size()]));
         }
         
-        // added code to parse use limit constraints
-        tempNodeList = evalXPathNodeList(this.mdMetadataNode, USELIMITCONSTRAINTSEXPRESSION);
+        // Parse access constraints, currently only looking for MD_RestrictionCodes
+        tempNodeList = evalXPathNodeList(this.mdMetadataNode, ACCESSCONSTRAINTSRESTRICTIONCODEEXPRESSION);
+        List<String> accessConstraintsList = new ArrayList<>();
         if (tempNodeList != null && tempNodeList.getLength() > 0) {
-            List<String> useLimitConstraintsList = new ArrayList<>();
-            Node useLimitConstraint;
-            for (int j = 0; j < tempNodeList.getLength(); j++) {
-            	useLimitConstraint = tempNodeList.item(j);
-                useLimitConstraintsList.add(useLimitConstraint.getTextContent());
-            }
-            record.setUseLimitConstraints(useLimitConstraintsList.toArray(new String[useLimitConstraintsList.size()]));
-        }
-        
-       //added code to parse access constraints
-        tempNodeList = evalXPathNodeList(this.mdMetadataNode, ACCESSCONSTRAINTSEXPRESSION);
-        if (tempNodeList != null && tempNodeList.getLength() > 0) {
-            List<String> accessConstraintsList = new ArrayList<>();
             Node accessConstraint;
             for (int j = 0; j < tempNodeList.getLength(); j++) {
             	accessConstraint = tempNodeList.item(j);
-                accessConstraintsList.add(accessConstraint.getTextContent());
+            	final String accessConstraintText = "RestrictionCode: " + accessConstraint.getTextContent();
+            	if (!accessConstraintsList.contains(accessConstraintText)) {
+            		accessConstraintsList.add(accessConstraintText);
+            	}
             }
             record.setAccessConstraints(accessConstraintsList.toArray(new String[accessConstraintsList.size()]));
         }
+        
+        // Parse use limit constraints
+        tempNodeList = evalXPathNodeList(this.mdMetadataNode, USELIMITCONSTRAINTSEXPRESSION);
+        List<String> useLimitConstraintsList = new ArrayList<>();
+        Node useLimitConstraint;
+        if (tempNodeList != null && tempNodeList.getLength() > 0) {
+            for (int j = 0; j < tempNodeList.getLength(); j++) {
+            	useLimitConstraint = tempNodeList.item(j);
+            	if(!useLimitConstraintsList.contains(useLimitConstraint.getTextContent())) {
+            		useLimitConstraintsList.add(useLimitConstraint.getTextContent());
+            	}
+            }
+        }
+        
+        // Check for use limit MD_RestrictionCodes
+        tempNodeList = evalXPathNodeList(this.mdMetadataNode, USELIMITCONSTRAINTSRESTRICTIONCODEEXPRESSION);
+        if (tempNodeList != null && tempNodeList.getLength() > 0) {
+            for (int j = 0; j < tempNodeList.getLength(); j++) {
+            	useLimitConstraint = tempNodeList.item(j);
+            	final String useLimitConstraintText = "RestrictionCode: " + useLimitConstraint.getTextContent();
+            	if(!useLimitConstraintsList.contains(useLimitConstraintText)) {
+            		useLimitConstraintsList.add(useLimitConstraintText);
+            	}
+            }
+        }
+        record.setUseLimitConstraints(useLimitConstraintsList.toArray(new String[useLimitConstraintsList.size()]));
+        
+        // Parse any general and legal constraints, append access and use limit constraints
+        tempNodeList = evalXPathNodeList(this.mdMetadataNode, OTHERCONSTRAINTSEXPRESSION);
+        List<String> constraintsList = new ArrayList<>();
+        if (tempNodeList != null && tempNodeList.getLength() > 0) {
+            Node constraint;
+            for (int j = 0; j < tempNodeList.getLength(); j++) {
+                constraint = tempNodeList.item(j);
+                if(!constraintsList.contains(constraint.getTextContent())) {
+                	constraintsList.add(constraint.getTextContent());
+                }
+            }
+        }
+        for (String accessConstraint : accessConstraintsList) {
+        	if (!constraintsList.contains(accessConstraint)) {
+        		constraintsList.add(accessConstraint);
+        	}
+        }
+        for (String useConstraint : useLimitConstraintsList) {
+        	if (!constraintsList.contains(useConstraint)) {
+        		constraintsList.add(useConstraint);
+        	}
+        }
+        record.setConstraints(constraintsList.toArray(new String[constraintsList.size()]));
 
         tempNodeList = evalXPathNodeList(this.mdMetadataNode, SCALEDENOMINATOR);
         if (tempNodeList != null && tempNodeList.getLength() > 0) {
-
             List<Double> scaleRange = new ArrayList<>();
             Node scaleDenominator;
             for (int j = 0; j < tempNodeList.getLength(); j++) {
@@ -792,7 +839,6 @@ public class CSWRecordTransformer {
                             record.getServiceName(), ex));
                 }
             }
-
             if (!scaleRange.isEmpty()) {
                 record.setMinScale(Collections.min(scaleRange));
                 if (scaleRange.size() > 1) {
@@ -816,7 +862,7 @@ public class CSWRecordTransformer {
         private final String PYCSW_ONLINETRANSFERSEXPRESSION = "gmd:identificationInfo/srv:SV_ServiceIdentification/descendant::srv:connectPoint/gmd:CI_OnlineResource";
         
         /**
-         * Tranform from mdMetadataNode to CSWRecord
+         * Transform from mdMetadataNode to CSWRecord
          * @param record
          * @return
          * @throws XPathException
@@ -945,42 +991,82 @@ public class CSWRecordTransformer {
                             record.getServiceName(), ex));
                 }
             }
-
-            //Parse any legal constraints
-            tempNodeList = evalXPathNodeList(mdMetadataNode, OTHERCONSTRAINTSEXPRESSION);
-            if (tempNodeList != null && tempNodeList.getLength() > 0) {
-                List<String> constraintsList = new ArrayList<>();
-                Node constraint;
-                for (int j = 0; j < tempNodeList.getLength(); j++) {
-                    constraint = tempNodeList.item(j);
-                    constraintsList.add(constraint.getTextContent());
+            
+            tempNode = evalXPathNode(mdMetadataNode, FUNDEREXPRESSION);
+            if (tempNode != null) {
+                try {
+                    CSWResponsibleParty fundingParty = CSWResponsiblePartyFactory.generateResponsiblePartyFromNode(tempNode);
+                    record.setFunder(fundingParty);
+                } catch (Exception ex) {
+                    logger.debug(String.format("Unable to parse funder for serviceName='%1$s' %2$s",
+                            record.getServiceName(), ex));
                 }
-                record.setConstraints(constraintsList.toArray(new String[constraintsList.size()]));
             }
             
-            // added code to parse use limit constraints
-            tempNodeList = evalXPathNodeList(mdMetadataNode, USELIMITCONSTRAINTSEXPRESSION);
+            // Parse access constraints, currently only looking for MD_RestrictionCodes
+            tempNodeList = evalXPathNodeList(mdMetadataNode, ACCESSCONSTRAINTSRESTRICTIONCODEEXPRESSION);
+            List<String> accessConstraintsList = new ArrayList<>();
             if (tempNodeList != null && tempNodeList.getLength() > 0) {
-                List<String> useLimitConstraintsList = new ArrayList<>();
-                Node useLimitConstraint;
-                for (int j = 0; j < tempNodeList.getLength(); j++) {
-                	useLimitConstraint = tempNodeList.item(j);
-                    useLimitConstraintsList.add(useLimitConstraint.getTextContent());
-                }
-                record.setUseLimitConstraints(useLimitConstraintsList.toArray(new String[useLimitConstraintsList.size()]));
-            }
-            
-           //added code to parse access constraints
-            tempNodeList = evalXPathNodeList(mdMetadataNode, ACCESSCONSTRAINTSEXPRESSION);
-            if (tempNodeList != null && tempNodeList.getLength() > 0) {
-                List<String> accessConstraintsList = new ArrayList<>();
                 Node accessConstraint;
                 for (int j = 0; j < tempNodeList.getLength(); j++) {
                 	accessConstraint = tempNodeList.item(j);
-                    accessConstraintsList.add(accessConstraint.getTextContent());
+                	final String accessConstraintText = "RestrictionCode: " + accessConstraint.getTextContent();
+                	if (!accessConstraintsList.contains(accessConstraintText)) {
+                		accessConstraintsList.add(accessConstraintText);
+                	}
                 }
                 record.setAccessConstraints(accessConstraintsList.toArray(new String[accessConstraintsList.size()]));
             }
+            
+            // Parse use limit constraints
+            tempNodeList = evalXPathNodeList(mdMetadataNode, USELIMITCONSTRAINTSEXPRESSION);
+            List<String> useLimitConstraintsList = new ArrayList<>();
+            Node useLimitConstraint;
+            if (tempNodeList != null && tempNodeList.getLength() > 0) {
+                for (int j = 0; j < tempNodeList.getLength(); j++) {
+                	useLimitConstraint = tempNodeList.item(j);
+                	if(!useLimitConstraintsList.contains(useLimitConstraint.getTextContent())) {
+                		useLimitConstraintsList.add(useLimitConstraint.getTextContent());
+                	}
+                }
+            }
+            
+            // Check for use limit MD_RestrictionCodes
+            tempNodeList = evalXPathNodeList(mdMetadataNode, USELIMITCONSTRAINTSRESTRICTIONCODEEXPRESSION);
+            if (tempNodeList != null && tempNodeList.getLength() > 0) {
+                for (int j = 0; j < tempNodeList.getLength(); j++) {
+                	useLimitConstraint = tempNodeList.item(j);
+                	final String useLimitConstraintText = "RestrictionCode: " + useLimitConstraint.getTextContent();
+                	if(!useLimitConstraintsList.contains(useLimitConstraintText)) {
+                		useLimitConstraintsList.add(useLimitConstraintText);
+                	}
+                }
+            }
+            record.setUseLimitConstraints(useLimitConstraintsList.toArray(new String[useLimitConstraintsList.size()]));
+            
+            // Parse any general and legal constraints, append access and use limit constraints
+            tempNodeList = evalXPathNodeList(mdMetadataNode, OTHERCONSTRAINTSEXPRESSION);
+            List<String> constraintsList = new ArrayList<>();
+            if (tempNodeList != null && tempNodeList.getLength() > 0) {
+                Node constraint;
+                for (int j = 0; j < tempNodeList.getLength(); j++) {
+                    constraint = tempNodeList.item(j);
+                    if(!constraintsList.contains(constraint.getTextContent())) {
+                    	constraintsList.add(constraint.getTextContent());
+                    }
+                }
+            }
+            for (String accessConstraint : accessConstraintsList) {
+            	if (!constraintsList.contains(accessConstraint)) {
+            		constraintsList.add(accessConstraint);
+            	}
+            }
+            for (String useConstraint : useLimitConstraintsList) {
+            	if (!constraintsList.contains(useConstraint)) {
+            		constraintsList.add(useConstraint);
+            	}
+            }
+            record.setConstraints(constraintsList.toArray(new String[constraintsList.size()]));
 
             tempNodeList = evalXPathNodeList(mdMetadataNode, SCALEDENOMINATOR);
             if (tempNodeList != null && tempNodeList.getLength() > 0) {
@@ -1009,7 +1095,7 @@ public class CSWRecordTransformer {
         }
         
         /**
-         * tranform online resources embedded in the service node.
+         * transform online resources embedded in the service node.
          * @param record
          * @param expression
          * @param threddsLayerName
@@ -1200,42 +1286,82 @@ public class CSWRecordTransformer {
                             record.getServiceName(), ex));
                 }
             }
+            
+            tempNode = evalXPathNode(mdMetadataNode, FUNDEREXPRESSION);
+            if (tempNode != null) {
+                try {
+                    CSWResponsibleParty fundingParty = CSWResponsiblePartyFactory.generateResponsiblePartyFromNode(tempNode);
+                    record.setFunder(fundingParty);
+                } catch (Exception ex) {
+                    logger.debug(String.format("Unable to parse funder for serviceName='%1$s' %2$s",
+                            record.getServiceName(), ex));
+                }
+            }
 
-            //Parse any legal constraints
-            tempNodeList = evalXPathNodeList(mdMetadataNode, OTHERCONSTRAINTSEXPRESSION);
+            // Parse access constraints, currently only looking for MD_RestrictionCodes
+            tempNodeList = evalXPathNodeList(mdMetadataNode, ACCESSCONSTRAINTSRESTRICTIONCODEEXPRESSION);
+            List<String> accessConstraintsList = new ArrayList<>();
             if (tempNodeList != null && tempNodeList.getLength() > 0) {
-                List<String> constraintsList = new ArrayList<>();
-                Node constraint;
-                for (int j = 0; j < tempNodeList.getLength(); j++) {
-                    constraint = tempNodeList.item(j);
-                    constraintsList.add(constraint.getTextContent());
-                }
-                record.setConstraints(constraintsList.toArray(new String[constraintsList.size()]));
-            }
-            
-            // added code to parse use limit constraints
-            tempNodeList = evalXPathNodeList(mdMetadataNode, USELIMITCONSTRAINTSEXPRESSION);
-            if (tempNodeList != null && tempNodeList.getLength() > 0) {
-                List<String> useLimitConstraintsList = new ArrayList<>();
-                Node useLimitConstraint;
-                for (int j = 0; j < tempNodeList.getLength(); j++) {
-                	useLimitConstraint = tempNodeList.item(j);
-                    useLimitConstraintsList.add(useLimitConstraint.getTextContent());
-                }
-                record.setUseLimitConstraints(useLimitConstraintsList.toArray(new String[useLimitConstraintsList.size()]));
-            }
-            
-           //added code to parse access constraints
-            tempNodeList = evalXPathNodeList(mdMetadataNode, ACCESSCONSTRAINTSEXPRESSION);
-            if (tempNodeList != null && tempNodeList.getLength() > 0) {
-                List<String> accessConstraintsList = new ArrayList<>();
                 Node accessConstraint;
                 for (int j = 0; j < tempNodeList.getLength(); j++) {
                 	accessConstraint = tempNodeList.item(j);
-                    accessConstraintsList.add(accessConstraint.getTextContent());
+                	final String accessConstraintText = "RestrictionCode: " + accessConstraint.getTextContent();
+                	if (!accessConstraintsList.contains(accessConstraintText)) {
+                		accessConstraintsList.add(accessConstraintText);
+                	}
                 }
                 record.setAccessConstraints(accessConstraintsList.toArray(new String[accessConstraintsList.size()]));
             }
+            
+            // Parse use limit constraints
+            tempNodeList = evalXPathNodeList(mdMetadataNode, USELIMITCONSTRAINTSEXPRESSION);
+            List<String> useLimitConstraintsList = new ArrayList<>();
+            Node useLimitConstraint;
+            if (tempNodeList != null && tempNodeList.getLength() > 0) {
+                for (int j = 0; j < tempNodeList.getLength(); j++) {
+                	useLimitConstraint = tempNodeList.item(j);
+                	if(!useLimitConstraintsList.contains(useLimitConstraint.getTextContent())) {
+                		useLimitConstraintsList.add(useLimitConstraint.getTextContent());
+                	}
+                }
+            }
+            
+            // Check for use limit MD_RestrictionCodes
+            tempNodeList = evalXPathNodeList(mdMetadataNode, USELIMITCONSTRAINTSRESTRICTIONCODEEXPRESSION);
+            if (tempNodeList != null && tempNodeList.getLength() > 0) {
+                for (int j = 0; j < tempNodeList.getLength(); j++) {
+                	useLimitConstraint = tempNodeList.item(j);
+                	final String useLimitConstraintText = "RestrictionCode: " + useLimitConstraint.getTextContent();
+                	if(!useLimitConstraintsList.contains(useLimitConstraintText)) {
+                		useLimitConstraintsList.add(useLimitConstraintText);
+                	}
+                }
+            }
+            record.setUseLimitConstraints(useLimitConstraintsList.toArray(new String[useLimitConstraintsList.size()]));
+            
+            // Parse any general and legal constraints, append access and use limit constraints
+            tempNodeList = evalXPathNodeList(mdMetadataNode, OTHERCONSTRAINTSEXPRESSION);
+            List<String> constraintsList = new ArrayList<>();
+            if (tempNodeList != null && tempNodeList.getLength() > 0) {
+                Node constraint;
+                for (int j = 0; j < tempNodeList.getLength(); j++) {
+                    constraint = tempNodeList.item(j);
+                    if(!constraintsList.contains(constraint.getTextContent())) {
+                    	constraintsList.add(constraint.getTextContent());
+                    }
+                }
+            }
+            for (String accessConstraint : accessConstraintsList) {
+            	if (!constraintsList.contains(accessConstraint)) {
+            		constraintsList.add(accessConstraint);
+            	}
+            }
+            for (String useConstraint : useLimitConstraintsList) {
+            	if (!constraintsList.contains(useConstraint)) {
+            		constraintsList.add(useConstraint);
+            	}
+            }
+            record.setConstraints(constraintsList.toArray(new String[constraintsList.size()]));
 
             tempNodeList = evalXPathNodeList(mdMetadataNode, SCALEDENOMINATOR);
             if (tempNodeList != null && tempNodeList.getLength() > 0) {

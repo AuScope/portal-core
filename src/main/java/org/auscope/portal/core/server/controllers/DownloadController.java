@@ -11,9 +11,19 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Map;
+import java.util.List;
+import java.util.stream.Stream;
+import java.net.URL;
+import java.net.URISyntaxException;
+import java.io.UnsupportedEncodingException;
+import java.io.IOException;
+import java.io.OutputStream;
+
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.naming.OperationNotSupportedException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -21,6 +31,25 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.message.BasicNameValuePair;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import com.google.common.io.Files;
+
+
+import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.configuration.ServiceConfiguration;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.server.http.download.DownloadResponse;
@@ -29,14 +58,7 @@ import org.auscope.portal.core.server.http.download.Progression;
 import org.auscope.portal.core.server.http.download.ServiceDownloadManager;
 import org.auscope.portal.core.util.FileIOUtil;
 import org.auscope.portal.core.util.MimeUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import com.google.common.io.Files;
+import org.auscope.portal.core.services.PortalServiceException;
 
 /**
  * User: Mathew Wyatt Date: 02/09/2009 Time: 12:33:48 PM
@@ -50,6 +72,9 @@ public class DownloadController extends BasePortalController {
     private final static Integer MINIMUM_NUMBER_OF_LINES = 2;
     private HttpServiceCaller serviceCaller;
     private ServiceConfiguration serviceConfiguration;
+
+    @Value("${access.whitelist}")
+    private String whitelist;
 
     @Autowired
     public DownloadController(HttpServiceCaller serviceCaller, ServiceConfiguration serviceConfiguration) {
@@ -80,7 +105,9 @@ public class DownloadController extends BasePortalController {
                     }
                 }
             } finally {
-            	downloadZip.close();
+                if (downloadZip != null) {
+                    downloadZip.close();
+                }
             }
             if (csvSign == false)
                 response.setHeader("Content-Disposition",
@@ -178,7 +205,7 @@ public class DownloadController extends BasePortalController {
 
             response.getOutputStream().write(htmlResponse.getBytes());
 
-        } else if (outputFormat.equals("csv")) {
+        } else if (outputFormat != null && outputFormat.equals("csv")) {
             // set the content type for zip files
             response.setContentType("application/zip");
             response.setHeader("Content-Disposition",
@@ -285,6 +312,72 @@ public class DownloadController extends BasePortalController {
         zout.finish();
         zout.flush();
         zout.close();
+    }
+
+    /**
+     * A proxy to make HTTP POST and GET requests to avoid CORS errors
+     * If the incoming request is POST it will send out a POST, if the
+     * incoming request is GET it will send out a GET request
+     *
+     * @param response response object
+     * @param request incoming request object
+     * @param url the URL to be proxied
+     * @throws Exception
+     */
+    @RequestMapping(value = "/getViaProxy.do", method = {RequestMethod.GET, RequestMethod.POST})
+    public void getViaProxy(
+            HttpServletResponse response,
+            HttpServletRequest request,
+            @RequestParam("url") String url
+            ) throws PortalServiceException, OperationNotSupportedException, URISyntaxException, IOException {
+
+        // Check if on whitelist
+        boolean isTrue = false;
+        URL aUrl = new URL(url);
+        String host = aUrl.getHost();
+        // get the URL whitelist from application.yaml
+        String[] urlList = whitelist.split(" ");
+        if (url != null) {
+            // Set a whitelist for the request URL only from the Commonwealth Government or the State Governments or Universities or Octopus will pass
+            Stream<String> whiteListStream = Stream.of(urlList);
+            isTrue = whiteListStream.anyMatch(parameter -> host.endsWith(parameter));
+        }
+        // Return if not on whitelist
+        if (!isTrue) return;
+
+        // Assemble method depending on the incoming request's method
+        HttpRequestBase method;
+        if (request.getMethod().equals("POST")) {
+            // Use old request parameters to assemble new request
+            Map<String, String[]> pMap = request.getParameterMap();
+            List<NameValuePair> nvpList = new ArrayList<>(pMap.size());
+            for (Map.Entry<String, String[]> entry : pMap.entrySet()) {
+                if (!entry.getKey().equalsIgnoreCase("url")) {
+                    for(String val: entry.getValue()) {
+                        nvpList.add(new BasicNameValuePair(entry.getKey(), val));
+                    }
+                }
+            }
+            // Use an HTTP POST request
+            method = new HttpPost(url);
+            UrlEncodedFormEntity entity;
+            try {
+                entity = new UrlEncodedFormEntity(nvpList, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                throw new URISyntaxException(e.getMessage(), "Error parsing UrlEncodedFormEntity");
+            }
+            ((HttpPost)method).setEntity(entity);
+
+        } else {
+            // Use an HTTP GET request
+            method = new HttpGet(url);
+        }
+        HttpClientInputStream result = serviceCaller.getMethodResponseAsStream(method);
+        try (OutputStream outputStream = response.getOutputStream();) {
+            IOUtils.copy(result, outputStream);
+        } catch (IOException e) {
+            throw new PortalServiceException("Exception during getViaProxy.do "+e.getMessage(), e);
+        }
     }
 
 }

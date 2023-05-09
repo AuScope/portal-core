@@ -4,7 +4,7 @@
     <groupId>org.auscope.portal</groupId>
     <artifactId>portal-core</artifactId>
     <packaging>jar</packaging>
-    <version>2.4.1-SNAPSHOT</version>
+    <version>2.4.4-SNAPSHOT</version>
     <name>Portal-Core</name>
     <description>Core functionality common to various AuScope portals.</description>
     <url>http://portal.auscope.org</url>
@@ -48,7 +48,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.5.14</version>
+        <version>2.6.13</version>
     </parent>
 
     <!-- Repositories section -->
@@ -101,7 +101,7 @@
             <dependency>
                 <groupId>org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
-                <version>1.27</version>
+                <version>1.32</version>
             </dependency>
             <dependency>
                 <groupId>com.squareup.okhttp3</groupId>
@@ -166,7 +166,7 @@
                 <version>2.18.1</version>
                 <configuration>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                    <argLine>-Dfile.encoding=UTF-8</argLine>
+                    <argLine>@{surefireArgLine} -Xmx1024m -noverify</argLine> 
                 </configuration>
             </plugin>
             <plugin>
@@ -213,16 +213,21 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.0</version>
+                <version>0.8.8</version>
                 <executions>
                     <execution>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
+                    <configuration>
+                        <append>true</append>
+                        <destFile>${sonar.jacoco.reportPath}</destFile>
+                        <!-- Sets the VM argument line used when unit tests are run. -->
+                        <propertyName>surefireArgLine</propertyName>
+                    </configuration>
                     </execution>
                     <execution>
                         <id>report</id>
-                        <phase>prepare-package</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
@@ -239,7 +244,7 @@
                     </classpathContainers>
                     <wtpversion>2.0</wtpversion>
                 </configuration>
-	</plugin>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
@@ -305,17 +310,17 @@
     	<groupId>org.springframework.boot</groupId>
     		<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
-	<dependency>
+        <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk</artifactId>
-            <version>1.12.196</version>
-	</dependency>
+            <version>1.12.335</version>
+	    </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.11</version>
         </dependency>
-	<dependency>
+	    <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20201115</version>
@@ -326,7 +331,7 @@
             <artifactId>Saxon-HE</artifactId>
             <version>9.9.1-6</version>
         </dependency>
-	<dependency>
+	    <dependency>
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-core</artifactId>
             <scope>test</scope>
@@ -361,7 +366,7 @@
             </exclusions>
             <scope>runtime</scope>
         </dependency>
-	<dependency>
+	    <dependency>
             <groupId>org.jmock</groupId>
             <artifactId>jmock-junit4</artifactId>
             <version>2.12.0</version>
@@ -372,18 +377,18 @@
               <artifactId>asm</artifactId>
              </exclusion>
             </exclusions>
-	</dependency>
+	    </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <optional>false</optional>
         </dependency>
-	<dependency>
+	    <dependency>
             <groupId>edu.ucar</groupId>
             <artifactId>netcdf4</artifactId>
             <version>5.3.3</version>
             <optional>false</optional>
-	</dependency>
+	    </dependency>
         <dependency>
             <groupId>org.apache.jclouds</groupId>
             <artifactId>jclouds-all</artifactId>
@@ -409,7 +414,7 @@
 	    <artifactId>joda-time</artifactId>
             <version>2.10.9</version>
         </dependency>
-	<dependency>
+	    <dependency>
           <groupId>org.apache.jena</groupId>
           <artifactId>jena-arq</artifactId>
           <version>4.2.0</version>
@@ -419,23 +424,38 @@
                   <artifactId>jcl-over-slf4j</artifactId>
               </exclusion>
           </exclusions>
-	</dependency>
-    <dependency>
-        <groupId>org.xerial</groupId>
-        <artifactId>sqlite-jdbc</artifactId>
-        <version>3.36.0</version>
-     </dependency>
-	<dependency>
+	    </dependency>
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.36.0</version>
+        </dependency>
+	    <dependency>
           <groupId>com.github.openstack4j.core</groupId>
           <artifactId>openstack4j-core</artifactId>
           <version>3.9</version>
         </dependency>
-	<dependency>
+	    <dependency>
             <groupId>com.google.auth</groupId>
             <artifactId>google-auth-library-oauth2-http</artifactId>
             <version>0.23.0</version>
-	</dependency>
-	<dependency>
+	    </dependency>
+	    <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>9.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-queryparser</artifactId>
+            <version>9.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-suggest</artifactId>
+            <version>9.4.1</version>
+        </dependency>
+	    <dependency>
             <groupId>com.google.http-client</groupId>
             <artifactId>google-http-client-apache-v2</artifactId>
             <version>1.38.1</version>

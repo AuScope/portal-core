@@ -6,14 +6,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.http.HttpStatus;
@@ -34,7 +30,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.UriUtils;
 
 /**
  * Acts as a proxy to WFS's
@@ -167,10 +162,10 @@ public class WFSController extends BasePortalController {
             } else{ //BBox or no filter
                 if (bbox == null) {
                     filterString = bboxFilter.getFilterStringAllRecords();
+                    result = wfsService.downloadCSV(url.toString(), featureType, filterString, maxFeatures);
                 } else {
-                    filterString = bboxFilter.getFilterStringBoundingBox(bbox);
+                    result = wfsService.downloadCSVByBBox(url.toString(), featureType, bbox.toBBoxString(), maxFeatures);
                 }
-                result = wfsService.downloadCSV(url.toString(), featureType, filterString, maxFeatures);
             }
         } catch (Exception ex) {
             log.warn(String.format("Exception getting '%2$s' from '%1$s': %3$s", url.toString(), featureType, ex));
@@ -322,13 +317,21 @@ public class WFSController extends BasePortalController {
         int startPos = requestUrl.indexOf("/wfsFeaturePopup.do");
         requestUrl.setLength(startPos);
         serviceUrl = encodeValue(serviceUrl);
+        
+        // If a system portalUrl property has been set, use that instead of the
+        // request URL which may be missing path fragments
+        String portalUrl = requestUrl.toString();
+        if (System.getProperty("portalUrl") != null) {
+        	portalUrl = System.getProperty("portalUrl");
+        }
+        
         //Make our request, transform and then return it.
         WFSTransformedResponse htmlResponse = null;
         try {
             if (typeName == null) {
-                htmlResponse = wfsService.getWfsResponseAsHtml(serviceUrl, requestUrl.toString());
+                htmlResponse = wfsService.getWfsResponseAsHtml(serviceUrl, portalUrl);
             } else {
-                htmlResponse = wfsService.getWfsResponseAsHtml(serviceUrl, typeName, featureId, requestUrl.toString());
+                htmlResponse = wfsService.getWfsResponseAsHtml(serviceUrl, typeName, featureId, portalUrl);
             }
 
             outputStream.write(htmlResponse.getTransformed().getBytes());
@@ -336,7 +339,8 @@ public class WFSController extends BasePortalController {
             log.warn(String.format("Internal error requesting/writing popup for '%1$s' from '%2$s': %3$s", typeName,
                     serviceUrl, ex));
             log.debug("Exception: ", ex);
-            response.sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            // Create a wrapper for the servlet response as the output stream has already been consumed
+            new HttpServletResponseWrapper(response).sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -349,22 +353,30 @@ public class WFSController extends BasePortalController {
     public void transformToHtml(HttpServletRequest request, HttpServletResponse response, @RequestParam("gml") String gml) throws Exception {
         response.setContentType("text/html; charset=utf-8");
         ServletOutputStream outputStream = response.getOutputStream();
-
+        
         // Create request base URL
         StringBuffer requestURL = request.getRequestURL();
         int startPos = requestURL.lastIndexOf("/transformToHtmlPopup.do");
         requestURL.setLength(startPos);
-
+        
+        // If a system portalUrl property has been set, use that instead of the
+        // request URL which may be missing path fragments
+        String portalUrl= requestURL.toString();
+        if (System.getProperty("portalUrl") != null) {
+        	portalUrl = System.getProperty("portalUrl");
+        }
+        
         //Make our request, transform and then return it.
         WFSTransformedResponse htmlResponse = null;
         WFSService service = wfsService;
         try {
-            htmlResponse = service.transformToHtml(gml, null, requestURL.toString());
+            htmlResponse = service.transformToHtml(gml, null, portalUrl);
             outputStream.write(htmlResponse.getTransformed().getBytes());
         } catch (Exception ex) {
             log.warn(String.format("Internal error requesting/writing popup for '%1$s': %3$s", gml, ex));
             log.debug("Exception: ", ex);
-            response.sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            // Create a wrapper for the servlet response as the output stream has already been consumed
+            new HttpServletResponseWrapper(response).sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
     }
 

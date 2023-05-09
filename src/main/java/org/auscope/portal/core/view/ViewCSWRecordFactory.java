@@ -51,6 +51,15 @@ public class ViewCSWRecordFactory {
         }
         obj.put("adminArea", adminArea);
         obj.put("contactOrg", contactOrg);
+        
+        CSWResponsibleParty frp = record.getFunder();
+        String funderOrg = "Unknown";
+        if (frp != null) {
+        	if (frp.getOrganisationName() != null && !frp.getOrganisationName().isEmpty()) {
+                funderOrg = frp.getOrganisationName();
+            }
+        }
+        obj.put("funderOrg", funderOrg);
 
         List<Map<String, Object>> onlineResources = new ArrayList<>();
         if (record.getOnlineResources() != null) {

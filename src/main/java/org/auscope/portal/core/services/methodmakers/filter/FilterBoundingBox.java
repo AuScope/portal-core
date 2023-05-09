@@ -413,4 +413,14 @@ public class FilterBoundingBox implements Serializable {
 
         return json.toString();
     }
+    /**
+     * Return the object as a bbox string
+     * 
+     * @return bbox
+     */
+    public String toBBoxString() {
+        //example 133.807,-23.98396127995235,135.22784420404986,-22.900819875316692,EPSG:4326
+        String bbox = getLowerCornerPoints()[0]+","+getLowerCornerPoints()[1]+","+getUpperCornerPoints()[0]+","+getUpperCornerPoints()[1]+","+getBboxSrs();
+        return bbox;
+    }
 }

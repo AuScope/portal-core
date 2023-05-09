@@ -288,7 +288,31 @@ public abstract class BaseWFSService {
             throw new PortalServiceException(method, "Error when attempting to download from:" + serviceUrl, ex);
         }
     }
+    /**
+     * Download a CSV based on the type and bbox.
+     *
+     * @param serviceUrl
+     *            a Web Feature Service URL
+     * @param type
+     * @param bbox
+     * @param maxFeatures
+     *            The maximum number of features to request
+     * @return
+     * @throws PortalServiceException
+     */
+    public InputStream downloadCSVByBBox(String serviceUrl, String typeName, String bbox, Integer maxFeatures)
+            throws PortalServiceException {
 
+        HttpRequestBase method = null;
+        try {
+
+            method = wfsMethodMaker.makeCSVDownloadByBBoxMethod(serviceUrl, typeName, bbox, maxFeatures);
+            return httpServiceCaller.getMethodResponseAsStream(method);
+
+        } catch (Exception ex) {
+            throw new PortalServiceException(method, "Error when attempting to download from:" + serviceUrl, ex);
+        }
+    }
     /**
      * Download a CSV based on the type and polygonFilter.
      *
