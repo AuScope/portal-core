@@ -328,7 +328,8 @@ public class DownloadController extends BasePortalController {
     public void getViaProxy(
             HttpServletResponse response,
             HttpServletRequest request,
-            @RequestParam("url") String url
+            @RequestParam("url") String url,
+            @RequestParam(required = false, value = "usepostafterproxy", defaultValue = "false") boolean usePost
             ) throws PortalServiceException, OperationNotSupportedException, URISyntaxException, IOException {
 
         // Check if on whitelist
@@ -347,7 +348,7 @@ public class DownloadController extends BasePortalController {
 
         // Assemble method depending on the incoming request's method
         HttpRequestBase method;
-        if (request.getMethod().equals("POST")) {
+        if (request.getMethod().equals("POST") || usePost) {
             // Use old request parameters to assemble new request
             Map<String, String[]> pMap = request.getParameterMap();
             List<NameValuePair> nvpList = new ArrayList<>(pMap.size());
@@ -373,6 +374,7 @@ public class DownloadController extends BasePortalController {
             method = new HttpGet(url);
         }
         HttpClientInputStream result = serviceCaller.getMethodResponseAsStream(method);
+        response.addHeader("Cache-Control", "public, max-age=604800, must-revalidate, no-transform");
         try (OutputStream outputStream = response.getOutputStream();) {
             IOUtils.copy(result, outputStream);
         } catch (IOException e) {
