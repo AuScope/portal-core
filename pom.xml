@@ -48,7 +48,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.11</version>
+        <version>2.6.15</version>
     </parent>
 
     <!-- Repositories section -->
@@ -417,7 +417,7 @@
 	    <dependency>
           <groupId>org.apache.jena</groupId>
           <artifactId>jena-arq</artifactId>
-          <version>4.8.0</version>
+          <version>4.2.0</version>
           <exclusions>
               <exclusion>
                   <groupId>org.slf4j</groupId>
@@ -428,7 +428,7 @@
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.41.2.1</version>
+            <version>3.42.0.0</version>
         </dependency>
 	    <dependency>
           <groupId>com.github.openstack4j.core</groupId>
