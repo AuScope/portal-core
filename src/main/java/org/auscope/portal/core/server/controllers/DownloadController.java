@@ -329,22 +329,24 @@ public class DownloadController extends BasePortalController {
             HttpServletResponse response,
             HttpServletRequest request,
             @RequestParam("url") String url,
-            @RequestParam(required = false, value = "usepostafterproxy", defaultValue = "false") boolean usePost
+            @RequestParam(required = false, value = "usepostafterproxy", defaultValue = "false") boolean usePost,
+            @RequestParam(required = false, value = "usewhitelist", defaultValue = "true") boolean useWhitelist
             ) throws PortalServiceException, OperationNotSupportedException, URISyntaxException, IOException {
-
-        // Check if on whitelist
-        boolean isTrue = false;
-        URL aUrl = new URL(url);
-        String host = aUrl.getHost();
-        // get the URL whitelist from application.yaml
-        String[] urlList = whitelist.split(" ");
-        if (url != null) {
-            // Set a whitelist for the request URL only from the Commonwealth Government or the State Governments or Universities or Octopus will pass
-            Stream<String> whiteListStream = Stream.of(urlList);
-            isTrue = whiteListStream.anyMatch(parameter -> host.endsWith(parameter));
-        }
-        // Return if not on whitelist
-        if (!isTrue) return;
+        // Check if on whitelist (if usewhitelist = true)
+    	if (useWhitelist) {
+	        boolean isTrue = false;
+	        URL aUrl = new URL(url);
+	        String host = aUrl.getHost();
+	        // get the URL whitelist from application.yaml
+	        String[] urlList = whitelist.split(" ");
+	        if (url != null) {
+	            // Set a whitelist for the request URL only from the Commonwealth Government or the State Governments or Universities or Octopus will pass
+	            Stream<String> whiteListStream = Stream.of(urlList);
+	            isTrue = whiteListStream.anyMatch(parameter -> host.endsWith(parameter));
+	        }
+	        // Return if not on whitelist
+	        if (!isTrue) return;
+    	}
 
         // Assemble method depending on the incoming request's method
         HttpRequestBase method;
@@ -353,7 +355,7 @@ public class DownloadController extends BasePortalController {
             Map<String, String[]> pMap = request.getParameterMap();
             List<NameValuePair> nvpList = new ArrayList<>(pMap.size());
             for (Map.Entry<String, String[]> entry : pMap.entrySet()) {
-                if (!entry.getKey().equalsIgnoreCase("url")) {
+                if (!entry.getKey().equalsIgnoreCase("url") && !entry.getKey().equalsIgnoreCase("usewhitelist")) {
                     for(String val: entry.getValue()) {
                         nvpList.add(new BasicNameValuePair(entry.getKey(), val));
                     }
@@ -368,7 +370,6 @@ public class DownloadController extends BasePortalController {
                 throw new URISyntaxException(e.getMessage(), "Error parsing UrlEncodedFormEntity");
             }
             ((HttpPost)method).setEntity(entity);
-
         } else {
             // Use an HTTP GET request
             method = new HttpGet(url);

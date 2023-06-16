@@ -1,23 +1,26 @@
 package org.auscope.portal.core.server.controllers;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.naming.OperationNotSupportedException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.auscope.portal.core.server.http.HttpServiceCaller;
+import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.WMSService;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
@@ -49,7 +52,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Scope("session")
 //this can't be a singleton as each request by a user may be targeting a specific wms version
 public class WMSController extends BaseCSWController {
-
+	
     // ----------------------------------------------------- Instance variables
 
     private WMSService wmsService;
@@ -86,6 +89,34 @@ public class WMSController extends BaseCSWController {
 			return generateJSONResponseMAV(false, "Unable to process request", null);
 		}
 	}
+	
+	/**
+	 * Gets the GetCapabilities response for a supplied WMS URL via a proxy.
+	 * Note this returns the raw response rather than a JSON Object.
+	 * 
+	 * @param response the Response Object
+	 * @param request the Request Object
+	 * @param url the service URL
+	 * @param version the WMS version
+	 * @param usePost if true use a POST request, else use a GET 
+	 * @param useWhitelist if true verify the url is on the whitelist before allowing request
+	 * @throws PortalServiceException
+	 * @throws OperationNotSupportedException
+	 * @throws URISyntaxException
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/getWMSCapabilitiesViaProxy.do", method = {RequestMethod.GET, RequestMethod.POST})
+    public void getViaProxy(
+            HttpServletResponse response,
+            HttpServletRequest request,
+            @RequestParam("url") String url,
+            @RequestParam("version") String version,
+            @RequestParam(required = false, value = "usepostafterproxy", defaultValue = "false") boolean usePost,
+            @RequestParam(required = false, value = "usewhitelist", defaultValue = "true") boolean useWhitelist
+            ) throws PortalServiceException, OperationNotSupportedException, URISyntaxException, IOException {
+		this.wmsService.getWMSCapabilitiesViaProxy(response, request, url, version, usePost, useWhitelist);
+	}
+
 
     /**
      * Gets all WMS data records from a discovery service, and then creates JSON response for the WMS layers list in the portal
