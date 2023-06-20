@@ -1,25 +1,42 @@
 package org.auscope.portal.core.services;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.naming.OperationNotSupportedException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.message.BasicNameValuePair;
 import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WMSMethodMakerInterface;
 import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * Service class providing functionality for interacting with a Web Map Service
  */
 public class WMSService {
+	
+	@Value("${access.whitelist}")
+    private String whitelist;
 
     // -------------------------------------------------------------- Constants
     private final Log log = LogFactory.getLog(getClass());
@@ -78,6 +95,73 @@ public class WMSService {
             if (method != null) {
                 method.releaseConnection();
             }
+        }
+    }
+    
+    /**
+	 * Gets the GetCapabilities response for a supplied WMS URL via a proxy
+	 * 
+	 * @param response the Response Object
+	 * @param request the Request Object
+	 * @param url the service URL
+	 * @param version the WMS version
+	 * @param usePost if true use a POST request, else use a GET 
+	 * @param useWhitelist if true verify the url is on the whitelist before allowing request
+	 * @throws PortalServiceException
+	 * @throws OperationNotSupportedException
+	 * @throws URISyntaxException
+	 * @throws IOException
+	 */
+    public void getWMSCapabilitiesViaProxy(HttpServletResponse response, HttpServletRequest request, String url, String version,
+    		boolean usePost, boolean useWhitelist) throws IOException, MalformedURLException, PortalServiceException, URISyntaxException {
+    	// Trim URL of parameters
+    	if (url.indexOf('?') != -1) {
+    		url = url.substring(0, url.indexOf('?'));
+    	}
+    	
+        // Check if on whitelist (is usewhitelist = true)
+    	if (useWhitelist) {
+	        boolean isTrue = false;
+	        URL aUrl = new URL(url);
+	        String host = aUrl.getHost();
+	        // get the URL whitelist from application.yaml
+	        String[] urlList = whitelist.split(" ");
+	        if (url != null) {
+	            // Set a whitelist for the request URL only from the Commonwealth Government or the State Governments or Universities or Octopus will pass
+	            Stream<String> whiteListStream = Stream.of(urlList);
+	            isTrue = whiteListStream.anyMatch(parameter -> host.endsWith(parameter));
+	        }
+	        // Return if not on whitelist
+	        if (!isTrue) return;
+    	}
+
+        // Assemble method depending on the incoming request's method
+        HttpRequestBase method;
+        if (request.getMethod().equals("POST") || usePost) {
+        	List<NameValuePair> nvpList = new ArrayList<>();
+        	nvpList.add(new BasicNameValuePair("service", "WMS"));
+        	nvpList.add(new BasicNameValuePair("request", "GetCapabilities"));
+        	nvpList.add(new BasicNameValuePair("version", version));
+            // Use an HTTP POST request
+            method = new HttpPost(url);
+            UrlEncodedFormEntity entity;
+            try {
+                entity = new UrlEncodedFormEntity(nvpList, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                throw new URISyntaxException(e.getMessage(), "Error parsing UrlEncodedFormEntity");
+            }
+            ((HttpPost)method).setEntity(entity);
+        } else {
+            // Use an HTTP GET request
+        	url = url + "?service=WMS&request=GetCapabilities&version=" + version;
+            method = new HttpGet(url);
+        }
+        HttpClientInputStream result = serviceCaller.getMethodResponseAsStream(method);
+        response.addHeader("Cache-Control", "public, max-age=604800, must-revalidate, no-transform");
+        try (OutputStream outputStream = response.getOutputStream();) {
+            IOUtils.copy(result, outputStream);
+        } catch (IOException e) {
+            throw new PortalServiceException("Exception during getCapabilitiesViaProxy.do "+e.getMessage(), e);
         }
     }
 
