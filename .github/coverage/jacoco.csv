@@ -71,7 +71,7 @@ Portal-Core,org.auscope.portal.core.uifilter.mandatory,UITextBox,14,0,0,0,6,0,2,
 Portal-Core,org.auscope.portal.core.server.controllers,OPeNDAPController,311,0,24,0,66,0,16,0,4,0
 Portal-Core,org.auscope.portal.core.server.controllers,CSWFilterController,186,750,44,66,38,140,40,27,2,10
 Portal-Core,org.auscope.portal.core.server.controllers,WFSController,434,223,12,6,84,54,11,9,4,7
-Portal-Core,org.auscope.portal.core.server.controllers,DownloadController,340,222,46,18,92,57,34,8,5,5
+Portal-Core,org.auscope.portal.core.server.controllers,DownloadController,348,222,50,18,93,57,36,8,5,5
 Portal-Core,org.auscope.portal.core.server.controllers,WCSController,167,338,34,26,36,70,22,16,1,7
 Portal-Core,org.auscope.portal.core.server.controllers,KnownLayerController,18,0,0,0,5,0,3,0,3,0
 Portal-Core,org.auscope.portal.core.server.controllers,ServiceConfigurationController,24,0,2,0,9,0,3,0,2,0
@@ -80,7 +80,7 @@ Portal-Core,org.auscope.portal.core.server.controllers,BaseCSWController,43,63,7
 Portal-Core,org.auscope.portal.core.server.controllers,CSWCacheController,53,75,0,2,10,17,1,4,1,3
 Portal-Core,org.auscope.portal.core.server.controllers,NamespaceController,65,0,0,0,15,0,3,0,3,0
 Portal-Core,org.auscope.portal.core.server.controllers,CSWController,256,0,24,0,58,0,17,0,5,0
-Portal-Core,org.auscope.portal.core.server.controllers,WMSController,543,350,34,22,122,74,28,12,8,4
+Portal-Core,org.auscope.portal.core.server.controllers,WMSController,553,350,34,22,124,74,29,12,9,4
 Portal-Core,org.auscope.portal.core.server.controllers,BasePortalController,60,225,6,14,11,45,5,18,0,13
 Portal-Core,org.auscope.portal.core.server.controllers,SearchController,126,0,4,0,30,0,6,0,4,0
 Portal-Core,org.auscope.portal.core.services.methodmakers.filter,FilterBoundingBox,215,436,16,34,40,82,23,23,8,13
@@ -210,7 +210,7 @@ Portal-Core,org.auscope.portal.core.services,LocalCSWFilterService.FilterRunnerS
 Portal-Core,org.auscope.portal.core.services,SOSService,30,19,0,0,6,5,1,2,1,2
 Portal-Core,org.auscope.portal.core.services,OpendapService,103,68,0,0,17,14,2,3,2,3
 Portal-Core,org.auscope.portal.core.services,LocalCSWFilterService.FilterRunner,15,136,0,8,4,37,0,7,0,3
-Portal-Core,org.auscope.portal.core.services,WMSService,131,195,13,11,27,36,14,6,3,5
+Portal-Core,org.auscope.portal.core.services,WMSService,273,195,25,11,60,36,22,6,5,5
 Portal-Core,org.auscope.portal.core.services,WFSGml32Service,22,0,0,0,4,0,2,0,2,0
 Portal-Core,org.auscope.portal.core.services,KnownLayerService,392,330,48,33,82,75,28,21,3,5
 Portal-Core,org.auscope.portal.core.services,CSWCacheService,29,488,9,27,6,104,10,28,1,19
