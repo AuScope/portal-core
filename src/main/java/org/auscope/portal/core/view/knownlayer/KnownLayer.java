@@ -100,6 +100,7 @@ public class KnownLayer implements Serializable {
         this.knownLayerSelector = knownLayerSelector;
         this.id = id;
         this.supportsCsvDownloads = false;
+        this.hidden = false;
     }
 
     /**
