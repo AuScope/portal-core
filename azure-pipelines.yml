@@ -5,6 +5,7 @@
 
 trigger:
 - master
+- Release-*
 
 pool:
   vmImage: ubuntu-latest
