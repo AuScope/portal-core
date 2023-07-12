@@ -23,9 +23,12 @@ import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.activation.MimetypesFileTypeMap;
 import javax.naming.OperationNotSupportedException;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
@@ -330,9 +333,9 @@ public class DownloadController extends BasePortalController {
             HttpServletRequest request,
             @RequestParam("url") String url,
             @RequestParam(required = false, value = "usepostafterproxy", defaultValue = "false") boolean usePost,
-            @RequestParam(required = false, value = "usewhitelist", defaultValue = "true") boolean useWhitelist
-            ) throws PortalServiceException, OperationNotSupportedException, URISyntaxException, IOException {
-        // Check if on whitelist (if usewhitelist = true)
+            @RequestParam(required = false, value = "usewhitelist", defaultValue = "true") boolean useWhitelist)
+            		throws PortalServiceException, OperationNotSupportedException, URISyntaxException, IOException {    	
+        // Check whitelist
     	if (useWhitelist) {
 	        boolean isTrue = false;
 	        URL aUrl = new URL(url);
@@ -347,6 +350,13 @@ public class DownloadController extends BasePortalController {
 	        // Return if not on whitelist
 	        if (!isTrue) return;
     	}
+
+    	// Determine content-type from filename if applicable
+    	String filename = FilenameUtils.getName(url);
+    	String contentType = new MimetypesFileTypeMap().getContentType(filename);
+    	if (StringUtils.isNotBlank(contentType)) {
+        	response.addHeader("Content-Type", contentType);
+        }
 
         // Assemble method depending on the incoming request's method
         HttpRequestBase method;
@@ -374,6 +384,7 @@ public class DownloadController extends BasePortalController {
             // Use an HTTP GET request
             method = new HttpGet(url);
         }
+        
         HttpClientInputStream result = serviceCaller.getMethodResponseAsStream(method);
         response.addHeader("Cache-Control", "public, max-age=604800, must-revalidate, no-transform");
         try (OutputStream outputStream = response.getOutputStream();) {
