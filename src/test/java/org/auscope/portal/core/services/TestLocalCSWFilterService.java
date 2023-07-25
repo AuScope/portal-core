@@ -104,7 +104,7 @@ public class TestLocalCSWFilterService extends PortalTestClass {
 
         }});
 
-        FacetedSearchResponse response = localFilterService.getFilteredRecords(serviceId, facets, startIndex, maxRecords);
+        FacetedSearchResponse response = localFilterService.getFilteredRecords(serviceId, null, facets, startIndex, maxRecords);
 
         Assert.assertNotNull(response);
         Assert.assertEquals(4, response.getNextIndex());
@@ -179,7 +179,7 @@ public class TestLocalCSWFilterService extends PortalTestClass {
                     new CSWRecord(serviceId, "rec6", null, null, new AbstractCSWOnlineResource[] {new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WCS", "wcs", ""), new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WMS", "wms", "")}, null))));
         }});
 
-        FacetedSearchResponse response = localFilterService.getFilteredRecords(serviceId, facets, startIndex, maxRecords);
+        FacetedSearchResponse response = localFilterService.getFilteredRecords(serviceId, null, facets, startIndex, maxRecords);
 
         Assert.assertNotNull(response);
         Assert.assertEquals(3, response.getRecords().size());
@@ -239,7 +239,7 @@ public class TestLocalCSWFilterService extends PortalTestClass {
                     new CSWRecord(serviceId, "rec4", null, null, new AbstractCSWOnlineResource[] {new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WMS", "wms", "")}, null))));
         }});
 
-        FacetedSearchResponse response = localFilterService.getFilteredRecords(serviceId, facets, startIndex, maxRecords);
+        FacetedSearchResponse response = localFilterService.getFilteredRecords(serviceId, null, facets, startIndex, maxRecords);
 
         Assert.assertNotNull(response);
         Assert.assertEquals(1, response.getRecords().size());
@@ -290,7 +290,7 @@ public class TestLocalCSWFilterService extends PortalTestClass {
             will(throwException(new PortalServiceException("Test exception")));
         }});
 
-        localFilterService.getFilteredRecords(serviceId, facets, startIndex, maxRecords);
+        localFilterService.getFilteredRecords(serviceId, null, facets, startIndex, maxRecords);
     }
 
     /**
@@ -400,7 +400,7 @@ public class TestLocalCSWFilterService extends PortalTestClass {
             allowing(mockServ3Res2).getRecords();will(returnValue(Arrays.asList(new CSWRecord("s3rec4"))));
         }});
 
-        FacetedMultiSearchResponse response = localFilterService.getFilteredRecords(serviceIds, facets, startIndexes, RECORD_REQUEST_COUNT);
+        FacetedMultiSearchResponse response = localFilterService.getFilteredRecords(serviceIds, null, facets, startIndexes, RECORD_REQUEST_COUNT);
         Assert.assertNotNull(response);
         Assert.assertNotNull(response.getNextIndexes());
         Assert.assertNotNull(response.getRecords());
@@ -504,7 +504,7 @@ public class TestLocalCSWFilterService extends PortalTestClass {
             allowing(mockServ3Res1).getRecords();will(returnValue(Arrays.asList(new CSWRecord("s3rec1"), new CSWRecord("s3rec2"), new CSWRecord("s3rec3"))));
         }});
 
-        FacetedMultiSearchResponse response = localFilterService.getFilteredRecords(serviceIds, facets, startIndexes, RECORD_REQUEST_COUNT);
+        FacetedMultiSearchResponse response = localFilterService.getFilteredRecords(serviceIds, null, facets, startIndexes, RECORD_REQUEST_COUNT);
         Assert.assertNotNull(response);
         Assert.assertNotNull(response.getNextIndexes());
         Assert.assertNotNull(response.getRecords());
@@ -592,7 +592,7 @@ public class TestLocalCSWFilterService extends PortalTestClass {
             allowing(mockServ3Res1).getRecords();will(returnValue(new ArrayList<CSWRecord>()));
         }});
 
-        FacetedMultiSearchResponse response = localFilterService.getFilteredRecords(serviceIds, facets, startIndexes, RECORD_REQUEST_COUNT);
+        FacetedMultiSearchResponse response = localFilterService.getFilteredRecords(serviceIds, null, facets, startIndexes, RECORD_REQUEST_COUNT);
         Assert.assertNotNull(response);
         Assert.assertNotNull(response.getNextIndexes());
         Assert.assertNotNull(response.getRecords());
@@ -714,7 +714,7 @@ public class TestLocalCSWFilterService extends PortalTestClass {
             allowing(mockServ3Res2).getRecords();will(returnValue(Arrays.asList(new CSWRecord("s3rec4"))));
         }});
 
-        FacetedMultiSearchResponse response = localFilterService.getFilteredRecords(serviceIds, facets, startIndexes, RECORD_REQUEST_COUNT);
+        FacetedMultiSearchResponse response = localFilterService.getFilteredRecords(serviceIds, null, facets, startIndexes, RECORD_REQUEST_COUNT);
         Assert.assertNotNull(response);
         Assert.assertNotNull(response.getNextIndexes());
         Assert.assertNotNull(response.getRecords());

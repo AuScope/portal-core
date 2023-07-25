@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.auscope.portal.core.server.OgcServiceProviderType;
 import org.auscope.portal.core.services.CSWCacheService;
 import org.auscope.portal.core.services.CSWFilterService;
 import org.auscope.portal.core.services.LocalCSWFilterService;
@@ -90,7 +91,11 @@ public class CSWSearchController extends BaseCSWController {
      * Parses and performs a faceted search on a CSW
      * @param start 1 based index to start record search from
      * @param limit
-     * @param serviceId
+     * @param serviceId A list of service IDs
+     * @param serviceTitle List of service titles for custom registries (optional)
+     * @param serviceUrl List of service URLs for custom registries (optional)
+     * @param recordUrl List of record URLs for custom registries (optional)
+     * @param serviceType List of OGC service types for custom registries (optional)
      * @param rawFields A list of all fields to be searched on. Must match the other raw params in length.
      * @param rawValues A list of all values to be searched against. Must match the other raw params in length.
      * @param rawTypes A list of all value types to be searched on. Must match the other raw params in length.
@@ -102,6 +107,10 @@ public class CSWSearchController extends BaseCSWController {
             @RequestParam(value="start", required=false, defaultValue="1") Integer[] starts,
             @RequestParam(value="limit", required=false, defaultValue="10") Integer limit,
             @RequestParam("serviceId") String[] serviceIds,
+            @RequestParam(value="serviceTitle", required=false) String[] serviceTitles,
+            @RequestParam(value="serviceUrl", required=false) String[] serviceUrls,
+            @RequestParam(value="recordUrl", required=false) String[] recordUrls,
+            @RequestParam(value="serviceType", required=false) String[] serviceTypes,
             @RequestParam(value="field", required=false) String[] rawFields,
             @RequestParam(value="value", required=false) String[] rawValues,
             @RequestParam(value="type", required=false) String[] rawTypes,
@@ -131,13 +140,13 @@ public class CSWSearchController extends BaseCSWController {
             throw new IllegalArgumentException("Limit too high (max 20)");
         }
 
-        //if start Id's are not specified, assume they are all 1
+        // If start Ids are not specified, assume they are all 1
         if (starts == null || starts.length == 0) {
             starts = new Integer[serviceIds.length];
             Arrays.fill(starts, 1);
         }
 
-        //Build our mapping between service ids and start indexes
+        // Build our mapping between service ids and start indexes
         if (starts.length != serviceIds.length) {
             throw new IllegalArgumentException("start/serviceId lengths mismatch");
         }
@@ -146,7 +155,7 @@ public class CSWSearchController extends BaseCSWController {
             startIndexes.put(serviceIds[i], starts[i]);
         }
 
-        //Parse our raw request info into a list of search facets
+        // Parse our raw request info into a list of search facets
         List<SearchFacet<? extends Object>> facets = new ArrayList<SearchFacet<? extends Object>>();
         for (int i = 0; i < rawFields.length; i++) {
             Comparison cmp = null;
@@ -190,11 +199,37 @@ public class CSWSearchController extends BaseCSWController {
 
             facets.add(newFacet);
         }
+        
+        // Construct CSWServiceItems for custom registries is required
+        CSWServiceItem[] serviceItems = null;
+    	if (serviceTitles != null && serviceUrls != null && recordUrls != null && serviceTypes != null) {
+    		serviceItems = new CSWServiceItem[serviceIds.length];
+    		for (int i = 0; i < serviceIds.length; i++) {
+    			OgcServiceProviderType serviceType = OgcServiceProviderType.Default;
+            	switch(serviceTypes[i].toLowerCase()) {
+            		case "geoserver":
+            			serviceType = OgcServiceProviderType.GeoServer;
+            			break;
+            		case "arcgis":
+            			serviceType = OgcServiceProviderType.ArcGis;
+            			break;
+            		case "pycsw":
+            			serviceType = OgcServiceProviderType.PyCSW;
+            			break;
+            		case "default":
+            		default:
+            			serviceType = OgcServiceProviderType.Default;
+            			break;
+            	}
+    			CSWServiceItem item = new CSWServiceItem(serviceIds[i], serviceUrls[i], recordUrls[i], serviceTitles[i], serviceType, CSWServiceItem.DEF_PAGE_SZ);
+    			serviceItems[i] = item;
+    		}
+    	}
 
-        //Make our request and then convert the records for transport to the view
+        // Make our request and then convert the records for transport to the view
         FacetedMultiSearchResponse response;
         try {
-            response = filterService.getFilteredRecords(serviceIds, facets, startIndexes, limit);
+            response = filterService.getFilteredRecords(serviceIds, serviceItems, facets, startIndexes, limit);
             workaroundMissingNCIMetadata(response.getRecords());
         } catch (Exception ex) {
             log.error("Unable to filter records from remote service", ex);
@@ -217,7 +252,7 @@ public class CSWSearchController extends BaseCSWController {
 
         return generateJSONResponseMAV(true, mm, "");
     }
-    
+        
     /**
      * gets csw record information based on file identifier and service id
      * @param fileIdentifier

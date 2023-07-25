@@ -1,5 +1,6 @@
 package org.auscope.portal.core.server.controllers;
 
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +13,7 @@ import org.auscope.portal.core.services.CSWFilterService;
 import org.auscope.portal.core.services.LocalCSWFilterService;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.WMSService;
+import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.responses.csw.CSWOnlineResourceImpl;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.services.responses.search.FacetedMultiSearchResponse;
@@ -68,6 +70,11 @@ public class TestCSWSearchController extends PortalTestClass {
         final Integer[] start = new Integer[] {1};
         final Integer limit = 2;
         final String[] serviceId = new String[] {"service-id-value"};
+        //final CSWServiceItem[] serviceItems = new CSWServiceItem[] {mockCswServiceItem};
+        String serviceTitle = "serviceTitle";
+        String serviceUrl = "serviceUrl";
+        String recordUrl = "recordUrl";
+        String serviceType = "default";
         final String newName = "new-layer-name";
         final String[] rawFields = new String[] {};
         final String[] rawValues = new String[] {};
@@ -91,7 +98,7 @@ public class TestCSWSearchController extends PortalTestClass {
         final GetCapabilitiesWMSLayerRecord mockGetCapLayer = context.mock(GetCapabilitiesWMSLayerRecord.class);
 
         context.checking(new Expectations() {{
-            oneOf(mockFilterService).getFilteredRecords(with(equal(serviceId)), with(any(List.class)), with(any(Map.class)), with(equal(limit)));
+            oneOf(mockFilterService).getFilteredRecords(with(equal(serviceId)), with.is(anything()), with(any(List.class)), with(any(Map.class)), with(equal(limit)));
             will(returnValue(response));
 
             oneOf(mockWmsService).getWmsCapabilities(with(equal("http://example.com/wms1")), with(any(String.class)));
@@ -107,7 +114,7 @@ public class TestCSWSearchController extends PortalTestClass {
             will(returnValue("new-layer-name"));
         }});
 
-        ModelAndView mav = controller.facetedCSWSearch(start, limit, serviceId, rawFields, rawValues, rawTypes, rawComparisons);
+        ModelAndView mav = controller.facetedCSWSearch(start, limit, serviceId, null, null, null, null, rawFields, rawValues, rawTypes, rawComparisons);
 
         Assert.assertTrue((Boolean) mav.getModelMap().get("success"));
         Assert.assertNotNull(mav.getModelMap().get("data"));
