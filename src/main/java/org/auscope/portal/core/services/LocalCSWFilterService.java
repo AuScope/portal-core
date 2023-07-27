@@ -156,18 +156,19 @@ public class LocalCSWFilterService {
      * Given a specific service to query with a set of local/remote search facets. Perform a full filter until maxRecords are received or the remote CSW runs out of records. This can result
      * in many calls to the remote CSW if the local portion of the filter is quite specific and the remote portion of very permissive.
      * @param serviceId
+     * @param serviceItem the CSWServiceItem for a custom registry (null if registered registry ID is supplied)
      * @param facets
      * @param startIndex
      * @param maxRecords
      * @return
      * @throws PortalServiceException
      */
-    public FacetedSearchResponse getFilteredRecords(String serviceId, List<SearchFacet<? extends Object>> facets, int startIndex, int maxRecords) throws PortalServiceException {
-        //Build our remote filter and keep track of what facets need to be done locally
+    public FacetedSearchResponse getFilteredRecords(String serviceId, CSWServiceItem serviceItem, List<SearchFacet<? extends Object>> facets, int startIndex, int maxRecords) throws PortalServiceException {
+        // Build our remote filter and keep track of what facets need to be done locally
         CSWGetDataRecordsFilter remoteFilter = new CSWGetDataRecordsFilter();
         List<SearchFacet<? extends Object>> localFacets = seperateFacets(facets, remoteFilter);
 
-        //Keep getting pages of data until we serve up enough records
+        // Keep getting pages of data until we serve up enough records
         FacetedSearchResponse result = new FacetedSearchResponse();
         result.setStartIndex(startIndex);
         result.setRecords(new ArrayList<CSWRecord>(maxRecords));
@@ -175,19 +176,27 @@ public class LocalCSWFilterService {
         int recordsMatched = 0;
         while((recordsRemaining = (maxRecords - result.getRecords().size())) > 0) {
 
-            //If we are dealing with a purely remote filter we can just request the exact number of records
+            // If we are dealing with a purely remote filter we can just request the exact number of records
             int recsToRequest = this.pageSize;
             if (localFacets.size() == 0) {
                 recsToRequest = Math.min(this.pageSize, recordsRemaining);
             }
 
-            //If this starts spamming requests we can always look at upping the page size every iteration.
-            CSWGetRecordResponse cswResponse = filterService.getFilteredRecords(serviceId, remoteFilter, recsToRequest, currentStartIndex);
+            
+            // If this starts spamming requests we can always look at upping the page size every iteration.
+            CSWGetRecordResponse cswResponse = null;
+            if(serviceItem != null) {
+            	cswResponse = filterService.getFilteredRecords(serviceItem, remoteFilter, recsToRequest, currentStartIndex);
+            } else if (serviceId != null) {
+            	cswResponse = filterService.getFilteredRecords(serviceId, remoteFilter, recsToRequest, currentStartIndex);
+            } else {
+            	throw new PortalServiceException("No registered service ID or user defined service item was provided.");
+            }
             
             // Update macthed record count
             recordsMatched = cswResponse.getRecordsMatched();
 
-            //Filter our response and copy passing records to our result list
+            // Filter our response and copy passing records to our result list
             int lastIndex;
             if (localFacets.size() == 0) {
                 result.getRecords().addAll(cswResponse.getRecords());
@@ -214,7 +223,7 @@ public class LocalCSWFilterService {
         result.setRecordsMatched(recordsMatched);
         return result;
     }
-
+    
     /**
      * Notifies all runners to terminate if they haven't already. Returns the count of the runner with the MOST records
      * @param allRunners
@@ -258,13 +267,14 @@ public class LocalCSWFilterService {
      * This method is synchronous but utilises the internal executor to concurrently call multiple services
      *
      * @param serviceIds
+     * @param serviceItems a list of CSWServiceItems for custom registries, will be null if only registered registires are used
      * @param facets
      * @param startIndexes
      * @param maxRecords
      * @return
      * @throws PortalServiceException
      */
-    public FacetedMultiSearchResponse getFilteredRecords(String[] serviceIds, List<SearchFacet<? extends Object>> facets, Map<String, Integer> startIndexes, int maxRecords) throws PortalServiceException {
+    public FacetedMultiSearchResponse getFilteredRecords(String[] serviceIds, CSWServiceItem[] serviceItems, List<SearchFacet<? extends Object>> facets, Map<String, Integer> startIndexes, int maxRecords) throws PortalServiceException {
         //Distribute our max records evenly across the service Ids (this will only be a suggested amount, we may need to redistribute)
         HashMap<String, Integer> fulfillment = new HashMap<String, Integer>();
         for (int i = 0; i < serviceIds.length; i++) {
@@ -275,19 +285,26 @@ public class LocalCSWFilterService {
             fulfillment.put(serviceIds[i], fulfillmentCount);
         }
 
-        //Fire off our requests concurrently
+        // Fire off our requests concurrently
         HashMap<String, FilterRunner> runners = new HashMap<String, FilterRunner>();
         Object lock = runners; //this doubles as our lock object for this request
-        for (String serviceId : serviceIds) {
-            FilterRunner runner = new FilterRunner(this, serviceId, fulfillment.get(serviceId), facets, startIndexes.get(serviceId), lock);
-            runners.put(serviceId, runner);
+         
+        for (int i = 0; i < serviceIds.length; i++) {
+        	// User may have specified a custom registry
+        	CSWServiceItem cswItem = null;
+        	if (serviceItems != null && serviceItems.length >= i) {
+        		cswItem = serviceItems[i];
+        	}
+            FilterRunner runner = new FilterRunner(this, serviceIds[i], cswItem, fulfillment.get(serviceIds[i]), facets, startIndexes.get(serviceIds[i]), lock);
+            runners.put(serviceIds[i], runner);
             this.executor.execute(runner);
         }
+        
         ArrayList<FilterRunner> allRunners = new ArrayList<FilterRunner>(runners.values());
 
-        //Check our runner statuses repeatedly, waking up when they tell us to
+        // Check our runner statuses repeatedly, waking up when they tell us to
         while(true) {
-            //Check our state inside the lock so don't end up with the state changing underneath us
+            // Check our state inside the lock so don't end up with the state changing underneath us
             synchronized(lock) {
                 boolean stillWaiting = false;
                 for (FilterRunner runner : allRunners) {
@@ -340,11 +357,11 @@ public class LocalCSWFilterService {
             }
         }
 
-        //Cleanup runners, check for errors
+        // Cleanup runners, check for errors
         int maxDepth = cleanupConcurrentFilteredRecords(allRunners, lock);
 
-        //Build our response object from the finished runner states (also cleanup our runners if some are paused)
-        //make sure we interleave the results "fairly"
+        // Build our response object from the finished runner states (also cleanup our runners if some are paused)
+        // make sure we interleave the results "fairly"
         FacetedMultiSearchResponse response = new FacetedMultiSearchResponse();
         for (int depth = 0; depth < maxDepth && response.getRecords().size() < maxRecords; depth++) {
             for (FilterRunner runner : allRunners) {
@@ -364,7 +381,7 @@ public class LocalCSWFilterService {
 
         return response;
     }
-
+        
     /**
      * Returns the list of internal CSWServiceItems that powers this service (passes straight through to underlying CSWFilterService
      *
@@ -393,6 +410,7 @@ public class LocalCSWFilterService {
         public Object lock;
         public LocalCSWFilterService parent;
         public String serviceId;
+        public CSWServiceItem serviceItem;	// Only present for custom registries
         public int currentFulfillment;
         public List<SearchFacet<? extends Object>> facets;
         public int currentStartIndex;
@@ -403,11 +421,12 @@ public class LocalCSWFilterService {
         public volatile boolean requestTerminate = false;
         public Throwable error;
 
-        public FilterRunner(LocalCSWFilterService parent, String serviceId, int currentFulfillment,
+        public FilterRunner(LocalCSWFilterService parent, String serviceId, CSWServiceItem serviceItem, int currentFulfillment,
                 List<SearchFacet<? extends Object>> facets, int currentStartIndex, Object lock) {
             super();
             this.parent = parent;
             this.serviceId = serviceId;
+            this.serviceItem = serviceItem;
             this.currentFulfillment = currentFulfillment;
             this.facets = facets;
             this.currentStartIndex = currentStartIndex;
@@ -430,7 +449,8 @@ public class LocalCSWFilterService {
                             this.wait(); //wait for the parent to notify this to look for more due to an increase in fulfillment
                         }
                     } else {
-                        FacetedSearchResponse response = parent.getFilteredRecords(serviceId, facets, currentNextIndex, currentFulfillment - this.records.size());
+                    	FacetedSearchResponse response;
+                   		response = parent.getFilteredRecords(serviceId, serviceItem, facets, currentNextIndex, currentFulfillment - this.records.size());
                         synchronized(this.lock) {
                             this.records.addAll(response.getRecords());
                             this.currentNextIndex =  response.getNextIndex();

@@ -225,9 +225,24 @@ public class CSWFilterService {
         if (cswServiceItem == null) {
             throw new IllegalArgumentException(String.format("serviceId '%1$s' DNE", serviceId));
         }
-
         return callSingleService(cswServiceItem, filter, maxRecords, startPosition, ResultType.Results);
     }
+    
+    
+    /**
+     * 
+     * @param cswServiceItem
+     * @param filter
+     * @param maxRecords
+     * @param startPosition
+     * @return
+     * @throws PortalServiceException
+     */
+    public CSWGetRecordResponse getFilteredRecords(CSWServiceItem cswServiceItem, CSWGetDataRecordsFilter filter, int maxRecords,
+            int startPosition) throws PortalServiceException {
+        return callSingleService(cswServiceItem, filter, maxRecords, startPosition, ResultType.Results);
+    }
+    
 
     /**
      * Makes a request to the specified CSW service (on this thread) before parsing and returning the response
