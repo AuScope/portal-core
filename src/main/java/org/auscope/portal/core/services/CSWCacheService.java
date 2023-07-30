@@ -342,7 +342,7 @@ public class CSWCacheService {
         if (!okToUpdate()) {
             return false;
         }
-
+        
         //This will be our new cache
         Map<String, Set<CSWRecord>> newKeywordCache = new HashMap<>();
         Map<String, Set<String>> newKeywordByEndpointCache = new HashMap<>();
@@ -715,14 +715,13 @@ public class CSWCacheService {
 
         @Override
         public void run() {
-
             // Before querying the endpoint, see if there is a serialised cache of endpoint
             // saved to disk, deserialise it and retain in memory in case there is a failure.
             Map<String, CSWRecord> serialisedCSWRecordMap = new HashMap<>();
             if(new File(CSW_CACHE_PATH + this.endpoint.getId() +".ser").exists()) {
                 Kryo kryo = new Kryo();
                 kryo.setRegistrationRequired(false);
-//                kryo.setInstantiatorStrategy(new Kryo.DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
+                //kryo.setInstantiatorStrategy(new Kryo.DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
                 kryo.setInstantiatorStrategy(new com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
                 com.esotericsoftware.kryo.io.Input input = null;
                 try {
@@ -736,7 +735,7 @@ public class CSWCacheService {
                 threadLog.warn(String.format("No saved registry found on disk on: %1$s, %2$s", CSW_CACHE_PATH, this.endpoint.getId() + ".ser"));
             }
 
-            //Query the endpoint and cache
+            // Query the endpoint and cache
             try {
                 String cswServiceUrl = this.endpoint.getServiceUrl();
 
@@ -780,7 +779,7 @@ public class CSWCacheService {
 
                         threadLog.trace(String.format("%1$s - Response parsed!", this.endpoint.getServiceUrl()));
 
-                        //Prepare to request next 'page' of records (if required)
+                        // Prepare to request next 'page' of records (if required)
                         if (response.getNextRecord() > response.getRecordsMatched() ||
                                 response.getNextRecord() <= 0) {
                             startPosition = -1; //we are done in this case
@@ -789,8 +788,8 @@ public class CSWCacheService {
                         }
                     } while (startPosition > 0);
 
-                    //Iterate the cswRecordMap resolving parent/children relationships
-                    //children will NOT be removed from the map
+                    // Iterate the cswRecordMap resolving parent/children relationships
+                    // children will NOT be removed from the map
                     for (Iterator<String> i = cswRecordMap.keySet().iterator(); i.hasNext();) {
                         CSWRecord next = cswRecordMap.get(i.next());
 
@@ -810,13 +809,12 @@ public class CSWCacheService {
                     // Cache the contents for this endpoint so we can use it in
                     // case of errors later.
                     synchronized(this.cswRecordsCache) {
-                        this.cswRecordsCache.put(this.endpoint.getId(), cswRecordMap);
-
                         // If there are records returned, serialise the cache and saved it to disk
                         if (cswRecordMap.size() > 0) {
+                        	this.cswRecordsCache.put(this.endpoint.getId(), cswRecordMap);
 	                        Kryo kryo = new Kryo();
 	                        kryo.setRegistrationRequired(false);
-	                        com.esotericsoftware.kryo.io.Output output = new com.esotericsoftware.kryo.io.Output(new FileOutputStream( CSW_CACHE_PATH + this.endpoint.getId() +".ser"));
+	                        com.esotericsoftware.kryo.io.Output output = new com.esotericsoftware.kryo.io.Output(new FileOutputStream(CSW_CACHE_PATH + this.endpoint.getId() +".ser"));
 	                        kryo.writeObject(output, cswRecordMap);
 	                        output.close();
 	                        threadLog.info(this.endpoint.getServiceUrl() + " has been serialized.");
@@ -824,8 +822,7 @@ public class CSWCacheService {
                     }
                 }
             } catch (Exception ex) {
-                threadLog.warn(String.format("Error updating keyword cache for '%1$s': %2$s", this.endpoint.getServiceUrl(),
-                        ex));
+                threadLog.warn(String.format("Error updating keyword cache for '%1$s': %2$s", this.endpoint.getServiceUrl(), ex));
                 threadLog.warn("Exception: ", ex);
                 threadLog.info("Falling back on cached results for this endpoint.");
             } finally {
