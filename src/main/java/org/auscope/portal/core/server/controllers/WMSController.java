@@ -358,7 +358,11 @@ public class WMSController extends BaseCSWController {
     }
 
     /**
-     *
+     * Construct a GetFeatureInfo request.
+     * 
+     * Note: I don't know why this is named what it is, it appears to be the only entry point for a GetFeatureInfo
+     * request. I've made the SLD_BODY parameter optional as I don't believe GetFeatureInfo supports it.
+     *  
      * @param request
      * @param response
      * @param wmsUrl
@@ -393,7 +397,7 @@ public class WMSController extends BaseCSWController {
             @RequestParam("WIDTH") String width,
             @RequestParam("HEIGHT") String height,
             @RequestParam("INFO_FORMAT") String infoFormat,
-            @RequestParam(value = "SLD_BODY", defaultValue = "") String sldBody,
+            @RequestParam(value = "SLD_BODY", defaultValue = "", required=false) String sldBody,
             @RequestParam(value = "postMethod", defaultValue = "false") Boolean postMethod,
             @RequestParam("version") String version,
             @RequestParam(value = "feature_count", defaultValue = "0") String feature_count) throws Exception {
@@ -423,6 +427,7 @@ public class WMSController extends BaseCSWController {
         InputStream responseStream = new ByteArrayInputStream(responseString.getBytes());
         FileIOUtil.writeInputToOutputStream(responseStream, response.getOutputStream(), BUFFERSIZE, true);
     }
+    
     /**
     * get the default style for polygon Layer
     * @param response

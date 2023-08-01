@@ -135,7 +135,7 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
         existingParam.add(new BasicNameValuePair("format", "image/png"));
         existingParam.add(new BasicNameValuePair("layers", layerName));
         existingParam.add(new BasicNameValuePair("layer", layerName));
-        if (styles != null && styles.trim().length() > 0) {
+        if (StringUtils.isNotBlank(styles)) {
             existingParam.add(new BasicNameValuePair("styles", styles.trim()));
         }
         if (width > 0) {
@@ -246,10 +246,10 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
             existingParam.addAll(vendorParams);
         }
 
-        if (sldBody != null && sldBody.trim().length() > 0) {
+        if (StringUtils.isNotBlank(sldBody)) {
             existingParam.add(new BasicNameValuePair("SLD_BODY", sldBody));
         }
-        if (styles != null && styles.trim().length() > 0) {
+        if (StringUtils.isNotBlank(styles)) {
             existingParam.add(new BasicNameValuePair("styles", styles.trim()));
         }
 
@@ -354,10 +354,10 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
             existingParam.addAll(vendorParams);
         }
 
-        if (sldBody != null && sldBody.trim().length() > 0) {
+        if (StringUtils.isNotBlank(sldBody)) {
             existingParam.add(new BasicNameValuePair("SLD_BODY", sldBody));
         }
-        if (styles != null && styles.trim().length() > 0) {
+        if (StringUtils.isNotBlank(styles)) {
             existingParam.add(new BasicNameValuePair("styles", styles.trim()));
         }
 
@@ -392,7 +392,7 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
         existingParam.add(new BasicNameValuePair("service", "WMS"));
         existingParam.add(new BasicNameValuePair("request", "GetMap"));
         existingParam.add(new BasicNameValuePair("version", "1.3.0"));
-        if (sldBody != null && sldBody.trim().length() > 0) {
+        if (StringUtils.isNotBlank(sldBody)) {
             existingParam.add(new BasicNameValuePair("SLD_BODY", sldBody));
         }
         existingParam.add(new BasicNameValuePair("DISPLAYOUTSIDEMAXEXTENT", "TRUE"));
