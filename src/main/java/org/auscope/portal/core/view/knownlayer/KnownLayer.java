@@ -87,6 +87,9 @@ public class KnownLayer implements Serializable {
 
     /** If true supports CSV downloads of WFS features */
     private Boolean supportsCsvDownloads;
+    
+    /** Server type. This is currently only used for easily identifying ESRI servers. */
+    private String serverType;
 
     /**
      * Creates a new KnownLayer
@@ -436,7 +439,8 @@ public class KnownLayer implements Serializable {
                 + ", knownLayerSelector=" + knownLayerSelector + ", iconUrl=" + iconUrl + ", polygonColor="
                 + polygonColor + ", iconAnchor=" + iconAnchor + ", iconSize=" + iconSize + ", styles=" + mapStyles +", feature_count="
                 + feature_count + ", order=" + order + ", singleTile=" + singleTile + ", legendImg=" + legendImg
-                + ", supportsCsvDownloads=" + supportsCsvDownloads + ']';
+                + ", supportsCsvDownloads=" + supportsCsvDownloads +
+                (getServerType() != null ? ", serverType=" + getServerType() : "") +']';
     }
 
     public FilterCollection getFilterCollection() {
@@ -462,4 +466,21 @@ public class KnownLayer implements Serializable {
     public void setMapStyles(String mapStyles) {
         this.mapStyles = mapStyles;
     }
+    
+    /**
+     * @return the type of server
+     */
+    public String getServerType() {
+    	return serverType;
+    }
+    
+    /**
+     * Set the server type
+     * 
+     * @param serverType
+     */
+    public void setServerType(String serverType) {
+    	this.serverType = serverType;
+    }
+
 }
