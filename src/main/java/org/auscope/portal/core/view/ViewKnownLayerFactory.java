@@ -81,6 +81,10 @@ public class ViewKnownLayerFactory {
         if (k.getSupportsCsvDownloads()) {
             obj.put("supportsCsvDownloads", k.getSupportsCsvDownloads());
         }
+        
+        if (k.getServerType() != null) {
+        	obj.put("serverType", k.getServerType());
+        }
 
         return obj;
     }
