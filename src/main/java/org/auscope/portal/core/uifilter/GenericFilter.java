@@ -68,6 +68,12 @@ public abstract class GenericFilter extends AbstractFilter {
         }else if(Predicate.valueOf(obj.getString("predicate")) == (Predicate.ISEQUAL)){
             return this.generatePropertyIsEqualToFragment(
                     obj.getString("xpath"), obj.getString("value"));
+        }else if(Predicate.valueOf(obj.getString("predicate")) == (Predicate.BIGGER_THAN)){ 
+            return this.generatePropertyIsGreaterThan(
+                    obj.getString("xpath"), obj.getString("value") );
+        }else if(Predicate.valueOf(obj.getString("predicate")) == (Predicate.SMALLER_THAN)){ 
+            return this.generatePropertyIsLessThan(
+                    obj.getString("xpath"), obj.getString("value") );
         }else throw new UnsupportedOperationException("Unable to parse text string fragment.");
 
     }
