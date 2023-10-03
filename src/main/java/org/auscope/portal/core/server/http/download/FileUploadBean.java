@@ -1,16 +1,17 @@
 package org.auscope.portal.core.server.http.download;
 
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
+
 
 public class FileUploadBean {
 
-    private CommonsMultipartFile file;
+    private MultipartFile file;
 
-    public CommonsMultipartFile getFile() {
+    public MultipartFile getFile() {
         return file;
     }
 
-    public void setFile(CommonsMultipartFile file) {
+    public void setFile(MultipartFile file) {
         this.file = file;
     }
 }
