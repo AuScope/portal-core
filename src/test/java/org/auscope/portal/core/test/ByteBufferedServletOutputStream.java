@@ -3,8 +3,8 @@ package org.auscope.portal.core.test;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.WriteListener;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.WriteListener;
 
 /**
  * Test class extension of a ServletOutputStream that allows access to an underlying byte[] of data that was written
