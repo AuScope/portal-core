@@ -48,7 +48,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.4</version>
+        <version>3.1.5</version>
     </parent>
 
     <!-- Repositories section -->
@@ -323,7 +323,7 @@
 	    <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20230227</version>
+            <version>20231013</version>
         </dependency>
         <dependency>
         <!-- Saxon needed for XPath 2 functionality. Java default is only XPath 1 -->
@@ -415,18 +415,13 @@
 	    <artifactId>joda-time</artifactId>
             <version>2.12.5</version>
         </dependency>
-	    <dependency>
-          <groupId>org.apache.jena</groupId>
-          <artifactId>jena-arq</artifactId>
-          <version>4.2.0</version>
-          <exclusions>
-              <exclusion>
-                  <groupId>org.slf4j</groupId>
-                  <artifactId>jcl-over-slf4j</artifactId>
-              </exclusion>
-          </exclusions>
-	    </dependency>
-	    <dependency>
+        <dependency>
+            <groupId>org.apache.jena</groupId>
+            <artifactId>apache-jena-libs</artifactId>
+            <version>4.10.0</version>
+            <type>pom</type>
+        </dependency>
+	<dependency>
           <groupId>com.github.openstack4j.core</groupId>
           <artifactId>openstack4j-core</artifactId>
           <version>3.9</version>
