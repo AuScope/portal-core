@@ -104,11 +104,12 @@ public class TestKnownLayerSelectors extends PortalTestClass {
     @Test
     public void testCSWKeywordSelector() {
         CSWRecordSelector selector = new CSWRecordSelector();
-        selector.setDescriptiveKeyword("Report");
+        String[] keywords = {"Report", "WMS"};
+        selector.setDescriptiveKeywords(keywords);
 
         Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(0)));
         Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(1)));
-        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(2)));
+        Assert.assertEquals(RelationType.Belongs, selector.isRelatedRecord(recordList.get(2)));
         Assert.assertEquals(RelationType.Belongs, selector.isRelatedRecord(recordList.get(3)));
         Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(4)));
         Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(5)));
@@ -122,9 +123,10 @@ public class TestKnownLayerSelectors extends PortalTestClass {
     @Test
     public void testCSWServiceNameSelector() {
         CSWRecordSelector selector = new CSWRecordSelector();
-        selector.setServiceName("name4");
+        String[] names = {"name1", "name4"};
+        selector.setServiceNames(names);
 
-        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(0)));
+        Assert.assertEquals(RelationType.Belongs, selector.isRelatedRecord(recordList.get(0)));
         Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(1)));
         Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(2)));
         Assert.assertEquals(RelationType.Belongs, selector.isRelatedRecord(recordList.get(3)));
@@ -140,10 +142,11 @@ public class TestKnownLayerSelectors extends PortalTestClass {
     @Test
     public void testCSWIdSelector() {
         CSWRecordSelector selector = new CSWRecordSelector();
-        selector.setRecordId("id4");
+        String[] ids = {"id2", "id4"};
+        selector.setRecordIds(ids);
 
         Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(0)));
-        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(1)));
+        Assert.assertEquals(RelationType.Belongs, selector.isRelatedRecord(recordList.get(1)));
         Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(2)));
         Assert.assertEquals(RelationType.Belongs, selector.isRelatedRecord(recordList.get(3)));
         Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(4)));
