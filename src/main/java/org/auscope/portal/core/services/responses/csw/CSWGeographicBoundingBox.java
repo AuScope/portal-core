@@ -11,6 +11,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.services.namespaces.CSWNamespaceContext;
 import org.auscope.portal.core.util.DOMUtil;
+import org.springframework.data.elasticsearch.core.geo.GeoJsonPolygon;
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -23,20 +25,24 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
 
     protected static final Log logger = LogFactory.getLog(new CSWGeographicBoundingBox().getClass());
     
-    /** The Constant serialVersionUID. */
+    // The Constant serialVersionUID.
     private static final long serialVersionUID = 1L;
 
-    /** The west bound longitude. */
+    // The west bound longitude.
     private double westBoundLongitude;
 
-    /** The east bound longitude. */
+    // The east bound longitude.
     private double eastBoundLongitude;
 
-    /** The south bound latitude. */
+    // The south bound latitude.
     private double southBoundLatitude;
 
-    /** The north bound latitude. */
+    // The north bound latitude.
     private double northBoundLatitude;
+    
+    /** Non-OGC fields below **/
+    // The GeoJsonPolyogn instance of the bounding box, used for indexing geometry in Elasticsearch.
+    private GeoJsonPolygon boundingPolygon;
 
     /**
      * Instantiates a new cSW geographic bounding box.
@@ -147,6 +153,44 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
     @Override
     public void setNorthBoundLatitude(double northBoundLatitude) {
         this.northBoundLatitude = Double.isNaN(northBoundLatitude) ? 90 : northBoundLatitude;
+    }
+    
+    /**
+     * Get the GeoJsonPolygon instance of the bounding box
+     * 
+     * @return the GeoJsonPolygon instance of the bounding box
+     */
+    @Override
+    public GeoJsonPolygon getBoundingPolygon() {
+    	return boundingPolygon;
+    }
+    
+    /**
+     * Set the GeoJsonPolygon instance of the bounding box
+     * 
+     * @param boundingPolygon
+     */
+    @Override
+    public void setBoundingPolygon(GeoJsonPolygon boundingPolygon) {
+    	this.boundingPolygon = boundingPolygon;
+    }
+    
+    /**
+     * Sets the bounding GeoJsonPolygon from lat/lon points
+     * 
+     * @param westBoundLongitude the west bound longitude
+     * @param eastBoundLongitude the east bound longitude
+     * @param southBoundLatitude the south bound latitude
+     * @param northBoundLatitude the north bound latitude
+     */
+    @Override
+    public void setBoundingPolygon(double westBoundLongitude, double eastBoundLongitude, double southBoundLatitude, double northBoundLatitude) {
+    	this.boundingPolygon = GeoJsonPolygon.of(
+    			new GeoPoint(northBoundLatitude, westBoundLongitude),
+				new GeoPoint(southBoundLatitude, westBoundLongitude),
+				new GeoPoint(southBoundLatitude, eastBoundLongitude),
+				new GeoPoint(northBoundLatitude, eastBoundLongitude),
+				new GeoPoint(northBoundLatitude, westBoundLongitude));
     }
 
     /**

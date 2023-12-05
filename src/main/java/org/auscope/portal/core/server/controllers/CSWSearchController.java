@@ -361,7 +361,7 @@ public class CSWSearchController extends BaseCSWController {
                 }
             }
 
-            record.setOnlineResources(resourcesToSave.toArray(new AbstractCSWOnlineResource[resourcesToSave.size()]));
+            record.setOnlineResources(resourcesToSave);
         }
     }
 

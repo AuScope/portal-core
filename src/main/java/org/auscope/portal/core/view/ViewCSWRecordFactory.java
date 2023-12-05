@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import javax.print.DocFlavor.STRING;
+
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicElement;
@@ -126,7 +128,6 @@ public class ViewCSWRecordFactory {
         }
         obj.put("accessConstraints", accessConstraints);
 
-
         List<Map<String, Object>> childRecords = new ArrayList<>();
         if (record.hasChildRecords()) {
             for (CSWRecord childRecord : record.getChildRecords()) {
@@ -145,6 +146,14 @@ public class ViewCSWRecordFactory {
 
         obj.put("minScale", record.getMinScale());
         obj.put("maxScale", record.getMaxScale());
+        
+        List<String> knownLayerIds = new ArrayList<String>();
+        if (record.getKnownLayerIds() != null && record.getKnownLayerIds().size() > 0) {
+        	for (String s: record.getKnownLayerIds()) {
+        		knownLayerIds.add(s);
+        	}
+        	obj.put("knownLayerIds", knownLayerIds);
+        }
 
         return obj;
     }

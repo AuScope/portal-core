@@ -1,5 +1,7 @@
 package org.auscope.portal.core.services.responses.csw;
 
+import org.springframework.data.elasticsearch.core.geo.GeoJsonPolygon;
+
 /**
  * An interface representing abstract geometry that can bound a record in a CSW response.
  */
@@ -64,4 +66,29 @@ public interface CSWGeographicElement {
      *            the new north bound latitude
      */
     public void setNorthBoundLatitude(double northBoundLatitude);
+    
+    /**
+     * Get the GeoJsonPolygon instance of the bounding box
+     * 
+     * @return the GeoJsonPolygon instance of the bounding box
+     */
+    public GeoJsonPolygon getBoundingPolygon();
+    
+    /**
+     * Set the GeoJsonPolygon instance of the bounding box
+     * 
+     * @param boundingPolygon
+     */
+    public void setBoundingPolygon(GeoJsonPolygon boundingPolygon);
+    
+    /**
+     * Sets the bounding GeoJsonPolygon from lat/lon points
+     * 
+     * @param westBoundLongitude the west bound longitude
+     * @param eastBoundLongitude the east bound longitude
+     * @param southBoundLatitude the south bound latitude
+     * @param northBoundLatitude the north bound latitude
+     */
+    public void setBoundingPolygon(double westBoundLongitude, double eastBoundLongitude, double southBoundLatitude, double northBoundLatitude);
+    
 }

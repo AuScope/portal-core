@@ -217,7 +217,7 @@ public class CSWRecordTransformer {
         Node exExtent = createChildNode(child, nc.getNamespaceURI("gmd"), "EX_Extent");
         Node geoEl = createChildNode(exExtent, nc.getNamespaceURI("gmd"), "geographicElement");
         
-        // GeographicBoundigBox
+        // GeographicBoundingBox
         Node geoBbox = createChildNode(geoEl, nc.getNamespaceURI("gmd"), "EX_GeographicBoundingBox");
         appendChildDecimal(geoBbox, nc.getNamespaceURI("gmd"), "westBoundLongitude", bbox.getWestBoundLongitude());
         appendChildDecimal(geoBbox, nc.getNamespaceURI("gmd"), "eastBoundLongitude", bbox.getEastBoundLongitude());
@@ -486,8 +486,8 @@ public class CSWRecordTransformer {
                 record.getSupplementalInformation());
 
         //Online resources
-        AbstractCSWOnlineResource[] onlineResources = record.getOnlineResources();
-        if (onlineResources != null && onlineResources.length > 0) {
+        List<AbstractCSWOnlineResource> onlineResources = record.getOnlineResources();
+        if (onlineResources != null && onlineResources.size() > 0) {
             Node distrInfo = createChildNode(root, nc.getNamespaceURI("gmd"), "distributionInfo");
             Node mdDistribution = createChildNode(distrInfo, nc.getNamespaceURI("gmd"), "MD_Distribution");
             Node transferOptions = createChildNode(mdDistribution, nc.getNamespaceURI("gmd"), "transferOptions");
@@ -601,7 +601,7 @@ public class CSWRecordTransformer {
      * @throws XPathException
      */
     public CSWRecord transformToCSWRecord() throws XPathException {
-        return transformToCSWRecord(new CSWRecord("", "", "", "", new AbstractCSWOnlineResource[0],
+        return transformToCSWRecord(new CSWRecord("", "", "", "", new ArrayList<AbstractCSWOnlineResource>(),
                 new CSWGeographicElement[0]));
     }
         
@@ -674,7 +674,7 @@ public class CSWRecordTransformer {
             }
         }
         removeDuplicateOnlineResources(resources);
-        record.setOnlineResources(resources.toArray(new AbstractCSWOnlineResource[resources.size()]));
+        record.setOnlineResources(resources);
 
         //Parse our bounding boxes (if they exist). If any are unparsable, don't worry and just continue
         tempNodeList = evalXPathNodeList(this.mdMetadataNode, BBOXEXPRESSION);
@@ -916,7 +916,7 @@ public class CSWRecordTransformer {
             
             srvlist.addAll(datasetlist);
             removeDuplicateOnlineResources(srvlist);
-            record.setOnlineResources(srvlist.toArray(new AbstractCSWOnlineResource[srvlist.size()]));
+            record.setOnlineResources(srvlist);
 
             //Parse our bounding boxes (if they exist). If any are unparsable, don't worry and just continue
             tempNodeList = evalXPathNodeList(mdMetadataNode, BBOXEXPRESSION);
@@ -1211,7 +1211,7 @@ public class CSWRecordTransformer {
             List<AbstractCSWOnlineResource> datasetlist = transformSrvNodes(record, ONLINEDATASETTRANSFERSEXPRESSION);
             srvlist.addAll(datasetlist);
             removeDuplicateOnlineResources(srvlist);
-            record.setOnlineResources(srvlist.toArray(new AbstractCSWOnlineResource[srvlist.size()]));
+            record.setOnlineResources(srvlist);
 
             //Parse our bounding boxes (if they exist). If any are unparsable, don't worry and just continue
             tempNodeList = evalXPathNodeList(mdMetadataNode, BBOXEXPRESSION);

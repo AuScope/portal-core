@@ -42,7 +42,7 @@ public class KnownLayerService {
     private List<KnownLayer> knownLayers;
     private CSWCacheService cswCacheService;
     private WMSService wmsService;
-    private SearchService searchService;
+    private ESSearchService esSearchService;
 
     private GoogleCloudMonitoringCachedService stackDriverService = null;
 
@@ -62,13 +62,11 @@ public class KnownLayerService {
      *
      * @param knownTypes
      *            A list of objects, only KnownLayer subclasses will be used
-     * @param cswCacheService
-     *            An instance of CSWCacheService
      */
     public KnownLayerService(@SuppressWarnings("rawtypes") List knownTypes,
             ViewKnownLayerFactory viewFactory,
             ViewCSWRecordFactory viewCSWRecordFactory,
-            ViewGetCapabilitiesFactory viewGetCapabilitiesFactory, WMSService wmsService, SearchService searchService) {
+            ViewGetCapabilitiesFactory viewGetCapabilitiesFactory, WMSService wmsService, ESSearchService esSearchService) {
         this.knownLayers = new ArrayList<>();
         for (Object obj : knownTypes) {
             if (obj instanceof KnownLayer) {
@@ -80,7 +78,7 @@ public class KnownLayerService {
         this.viewCSWRecordFactory = viewCSWRecordFactory;
         this.viewGetCapabilitiesFactory = viewGetCapabilitiesFactory;
         this.wmsService = wmsService;
-        this.searchService = searchService;
+        this.esSearchService = esSearchService;
     }
     
     @Lazy
@@ -226,9 +224,6 @@ public class KnownLayerService {
             }
         }
 
-        // Index collated layers and records for searching
-        this.searchService.indexKnownLayersAndRecords(knownLayerAndRecords);
-        
         return new KnownLayerGrouping(knownLayerAndRecords, unmappedRecords, originalRecordList);
     }
 
@@ -313,7 +308,7 @@ public class KnownLayerService {
      * To access the results of the update, call {@link KnownLayerService#getKnownLayersCache()}
      */
     public void updateKnownLayersCache() {
-        logger.trace("Updating service status for KnownLayers. Current size: "+knownLayers.size());
+        logger.info("Updating service status for KnownLayers");
         ArrayList<ModelMap> newKnownLayersCache = new ArrayList<>();
         
         KnownLayerGrouping knownLayerGrouping = groupKnownLayerRecords();
@@ -330,9 +325,12 @@ public class KnownLayerService {
             Set<String> onlineResourceEndpoints = new HashSet<>();
             ArrayList<String> layerNames = new ArrayList<>();
             for (CSWRecord rec : knownLayerAndRecords.getBelongingRecords()) {
-
-                
                 if (rec != null) {
+                	// Update the CSW record with KnownLayer information required for searching (name and description)
+                	if(rec.addKnownLayerId(knownLayerAndRecords.getKnownLayer().getId())) {
+                		rec.addKnownLayerName(knownLayerAndRecords.getKnownLayer().getName());
+                		rec.addKnownLayerDescription(knownLayerAndRecords.getKnownLayer().getDescription());
+                	}
                     for (AbstractCSWOnlineResource onlineResource : rec.getOnlineResources()) {
                         if (onlineResource.getLinkage() != null) {
                             onlineResourceEndpoints.add(onlineResource.getLinkage().getHost());
@@ -341,6 +339,10 @@ public class KnownLayerService {
                     }
                     viewMappedRecords.add(viewCSWRecordFactory.toView(rec));
                 }
+                // Update the CSW records in the index with the KnownLayer ID. If the record doesn't exist yet
+                // (e.g. first run) they'll still be added and the KnownLayer IDs updated later.
+                // XXX XXX
+                esSearchService.updateCSWRecords(knownLayerAndRecords.getBelongingRecords());
             }
 
             List<ModelMap> viewRelatedRecords = new ArrayList<>();
@@ -393,7 +395,7 @@ public class KnownLayerService {
             knownLayersCache.clear();
             knownLayersCache.addAll(newKnownLayersCache);
         }
-        logger.info("Finished updating service status for KnownLayers. New size: "+knownLayers.size());
+        logger.info("Finished updating service status for KnownLayers. New size: " + knownLayers.size());
     }
   
 }

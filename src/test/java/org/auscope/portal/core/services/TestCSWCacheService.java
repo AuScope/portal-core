@@ -58,6 +58,7 @@ public class TestCSWCacheService extends PortalTestClass {
     private BasicThreadExecutor threadExecutor;
     
     private KnownLayerService mockKnownLayerService = context.mock(KnownLayerService.class);
+    private ESSearchService esSearchService = context.mock(ESSearchService.class);
 
     private static final String serviceUrlFormatString = "http://cswservice.%1$s.url/";
 
@@ -76,8 +77,7 @@ public class TestCSWCacheService extends PortalTestClass {
                     serviceUrlFormatString, i + 1)));
         }
 
-        this.cswCacheService = new CSWCacheService(threadExecutor, httpServiceCaller, serviceUrlList);
-        this.cswCacheService.setKnownLayerService(mockKnownLayerService);
+        this.cswCacheService = new CSWCacheService(threadExecutor, httpServiceCaller, serviceUrlList, esSearchService);
     }
 
     @After

@@ -174,20 +174,20 @@ public class WMSController extends BaseCSWController {
                         geoEls = new CSWGeographicElement[] {bbox};
                     }
 
-                    AbstractCSWOnlineResource[] onlineResources = new AbstractCSWOnlineResource[1];
+                    List<AbstractCSWOnlineResource> onlineResources = new ArrayList<AbstractCSWOnlineResource>();
 
                     if (capabilitiesRec.getVersion().equals("1.3.0")) {
-                        onlineResources[0] = new CSWOnlineResourceImpl(new URL(capabilitiesRec.getMapUrl()),
+                        onlineResources.add(new CSWOnlineResourceImpl(new URL(capabilitiesRec.getMapUrl()),
                                 "OGC:WMS-1.3.0-http-get-map",
                                 rec.getName(),
                                 rec.getTitle(),
-                                capabilitiesRec.getApplicationProfile());
+                                capabilitiesRec.getApplicationProfile()));
                     } else {
-                        onlineResources[0] = new CSWOnlineResourceImpl(new URL(capabilitiesRec.getMapUrl()),
+                        onlineResources.add(new CSWOnlineResourceImpl(new URL(capabilitiesRec.getMapUrl()),
                                 "OGC:WMS-1.1.1-http-get-map",
                                 rec.getName(),
                                 rec.getTitle(),
-                                capabilitiesRec.getApplicationProfile());
+                                capabilitiesRec.getApplicationProfile()));
                     }
 
                     CSWRecord newRecord = new CSWRecord(serviceName, fileId, recordInfoUrl, dataAbstract,

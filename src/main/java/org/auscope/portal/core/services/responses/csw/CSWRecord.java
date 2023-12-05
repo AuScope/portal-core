@@ -5,9 +5,16 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.services.csw.CSWRecordsFilterVisitor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.elasticsearch.annotations.CompletionField;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.Setting;
+import org.springframework.data.elasticsearch.core.suggest.Completion;
+
 
 /**
  * Represents a parsed gmd:MD_Metadata element that is received as part of an OGC CSW transaction.
@@ -16,21 +23,25 @@ import org.auscope.portal.core.services.csw.CSWRecordsFilterVisitor;
  * @author Joshua Vote
  * @version $Id$
  */
+@Document(indexName = "auscope-api-cswrecord")
+//@Setting(settingPath = "org/auscope/portal/server/elasticsearch/autocomplete-analyzer.json")
 public class CSWRecord {
 
-    /** The Constant logger. */
-    private static final Log logger = LogFactory.getLog(CSWRecord.class);
-
     /** The service name. */
+	//@Field(type = FieldType.Text, analyzer = "autocomplete_index", searchAnalyzer = "autocomplete_search", copyTo = {"suggesterCompletion"})
+	//@Field(type = FieldType.Text, copyTo = {"suggesterCompletion"})
+	//@Field(type = FieldType.Text)
     private String serviceName;
 
     /** The online resources. */
-    private AbstractCSWOnlineResource[] onlineResources;
+    @Field(type = FieldType.Object)
+    private List<AbstractCSWOnlineResource> onlineResources;
 
     /** The resource provider. */
     private String resourceProvider;
 
     /** The file identifier. */
+    @Id
     private String fileIdentifier;
 
     /** The parent identifier. */
@@ -40,15 +51,22 @@ public class CSWRecord {
     private String recordInfoUrl;
 
     /** The csw geographic elements. */
+    @Field(type = FieldType.Object)
     private CSWGeographicElement[] cswGeographicElements;
 
     /** The descriptive keywords. */
+    //@Field(type = FieldType.Text, analyzer = "autocomplete_index", searchAnalyzer = "autocomplete_search", copyTo = {"suggesterCompletion"})
+    //@Field(type = FieldType.Text, copyTo = {"suggesterCompletion"})
+    //@Field(type = FieldType.Text)
     private String[] descriptiveKeywords;
 
     /** The URIs from which file downloads will be available in some records. */
     private String[] dataSetURIs;
 
     /** The data identification abstract. */
+    //@Field(type = FieldType.Text, analyzer = "autocomplete_index", searchAnalyzer = "autocomplete_search", copyTo = {"suggesterCompletion"})
+    //@Field(type = FieldType.Text, copyTo = {"suggesterCompletion"})
+    //@Field(type = FieldType.Text)
     private String dataIdentificationAbstract;
 
     /** The supplemental information. */
@@ -67,9 +85,11 @@ public class CSWRecord {
     private String[] accessConstraints;
 
     /** The contact. */
+    @Field(type = FieldType.Object)
     private CSWResponsibleParty contact;
     
     /** The funder. */
+    @Field(type = FieldType.Object)
     private CSWResponsibleParty funder;
 
     /** The date. */
@@ -82,8 +102,10 @@ public class CSWRecord {
     private CSWTemporalExtent temporalExtent;
 
     /** The csw child records */
+    @Transient
     private List<CSWRecord> childRecords = new ArrayList<>();
 
+    @Transient
     private boolean noCache;
 
     private boolean service;
@@ -95,18 +117,52 @@ public class CSWRecord {
 
     /** The minimum scale for the layer to appear */
     private Double minScale;
+    
+    /** Non-OGC Fields below included for indexing/searching **/
+    // The ID (from application-registries.yaml) of the service provider
+    private String serviceId;
+    
+    // The IDs of any associated KnownLayers
+    private List<String> knownLayerIds;
+    
+    // The names of any associated layers (for searching)
+    //@Field(type = FieldType.Text, analyzer = "autocomplete_index", searchAnalyzer = "autocomplete_search", copyTo = {"suggesterCompletion"})
+    //@Field(type = FieldType.Text, copyTo = {"suggesterCompletion"})
+    //@Field(type = FieldType.Text)
+    private List<String> knownLayerNames;
+    
+    // The descriptions of any associated layers (for searching)
+    //@Field(type = FieldType.Text, analyzer = "autocomplete_index", searchAnalyzer = "autocomplete_search", copyTo = {"suggesterCompletion"})
+    //@Field(type = FieldType.Text, copyTo = {"suggesterCompletion"})
+    //@Field(type = FieldType.Text)
+    private List<String> knownLayerDescriptions;
+    
+
+    // XXX
+    //@CompletionField(analyzer = "autocomplete_index", searchAnalyzer = "autocomplete_search"/*, maxInputLength = 1000*//*, preservePositionIncrements = false, preserveSeparators = false, maxInputLength = 20*/)
+    /*
+    @CompletionField
+    private Completion suggesterCompletion;
+    */
+    
 
     /**
      * Instantiates a new empty CSWRecord
+     * 
+     */
+    public CSWRecord() {
+        this(null, null, null, null, null, null, "");
+    }
+    
+    /**
+     * Instantiates a new CSW record.
      *
      * @param fileIdentifier
+     *            the file identifier
+     * 
      */
     public CSWRecord(String fileIdentifier) {
         this(null, fileIdentifier, null, null, null, null, "");
-    }
-    
-    public CSWRecord() {
-        this(null, null, null, null, null, null, "");
     }
 
     /**
@@ -127,7 +183,7 @@ public class CSWRecord {
      */
     public CSWRecord(String serviceName, String fileIdentifier,
             String recordInfoUrl, String dataIdentificationAbstract,
-            AbstractCSWOnlineResource[] onlineResources, CSWGeographicElement[] cswGeographicsElements) {
+            List<AbstractCSWOnlineResource> onlineResources, CSWGeographicElement[] cswGeographicsElements) {
         this(serviceName, fileIdentifier, recordInfoUrl, dataIdentificationAbstract, onlineResources, cswGeographicsElements, "");
     }
 
@@ -149,7 +205,7 @@ public class CSWRecord {
      */
     public CSWRecord(String serviceName, String fileIdentifier,
             String recordInfoUrl, String dataIdentificationAbstract,
-            AbstractCSWOnlineResource[] onlineResources, CSWGeographicElement[] cswGeographicsElements, String layerName) {
+            List<AbstractCSWOnlineResource> onlineResources, CSWGeographicElement[] cswGeographicsElements, String layerName) {
         this.serviceName = serviceName;
         this.fileIdentifier = fileIdentifier;
         this.recordInfoUrl = recordInfoUrl;
@@ -164,7 +220,6 @@ public class CSWRecord {
         this.accessConstraints = new String[0];
         this.noCache = false;
         this.layerName = layerName;
-        logger.trace(this.toString());
     }
 
     /**
@@ -236,7 +291,7 @@ public class CSWRecord {
      *
      * @return the online resources
      */
-    public AbstractCSWOnlineResource[] getOnlineResources() {
+    public List<AbstractCSWOnlineResource> getOnlineResources() {
         return onlineResources;
     }
     
@@ -248,8 +303,8 @@ public class CSWRecord {
     public boolean hasNamedOnlineResources() {
         boolean hasName = false;
         if (onlineResources != null) {
-            for (int i=0; i<onlineResources.length; i++) {
-                if (!onlineResources[i].getName().equals("")) {
+        	for (int i = 0; i < onlineResources.size(); i++) {
+                if (!onlineResources.get(i).getName().equals("")) {
                     hasName = true;
                     break;
                 }
@@ -396,7 +451,7 @@ public class CSWRecord {
      * @param onlineResources
      *            the new online resources
      */
-    public void setOnlineResources(AbstractCSWOnlineResource[] onlineResources) {
+    public void setOnlineResources(List<AbstractCSWOnlineResource> onlineResources) {
         this.onlineResources = onlineResources;
     }
 
@@ -634,14 +689,22 @@ public class CSWRecord {
     public void setLayerName(String layerName) {
         this.layerName = layerName;
     }
-
+    
+    /**
+     * Get the service ID
+     * @return service ID as String
+     */
+    public String getServiceId() {
+    	return serviceId;
+    }
+    
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
         return "CSWRecord [serviceName=" + serviceName + ", onlineResources="
-                + Arrays.toString(onlineResources) + ", resourceProvider="
+                + onlineResources + ", resourceProvider="
                 + resourceProvider + ", fileIdentifier=" + fileIdentifier
                 + ", recordInfoUrl=" + recordInfoUrl
                 + ", cswGeographicElements="
@@ -809,4 +872,109 @@ public class CSWRecord {
     public void setMaxScale(Double maxScale) {
         this.maxScale = maxScale;
     }
+    
+    /**
+     * Set the service ID
+     * @param serviceId service ID as String
+     */
+    public void setServiceId(String serviceId) {
+    	this.serviceId = serviceId;
+    }
+    
+    /**
+     * Get IDs of the associated KnownLayers (if the record has any)
+     * @return the IDs of the KnownLayers
+     */
+    public List<String> getKnownLayerIds() {
+    	return knownLayerIds;
+    }
+    
+    /**
+     * Set the ID of the associated KnownLayer
+     * @param knownLayerId ID of associated KnownLayer
+     */
+    public void setKnownLayerIds(List<String> knownLayerIds) {
+    	this.knownLayerIds = knownLayerIds;
+    }
+    
+    /**
+     * Adds a KnownLayer ID if not already present in the list
+     * @param knownLayerId the KnownLayer ID
+     * @return true if the name was unique and added to the list, false otherwise
+     */
+    public boolean addKnownLayerId(String knownLayerId) {
+    	if(knownLayerIds == null) {
+    		knownLayerIds = new ArrayList<String>();
+    	}
+    	if(!knownLayerIds.contains(knownLayerId)) {
+    		knownLayerIds.add(knownLayerId);
+    		return true;
+    	}
+    	return false;
+    }
+    
+    /**
+     * Get the associated KnownLayer names
+     * @return KnownLayer names
+     */
+    public List<String> getKnownLayerNames() {
+    	return knownLayerNames;
+    }
+    
+    /**
+     * Set the associated KnownLayer names
+     * @param knownLayerNames List of KnownLayer names
+     */
+    public void setKnownLayerNames(List<String> knownLayerNames) {
+    	this.knownLayerNames = knownLayerNames;
+    }
+    
+    /**
+     * Add a KnownLayer name
+     * @param knownLayerName the KnownLayer name
+     */
+    public void addKnownLayerName(String knownLayerName) {
+    	if(knownLayerNames == null) {
+    		knownLayerNames = new ArrayList<String>();
+    	}
+   		knownLayerNames.add(knownLayerName);
+    }
+    
+    /**
+     * Gets associated KnownLayer descriptions
+     * @return List of KnownLayer descriptions
+     */
+    public List<String> getKnownLayerDescriptions() {
+    	return knownLayerDescriptions;
+    }
+    
+    /**
+     * Set associated KnownLayer descriptions
+     * @param knownLayerDescriptions KnownLayer descriptions
+     */
+    public void setKnownLayerDescriptions(List<String> knownLayerDescriptions) {
+    	this.knownLayerDescriptions = knownLayerDescriptions;
+    }
+    
+    /**
+     * Add an associated KnownLayer description
+     * @param knownLayerDescription the KnownLayer description
+     */
+    public void addKnownLayerDescription(String knownLayerDescription) {
+    	if(knownLayerDescriptions == null) {
+    		knownLayerDescriptions = new ArrayList<String>();
+    	}
+   		knownLayerDescriptions.add(knownLayerDescription);
+    }
+    
+    /*
+    // XXX
+    public Completion getSuggesterCompletion() {
+    	return suggesterCompletion;
+    }
+    
+    public void setSuggesterCompletion(Completion suggesterCompletion) {
+    	this.suggesterCompletion = suggesterCompletion;
+    }
+    */
 }

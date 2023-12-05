@@ -25,12 +25,14 @@
         <repository>
             <id>aus-mvn</id>
             <url>https://pkgs.dev.azure.com/CSIROMineralResources/40352a90-4ca9-4028-b1e6-953538e003b4/_packaging/aus-mvn/maven/v1</url>
+            <!--
             <releases>
                 <enabled>true</enabled>
             </releases>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
+            -->
         </repository>
     </distributionManagement>
 
@@ -309,6 +311,10 @@
         <dependency>
     	<groupId>org.springframework.boot</groupId>
     		<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-elasticsearch</artifactId>
 		</dependency>
         <dependency>
             <groupId>com.amazonaws</groupId>

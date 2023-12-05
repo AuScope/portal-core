@@ -1,6 +1,8 @@
 package org.auscope.portal.core.services.csw;
 
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 /**
  * An extension to the CSWRecord that adds additional gridded data information
@@ -10,8 +12,9 @@ import org.auscope.portal.core.services.responses.csw.CSWRecord;
  *
  */
 public class GriddedCSWRecord extends CSWRecord {
-
+	
     private GriddedDataPositionalAccuracy[] griddedInfo;
+    @Field(type = FieldType.Text)
     private String dateStamp;
     
     public GriddedCSWRecord(String fileIdentifier) {
