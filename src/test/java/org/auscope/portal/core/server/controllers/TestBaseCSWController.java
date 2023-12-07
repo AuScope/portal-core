@@ -19,7 +19,6 @@ public class TestBaseCSWController extends PortalTestClass {
         }
     }
 
-    private KnownLayerControllerImpl baseController = new KnownLayerControllerImpl(new ViewCSWRecordFactory(), new KnownLayerService(null, null, null, null, null, null, null));
-
+    private KnownLayerControllerImpl baseController = new KnownLayerControllerImpl(new ViewCSWRecordFactory(), new KnownLayerService(null, null, null, null, null, null));
 
 }

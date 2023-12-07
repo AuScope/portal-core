@@ -73,7 +73,8 @@ public class TestKnownLayerService extends PortalTestClass {
         
         mockCacheService = context.mock(CSWCacheService.class);
         mockSearchService = context.mock(SearchService.class);
-        knownLayerService = new KnownLayerService(mockKnownLayerList, mockCacheService, null, null, null, null, mockSearchService);
+        knownLayerService = new KnownLayerService(mockKnownLayerList, null, null, null, null, mockSearchService);
+        knownLayerService.setCSWCacheService(mockCacheService);
 
         context.checking(new Expectations() {
             {

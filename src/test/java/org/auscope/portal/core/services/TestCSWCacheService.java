@@ -56,6 +56,8 @@ public class TestCSWCacheService extends PortalTestClass {
     private CSWCacheService cswCacheService;
     private HttpServiceCaller httpServiceCaller = context.mock(HttpServiceCaller.class);
     private BasicThreadExecutor threadExecutor;
+    
+    private KnownLayerService mockKnownLayerService = context.mock(KnownLayerService.class);
 
     private static final String serviceUrlFormatString = "http://cswservice.%1$s.url/";
 
@@ -75,6 +77,7 @@ public class TestCSWCacheService extends PortalTestClass {
         }
 
         this.cswCacheService = new CSWCacheService(threadExecutor, httpServiceCaller, serviceUrlList);
+        this.cswCacheService.setKnownLayerService(mockKnownLayerService);
     }
 
     @After
@@ -121,6 +124,8 @@ public class TestCSWCacheService extends PortalTestClass {
 
             context.checking(new Expectations() {
                 {
+                	ignoring(mockKnownLayerService);
+                	
                     // Thread 1 will make 2 requests
                     oneOf(httpServiceCaller).getMethodResponseAsStream(
                             with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)));
@@ -202,6 +207,8 @@ public class TestCSWCacheService extends PortalTestClass {
                         new ByteArrayInputStream(noMoreRecordsString.getBytes()), null)) {
             context.checking(new Expectations() {
                 {
+                	ignoring(mockKnownLayerService);
+                	
                     // Thread 1 will make 2 requests
                     oneOf(httpServiceCaller).getMethodResponseAsStream(
                             with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)));
@@ -282,6 +289,8 @@ public class TestCSWCacheService extends PortalTestClass {
                         new ByteArrayInputStream(noMoreRecordsString.getBytes()), null)) {
             context.checking(new Expectations() {
                 {
+                	ignoring(mockKnownLayerService);
+                	
                     // Thread 1 will make 2 requests
                     oneOf(httpServiceCaller).getMethodResponseAsStream(
                             with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)));
@@ -378,6 +387,8 @@ public class TestCSWCacheService extends PortalTestClass {
 
             context.checking(new Expectations() {
                 {
+                	ignoring(mockKnownLayerService);
+                	
                     // Thread 1 will make 2 requests
                     oneOf(httpServiceCaller).getMethodResponseAsStream(
                             with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)));
@@ -438,6 +449,8 @@ public class TestCSWCacheService extends PortalTestClass {
                         new ByteArrayInputStream(noMoreRecordsString.getBytes()), null)) {
             context.checking(new Expectations() {
                 {
+                	ignoring(mockKnownLayerService);
+                	
                     // Thread 1 will make 2 requests
                     oneOf(httpServiceCaller).getMethodResponseAsStream(
                             with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)));
@@ -508,6 +521,8 @@ public class TestCSWCacheService extends PortalTestClass {
 
         context.checking(new Expectations() {
             {
+            	ignoring(mockKnownLayerService);
+            	
                 for (int i = 0; i < CONCURRENT_THREADS_TO_RUN; i++) {
                     oneOf(httpServiceCaller).getMethodResponseAsStream(
                             with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, i + 1),
@@ -555,6 +570,8 @@ public class TestCSWCacheService extends PortalTestClass {
 
         context.checking(new Expectations() {
             {
+            	ignoring(mockKnownLayerService);
+            	
                 for (int i = 0; i < CONCURRENT_THREADS_TO_RUN; i++) {
                     oneOf(httpServiceCaller).getMethodResponseAsStream(
                             with(aHttpMethodBase(null, String.format(serviceUrlFormatString, i + 1), null)));
@@ -590,6 +607,8 @@ public class TestCSWCacheService extends PortalTestClass {
 
             context.checking(new Expectations() {
                 {
+                	ignoring(mockKnownLayerService);
+                	
                     // Thread 1 will make 1 requests
                     oneOf(httpServiceCaller).getMethodResponseAsStream(
                             with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)));
@@ -663,6 +682,8 @@ public class TestCSWCacheService extends PortalTestClass {
 
             context.checking(new Expectations() {
                 {
+                	ignoring(mockKnownLayerService);
+                	
                     // Thread 1 will make 1 requests
                     oneOf(httpServiceCaller).getMethodResponseAsStream(
                             with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)));
@@ -751,6 +772,8 @@ public class TestCSWCacheService extends PortalTestClass {
                 new ByteArrayInputStream(noMoreRecordsString.getBytes()), null)) {
             context.checking(new Expectations() {
                 {
+                	ignoring(mockKnownLayerService);
+                	
                     // Thread 1 will make 1 requests
                     oneOf(httpServiceCaller).getMethodResponseAsStream(
                             with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)));
@@ -808,6 +831,8 @@ public class TestCSWCacheService extends PortalTestClass {
             try (final HttpClientInputStream t2r1 = new HttpClientInputStream(new ByteArrayInputStream(singleRecordString.getBytes()), null)) {
                 context.checking(new Expectations() {
                     {
+                    	ignoring(mockKnownLayerService);
+                    	
                         // Thread 1 will make 1 requests
                         oneOf(httpServiceCaller).getMethodResponseAsStream(
                                 with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)));
@@ -877,6 +902,8 @@ public class TestCSWCacheService extends PortalTestClass {
 
         context.checking(new Expectations() {
             {
+            	ignoring(mockKnownLayerService);
+            	
                 //Thread 1 will make a single request
                 oneOf(httpServiceCaller).getMethodResponseAsStream(
                         with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)));
@@ -945,6 +972,8 @@ public class TestCSWCacheService extends PortalTestClass {
 
             context.checking(new Expectations() {
                 {
+                	ignoring(mockKnownLayerService);
+                	
                     // Thread 1 will make 2 requests
                     oneOf(httpServiceCaller).getMethodResponseAsStream(
                             with(aHttpMethodBase(HttpMethodType.GET,
@@ -1031,6 +1060,8 @@ public class TestCSWCacheService extends PortalTestClass {
 
             context.checking(new Expectations() {
                 {
+                	ignoring(mockKnownLayerService);
+                	
                     // Thread 1 will make 2 requests
                     oneOf(httpServiceCaller).getMethodResponseAsStream(
                             with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)));
