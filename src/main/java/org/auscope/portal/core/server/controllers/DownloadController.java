@@ -21,9 +21,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.activation.MimetypesFileTypeMap;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.activation.MimetypesFileTypeMap;
 import javax.naming.OperationNotSupportedException;
 
 import org.apache.commons.io.FilenameUtils;

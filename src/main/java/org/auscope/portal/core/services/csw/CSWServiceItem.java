@@ -3,7 +3,7 @@ package org.auscope.portal.core.services.csw;
 import java.util.Arrays;
 import java.util.Collection;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.auscope.portal.core.server.OgcServiceProviderType;
 

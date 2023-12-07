@@ -10,18 +10,18 @@ import org.auscope.portal.core.services.responses.csw.CSWRecord;
  */
 public class CSWRecordSelector implements KnownLayerSelector {
 
-    private String recordId;
-    private String descriptiveKeyword;
-    private String serviceName;
+    private String[] recordIds;
+    private String[] descriptiveKeywords;
+    private String[] serviceNames;
 
     /**
      * @param descriptiveKeyword
      *            the descriptive keyword used to identify CSW records
      */
     public CSWRecordSelector() {
-        this.descriptiveKeyword = null;
-        this.recordId = null;
-        this.serviceName = null;
+        this.descriptiveKeywords = new String[0];
+        this.recordIds = new String[0];
+        this.serviceNames = new String[0];
     }
 
     /**
@@ -29,8 +29,8 @@ public class CSWRecordSelector implements KnownLayerSelector {
      * 
      * @return record id string
      */
-    public String getRecordId() {
-        return recordId;
+    public String[] getRecordIds() {
+        return recordIds;
     }
 
     /**
@@ -39,8 +39,8 @@ public class CSWRecordSelector implements KnownLayerSelector {
      * @param recordId record id string
      * @return
      */
-    public void setRecordId(String recordId) {
-        this.recordId = recordId;
+    public void setRecordIds(String[] recordIds) {
+        this.recordIds = recordIds;
     }
 
     /**
@@ -48,8 +48,8 @@ public class CSWRecordSelector implements KnownLayerSelector {
      * 
      * @return the descriptiveKeyword
      */
-    public String getDescriptiveKeyword() {
-        return descriptiveKeyword;
+    public String[] getDescriptiveKeywords() {
+        return descriptiveKeywords;
     }
 
     /**
@@ -58,8 +58,8 @@ public class CSWRecordSelector implements KnownLayerSelector {
      * @param descriptiveKeyword
      *            the descriptiveKeyword to set
      */
-    public void setDescriptiveKeyword(String descriptiveKeyword) {
-        this.descriptiveKeyword = descriptiveKeyword;
+    public void setDescriptiveKeywords(String[] descriptiveKeywords) {
+        this.descriptiveKeywords = descriptiveKeywords;
     }
 
     /**
@@ -67,8 +67,8 @@ public class CSWRecordSelector implements KnownLayerSelector {
      *
      * @return the service name
      */
-    public String getServiceName() {
-        return serviceName;
+    public String[] getServiceNames() {
+        return serviceNames;
     }
 
     /**
@@ -77,8 +77,8 @@ public class CSWRecordSelector implements KnownLayerSelector {
      * @param serviceName the service name string to search for in CSW records
      *
      */
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
+    public void setServiceNames(String[] serviceNames) {
+        this.serviceNames = serviceNames;
     }
 
     /**
@@ -87,18 +87,21 @@ public class CSWRecordSelector implements KnownLayerSelector {
      */
     @Override
     public RelationType isRelatedRecord(CSWRecord record) {
-        if (recordId != null && recordId.equals(record.getFileIdentifier())) {
-            return RelationType.Belongs;
+        for (String recordId: recordIds) {
+            if (recordId.equals(record.getFileIdentifier())) {
+                return RelationType.Belongs;
+            }
         }
-
-        if (descriptiveKeyword != null && record.containsKeyword(descriptiveKeyword)) {
-            return RelationType.Belongs;
+        for (String descriptiveKeyword: descriptiveKeywords) {
+            if (record.containsKeyword(descriptiveKeyword)) {
+                return RelationType.Belongs;
+            }
         }
-
-	if (serviceName != null && serviceName.equals(record.getServiceName())) {
-            return RelationType.Belongs;
-	}
-
+        for (String serviceName: serviceNames) {
+            if (serviceName.equals(record.getServiceName())) {
+                return RelationType.Belongs;
+            }
+        }
         return RelationType.NotRelated;
     }
 }
