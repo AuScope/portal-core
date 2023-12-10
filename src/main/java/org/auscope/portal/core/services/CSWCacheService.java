@@ -87,9 +87,6 @@ public class CSWCacheService {
     protected boolean forceGetMethods = false;
     protected Date lastCacheUpdate;
     
-    // KnownLayerService needs to be informed when indexing is finished, must be @Lazy loaded to avoid circular dependencies   
-    @Autowired
-    @Lazy
     private KnownLayerService knownLayerService;
 
     /**
@@ -141,6 +138,17 @@ public class CSWCacheService {
         }
         
         restoreCacheFromFile();
+    }
+    
+    // KnownLayerService needs to be informed when indexing is finished, must be @Lazy loaded to avoid circular dependencies
+    @Lazy
+    @Autowired
+    public void setKnownLayerService(KnownLayerService knownLayerService) {
+    	this.knownLayerService = knownLayerService;
+    }
+    
+    public KnownLayerService getKnownLayerService() {
+    	return this.knownLayerService;
     }
     
     /**

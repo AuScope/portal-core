@@ -49,7 +49,7 @@ public class KnownLayerServiceTest {
     private KnownLayerService buildKnownLayerServiceWithWMSSelectorsAndKnownLayerIdOf(String knownLayerId) {
         knownLayer = new KnownLayer(knownLayerId, wmsSelectors);
 
-        knownLayerService = new KnownLayerService(Lists.newArrayList(knownLayer), null, null, null, null, null, null);
+        knownLayerService = new KnownLayerService(Lists.newArrayList(knownLayer), null, null, null, null, null);
         return knownLayerService;
     }
 
@@ -61,7 +61,7 @@ public class KnownLayerServiceTest {
             KnownLayer knownLayerLocal = new KnownLayer(knownLayerId, selector);
             knownLayersListLocal.add(knownLayerLocal);
         }
-        knownLayerService = new KnownLayerService(knownLayersListLocal, null, null, null, null, null, null);
+        knownLayerService = new KnownLayerService(knownLayersListLocal, null, null, null, null, null);
         knownLayer = knownLayersListLocal.get(0);
 
         return knownLayerService;

@@ -28,6 +28,7 @@ import org.auscope.portal.core.view.knownlayer.KnownLayerSelector;
 import org.auscope.portal.core.view.knownlayer.WMSSelector;
 import org.auscope.portal.core.view.knownlayer.WMSSelectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.ui.ModelMap;
 
 /**
@@ -65,7 +66,7 @@ public class KnownLayerService {
      *            An instance of CSWCacheService
      */
     public KnownLayerService(@SuppressWarnings("rawtypes") List knownTypes,
-            CSWCacheService cswCacheService, ViewKnownLayerFactory viewFactory,
+            ViewKnownLayerFactory viewFactory,
             ViewCSWRecordFactory viewCSWRecordFactory,
             ViewGetCapabilitiesFactory viewGetCapabilitiesFactory, WMSService wmsService, SearchService searchService) {
         this.knownLayers = new ArrayList<>();
@@ -75,12 +76,21 @@ public class KnownLayerService {
             }
         }
 
-        this.cswCacheService = cswCacheService;
         this.viewKnownLayerFactory = viewFactory;
         this.viewCSWRecordFactory = viewCSWRecordFactory;
         this.viewGetCapabilitiesFactory = viewGetCapabilitiesFactory;
         this.wmsService = wmsService;
         this.searchService = searchService;
+    }
+    
+    @Lazy
+    @Autowired
+    public void setCSWCacheService(CSWCacheService cswCacheService) {
+    	this.cswCacheService = cswCacheService;
+    }
+    
+    public CSWCacheService getCSWCacheService() {
+    	return this.cswCacheService;
     }
 
     /**
