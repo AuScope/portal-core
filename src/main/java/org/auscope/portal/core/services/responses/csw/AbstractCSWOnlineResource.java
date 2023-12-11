@@ -78,7 +78,12 @@ public abstract class AbstractCSWOnlineResource {
         /**
          * KML Layer
          */
-        KML
+        KML,
+
+        /**
+         * VMF Layer
+         */
+        VMF
     }
 
     /**
@@ -171,8 +176,10 @@ public abstract class AbstractCSWOnlineResource {
             return OnlineResourceType.DOI;
         } else if (lowerProtocol.contains("kml")) {
             return OnlineResourceType.KML;
+        } else if (lowerProtocol.contains("vmf")) {
+            return OnlineResourceType.VMF;
         }
- 
+        
         return OnlineResourceType.Unsupported;
     }
 

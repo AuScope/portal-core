@@ -98,6 +98,7 @@ public class CSWGetRecordResponse {
             newRecord.setRecordInfoUrl(String.format(origin.getRecordInformationUrl(), newRecord.getFileIdentifier()));
             records.add(newRecord);
             log.trace("GN layer " + (i + 1) + " : " + newRecord.toString());
+            //System.out.println("CSWGetRecordResponse.newRecord.setRecordInfoUrl "+newRecord.toString());
         }
     }
 

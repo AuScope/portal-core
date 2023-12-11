@@ -2,11 +2,18 @@ package org.auscope.portal.core.view;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
+import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
+import org.auscope.portal.core.services.responses.csw.CSWGeographicElement;
 import org.auscope.portal.core.view.knownlayer.KnownLayer;
 import org.auscope.portal.core.view.knownlayer.KnownLayerSelector;
 import org.auscope.portal.core.view.knownlayer.SelectorsMode;
 import org.auscope.portal.core.view.knownlayer.WMSSelectors;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.ui.ModelMap;
 
 /**
@@ -56,8 +63,29 @@ public class ViewKnownLayerFactory {
         if (k.getGroup() != null && !k.getGroup().isEmpty()) {
             group = k.getGroup();
         }
+
         obj.put("group", group);
 
+        // add a geojson object to support the VMF layer - Indigenous
+        if (k.getEndPoint() != null) {
+            ModelMap geoObj = new ModelMap();            
+            geoObj.put("endPoint", k.getEndPoint());
+            if (k.getPolygon() != null) {
+                JSONArray polygon = k.getPolygon();
+                List<Object> coords = new ArrayList<>();
+                for (int i = 0; i < polygon.length(); i++) {
+                    JSONArray coordNode = (JSONArray) polygon.get(i);
+                    
+                    List<Double> coord = new ArrayList<>();
+                    coord.add((Double) coordNode.get(0));
+                    coord.add((Double) coordNode.get(1));
+                    coords.add(coord);                    
+                }
+                geoObj.put("polygon", coords);                
+            }
+            obj.put("geojson", geoObj);
+        }
+        
         // LayersMode is from GA GPT-41 where Layers can have Layers and they can be 'OR'd or 'AND'd.
         if (k.getKnownLayerSelector() != null) {
             KnownLayerSelector knownLayerSelector = k.getKnownLayerSelector();
