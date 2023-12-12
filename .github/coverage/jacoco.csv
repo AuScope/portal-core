@@ -58,7 +58,7 @@ Portal-Core,org.auscope.portal.core.server.http,HttpClientInputStream,26,31,1,1,
 Portal-Core,org.auscope.portal.core.server.http,DistributedHTTPServiceCallerException,0,4,0,0,0,2,0,1,0,1
 Portal-Core,org.auscope.portal.core.server.http,HttpClientResponse,132,17,1,1,42,7,27,3,26,3
 Portal-Core,org.auscope.portal.core.server.http,DistributedHTTPServiceCaller.ServiceCallStatus,0,92,0,2,0,34,0,10,0,9
-Portal-Core,org.auscope.portal.core.view,ViewKnownLayerFactory,44,217,10,16,8,46,8,9,0,4
+Portal-Core,org.auscope.portal.core.view,ViewKnownLayerFactory,109,220,15,17,21,47,11,9,0,4
 Portal-Core,org.auscope.portal.core.view,ViewCSWRecordFactory,56,518,15,41,10,93,15,18,1,4
 Portal-Core,org.auscope.portal.core.view,ViewGetCapabilitiesFactory,215,0,8,0,43,0,8,0,4,0
 Portal-Core,org.auscope.portal.core.uifilter.optional,UICheckBoxGroupProvider,14,0,0,0,6,0,2,0,2,0
@@ -101,8 +101,9 @@ Portal-Core,org.auscope.portal.core.view.knownlayer,KnownLayerGrouping,8,21,0,0,
 Portal-Core,org.auscope.portal.core.view.knownlayer,KnownLayerSelector.RelationType,0,21,0,0,0,4,0,1,0,1
 Portal-Core,org.auscope.portal.core.view.knownlayer,SelectorsMode,0,21,0,0,0,2,0,1,0,1
 Portal-Core,org.auscope.portal.core.view.knownlayer,WFSSelector,14,144,2,26,4,28,6,16,4,4
-Portal-Core,org.auscope.portal.core.view.knownlayer,KnownLayer,130,111,4,0,40,41,22,30,20,30
+Portal-Core,org.auscope.portal.core.view.knownlayer,KnownLayer,177,114,6,0,51,42,26,31,23,31
 Portal-Core,org.auscope.portal.core.view.knownlayer,KnownLayerAndRecords,13,24,0,0,2,9,2,4,2,4
+Portal-Core,org.auscope.portal.core.view.knownlayer,VMFSelector,32,0,2,0,11,0,5,0,4,0
 Portal-Core,org.auscope.portal.core.view.knownlayer,WMSWFSSelector,135,0,24,0,33,0,20,0,8,0
 Portal-Core,org.auscope.portal.core.view.knownlayer,CSWTitleFilterRecordSelector,47,0,8,0,15,0,10,0,6,0
 Portal-Core,org.auscope.portal.core.view.knownlayer,WMSSelector,84,92,17,11,20,17,16,8,6,4
@@ -176,7 +177,7 @@ Portal-Core,org.auscope.portal.core.services.responses.csw,CSWTemporalExtent,26,
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWGetRecordResponse,0,160,3,5,0,36,3,7,0,6
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWGetCapabilities.CSWGetCapabilitiesNamespace,0,18,0,0,0,4,0,1,0,1
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWContact,3,83,0,0,1,28,1,19,1,19
-Portal-Core,org.auscope.portal.core.services.responses.csw,AbstractCSWOnlineResource.OnlineResourceType,0,81,0,0,0,14,0,1,0,1
+Portal-Core,org.auscope.portal.core.services.responses.csw,AbstractCSWOnlineResource.OnlineResourceType,0,87,0,0,0,15,0,1,0,1
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWRecordTransformer.Scope,0,15,0,0,0,2,0,1,0,1
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWGeographicBoundingBox,16,290,1,37,4,53,1,33,0,15
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWRecordTransformer.GeoServerHelper,355,416,57,31,72,77,41,6,0,3
@@ -187,7 +188,7 @@ Portal-Core,org.auscope.portal.core.services.responses.csw,CSWResponsibleParty,0
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWRecordTransformer,905,1294,72,104,146,246,65,43,6,14
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWGetCapabilities,16,88,2,4,5,23,4,5,2,4
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWGetDomainResponse,8,74,0,2,2,19,0,6,0,5
-Portal-Core,org.auscope.portal.core.services.responses.csw,AbstractCSWOnlineResource,26,245,30,44,9,58,28,14,0,5
+Portal-Core,org.auscope.portal.core.services.responses.csw,AbstractCSWOnlineResource,28,249,31,45,10,59,29,14,0,5
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWResponsiblePartyFactory,3,68,0,8,1,16,1,5,1,1
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWContactFactory,3,139,0,18,1,31,1,10,1,1
 Portal-Core,org.auscope.portal.core.services.methodmakers.sissvoc,SISSVoc2MethodMaker,2,121,2,2,1,19,2,6,0,6
