@@ -141,7 +141,6 @@ public class KnownLayerService {
             // For each record, mark it as being added to a known layer (if appropriate)
             // We also need to mark the record as being mapped using mappedRecordIDs
             for (CSWRecord record : originalRecordList) {
-                // System.out.println(" test this record: " + record.getLayerName());
                 try {
                     switch (selector.isRelatedRecord(record)) {
                     case Related:
@@ -332,6 +331,7 @@ public class KnownLayerService {
             ArrayList<String> layerNames = new ArrayList<>();
             for (CSWRecord rec : knownLayerAndRecords.getBelongingRecords()) {
 
+                
                 if (rec != null) {
                     for (AbstractCSWOnlineResource onlineResource : rec.getOnlineResources()) {
                         if (onlineResource.getLinkage() != null) {
