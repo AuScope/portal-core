@@ -17,7 +17,8 @@ import org.json.JSONObject;
 import org.springframework.ui.ModelMap;
 
 /**
- * A factory class containing methods for generating view representations of the KnownLayer
+ * A factory class containing methods for generating view representations of the
+ * KnownLayer
  *
  * @author Josh Vote
  *
@@ -68,25 +69,42 @@ public class ViewKnownLayerFactory {
 
         // add a geojson object to support the VMF layer - Indigenous
         if (k.getEndPoint() != null) {
-            ModelMap geoObj = new ModelMap();            
+            ModelMap geoObj = new ModelMap();
             geoObj.put("endPoint", k.getEndPoint());
             if (k.getPolygon() != null) {
                 JSONArray polygon = k.getPolygon();
                 List<Object> coords = new ArrayList<>();
                 for (int i = 0; i < polygon.length(); i++) {
                     JSONArray coordNode = (JSONArray) polygon.get(i);
-                    
+
                     List<Double> coord = new ArrayList<>();
                     coord.add((Double) coordNode.get(0));
                     coord.add((Double) coordNode.get(1));
-                    coords.add(coord);                    
+                    coords.add(coord);
                 }
-                geoObj.put("polygon", coords);                
+                geoObj.put("polygon", coords);
             }
             obj.put("geojson", geoObj);
         }
-        
-        // LayersMode is from GA GPT-41 where Layers can have Layers and they can be 'OR'd or 'AND'd.
+
+        // add a geojson object to support the bbox;
+        if (k.getBBox() != null) {
+            ModelMap geoObj = new ModelMap();
+            JSONArray bbox = k.getBBox();
+            List<Object> coords = new ArrayList<>();
+            for (int i = 0; i < bbox.length(); i++) {
+                JSONArray coordNode = (JSONArray) bbox.get(i);
+
+                List<Double> coord = new ArrayList<>();
+                coord.add((Double) coordNode.get(0));
+                coord.add((Double) coordNode.get(1));
+                coords.add(coord);
+            }
+            geoObj.put("bbox", coords);
+            obj.put("geojson", geoObj);
+        }
+        // LayersMode is from GA GPT-41 where Layers can have Layers and they can be
+        // 'OR'd or 'AND'd.
         if (k.getKnownLayerSelector() != null) {
             KnownLayerSelector knownLayerSelector = k.getKnownLayerSelector();
             if (knownLayerSelector instanceof WMSSelectors) {
@@ -99,8 +117,8 @@ public class ViewKnownLayerFactory {
             obj.put("layerMode", SelectorsMode.NA);
         }
 
-        if(k.getFilterCollection()!=null){
-            obj.put("filterCollection",k.getFilterCollection());
+        if (k.getFilterCollection() != null) {
+            obj.put("filterCollection", k.getFilterCollection());
         }
 
         if (k.getStackdriverServiceGroup() != null) {
@@ -109,9 +127,9 @@ public class ViewKnownLayerFactory {
         if (k.getSupportsCsvDownloads()) {
             obj.put("supportsCsvDownloads", k.getSupportsCsvDownloads());
         }
-        
+
         if (k.getServerType() != null) {
-        	obj.put("serverType", k.getServerType());
+            obj.put("serverType", k.getServerType());
         }
 
         return obj;

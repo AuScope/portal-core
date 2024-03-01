@@ -116,6 +116,9 @@ public class KnownLayer implements Serializable {
     /** VMF - geoJson polygon */
     private JSONArray polygon;
 
+    /** geoJson bbox */
+    private JSONArray bbox;
+
     /**
      * Creates a new KnownLayer
      *
@@ -533,6 +536,13 @@ public class KnownLayer implements Serializable {
     }
 
     /**
+     * @return the initial - bbox
+     */
+    public JSONArray getBBox() {
+        return bbox;
+    }
+
+    /**
      * Set the VMF - polygon
      * 
      * @param polygonGeoJson
@@ -549,6 +559,27 @@ public class KnownLayer implements Serializable {
             newCoordNode.put(oldCoordNode.get(0));
             newCoordNode.put(oldCoordNode.get(1));
             this.polygon.put(newCoordNode);
+
+        }
+
+    }
+    
+    /**
+     * Set the initialBBox
+     * 
+     * @param bboxGeoJson
+     */
+    public void setBBox(JSONArray bboxGeoJson) {
+        this.bbox = new JSONArray();
+
+        for (int i = 0; i < bboxGeoJson.length(); i++) {
+
+            JSONArray oldCoordNode = (JSONArray) bboxGeoJson.get(i);
+
+            JSONArray newCoordNode = new JSONArray();
+            newCoordNode.put(oldCoordNode.get(0));
+            newCoordNode.put(oldCoordNode.get(1));
+            this.bbox.put(newCoordNode);
 
         }
 
