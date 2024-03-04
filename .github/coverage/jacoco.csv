@@ -58,7 +58,7 @@ Portal-Core,org.auscope.portal.core.server.http,HttpClientInputStream,26,31,1,1,
 Portal-Core,org.auscope.portal.core.server.http,DistributedHTTPServiceCallerException,0,4,0,0,0,2,0,1,0,1
 Portal-Core,org.auscope.portal.core.server.http,HttpClientResponse,132,17,1,1,42,7,27,3,26,3
 Portal-Core,org.auscope.portal.core.server.http,DistributedHTTPServiceCaller.ServiceCallStatus,0,92,0,2,0,34,0,10,0,9
-Portal-Core,org.auscope.portal.core.view,ViewKnownLayerFactory,109,220,15,17,21,47,11,9,0,4
+Portal-Core,org.auscope.portal.core.view,ViewKnownLayerFactory,165,223,18,18,32,48,13,9,0,4
 Portal-Core,org.auscope.portal.core.view,ViewCSWRecordFactory,56,518,15,41,10,93,15,18,1,4
 Portal-Core,org.auscope.portal.core.view,ViewGetCapabilitiesFactory,215,0,8,0,43,0,8,0,4,0
 Portal-Core,org.auscope.portal.core.uifilter.optional,UICheckBoxGroupProvider,14,0,0,0,6,0,2,0,2,0
@@ -101,7 +101,7 @@ Portal-Core,org.auscope.portal.core.view.knownlayer,KnownLayerGrouping,8,21,0,0,
 Portal-Core,org.auscope.portal.core.view.knownlayer,KnownLayerSelector.RelationType,0,21,0,0,0,4,0,1,0,1
 Portal-Core,org.auscope.portal.core.view.knownlayer,SelectorsMode,0,21,0,0,0,2,0,1,0,1
 Portal-Core,org.auscope.portal.core.view.knownlayer,WFSSelector,14,144,2,26,4,28,6,16,4,4
-Portal-Core,org.auscope.portal.core.view.knownlayer,KnownLayer,177,114,6,0,51,42,26,31,23,31
+Portal-Core,org.auscope.portal.core.view.knownlayer,KnownLayer,217,117,8,0,59,43,28,32,24,32
 Portal-Core,org.auscope.portal.core.view.knownlayer,KnownLayerAndRecords,13,24,0,0,2,9,2,4,2,4
 Portal-Core,org.auscope.portal.core.view.knownlayer,VMFSelector,32,0,2,0,11,0,5,0,4,0
 Portal-Core,org.auscope.portal.core.view.knownlayer,WMSWFSSelector,135,0,24,0,33,0,20,0,8,0
