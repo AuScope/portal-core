@@ -1,6 +1,6 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
-Portal-Core,org.auscope.portal.core.server,PortalPropertySourcesPlaceholderConfigurer,99,0,10,0,25,0,8,0,3,0
 Portal-Core,org.auscope.portal.core.server,PortalProfileXmlWebApplicationContext,24,0,2,0,5,0,3,0,2,0
+Portal-Core,org.auscope.portal.core.server,PortalPropertySourcesPlaceholderConfigurer,99,0,10,0,25,0,8,0,3,0
 Portal-Core,org.auscope.portal.core.server,OgcServiceProviderType,0,36,0,2,0,6,0,3,0,2
 Portal-Core,org.auscope.portal.core.services.methodmakers,GeonetworkMethodMaker,210,0,0,0,39,0,7,0,7,0
 Portal-Core,org.auscope.portal.core.services.methodmakers,SOSMethodMaker,4,295,8,18,1,61,8,8,0,3
@@ -174,8 +174,8 @@ Portal-Core,org.auscope.portal.core.services.responses.csw,CSWGetDomainResponse.
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWRecordTransformerFactory,9,14,0,0,2,3,2,2,2,2
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWOnlineResourceFactory,3,109,2,4,1,28,3,3,1,2
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWTemporalExtent,26,0,0,0,11,0,6,0,6,0
-Portal-Core,org.auscope.portal.core.services.responses.csw,CSWGetCapabilities.CSWGetCapabilitiesNamespace,0,18,0,0,0,4,0,1,0,1
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWGetRecordResponse,0,160,3,5,0,36,3,7,0,6
+Portal-Core,org.auscope.portal.core.services.responses.csw,CSWGetCapabilities.CSWGetCapabilitiesNamespace,0,18,0,0,0,4,0,1,0,1
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWContact,3,83,0,0,1,28,1,19,1,19
 Portal-Core,org.auscope.portal.core.services.responses.csw,AbstractCSWOnlineResource.OnlineResourceType,0,87,0,0,0,15,0,1,0,1
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWRecordTransformer.Scope,0,15,0,0,0,2,0,1,0,1
