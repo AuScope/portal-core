@@ -19,7 +19,6 @@ public class CSWOnlineResourceImpl extends AbstractCSWOnlineResource {
     private URL linkage;
     private String protocol;
     private String name;
-    //@Field(type = FieldType.Text)
     private String description;
     private String applicationProfile;
     private String protocolRequest;

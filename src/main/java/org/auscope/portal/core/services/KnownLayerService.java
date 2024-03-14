@@ -42,7 +42,7 @@ public class KnownLayerService {
     private List<KnownLayer> knownLayers;
     private CSWCacheService cswCacheService;
     private WMSService wmsService;
-    private ESSearchService esSearchService;
+    private ElasticsearchService elasticsearchService;
 
     private GoogleCloudMonitoringCachedService stackDriverService = null;
 
@@ -66,7 +66,7 @@ public class KnownLayerService {
     public KnownLayerService(@SuppressWarnings("rawtypes") List knownTypes,
             ViewKnownLayerFactory viewFactory,
             ViewCSWRecordFactory viewCSWRecordFactory,
-            ViewGetCapabilitiesFactory viewGetCapabilitiesFactory, WMSService wmsService, ESSearchService esSearchService) {
+            ViewGetCapabilitiesFactory viewGetCapabilitiesFactory, WMSService wmsService, ElasticsearchService elasticsearchService) {
         this.knownLayers = new ArrayList<>();
         for (Object obj : knownTypes) {
             if (obj instanceof KnownLayer) {
@@ -78,7 +78,7 @@ public class KnownLayerService {
         this.viewCSWRecordFactory = viewCSWRecordFactory;
         this.viewGetCapabilitiesFactory = viewGetCapabilitiesFactory;
         this.wmsService = wmsService;
-        this.esSearchService = esSearchService;
+        this.elasticsearchService = elasticsearchService;
     }
     
     @Lazy
@@ -119,6 +119,7 @@ public class KnownLayerService {
      */
     public <T extends KnownLayer> KnownLayerGrouping groupKnownLayerRecords(Class<?>... classFilters) {
         List<CSWRecord> originalRecordList = this.cswCacheService.getRecordCache();
+        
         List<KnownLayerAndRecords> knownLayerAndRecords = new ArrayList<>();
         Map<String, Object> mappedRecordIDs = new HashMap<>();
 
@@ -150,8 +151,8 @@ public class KnownLayerService {
                         mappedRecordIDs.put(record.getFileIdentifier(), null);
 
                         // Look for services for which require a GetCapabilitiesRecord
-                        AbstractCSWOnlineResource[] onlineResourceList = record.getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType.WMS);
-                        if (onlineResourceList.length > 0) {
+                        List<AbstractCSWOnlineResource> onlineResourceList = record.getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType.WMS);
+                        if (onlineResourceList.size() > 0) {
                             for (AbstractCSWOnlineResource onlineRes: onlineResourceList) {
                                 // So far only GSKY services require us to fetch a 'GetCapabilities' response 
                                 if (onlineRes.getApplicationProfile().contains("GSKY")) {
@@ -341,8 +342,7 @@ public class KnownLayerService {
                 }
                 // Update the CSW records in the index with the KnownLayer ID. If the record doesn't exist yet
                 // (e.g. first run) they'll still be added and the KnownLayer IDs updated later.
-                // XXX XXX
-                esSearchService.updateCSWRecords(knownLayerAndRecords.getBelongingRecords());
+                elasticsearchService.updateCSWRecords(knownLayerAndRecords.getBelongingRecords());
             }
 
             List<ModelMap> viewRelatedRecords = new ArrayList<>();

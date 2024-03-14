@@ -2,6 +2,8 @@ package org.auscope.portal.core.services.responses.csw;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.auscope.portal.core.services.csw.CSWRecordsHostFilter;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.OnlineResourceType;
@@ -34,15 +36,15 @@ public class TestCSWRecord extends PortalTestClass {
 
     @Test
     public void testContainsAnyOnlineResource() throws MalformedURLException {
-        final AbstractCSWOnlineResource[] emptyOnlineResources = new AbstractCSWOnlineResource[] {};
-        final AbstractCSWOnlineResource[] nullOnlineResources = null;
-        final AbstractCSWOnlineResource[] fullOnlineResources = new AbstractCSWOnlineResource[] {
-                new CSWOnlineResourceImpl(new URL("http://example.com"), "wfs", "or1", "or1"),
-                new CSWOnlineResourceImpl(new URL("http://example.com"), "wfs", "or2", "or2"),
-                new CSWOnlineResourceImpl(new URL("http://example.com"), "wms", "or3", "or3"),
-                null,
-                new CSWOnlineResourceImpl(new URL("http://example.com"), "unknown", "or4", "or4"),
-        };
+        final List<AbstractCSWOnlineResource> emptyOnlineResources = new ArrayList<AbstractCSWOnlineResource>();
+        final List<AbstractCSWOnlineResource> nullOnlineResources = null;
+        final List<AbstractCSWOnlineResource> fullOnlineResources = new ArrayList<AbstractCSWOnlineResource>();
+        fullOnlineResources.add(new CSWOnlineResourceImpl(new URL("http://example.com"), "wfs", "or1", "or1"));
+        fullOnlineResources.add(new CSWOnlineResourceImpl(new URL("http://example.com"), "wfs", "or2", "or2"));
+        fullOnlineResources.add(new CSWOnlineResourceImpl(new URL("http://example.com"), "wms", "or3", "or3"));
+        fullOnlineResources.add(null);
+        fullOnlineResources.add(new CSWOnlineResourceImpl(new URL("http://example.com"), "unknown", "or4", "or4"));
+        
         CSWRecord record = new CSWRecord("serviceName", "fileId", "http://record.info", "Abstract", null, null);
 
         record.setOnlineResources(emptyOnlineResources);
@@ -72,31 +74,30 @@ public class TestCSWRecord extends PortalTestClass {
 
     @Test
     public void testGetOnlineResourcesByType() throws MalformedURLException {
-        final AbstractCSWOnlineResource[] fullOnlineResources = new AbstractCSWOnlineResource[] {
-                new CSWOnlineResourceImpl(new URL("http://example.com/test2"), "wfs", "or1", "or1"),
-                new CSWOnlineResourceImpl(new URL("http://example2.com/test3"), "wfs", "or2", "or2"),
-                new CSWOnlineResourceImpl(new URL("http://example2.com/test4"), "wms", "or3", "or3"),
-                new CSWOnlineResourceImpl(new URL("http://example2.com/test4"), "wms", "or4", "or4"),
-                null,
-                new CSWOnlineResourceImpl(new URL("http://example.com"), "unknown", "or4", "or4"),
-        };
+        final List<AbstractCSWOnlineResource> fullOnlineResources = new ArrayList<AbstractCSWOnlineResource>();
+        fullOnlineResources.add(new CSWOnlineResourceImpl(new URL("http://example.com/test2"), "wfs", "or1", "or1"));
+        fullOnlineResources.add(new CSWOnlineResourceImpl(new URL("http://example2.com/test3"), "wfs", "or2", "or2"));
+        fullOnlineResources.add(new CSWOnlineResourceImpl(new URL("http://example2.com/test4"), "wms", "or3", "or3"));
+        fullOnlineResources.add(new CSWOnlineResourceImpl(new URL("http://example2.com/test4"), "wms", "or4", "or4"));
+        fullOnlineResources.add(null);
+        fullOnlineResources.add(new CSWOnlineResourceImpl(new URL("http://example.com"), "unknown", "or4", "or4"));
         CSWRecord record = new CSWRecord("serviceName", "fileId", "http://record.info", "Abstract", null, null);
         record.setOnlineResources(fullOnlineResources);
 
-        AbstractCSWOnlineResource[] result = record.getOnlineResourcesByType(OnlineResourceType.WFS);
-        Assert.assertEquals(2, result.length);
+        List<AbstractCSWOnlineResource> result = record.getOnlineResourcesByType(OnlineResourceType.WFS);
+        Assert.assertEquals(2, result.size());
 
         result = record
                 .getOnlineResourcesByType(new CSWRecordsHostFilter("http://example.com"), OnlineResourceType.WFS);
-        Assert.assertEquals(1, result.length);
+        Assert.assertEquals(1, result.size());
 
         result = record.getOnlineResourcesByType(new CSWRecordsHostFilter("http://example2.com"),
                 OnlineResourceType.WMS);
-        Assert.assertEquals(2, result.length);
+        Assert.assertEquals(2, result.size());
 
         result = record.getOnlineResourcesByType(new CSWRecordsHostFilter("http://example2.com"),
                 OnlineResourceType.WFS);
-        Assert.assertEquals(1, result.length);
+        Assert.assertEquals(1, result.size());
     }
 
 }

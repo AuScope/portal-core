@@ -26,6 +26,7 @@ import org.auscope.portal.core.services.responses.csw.CSWOnlineResourceImpl;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.services.responses.csw.CSWRecordTransformerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 
 
@@ -38,11 +39,14 @@ import org.springframework.context.annotation.Lazy;
  *
  */
 public class CSWCacheService {
+	
+	@Value("${spring.data.elasticsearch.manualUpdateOnly:false}")
+    private boolean manualUpdateOnly;
 
     /**
      * The frequency in which the cache updates (in milliseconds).
      */
-    public static final long CACHE_UPDATE_FREQUENCY_MS = 1000L * 60L * 5L; //Set to 5 minutes
+	public static final long CACHE_UPDATE_FREQUENCY_MS = 1000L * 60L * 60L * 24L; //Set to 1 day
 
     private final Log log = LogFactory.getLog(getClass());
 
@@ -74,10 +78,8 @@ public class CSWCacheService {
     protected boolean forceGetMethods = false;
     protected Date lastCacheUpdate;
     
-    private KnownLayerService knownLayerService;
-
     // Provides access to CSWRecord index
-    protected ESSearchService esSearchService;
+    protected ElasticsearchService elasticsearchService;
 
     // KnownLayerService needs to be informed when indexing is finished, must be @Lazy loaded to avoid circular dependencies   
     @Autowired
@@ -97,8 +99,8 @@ public class CSWCacheService {
     public CSWCacheService(Executor executor,
             HttpServiceCaller serviceCaller,
             @SuppressWarnings("rawtypes") ArrayList cswServiceList,
-            ESSearchService esSearchService) {
-        this(executor, serviceCaller, cswServiceList, new CSWRecordTransformerFactory(), esSearchService);
+            ElasticsearchService elasticsearchService) {
+        this(executor, serviceCaller, cswServiceList, new CSWRecordTransformerFactory(), elasticsearchService);
     }
 
     /**
@@ -116,7 +118,7 @@ public class CSWCacheService {
             HttpServiceCaller serviceCaller,
             @SuppressWarnings("rawtypes") ArrayList cswServiceList,
             CSWRecordTransformerFactory transformerFactory,
-            ESSearchService esSearchService) {
+            ElasticsearchService elasticsearchService) {
         this.updateRunning = false;
         this.executor = executor;
         this.serviceCaller = serviceCaller;
@@ -125,13 +127,19 @@ public class CSWCacheService {
         this.recordCache = new ArrayList<>();
         this.cswRecordCache = new HashMap<String, Map<String, CSWRecord>>();
         this.transformerFactory = transformerFactory;
-        this.esSearchService = esSearchService;
+        this.elasticsearchService = elasticsearchService;
         this.cswServiceList = new CSWServiceItem[cswServiceList.size()];
         for (int i = 0; i < cswServiceList.size(); i++) {
             this.cswServiceList[i] = (CSWServiceItem) cswServiceList.get(i);
         }
         // Restore recordCache from index
-        this.recordCache = esSearchService.getAllCSWRecords();
+        log.info("CSW record cache restoring");
+        this.recordCache = elasticsearchService.getAllCSWRecords();
+        if (this.recordCache.size() > 0) {
+        	log.info("CSW record cache restored: " + recordCache.size() + " records");
+        } else {
+        	log.info("CSW record cache empty");
+        }
     }
     
     // KnownLayerService needs to be informed when indexing is finished, must be @Lazy loaded to avoid circular dependencies
@@ -145,69 +153,6 @@ public class CSWCacheService {
     	return this.knownLayerService;
     }
     
-    /**
-     * Saves the current CSW cache to a temp file. This file is used to speed up start-up to serve as a temporary cache until the 
-     * actual endpoints have been re-harvested.
-     */
-    /*
-    private void saveCacheToFile() {
-        Kryo kryo = new Kryo();
-        kryo.setRegistrationRequired(false);
-        com.esotericsoftware.kryo.io.Output output=null;
-        try {
-            output = new com.esotericsoftware.kryo.io.Output(new FileOutputStream( CSW_CACHE_PATH + CSW_CACHE_FILENAME));
-            kryo.writeObject(output, this.keywordCache);
-            kryo.writeObject(output, this.recordCache);
-            kryo.writeObject(output, this.keywordsByRegistry);
-            log.info("CSWCache:saveCacheToFile:" + CSW_CACHE_PATH + CSW_CACHE_FILENAME);
-            log.info("CSWCache has been serialized.");
-        } catch (FileNotFoundException e) {
-            log.error("Could not save CSW cache to file", e);
-        } finally {
-            if(output!=null) {
-                output.close();                
-            }
-        }
-    }
-    */
-
-
-    /**
-     * Loads the CSW cache to a temp file. This file is used to speed up start-up to serve as a temporary cache until the 
-     * actual endpoints have been re-harvested.
-     */
-    /*
-    @SuppressWarnings("unchecked")
-    private void restoreCacheFromFile() {
-        if(new File(CSW_CACHE_PATH + CSW_CACHE_FILENAME).exists()) {
-            Kryo kryo = new Kryo();
-            kryo.setRegistrationRequired(false);
-            kryo.setInstantiatorStrategy(new com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
-            com.esotericsoftware.kryo.io.Input input = null;
-            try {
-                input = new com.esotericsoftware.kryo.io.Input(new FileInputStream(CSW_CACHE_PATH + CSW_CACHE_FILENAME));
-                this.keywordCache = kryo.readObject(input, HashMap.class);
-                this.recordCache = kryo.readObject(input, ArrayList.class);
-                this.keywordsByRegistry = kryo.readObject(input, HashMap.class);
-                log.info("CSWCache has been loaded from cache.");
-                log.info(String.format("    Keyword cache updated! Cache now has '%1$d' unique keyword names",
-                        this.keywordCache.size()));
-                log.info(String.format("    Record cache updated! Cache now has '%1$d' records", this.recordCache.size()));
-                log.info("CSWCache:restoreCacheFromFile:" + CSW_CACHE_PATH + CSW_CACHE_FILENAME);
-
-            } catch (Exception e) {
-                log.warn(String.format("Failed loading CSW cache: %1$s, %2$s", CSW_CACHE_PATH, CSW_CACHE_FILENAME), e);
-            } finally {
-                if(input!=null) {
-                    input.close();
-                }
-            }
-        } else {
-            log.warn(String.format("No saved CSW cache found on disk on: %1$s, %2$s", CSW_CACHE_PATH, CSW_CACHE_FILENAME));
-        }
-    }
-    */
-
     /**
      * Does this cache service force the usage of HTTP Get Methods
      *
@@ -270,9 +215,9 @@ public class CSWCacheService {
             this.keywordsByRegistry = newKeywordByEndpointCache;
         }
 
-        // Index CSWRecords in newRecordCache
-        // XXX XXX
-        esSearchService.indexCSWRecords(newRecordCache);
+        // Index CSWRecords and completion terms from newRecordCache
+        elasticsearchService.indexCSWRecords(newRecordCache);
+        elasticsearchService.indexCompletionTerms(newRecordCache);
         
         // Inform KnownLayerService that there are (potentially) new CSWRecords
         knownLayerService.updateKnownLayersCache();
@@ -289,8 +234,7 @@ public class CSWCacheService {
      * Starts an update of the internal caches if enough time has elapsed since the last update
      */
     private void updateCacheIfRequired() {
-        if (lastCacheUpdate == null ||
-                (new Date().getTime() - lastCacheUpdate.getTime()) > CACHE_UPDATE_FREQUENCY_MS) {
+        if (!manualUpdateOnly && (lastCacheUpdate == null || (new Date().getTime() - lastCacheUpdate.getTime()) > CACHE_UPDATE_FREQUENCY_MS)) {
             updateCache();
         }
     }
@@ -575,7 +519,6 @@ public class CSWCacheService {
             Set<AbstractCSWOnlineResource> targetSet = new HashSet<AbstractCSWOnlineResource>();
             targetSet.addAll(destination.getOnlineResources());
             targetSet.addAll(source.getOnlineResources());
-            AbstractCSWOnlineResource[] merged = targetSet.toArray(new AbstractCSWOnlineResource[targetSet.size()]);
             destination.setOnlineResources(new ArrayList<AbstractCSWOnlineResource>(targetSet));
             
             // Merge constraints, accessConstraints and useLimitConstraints (no dupes)
@@ -735,7 +678,7 @@ public class CSWCacheService {
             // Query the endpoint and cache
             try {
                 String cswServiceUrl = this.endpoint.getServiceUrl();
-
+                threadLog.info("Updating CSW cache for: " + cswServiceUrl);
                 if (this.endpoint.getNoCache()) {
                     // Create the dummy CSWResource - to avoid confusion: this is a CSW End point, NOT a CSW record.
                     // If we're not caching the responses we need to add this endpoint as a fake CSW record so that we can query it later:

@@ -8,29 +8,24 @@ import java.util.List;
 import org.auscope.portal.core.services.csw.CSWRecordsFilterVisitor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
-import org.springframework.data.elasticsearch.annotations.CompletionField;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
-import org.springframework.data.elasticsearch.annotations.Setting;
-import org.springframework.data.elasticsearch.core.suggest.Completion;
 
 
 /**
  * Represents a parsed gmd:MD_Metadata element that is received as part of an OGC CSW transaction.
+ * When KnownLayers are built the associated CSWRecords will be updated with their names and descriptions to facilitate searching.
  *
  * @author Mathew Wyatt
  * @author Joshua Vote
  * @version $Id$
  */
-@Document(indexName = "auscope-api-cswrecord")
-//@Setting(settingPath = "org/auscope/portal/server/elasticsearch/autocomplete-analyzer.json")
+//@Document(indexName = "auscope-api-cswrecord")
+@Document(indexName = "#{@environment.getProperty('spring.data.elasticsearch.cswRecordIndex')}")
 public class CSWRecord {
-
+	
     /** The service name. */
-	//@Field(type = FieldType.Text, analyzer = "autocomplete_index", searchAnalyzer = "autocomplete_search", copyTo = {"suggesterCompletion"})
-	//@Field(type = FieldType.Text, copyTo = {"suggesterCompletion"})
-	//@Field(type = FieldType.Text)
     private String serviceName;
 
     /** The online resources. */
@@ -55,18 +50,12 @@ public class CSWRecord {
     private CSWGeographicElement[] cswGeographicElements;
 
     /** The descriptive keywords. */
-    //@Field(type = FieldType.Text, analyzer = "autocomplete_index", searchAnalyzer = "autocomplete_search", copyTo = {"suggesterCompletion"})
-    //@Field(type = FieldType.Text, copyTo = {"suggesterCompletion"})
-    //@Field(type = FieldType.Text)
     private String[] descriptiveKeywords;
 
     /** The URIs from which file downloads will be available in some records. */
     private String[] dataSetURIs;
 
     /** The data identification abstract. */
-    //@Field(type = FieldType.Text, analyzer = "autocomplete_index", searchAnalyzer = "autocomplete_search", copyTo = {"suggesterCompletion"})
-    //@Field(type = FieldType.Text, copyTo = {"suggesterCompletion"})
-    //@Field(type = FieldType.Text)
     private String dataIdentificationAbstract;
 
     /** The supplemental information. */
@@ -125,25 +114,11 @@ public class CSWRecord {
     // The IDs of any associated KnownLayers
     private List<String> knownLayerIds;
     
-    // The names of any associated layers (for searching)
-    //@Field(type = FieldType.Text, analyzer = "autocomplete_index", searchAnalyzer = "autocomplete_search", copyTo = {"suggesterCompletion"})
-    //@Field(type = FieldType.Text, copyTo = {"suggesterCompletion"})
-    //@Field(type = FieldType.Text)
+    // The names of any associated known layers (for searching)
     private List<String> knownLayerNames;
     
-    // The descriptions of any associated layers (for searching)
-    //@Field(type = FieldType.Text, analyzer = "autocomplete_index", searchAnalyzer = "autocomplete_search", copyTo = {"suggesterCompletion"})
-    //@Field(type = FieldType.Text, copyTo = {"suggesterCompletion"})
-    //@Field(type = FieldType.Text)
+    // The descriptions of any associated known layers (for searching)
     private List<String> knownLayerDescriptions;
-    
-
-    // XXX
-    //@CompletionField(analyzer = "autocomplete_index", searchAnalyzer = "autocomplete_search"/*, maxInputLength = 1000*//*, preservePositionIncrements = false, preserveSeparators = false, maxInputLength = 20*/)
-    /*
-    @CompletionField
-    private Completion suggesterCompletion;
-    */
     
 
     /**
@@ -729,7 +704,7 @@ public class CSWRecord {
      *            The list of types you want to filter by
      * @return the online resources by type
      */
-    public AbstractCSWOnlineResource[] getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType... types) {
+    public List<AbstractCSWOnlineResource> getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType... types) {
         List<AbstractCSWOnlineResource> result = new ArrayList<>();
 
         for (AbstractCSWOnlineResource r : onlineResources) {
@@ -750,7 +725,7 @@ public class CSWRecord {
             }
         }
 
-        return result.toArray(new AbstractCSWOnlineResource[result.size()]);
+        return result;
     }
 
     /**
@@ -764,7 +739,7 @@ public class CSWRecord {
      *            visitor to action on the AbstractCSWOnlineResource
      * @return the online resources by type
      */
-    public AbstractCSWOnlineResource[] getOnlineResourcesByType(
+    public List<AbstractCSWOnlineResource> getOnlineResourcesByType(
             CSWRecordsFilterVisitor visitor,
             AbstractCSWOnlineResource.OnlineResourceType... types) {
         List<AbstractCSWOnlineResource> result = new ArrayList<>();
@@ -788,7 +763,7 @@ public class CSWRecord {
             }
         }
 
-        return result.toArray(new AbstractCSWOnlineResource[result.size()]);
+        return result;
     }
 
     /**
@@ -966,15 +941,5 @@ public class CSWRecord {
     	}
    		knownLayerDescriptions.add(knownLayerDescription);
     }
-    
-    /*
-    // XXX
-    public Completion getSuggesterCompletion() {
-    	return suggesterCompletion;
-    }
-    
-    public void setSuggesterCompletion(Completion suggesterCompletion) {
-    	this.suggesterCompletion = suggesterCompletion;
-    }
-    */
+
 }

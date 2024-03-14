@@ -2,11 +2,8 @@ package org.auscope.portal.core.server.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.auscope.portal.core.services.ESSearchService;
+import org.auscope.portal.core.services.ElasticsearchService;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.services.responses.es.CSWRecordSearchResponse;
 import org.auscope.portal.core.view.ViewCSWRecordFactory;
@@ -18,28 +15,29 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-public class ESSearchController extends BasePortalController {
-	
-	private final Log log = LogFactory.getLog(getClass());
+public class ElasticsearchController extends BasePortalController {
 	
 	@Autowired
-	ESSearchService esSearchService;
+	ElasticsearchService elasticsearchService;
 	
 	@Autowired
 	ViewCSWRecordFactory viewCSWRecordFactory;
 	
+
 	/**
 	 * Search the CSW record index
-	 * @param query
-	 * @param queryFields
-	 * @param cswRecordsPageNo
-	 * @param ogcServices
-	 * @param spatialRelation
-	 * @param westBoundLongitude
-	 * @param eastBoundLongitude
-	 * @param southBoundLatitude
-	 * @param northBoundLatitude
-	 * @return
+	 * 
+	 * @param query the search term
+	 * @param queryFields the fields to search (optional)
+	 * @param page the page number (optional)
+	 * @param pageSize the page size (optional)
+	 * @param ogcServices ogc services to search to filter search (optional)
+	 * @param spatialRelation the spatial relation type (e.g. "Intersects") (optional)
+	 * @param westBoundLongitude west longitude bound (optional)
+	 * @param eastBoundLongitude east longitude bound (optional)
+	 * @param southBoundLatitude south latitude bound (optional)
+	 * @param northBoundLatitude south latitude bound (optional)
+	 * @return a list of CSWRecord objects and KnownLayer IDs matching the search criteria
 	 */
     @RequestMapping("/searchCSWRecords.do")
     public ModelAndView searchKnownLayersAndCSWRecords(
@@ -53,10 +51,9 @@ public class ESSearchController extends BasePortalController {
     		@RequestParam(value = "eastBoundLongitude", required = false) Double eastBoundLongitude,
     		@RequestParam(value = "southBoundLatitude", required = false) Double southBoundLatitude,
     		@RequestParam(value = "northBoundLatitude", required = false) Double northBoundLatitude) {
-    	CSWRecordSearchResponse response = this.esSearchService.searchCSWRecords(
+    	CSWRecordSearchResponse response = this.elasticsearchService.searchCSWRecords(
     			query, queryFields, page, pageSize, ogcServices, spatialRelation, westBoundLongitude, eastBoundLongitude,
     			southBoundLatitude, northBoundLatitude);
-    	
     	ModelMap modelMap = new ModelMap();
     	modelMap.put("totalCSWRecordHits", response.getTotalCSWRecordHits());
     	
@@ -65,36 +62,14 @@ public class ESSearchController extends BasePortalController {
     		cswRecords.add(viewCSWRecordFactory.toView(record));
     	}
     	modelMap.put("cswRecords", cswRecords);
-
     	modelMap.put("knownLayerIds", response.getKnownLayerIds());
     	
         return generateJSONResponseMAV(true, modelMap, "");
     }
     
-    /**
-     * 
-     * @param query
-     * @return
-     */
-    @RequestMapping("/getIndexSuggestions.do")
-    public ModelAndView prefixQueryCSWRecords2(@RequestParam(value = "query") String query) {
-    	List<String> result = esSearchService.getPrefixHighlights(query);
-    	/*
-    	try {
-	    	CompletableFuture<List<String>> records = this.esSearchService.getIndexSuggestions(query);
-	    	CompletableFuture.allOf(records);
-	   		result = records.get();
-    	} catch(Exception e) {
-    		log.error("Error retrieving suggestions: " + e.getLocalizedMessage());
-    		return generateJSONResponseMAV(false, null, e.getLocalizedMessage());
-    	}
-    	*/
-    	return generateJSONResponseMAV(true, result.toArray(new String[result.size()]), "");
-    }
-    
     @RequestMapping("/suggestTerms.do")
     public ModelAndView suggestTerms(@RequestParam(value = "query") String query) {
-    	List<String> result = esSearchService.suggestTerms(query);
+    	List<String> result = elasticsearchService.suggestTerms(query);
     	return generateJSONResponseMAV(true, result.toArray(new String[result.size()]), "");
     }
     

@@ -72,17 +72,17 @@ public class TestCSWRecordTransformer extends PortalTestClass {
     public void testGetServiceUrl() throws XPathException, ParserConfigurationException, SAXException, IOException  {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
 
-        AbstractCSWOnlineResource[] resources = this.records[4].getOnlineResourcesByType(OnlineResourceType.WFS);
-        Assert.assertEquals(1, resources.length);
+        List<AbstractCSWOnlineResource> resources = this.records[4].getOnlineResourcesByType(OnlineResourceType.WFS);
+        Assert.assertEquals(1, resources.size());
         Assert.assertEquals(
                 "http://auscope-services-test.arrc.csiro.au/deegree-wfs/services?",
-                resources[0].getLinkage().toString());
+                resources.get(0).getLinkage().toString());
 
         resources = this.records[7].getOnlineResourcesByType(OnlineResourceType.WFS);
-        Assert.assertEquals(1, resources.length);
+        Assert.assertEquals(1, resources.size());
         Assert.assertEquals(
                 "http://auscope-services-test.arrc.csiro.au:80/geodesy/wfs?",
-                resources[0].getLinkage().toString());
+                resources.get(0).getLinkage().toString());
     }
 
     @Test
@@ -99,34 +99,34 @@ public class TestCSWRecordTransformer extends PortalTestClass {
     public void testMultipleOnlineResources() throws XPathException, ParserConfigurationException, SAXException, IOException  {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
 
-        AbstractCSWOnlineResource[] resources = this.records[14].getOnlineResources();
-        Assert.assertEquals(4, resources.length);
+        List<AbstractCSWOnlineResource> resources = this.records[14].getOnlineResources();
+        Assert.assertEquals(4, resources.size());
 
         resources = this.records[14].getOnlineResourcesByType(OnlineResourceType.WCS);
-        Assert.assertEquals(1, resources.length);
-        Assert.assertEquals("http://apacsrv6/thredds/wcs/galeon/ocean.nc", resources[0].getLinkage().toString());
+        Assert.assertEquals(1, resources.size());
+        Assert.assertEquals("http://apacsrv6/thredds/wcs/galeon/ocean.nc", resources.get(0).getLinkage().toString());
 
         resources = this.records[14].getOnlineResourcesByType(OnlineResourceType.WMS);
-        Assert.assertEquals(1, resources.length);
-        Assert.assertEquals("http://apacsrv6/thredds/wms/galeon/ocean.nc", resources[0].getLinkage().toString());
+        Assert.assertEquals(1, resources.size());
+        Assert.assertEquals("http://apacsrv6/thredds/wms/galeon/ocean.nc", resources.get(0).getLinkage().toString());
 
         resources = this.records[14].getOnlineResourcesByType(OnlineResourceType.FTP);
-        Assert.assertEquals(1, resources.length);
-        Assert.assertEquals("ftp://example.org/ftp", resources[0].getLinkage().toString());
+        Assert.assertEquals(1, resources.size());
+        Assert.assertEquals("ftp://example.org/ftp", resources.get(0).getLinkage().toString());
 
         resources = this.records[14].getOnlineResourcesByType(OnlineResourceType.NCSS);
-        Assert.assertEquals(1, resources.length);
-        Assert.assertEquals("http://apacsrv6/thredds/ncss/galeon/ocean.nc", resources[0].getLinkage().toString());
+        Assert.assertEquals(1, resources.size());
+        Assert.assertEquals("http://apacsrv6/thredds/ncss/galeon/ocean.nc", resources.get(0).getLinkage().toString());
 
         resources = this.records[14].getOnlineResourcesByType();
-        Assert.assertEquals(0, resources.length);
+        Assert.assertEquals(0, resources.size());
         resources = this.records[14].getOnlineResourcesByType(OnlineResourceType.WCS, OnlineResourceType.WMS);
-        Assert.assertEquals(2, resources.length);
+        Assert.assertEquals(2, resources.size());
         resources = this.records[14].getOnlineResourcesByType(OnlineResourceType.WCS, OnlineResourceType.WMS,
                 OnlineResourceType.WFS);
-        Assert.assertEquals(2, resources.length);
+        Assert.assertEquals(2, resources.size());
         resources = this.records[14].getOnlineResourcesByType(OnlineResourceType.Unsupported);
-        Assert.assertEquals(0, resources.length);
+        Assert.assertEquals(0, resources.size());
 
         Assert.assertTrue(this.records[14].containsAnyOnlineResource(OnlineResourceType.WCS));
         Assert.assertTrue(this.records[14].containsAnyOnlineResource(OnlineResourceType.WMS));
@@ -140,10 +140,10 @@ public class TestCSWRecordTransformer extends PortalTestClass {
 
         //Now test another record with a slightly different schema
         resources = this.records[3].getOnlineResources();
-        Assert.assertEquals(1, resources.length);
+        Assert.assertEquals(1, resources.size());
         resources = this.records[3].getOnlineResourcesByType(OnlineResourceType.FTP);
-        Assert.assertEquals(1, resources.length);
-        Assert.assertEquals("ftp://ftp.bom.gov.au/anon/home/geofabric/", resources[0].getLinkage().toString());
+        Assert.assertEquals(1, resources.size());
+        Assert.assertEquals("ftp://ftp.bom.gov.au/anon/home/geofabric/", resources.get(0).getLinkage().toString());
     }
 
     @Test
@@ -272,13 +272,13 @@ public class TestCSWRecordTransformer extends PortalTestClass {
     public void testUploadedResourceParsing() throws XPathException, ParserConfigurationException, SAXException, IOException {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse_UploadedResources.xml");
 
-        final AbstractCSWOnlineResource[] ors = this.records[0].getOnlineResources();
+        final List<AbstractCSWOnlineResource> ors = this.records[0].getOnlineResources();
 
         Assert.assertNotNull(ors);
-        Assert.assertEquals(1, ors.length);
+        Assert.assertEquals(1, ors.size());
 
-        Assert.assertEquals(OnlineResourceType.WWW, ors[0].getType());
-        Assert.assertEquals("Cooper_Basin_3D_Map_geology.vo", ors[0].getName());
+        Assert.assertEquals(OnlineResourceType.WWW, ors.get(0).getType());
+        Assert.assertEquals("Cooper_Basin_3D_Map_geology.vo", ors.get(0).getName());
     }
 
     @Test
@@ -307,10 +307,10 @@ public class TestCSWRecordTransformer extends PortalTestClass {
         List<CSWRecord> records = parseCSWRecordFromGetRecordResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse_Pycsw_Thredds.xml", OgcServiceProviderType.PyCSW);
         Assert.assertEquals(5, records.size());        
         CSWRecord record = records.get(0);
-        AbstractCSWOnlineResource[] onlineRes = record.getOnlineResources();
-        Assert.assertEquals(7, onlineRes.length);        
-        Assert.assertEquals("Band1", onlineRes[2].getName());
-        Assert.assertEquals(OnlineResourceType.WMS, onlineRes[2].getType());
+        List<AbstractCSWOnlineResource> onlineRes = record.getOnlineResources();
+        Assert.assertEquals(7, onlineRes.size());        
+        Assert.assertEquals("Band1", onlineRes.get(2).getName());
+        Assert.assertEquals(OnlineResourceType.WMS, onlineRes.get(2).getType());
         CSWGeographicElement[] bboxes = record.getCSWGeographicElements();
         Assert.assertEquals(1, bboxes.length);       
         Assert.assertEquals(151.92188, bboxes[0].getEastBoundLongitude(), 0.001);       
@@ -323,10 +323,10 @@ public class TestCSWRecordTransformer extends PortalTestClass {
         CSWRecord record = records.get(0);
         Assert.assertEquals("9031SE_loweEE_dom", record.getLayerName());
         
-        AbstractCSWOnlineResource[] onlineRes = record.getOnlineResources();
-        Assert.assertEquals(2, onlineRes.length);        
-        Assert.assertEquals("9031SE_loweEE_dom", onlineRes[0].getName());
-        Assert.assertEquals(OnlineResourceType.WMS, onlineRes[0].getType());
+        List<AbstractCSWOnlineResource> onlineRes = record.getOnlineResources();
+        Assert.assertEquals(2, onlineRes.size());        
+        Assert.assertEquals("9031SE_loweEE_dom", onlineRes.get(0).getName());
+        Assert.assertEquals(OnlineResourceType.WMS, onlineRes.get(0).getType());
         
         CSWGeographicElement[] bboxes = record.getCSWGeographicElements();
         Assert.assertEquals(1, bboxes.length);       

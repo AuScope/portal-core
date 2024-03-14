@@ -154,6 +154,22 @@ public class ViewCSWRecordFactory {
         	}
         	obj.put("knownLayerIds", knownLayerIds);
         }
+        
+        List<String> knownLayerNames = new ArrayList<String>();
+        if (record.getKnownLayerNames() != null && record.getKnownLayerNames().size() > 0) {
+        	for (String s: record.getKnownLayerNames()) {
+        		knownLayerNames.add(s);
+        	}
+        	obj.put("knownLayerNames", knownLayerNames);
+        }
+        
+        List<String> knownLayerDescriptions = new ArrayList<String>();
+        if (record.getKnownLayerDescriptions() != null && record.getKnownLayerDescriptions().size() > 0) {
+        	for (String s: record.getKnownLayerDescriptions()) {
+        		knownLayerDescriptions.add(s);
+        	}
+        	obj.put("knownLayerDescriptions", knownLayerDescriptions);
+        }
 
         return obj;
     }

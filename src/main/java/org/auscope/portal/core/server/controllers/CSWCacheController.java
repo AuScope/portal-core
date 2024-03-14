@@ -32,7 +32,7 @@ public class CSWCacheController extends BaseCSWController {
         super(viewCSWRecordFactory);
         this.cswService = cswService;
 
-        cswService.updateCache();
+        //cswService.updateCache();
     }
 
     /**

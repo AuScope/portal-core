@@ -48,6 +48,7 @@ public class TestKnownLayerService extends PortalTestClass {
     @SuppressWarnings("rawtypes")
     private ArrayList mockKnownLayerList;
     private CSWCacheService mockCacheService;
+    private ElasticsearchService mockElasticsearchService;
     private KnownLayerService knownLayerService;
 
     /**
@@ -71,8 +72,10 @@ public class TestKnownLayerService extends PortalTestClass {
         cswRecordList.add(context.mock(CSWRecord.class, "mockRecord3"));
         
         mockCacheService = context.mock(CSWCacheService.class);
+        mockElasticsearchService = context.mock(ElasticsearchService.class);
 
-        knownLayerService = new KnownLayerService(mockKnownLayerList, mockCacheService, null, null, null, null, null);
+        knownLayerService = new KnownLayerService(mockKnownLayerList, null, null, null, null, mockElasticsearchService);
+        knownLayerService.setCSWCacheService(mockCacheService);
 
         context.checking(new Expectations() {
             {

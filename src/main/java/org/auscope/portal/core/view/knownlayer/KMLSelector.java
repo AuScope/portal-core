@@ -1,5 +1,7 @@
 package org.auscope.portal.core.view.knownlayer;
 
+import java.util.List;
+
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
@@ -47,8 +49,8 @@ public class KMLSelector implements KnownLayerSelector {
      */
     @Override
     public RelationType isRelatedRecord(CSWRecord record) {
-        AbstractCSWOnlineResource[] onlineResources = record.getOnlineResourcesByType(OnlineResourceType.KML);
-        if (onlineResources.length > 0) {
+        List<AbstractCSWOnlineResource> onlineResources = record.getOnlineResourcesByType(OnlineResourceType.KML);
+        if (onlineResources.size() > 0) {
             for (AbstractCSWOnlineResource onlineResource : onlineResources) {
                 if (this.layerName.equals(onlineResource.getName())) {
                     return RelationType.Belongs;

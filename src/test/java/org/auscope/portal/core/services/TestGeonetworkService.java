@@ -3,6 +3,8 @@ package org.auscope.portal.core.services;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -11,6 +13,7 @@ import org.auscope.portal.core.server.http.HttpClientResponse;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.methodmakers.GeonetworkMethodMaker;
+import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicElement;
 import org.auscope.portal.core.services.responses.csw.CSWOnlineResourceImpl;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
@@ -67,7 +70,7 @@ public class TestGeonetworkService extends PortalTestClass {
         final String recordGetMetadata = ResourceUtil
                 .loadResourceAsString("org/auscope/portal/core/test/responses/geonetwork/GNMetadataGetXMLResponse.xml");
 
-        final CSWRecord record = new CSWRecord("a", "b", "c", "", new CSWOnlineResourceImpl[0],
+        final CSWRecord record = new CSWRecord("a", "b", "c", "", new ArrayList<AbstractCSWOnlineResource>(),
                 new CSWGeographicElement[0]);
         final URI responseUri = new URI("http://foo.bar.baz");
 
@@ -124,7 +127,7 @@ public class TestGeonetworkService extends PortalTestClass {
         final HttpEntity mockEntity = context.mock(HttpEntity.class);
         final InputStream loginResponse = new ByteArrayInputStream("<html>The contents doesn't matter as a failed GN login returns a static page</html>".getBytes());
 
-        final CSWRecord record = new CSWRecord("a", "b", "c", "", new CSWOnlineResourceImpl[0],
+        final CSWRecord record = new CSWRecord("a", "b", "c", "", new ArrayList<AbstractCSWOnlineResource>(),
                 new CSWGeographicElement[0]);
 
         try (final HttpClientResponse mockLoginResponse = context.mock(HttpClientResponse.class)) {

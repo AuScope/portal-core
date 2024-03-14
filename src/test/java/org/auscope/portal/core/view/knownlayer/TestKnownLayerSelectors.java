@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
 import org.auscope.portal.core.services.responses.csw.CSWOnlineResourceImpl;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.test.PortalTestClass;
@@ -35,65 +36,54 @@ public class TestKnownLayerSelectors extends PortalTestClass {
         //OGC:WMS-1.1.1-http-get-map
 
         //The first record is a simple WFS
-        CSWOnlineResourceImpl[] resources = new CSWOnlineResourceImpl[] {
-                new CSWOnlineResourceImpl(new URL("http://test.url1/wfs"), "OGC:WFS-1.0.0-http-get-feature",
-                        "type:name1", "")
-        };
+        List<AbstractCSWOnlineResource> resources = new ArrayList<AbstractCSWOnlineResource>();
+        resources.add(new CSWOnlineResourceImpl(new URL("http://test.url1/wfs"), "OGC:WFS-1.0.0-http-get-feature", "type:name1", "")
+        );
         CSWRecord rec = new CSWRecord("name1", "id1", "", "", resources, null);
         recordList.add(rec);
 
         //The second record is the same as the first but with a different URL
-        resources = new CSWOnlineResourceImpl[] {
-                new CSWOnlineResourceImpl(new URL("http://test.url2/wfs"), "OGC:WFS-1.0.0-http-get-feature",
-                        "type:name1", "")
-        };
+        resources = new ArrayList<AbstractCSWOnlineResource>();
+        resources.add(new CSWOnlineResourceImpl(new URL("http://test.url2/wfs"), "OGC:WFS-1.0.0-http-get-feature", "type:name1", "")
+        );
         rec = new CSWRecord("name2", "id2", "", "", resources, null);
         recordList.add(rec);
 
         //The third record is a WMS (same name as above)
-        resources = new CSWOnlineResourceImpl[] {
-                new CSWOnlineResourceImpl(new URL("http://test.url3/wms"), "OGC:WMS-1.1.1-http-get-map", "type:name1",
-                        "")
-        };
+        resources = new ArrayList<AbstractCSWOnlineResource>();
+        resources.add(new CSWOnlineResourceImpl(new URL("http://test.url3/wms"), "OGC:WMS-1.1.1-http-get-map", "type:name1", ""));
         rec = new CSWRecord("name3", "id3", "", "", resources, null);
         rec.setDescriptiveKeywords(new String[] {"WMS", "Keyword"});
         recordList.add(rec);
 
         //The fourth record is a WWW link
-        resources = new CSWOnlineResourceImpl[] {
-                new CSWOnlineResourceImpl(new URL("http://test.url4"), "WWW:LINK-1.0-http--link", "Web Link Name", "")
-        };
+        resources = new ArrayList<AbstractCSWOnlineResource>();
+        resources.add(new CSWOnlineResourceImpl(new URL("http://test.url4"), "WWW:LINK-1.0-http--link", "Web Link Name", ""));
         rec = new CSWRecord("name4", "id4", "", "", resources, null);
         rec.setDescriptiveKeywords(new String[] {"keyword", "Report", "anotherKeyword"});
         recordList.add(rec);
 
         //The fifth record is another WFS with a different type name (but same URL as rec 1)
-        resources = new CSWOnlineResourceImpl[] {
-                new CSWOnlineResourceImpl(new URL("http://test.url1/wfs"), "OGC:WFS-1.0.0-http-get-feature",
-                        "type:name2", "")
-        };
+        resources = new ArrayList<AbstractCSWOnlineResource>();
+        resources.add(new CSWOnlineResourceImpl(new URL("http://test.url1/wfs"), "OGC:WFS-1.0.0-http-get-feature", "type:name2", ""));
         rec = new CSWRecord("name5", "id5", "", "", resources, null);
         recordList.add(rec);
 
         //The sixth record is a WMS (new type name, same URL as #3)
-        resources = new CSWOnlineResourceImpl[] {
-                new CSWOnlineResourceImpl(new URL("http://test.url3/wms"), "OGC:WMS-1.1.1-http-get-map", "type:name2",
-                        "")
-        };
+        resources = new ArrayList<AbstractCSWOnlineResource>();
+        resources.add(new CSWOnlineResourceImpl(new URL("http://test.url3/wms"), "OGC:WMS-1.1.1-http-get-map", "type:name2", ""));
         rec = new CSWRecord("name6", "id6", "", "", resources, null);
         recordList.add(rec);
 
         // The seventh record is a KML
-        resources = new CSWOnlineResourceImpl[] {
-            new CSWOnlineResourceImpl(new URL("https://test.url4/blah.kml"), "KML", "kml1","")
-        };
+        resources = new ArrayList<AbstractCSWOnlineResource>();
+        resources.add(new CSWOnlineResourceImpl(new URL("https://test.url4/blah.kml"), "KML", "kml1",""));
         rec = new CSWRecord("name7", "id7", "", "", resources, null);
         recordList.add(rec);
 
         // The eighth record is a KML
-        resources = new CSWOnlineResourceImpl[] {
-            new CSWOnlineResourceImpl(new URL("https://test.url4/blah.kml"), "KML", "kml2","")
-        };
+        resources = new ArrayList<AbstractCSWOnlineResource>();
+        resources.add(new CSWOnlineResourceImpl(new URL("https://test.url4/blah.kml"), "KML", "kml2",""));
         rec = new CSWRecord("name8", "id8", "", "", resources, null);
         recordList.add(rec);
     }
