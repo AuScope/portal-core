@@ -28,6 +28,7 @@ import org.auscope.portal.core.view.knownlayer.KnownLayerSelector;
 import org.auscope.portal.core.view.knownlayer.WMSSelector;
 import org.auscope.portal.core.view.knownlayer.WMSSelectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.ui.ModelMap;
 
@@ -38,6 +39,10 @@ import org.springframework.ui.ModelMap;
  *
  */
 public class KnownLayerService {
+	
+	@Value("${spring.data.elasticsearch.manualUpdateOnly:false}")
+    private boolean manualUpdateOnly;
+	
     private final Log logger = LogFactory.getLog(getClass());
     private List<KnownLayer> knownLayers;
     private CSWCacheService cswCacheService;
@@ -308,9 +313,12 @@ public class KnownLayerService {
      * 
      * To access the results of the update, call {@link KnownLayerService#getKnownLayersCache()}
      */
-    public void updateKnownLayersCache() {
+    public void updateKnownLayersCache(boolean updateCSWRecordsWithKnownLayerInfo) {
         logger.info("Updating service status for KnownLayers");
         ArrayList<ModelMap> newKnownLayersCache = new ArrayList<>();
+        
+        // Keep track of CSW records updated with KnownLayer info that will be updated in the cache
+        List<CSWRecord> recordsToUpdate = new ArrayList<CSWRecord>();
         
         KnownLayerGrouping knownLayerGrouping = groupKnownLayerRecords();
         List<KnownLayerAndRecords> knownLayers = knownLayerGrouping.getKnownLayers();
@@ -328,10 +336,11 @@ public class KnownLayerService {
             for (CSWRecord rec : knownLayerAndRecords.getBelongingRecords()) {
                 if (rec != null) {
                 	// Update the CSW record with KnownLayer information required for searching (name and description)
-                	if(rec.addKnownLayerId(knownLayerAndRecords.getKnownLayer().getId())) {
-                		rec.addKnownLayerName(knownLayerAndRecords.getKnownLayer().getName());
-                		rec.addKnownLayerDescription(knownLayerAndRecords.getKnownLayer().getDescription());
-                	}
+                	rec.addKnownLayerId(knownLayerAndRecords.getKnownLayer().getId());
+                	rec.addKnownLayerName(knownLayerAndRecords.getKnownLayer().getName());
+                	rec.addKnownLayerDescription(knownLayerAndRecords.getKnownLayer().getDescription());
+                	recordsToUpdate.add(rec);
+                	// OnlineResources
                     for (AbstractCSWOnlineResource onlineResource : rec.getOnlineResources()) {
                         if (onlineResource.getLinkage() != null) {
                             onlineResourceEndpoints.add(onlineResource.getLinkage().getHost());
@@ -340,9 +349,6 @@ public class KnownLayerService {
                     }
                     viewMappedRecords.add(viewCSWRecordFactory.toView(rec));
                 }
-                // Update the CSW records in the index with the KnownLayer ID. If the record doesn't exist yet
-                // (e.g. first run) they'll still be added and the KnownLayer IDs updated later.
-                elasticsearchService.updateCSWRecords(knownLayerAndRecords.getBelongingRecords());
             }
 
             List<ModelMap> viewRelatedRecords = new ArrayList<>();
@@ -389,6 +395,14 @@ public class KnownLayerService {
             }
 
             newKnownLayersCache.add(viewKnownLayer);
+        }
+        
+        // Update the CSW records in the index with the KnownLayer ID. If the record doesn't exist yet
+        // (e.g. first run) they'll still be added and the KnownLayer IDs updated later.
+        if (updateCSWRecordsWithKnownLayerInfo && recordsToUpdate.size() > 0) {
+	        logger.info("Updating CSW records (" + recordsToUpdate.size() + ") KnownLayer information");
+	        elasticsearchService.updateCSWRecords(recordsToUpdate);
+	        logger.info("CSW records updated (" + recordsToUpdate.size() + ")");
         }
         
         synchronized (knownLayersCache) {

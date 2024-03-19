@@ -29,6 +29,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
@@ -112,7 +113,6 @@ public class ElasticsearchService {
 	@PostConstruct
 	private void setElasticsearchUrl() {
 		try {
-			System.out.println("ElasticURL: " + elasticsearchNodesUrl);
 			URIBuilder uriBuilder = new URIBuilder(elasticsearchNodesUrl);
 			if (elasticsearchPort != null) {
 				uriBuilder.setPort(elasticsearchPort);
@@ -130,50 +130,50 @@ public class ElasticsearchService {
 	 * 
 	 * @param cswRecords the CSWRecord list
 	 */
-	public void indexCSWRecords(final List<CSWRecord> cswRecords) {
+	public void indexCSWRecords(final List<CSWRecord> cswRecords) throws DataAccessResourceFailureException {
 		log.info("Indexing CSW records");
-		// Batch records for indexing
-		List<List<CSWRecord>> batchRecords = Lists.partition(cswRecords, 100);
-		for (List<CSWRecord> recordSet : batchRecords) {
-			for (CSWRecord record: recordSet) {
-				if(record.getCSWGeographicElements() != null && record.getCSWGeographicElements().length > 0) {
-					// Sanitize data
-					for (CSWGeographicElement bbox: record.getCSWGeographicElements()) {
-						double southLat = bbox.getSouthBoundLatitude();
-						double westLong = bbox.getWestBoundLongitude();
-						double northLat = bbox.getNorthBoundLatitude();
-						double eastLong = bbox.getEastBoundLongitude();
-						// See if this is a point. We could technically store a GeoJsonPoint instead of a GeoJsonPolygon is we
-						// make the bounding object extend from GeoJson, but the code doesn't deal with points, so extend to a poly
-						if (southLat == northLat) {
-							southLat = southLat - 0.001;
-							northLat = northLat + 0.001;
-						}
-						if (westLong == eastLong) {
-							eastLong = eastLong - 0.001;
-							westLong = westLong + 0.001;
-						}
-						
-						// Sanitise data, some values have been slightly beyond limits
-						if (southLat < -90.0) {
-							southLat = -90.0;
-						}
-						if (northLat > 90.0) {
-							northLat = 90.0;
-						}
-						if (westLong < -180.0) {
-							westLong = -180.0;
-						}
-						if (eastLong > 180.0) {
-							eastLong = 180.0;
-						}
-						
-						// Set the polygon from the bounds information
-						bbox.setBoundingPolygon(westLong, eastLong, southLat, northLat);
+		// Check geographical bounds
+		for (CSWRecord record: cswRecords) {
+			if(record.getCSWGeographicElements() != null && record.getCSWGeographicElements().length > 0) {
+				for (CSWGeographicElement bbox: record.getCSWGeographicElements()) {
+					double southLat = bbox.getSouthBoundLatitude();
+					double westLong = bbox.getWestBoundLongitude();
+					double northLat = bbox.getNorthBoundLatitude();
+					double eastLong = bbox.getEastBoundLongitude();
+					// See if this is a point. We could technically store a GeoJsonPoint instead of a GeoJsonPolygon is we
+					// make the bounding object extend from GeoJson, but the code doesn't deal with points, so extend to a poly
+					if (southLat == northLat) {
+						southLat = southLat - 0.001;
+						northLat = northLat + 0.001;
 					}
+					if (westLong == eastLong) {
+						eastLong = eastLong - 0.001;
+						westLong = westLong + 0.001;
+					}
+					
+					// Sanitise data, some values have been slightly beyond limits
+					if (southLat < -90.0) {
+						southLat = -90.0;
+					}
+					if (northLat > 90.0) {
+						northLat = 90.0;
+					}
+					if (westLong < -180.0) {
+						westLong = -180.0;
+					}
+					if (eastLong > 180.0) {
+						eastLong = 180.0;
+					}
+					
+					// Set the polygon from the bounds information
+					bbox.setBoundingPolygon(westLong, eastLong, southLat, northLat);
 				}
 			}
-			recordRepository.saveAll(recordSet);
+		}
+		try {
+			this.updateCSWRecords(cswRecords);
+		} catch(DataAccessResourceFailureException e) {
+			throw e;
 		}
 		log.info("Indexing CSW records complete (" + cswRecords.size() + " records)");
 	}
@@ -183,8 +183,12 @@ public class ElasticsearchService {
 	 * 
 	 * @param cswRecord the CSWRecord instance
 	 */
-	public void updateCSWRecord(final CSWRecord cswRecord) {
-		this.recordRepository.save(cswRecord);
+	public void updateCSWRecord(final CSWRecord cswRecord) throws DataAccessResourceFailureException {
+		try {
+			this.recordRepository.save(cswRecord);
+		} catch(DataAccessResourceFailureException e) {
+			throw e;
+		}
 	}
 	
 	/**
@@ -194,10 +198,14 @@ public class ElasticsearchService {
 	 * 
 	 * @param cswRecords List of CSWRecords
 	 */
-	public void updateCSWRecords(final List<CSWRecord> cswRecords) {
-		List<List<CSWRecord>> batchRecords = Lists.partition(cswRecords, 100);
-		for (List<CSWRecord> recordSet : batchRecords) {
-			this.recordRepository.saveAll(recordSet);
+	public void updateCSWRecords(final List<CSWRecord> cswRecords) throws DataAccessResourceFailureException {
+		try {
+			List<List<CSWRecord>> batchRecords = Lists.partition(cswRecords, 100);
+			for (List<CSWRecord> recordSet : batchRecords) {
+				this.recordRepository.saveAll(recordSet);
+			}
+		} catch(DataAccessResourceFailureException e) {
+			throw e;
 		}
 	}
 	
@@ -421,7 +429,7 @@ public class ElasticsearchService {
 	 * 
 	 * @param cswRecords the list of CSWRecords to index search terms for
 	 */
-	public void indexCompletionTerms(List<CSWRecord> cswRecords) {
+	public void indexCompletionTerms(List<CSWRecord> cswRecords) throws DataAccessResourceFailureException {
 		log.info("Indexing CSW record suggestions");
 		// Map of terms with appearance count
 		Map<String, Integer> uniqueTerms = new HashMap<String, Integer>();
@@ -445,7 +453,7 @@ public class ElasticsearchService {
 		if (uniqueTerms.size() > 0) {
 			List<CSWSuggestion> suggestionList = new ArrayList<CSWSuggestion>();
 			for (Map.Entry<String, Integer> term : uniqueTerms.entrySet()) {
-				if (StringUtils.isNotBlank(term.getKey()) && term.getKey().length() > 2 && term.getKey().length() < 500) {
+				if (StringUtils.isNotBlank(term.getKey()) && term.getKey().length() > 2 && term.getKey().length() < 100) {
 					CSWSuggestion suggestion = new CSWSuggestion(term.getKey(), term.getValue());
 					suggestionList.add(suggestion);
 				}
@@ -453,7 +461,11 @@ public class ElasticsearchService {
 			
 			List<List<CSWSuggestion>> batchSuggestions = Lists.partition(suggestionList, 100);
 			for (List<CSWSuggestion> suggestionSet : batchSuggestions) {
-				suggestionRepository.saveAll(suggestionSet);
+				try {
+					suggestionRepository.saveAll(suggestionSet);
+				} catch (DataAccessResourceFailureException e) {
+					throw e;
+				}
 			}
 			
 			log.info("Indexing CSW record suggestions complete (" + suggestionList.size() + " records)");

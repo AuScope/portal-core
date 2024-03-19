@@ -3,7 +3,6 @@ package org.auscope.portal.core.view.knownlayer;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.Serializable;
-import java.util.ArrayList;
 
 import org.auscope.portal.core.uifilter.FilterCollection;
 import org.json.JSONArray;

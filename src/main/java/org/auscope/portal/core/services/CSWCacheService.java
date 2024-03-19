@@ -28,6 +28,7 @@ import org.auscope.portal.core.services.responses.csw.CSWRecordTransformerFactor
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.dao.DataAccessResourceFailureException;
 
 
 /**
@@ -134,7 +135,12 @@ public class CSWCacheService {
         }
         // Restore recordCache from index
         log.info("CSW record cache restoring");
-        this.recordCache = elasticsearchService.getAllCSWRecords();
+        try {
+        	this.recordCache = elasticsearchService.getAllCSWRecords();
+        } catch(Exception e) {
+        	log.error("Error retrieving CSW records: " + e.getLocalizedMessage());
+        	this.updateRunning = false;
+        }
         if (this.recordCache.size() > 0) {
         	log.info("CSW record cache restored: " + recordCache.size() + " records");
         } else {
@@ -216,11 +222,16 @@ public class CSWCacheService {
         }
 
         // Index CSWRecords and completion terms from newRecordCache
-        elasticsearchService.indexCSWRecords(newRecordCache);
-        elasticsearchService.indexCompletionTerms(newRecordCache);
+        try {
+	        elasticsearchService.indexCSWRecords(newRecordCache);
+	        elasticsearchService.indexCompletionTerms(newRecordCache);
+        } catch(DataAccessResourceFailureException e) {
+        	log.error(e.getLocalizedMessage());
+        	this.updateRunning = false;
+        }
         
         // Inform KnownLayerService that there are (potentially) new CSWRecords
-        knownLayerService.updateKnownLayersCache();
+        knownLayerService.updateKnownLayersCache(true);
         
         this.updateRunning = false;
         this.lastCacheUpdate = new Date();
