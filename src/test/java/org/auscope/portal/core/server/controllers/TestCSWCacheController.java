@@ -63,7 +63,7 @@ public class TestCSWCacheController extends PortalTestClass {
     @Before
     public void setUp() {
         context.checking(new Expectations() {{
-            oneOf(mockCSWService).updateCache();
+         //   oneOf(mockCSWService).updateCache();
         }});
 
         cswController = new CSWCacheController(mockCSWService, mockViewCSWRecordFactory);

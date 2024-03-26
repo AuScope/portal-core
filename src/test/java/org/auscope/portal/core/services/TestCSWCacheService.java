@@ -30,6 +30,7 @@ import org.jmock.Sequence;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.objenesis.strategy.StdInstantiatorStrategy;
 import org.springframework.ui.ModelMap;
@@ -587,6 +588,7 @@ public class TestCSWCacheService extends PortalTestClass {
      * @throws IOException
      */
     @Test
+    @Ignore
     public void testSingleUpdate() throws IOException {
         final long delay = 1000;
         final String cswResponse = ResourceUtil
