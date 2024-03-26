@@ -85,7 +85,7 @@ public class CSWService {
                 try {
                     Thread.sleep(timeBetweenAttempts);
                 } catch (InterruptedException e1) {
-                    log.info("queryCSWEndpoint interrupted. Abroting query");
+                    log.warn("queryCSWEndpoint interrupted. Aborting query");
                     return null;
                 }
                 return queryCSWEndpoint(startPosition, maxQueryLength, numberOfAttempts, timeBetweenAttempts);
@@ -119,14 +119,13 @@ public class CSWService {
         InputStream responseStream = null;
         try {   
             responseStream = this.serviceCaller.getMethodResponseAsStream(method);
-        	  log.trace(String.format("%1$s - Response received", this.endpoint.getServiceUrl()));
+        	log.trace(String.format("%1$s - Response received", this.endpoint.getServiceUrl()));
         	
-            // Parse the response into newCache (remember that maps are NOT
-            // thread safe)
+            // Parse the response into newCache (remember that maps are NOT thread safe)
             Document responseDocument = DOMUtil.buildDomFromStream(responseStream);
             OWSExceptionParser.checkForExceptionResponse(responseDocument);
             
-        	  return new CSWGetRecordResponse(this.endpoint, responseDocument, transformerFactory);
+        	return new CSWGetRecordResponse(this.endpoint, responseDocument, transformerFactory);
         } catch (ParserConfigurationException | SAXException | XPathException e) {
             throw new IOException(e.getMessage(), e);
         } finally {

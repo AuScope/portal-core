@@ -97,6 +97,9 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         expectation.put("minScale", minScale);
         expectation.put("maxScale", maxScale);
         expectation.put("service", false);
+        expectation.put("knownLayerIds", Arrays.asList("layerId1"));
+        expectation.put("knownLayerNames", Arrays.asList("layerName1"));
+        expectation.put("knownLayerDescriptions", Arrays.asList("layerDescription1"));
 
         onlineResExpectation.put("url", orUrl.toString());
         onlineResExpectation.put("name", orName);
@@ -161,6 +164,9 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         childRecordExpectation.put("minScale", null);
         childRecordExpectation.put("maxScale", null);
         childRecordExpectation.put("service", false);
+        childRecordExpectation.put("knownLayerIds", Arrays.asList("layerId1"));
+        childRecordExpectation.put("knownLayerNames", Arrays.asList("layerName1"));
+        childRecordExpectation.put("knownLayerDescriptions", Arrays.asList("layerDescription1"));
 
         onlineResExpectation_1.put("url", orUrl_1.toString());
         onlineResExpectation_1.put("name", orName_1);
@@ -189,7 +195,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 allowing(mockCSWRecord).getDataIdentificationAbstract();
                 will(returnValue(dataAbstract));
                 allowing(mockCSWRecord).getOnlineResources();
-                will(returnValue(new AbstractCSWOnlineResource[] {mockOnlineRes}));
+                will(returnValue(Arrays.asList(mockOnlineRes)));
                 allowing(mockCSWRecord).getCSWGeographicElements();
                 will(returnValue(new CSWGeographicElement[] {mockBbox}));
                 allowing(mockCSWRecord).getDescriptiveKeywords();
@@ -216,6 +222,13 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 will(returnValue(false));
                 allowing(mockCSWRecord).getTemporalExtent();
                 will(returnValue(null));
+                
+                allowing(mockCSWRecord).getKnownLayerIds();
+                will(returnValue(Arrays.asList("layerId1")));
+                allowing(mockCSWRecord).getKnownLayerNames();
+                will(returnValue(Arrays.asList("layerName1")));
+                allowing(mockCSWRecord).getKnownLayerDescriptions();
+                will(returnValue(Arrays.asList("layerDescription1")));
 
                 allowing(mockCSWChildRecord1).getServiceName();
                 will(returnValue(serviceName_1));
@@ -234,7 +247,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 allowing(mockCSWChildRecord1).getDataIdentificationAbstract();
                 will(returnValue(dataAbstract_1));
                 allowing(mockCSWChildRecord1).getOnlineResources();
-                will(returnValue(new AbstractCSWOnlineResource[] {mockOnlineRes_1}));
+                will(returnValue(Arrays.asList(mockOnlineRes_1)));
                 allowing(mockCSWChildRecord1).getCSWGeographicElements();
                 will(returnValue(null));
                 allowing(mockCSWChildRecord1).getDescriptiveKeywords();
@@ -259,6 +272,13 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 will(returnValue(false));
                 allowing(mockCSWChildRecord1).getTemporalExtent();
                 will(returnValue(null));
+                
+                allowing(mockCSWChildRecord1).getKnownLayerIds();
+                will(returnValue(Arrays.asList("layerId1")));
+                allowing(mockCSWChildRecord1).getKnownLayerNames();
+                will(returnValue(Arrays.asList("layerName1")));
+                allowing(mockCSWChildRecord1).getKnownLayerDescriptions();
+                will(returnValue(Arrays.asList("layerDescription1")));
 
                 allowing(mockBbox).getEastBoundLongitude();
                 will(returnValue(bboxEast));
@@ -283,7 +303,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 will(returnValue(version));
                 allowing(mockOnlineRes).getApplicationProfile();
                 will(returnValue(applicationProfile));
-
+                
                 allowing(mockOnlineRes_1).getDescription();
                 will(returnValue(orDesc_1));
                 allowing(mockOnlineRes_1).getName();
@@ -376,6 +396,9 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         expectation.put("maxScale", maxScale);
         expectation.put("service", true);
         expectation.put("datasetURIs", new ArrayList<String>());
+        expectation.put("knownLayerIds", Arrays.asList("layerId1"));
+        expectation.put("knownLayerNames", Arrays.asList("layerName1"));
+        expectation.put("knownLayerDescriptions", Arrays.asList("layerDescription1"));
 
         geoExpectation.put("type", "bbox");
         geoExpectation.put("eastBoundLongitude", bboxEast);
@@ -402,7 +425,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 allowing(mockCSWRecord).getDataIdentificationAbstract();
                 will(returnValue(dataAbstract));
                 allowing(mockCSWRecord).getOnlineResources();
-                will(returnValue(new AbstractCSWOnlineResource[] {mockOnlineRes}));
+                will(returnValue(Arrays.asList(mockOnlineRes)));
                 allowing(mockCSWRecord).getCSWGeographicElements();
                 will(returnValue(new CSWGeographicElement[] {mockBbox}));
                 allowing(mockCSWRecord).getDescriptiveKeywords();
@@ -427,6 +450,12 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 will(returnValue(new String[] {}));
                 allowing(mockCSWRecord).getTemporalExtent();
                 will(returnValue(null));
+                allowing(mockCSWRecord).getKnownLayerIds();
+                will(returnValue(Arrays.asList("layerId1")));
+                allowing(mockCSWRecord).getKnownLayerNames();
+                will(returnValue(Arrays.asList("layerName1")));
+                allowing(mockCSWRecord).getKnownLayerDescriptions();
+                will(returnValue(Arrays.asList("layerDescription1")));
 
                 allowing(mockBbox).getEastBoundLongitude();
                 will(returnValue(bboxEast));
@@ -458,8 +487,6 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 
                 oneOf(mockContact).getAddressAdministrativeArea();
                 will(returnValue(administrativeArea));
-                
-                
             }
         });
 
@@ -534,6 +561,9 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         expectation.put("maxScale", maxScale);
         expectation.put("service", false);
         expectation.put("datasetURIs", Arrays.asList("datasetUri1"));
+        expectation.put("knownLayerIds", Arrays.asList("layerId1"));
+        expectation.put("knownLayerNames", Arrays.asList("layerName1"));
+        expectation.put("knownLayerDescriptions", Arrays.asList("layerDescription1"));
 
         onlineResExpectation.put("url", orUrl.toString());
         onlineResExpectation.put("name", orName);
@@ -568,7 +598,8 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 allowing(mockCSWRecord).getDataIdentificationAbstract();
                 will(returnValue(dataAbstract));
                 allowing(mockCSWRecord).getOnlineResources();
-                will(returnValue(new AbstractCSWOnlineResource[] {mockOnlineRes}));
+                will(returnValue(Arrays.asList(mockOnlineRes)));
+                will(returnValue(Arrays.asList(mockOnlineRes)));
                 allowing(mockCSWRecord).getCSWGeographicElements();
                 will(returnValue(new CSWGeographicElement[] {mockBbox}));
                 allowing(mockCSWRecord).getDescriptiveKeywords();
@@ -588,7 +619,13 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 allowing(mockCSWRecord).getMinScale();
                 will(returnValue(minScale));
                 allowing(mockCSWRecord).getTemporalExtent();
-                will(returnValue(null));
+                will(returnValue(null));                
+                allowing(mockCSWRecord).getKnownLayerIds();
+                will(returnValue(Arrays.asList("layerId1")));
+                allowing(mockCSWRecord).getKnownLayerNames();
+                will(returnValue(Arrays.asList("layerName1")));
+                allowing(mockCSWRecord).getKnownLayerDescriptions();
+                will(returnValue(Arrays.asList("layerDescription1")));
 
                 allowing(mockCSWRecord).isService();
                 will(returnValue(false));

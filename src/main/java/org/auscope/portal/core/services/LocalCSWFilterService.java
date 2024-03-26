@@ -111,7 +111,7 @@ public class LocalCSWFilterService {
         switch(facet.getField()) {
         case "servicetype":
             OnlineResourceType type = (OnlineResourceType) facet.getValue();
-            return record.getOnlineResourcesByType(type).length > 0;
+            return record.getOnlineResourcesByType(type).size() > 0;
         default:
             log.error("Unable to local filter on field: " + facet.getField());
             return false;

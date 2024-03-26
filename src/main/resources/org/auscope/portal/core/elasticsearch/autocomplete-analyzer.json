@@ -1,0 +1,26 @@
+{
+	"number_of_shards": 1,
+	"analysis": {
+		"analyzer": {
+			"autocomplete": {
+				"tokenizer": "autocomplete",
+				"filter": [
+					"lowercase"
+				]
+			},
+			"autocomplete_search": {
+				"tokenizer": "lowercase"
+			}
+		},
+		"tokenizer": {
+			"autocomplete": {
+				"type": "edge_ngram",
+				"min_gram": 4,
+				"max_gram": 10,
+				"token_chars": [
+					"letter"
+				]
+			}
+		}
+	}
+}

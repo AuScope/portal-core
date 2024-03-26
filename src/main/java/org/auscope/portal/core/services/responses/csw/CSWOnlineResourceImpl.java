@@ -2,6 +2,11 @@ package org.auscope.portal.core.services.responses.csw;
 
 import java.net.URL;
 
+import org.auscope.portal.core.services.csw.URLToStringConverter;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.ValueConverter;
+
 /**
  * Represents a <gmd:CI_OnlineResource> element in a CSW response
  * 
@@ -9,6 +14,8 @@ import java.net.URL;
  *
  */
 public class CSWOnlineResourceImpl extends AbstractCSWOnlineResource {
+	@Field(type = FieldType.Text)
+	@ValueConverter(URLToStringConverter.class)
     private URL linkage;
     private String protocol;
     private String name;
@@ -16,6 +23,14 @@ public class CSWOnlineResourceImpl extends AbstractCSWOnlineResource {
     private String applicationProfile;
     private String protocolRequest;
 
+    
+    /**
+     * Default constructor required for deserialization
+     */
+    public CSWOnlineResourceImpl() {
+    	super();
+    }
+    
     public CSWOnlineResourceImpl(URL linkage, String protocol, String name,
             String description) {
         this(linkage, protocol, name, description, "");

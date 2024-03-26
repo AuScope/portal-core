@@ -12,7 +12,6 @@ import org.auscope.portal.core.services.csw.SearchFacet;
 import org.auscope.portal.core.services.csw.SearchFacet.Comparison;
 import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
 import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter.KeywordMatchType;
-import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.core.services.responses.csw.CSWGetRecordResponse;
 import org.auscope.portal.core.services.responses.csw.CSWOnlineResourceImpl;
@@ -147,8 +146,8 @@ public class TestLocalCSWFilterService extends PortalTestClass {
             allowing(mockResponse1).getRecordsMatched();will(returnValue(100));
             allowing(mockResponse1).getRecordsReturned();will(returnValue(2));
             allowing(mockResponse1).getRecords();will(returnValue(Arrays.asList(
-                    new CSWRecord(serviceId, "rec1", null, null, new AbstractCSWOnlineResource[] {new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WCS", "wcs", "")}, null),
-                    new CSWRecord(serviceId, "rec2", null, null, new AbstractCSWOnlineResource[] {new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WMS", "wms", "")}, null))));
+            		new CSWRecord(serviceId, "rec1", null, null, Arrays.asList(new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WCS", "wcs", "")), null),
+                    new CSWRecord(serviceId, "rec2", null, null, Arrays.asList(new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WMS", "wms", "")), null))));
 
             //Still 3 records to find
             oneOf(mockFilterService).getFilteredRecords(with(equal(serviceId)),
@@ -161,8 +160,8 @@ public class TestLocalCSWFilterService extends PortalTestClass {
             allowing(mockResponse2).getRecordsMatched();will(returnValue(100));
             allowing(mockResponse2).getRecordsReturned();will(returnValue(2));
             allowing(mockResponse2).getRecords();will(returnValue(Arrays.asList(
-                    new CSWRecord(serviceId, "rec3", null, null, new AbstractCSWOnlineResource[] {new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WCS", "wcs", ""), new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WMS", "wms", "")}, null),
-                    new CSWRecord(serviceId, "rec4", null, null, new AbstractCSWOnlineResource[] {new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WCS", "wcs", ""), new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WMS", "wms", "")}, null))));
+                    new CSWRecord(serviceId, "rec3", null, null, Arrays.asList(new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WCS", "wcs", ""), new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WMS", "wms", "")), null),
+                    new CSWRecord(serviceId, "rec4", null, null, Arrays.asList(new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WCS", "wcs", ""), new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WMS", "wms", "")), null))));
 
             //Still 1 more record to find
             oneOf(mockFilterService).getFilteredRecords(with(equal(serviceId)),
@@ -175,8 +174,8 @@ public class TestLocalCSWFilterService extends PortalTestClass {
             allowing(mockResponse3).getRecordsMatched();will(returnValue(100));
             allowing(mockResponse3).getRecordsReturned();will(returnValue(2));
             allowing(mockResponse3).getRecords();will(returnValue(Arrays.asList(
-                    new CSWRecord(serviceId, "rec5", null, null, new AbstractCSWOnlineResource[] {new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WCS", "wcs", ""), new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WMS", "wms", "")}, null),
-                    new CSWRecord(serviceId, "rec6", null, null, new AbstractCSWOnlineResource[] {new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WCS", "wcs", ""), new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WMS", "wms", "")}, null))));
+                    new CSWRecord(serviceId, "rec5", null, null, Arrays.asList(new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WCS", "wcs", ""), new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WMS", "wms", "")), null),
+                    new CSWRecord(serviceId, "rec6", null, null, Arrays.asList(new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WCS", "wcs", ""), new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WMS", "wms", "")), null))));
         }});
 
         FacetedSearchResponse response = localFilterService.getFilteredRecords(serviceId, null, facets, startIndex, maxRecords);
@@ -221,8 +220,8 @@ public class TestLocalCSWFilterService extends PortalTestClass {
             allowing(mockResponse1).getRecordsMatched();will(returnValue(4));
             allowing(mockResponse1).getRecordsReturned();will(returnValue(2));
             allowing(mockResponse1).getRecords();will(returnValue(Arrays.asList(
-                    new CSWRecord(serviceId, "rec1", null, null, new AbstractCSWOnlineResource[] {new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WCS", "wcs", "")}, null),
-                    new CSWRecord(serviceId, "rec2", null, null, new AbstractCSWOnlineResource[] {new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WMS", "wms", "")}, null))));
+                    new CSWRecord(serviceId, "rec1", null, null, Arrays.asList(new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WCS", "wcs", "")), null),
+                    new CSWRecord(serviceId, "rec2", null, null, Arrays.asList(new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WMS", "wms", "")), null))));
 
             //Still 1 record to find
             oneOf(mockFilterService).getFilteredRecords(with(equal(serviceId)),
@@ -235,8 +234,8 @@ public class TestLocalCSWFilterService extends PortalTestClass {
             allowing(mockResponse2).getRecordsMatched();will(returnValue(4));
             allowing(mockResponse2).getRecordsReturned();will(returnValue(2));
             allowing(mockResponse2).getRecords();will(returnValue(Arrays.asList(
-                    new CSWRecord(serviceId, "rec3", null, null, new AbstractCSWOnlineResource[] {new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WMS", "wms", "")}, null),
-                    new CSWRecord(serviceId, "rec4", null, null, new AbstractCSWOnlineResource[] {new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WMS", "wms", "")}, null))));
+                    new CSWRecord(serviceId, "rec3", null, null, Arrays.asList(new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WMS", "wms", "")), null),
+                    new CSWRecord(serviceId, "rec4", null, null, Arrays.asList(new CSWOnlineResourceImpl(new URL("http://example.com"), "OGC:WMS", "wms", "")), null))));
         }});
 
         FacetedSearchResponse response = localFilterService.getFilteredRecords(serviceId, null, facets, startIndex, maxRecords);

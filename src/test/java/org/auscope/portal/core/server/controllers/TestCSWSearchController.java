@@ -71,10 +71,6 @@ public class TestCSWSearchController extends PortalTestClass {
         final Integer limit = 2;
         final String[] serviceId = new String[] {"service-id-value"};
         //final CSWServiceItem[] serviceItems = new CSWServiceItem[] {mockCswServiceItem};
-        String serviceTitle = "serviceTitle";
-        String serviceUrl = "serviceUrl";
-        String recordUrl = "recordUrl";
-        String serviceType = "default";
         final String newName = "new-layer-name";
         final String[] rawFields = new String[] {};
         final String[] rawValues = new String[] {};
@@ -84,10 +80,10 @@ public class TestCSWSearchController extends PortalTestClass {
         CSWRecord rec1 = new CSWRecord("aaa");
         CSWRecord rec2 = new CSWRecord("bbb");
 
-        rec1.setOnlineResources(new CSWOnlineResourceImpl[] {new CSWOnlineResourceImpl(new URL("http://example.com/wms1"), "OGC:WMS", "Link to Web Map Service", "description"),
-                                                             new CSWOnlineResourceImpl(new URL("http://example.com/wcs1"), "OGC:WCS", "Link to Web Coverage Service", "description")});
-        rec2.setOnlineResources(new CSWOnlineResourceImpl[] {new CSWOnlineResourceImpl(new URL("http://example.com/wms2"), "OGC:WMS", "Link to Web Map Service", "description"),
-                                                             new CSWOnlineResourceImpl(new URL("http://example.com/wcs2"), "OGC:WCS", "Link to Web Coverage Service", "description")});
+        rec1.setOnlineResources(Arrays.asList(new CSWOnlineResourceImpl(new URL("http://example.com/wms1"), "OGC:WMS", "Link to Web Map Service", "description"),
+                new CSWOnlineResourceImpl(new URL("http://example.com/wcs1"), "OGC:WCS", "Link to Web Coverage Service", "description")));
+        rec2.setOnlineResources(Arrays.asList(new CSWOnlineResourceImpl(new URL("http://example.com/wms2"), "OGC:WMS", "Link to Web Map Service", "description"),
+                new CSWOnlineResourceImpl(new URL("http://example.com/wcs2"), "OGC:WCS", "Link to Web Coverage Service", "description")));
 
         final FacetedMultiSearchResponse response = new FacetedMultiSearchResponse();
         response.setNextIndexes(singleKeyMap(serviceId[0], -1));

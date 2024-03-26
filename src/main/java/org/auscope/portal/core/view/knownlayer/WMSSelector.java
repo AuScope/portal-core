@@ -1,6 +1,7 @@
 package org.auscope.portal.core.view.knownlayer;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.OnlineResourceType;
@@ -87,7 +88,7 @@ public class WMSSelector implements KnownLayerSelector {
      */
     @Override
     public RelationType isRelatedRecord(CSWRecord record) {
-        AbstractCSWOnlineResource[] wmsResources = record.getOnlineResourcesByType(OnlineResourceType.WMS);
+        List<AbstractCSWOnlineResource> wmsResources = record.getOnlineResourcesByType(OnlineResourceType.WMS);
 
         //Check for strong association to begin with
         for (AbstractCSWOnlineResource onlineResource : wmsResources) {

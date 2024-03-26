@@ -1,5 +1,10 @@
 package org.auscope.portal.core.services.csw;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
 import javax.xml.xpath.XPathException;
 
 import org.auscope.portal.core.server.OgcServiceProviderType;
@@ -15,6 +20,10 @@ import org.w3c.dom.NodeList;
  *
  */
 public class GriddedCSWRecordTransformer extends CSWRecordTransformer {
+	
+	protected static final String DATETIMEFORMATSTRING = "yyyy-MM-dd'T'HH:mm:ss";
+	protected static final String NULL_DATETIME_STRING = "1900-01-01T12:00:00";
+	private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DATETIMEFORMATSTRING);
 
     public GriddedCSWRecordTransformer() throws PortalServiceException {
         super();
@@ -40,7 +49,16 @@ public class GriddedCSWRecordTransformer extends CSWRecordTransformer {
         super.transformToCSWRecord(cswRecord);
         
         //Extract Date as a string
-        cswRecord.setDateStamp(evalXPathString(this.mdMetadataNode, "gmd:dateStamp/gco:DateTime"));
+        String dateStamp = evalXPathString(this.mdMetadataNode, "gmd:dateStamp/gco:DateTime");
+        String dateTimeString = null;
+        // Note: ElasticSEarch indexes the String field as a Date for some reason, so it can't be empty
+        SimpleDateFormat sdf = new SimpleDateFormat(DATETIMEFORMATSTRING);
+        try {
+        	dateTimeString = LocalDateTime.parse(dateStamp).format(dateTimeFormatter); 
+        } catch(DateTimeParseException e) {
+        	dateTimeString = LocalDateTime.parse(NULL_DATETIME_STRING).format(dateTimeFormatter);
+        }
+        cswRecord.setDateStamp(dateTimeString);
         
         //Extract gridded positional data
         NodeList posAccuracyEls = evalXPathNodeList(this.mdMetadataNode, "gmd:dataQualityInfo/gmd:DQ_DataQuality/gmd:report/gmd:DQ_GriddedDataPositionalAccuracy");
