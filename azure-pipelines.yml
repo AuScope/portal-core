@@ -11,7 +11,20 @@ pool:
 
 container: maven:3.8.4-openjdk-17-slim
 
+variables:
+  MAVEN_CACHE_FOLDER: $(Pipeline.Workspace)/.m2/repository
+  MAVEN_OPTS: '-Dmaven.repo.local=$(MAVEN_CACHE_FOLDER)'
+
 steps:
+- task: Cache@2
+  inputs:
+    key: 'maven | "$(Agent.OS)" | **/pom.xml'
+    restoreKeys: |
+      maven | "$(Agent.OS)"
+      maven
+    path: $(MAVEN_CACHE_FOLDER)
+  displayName: Cache Maven local repo
+
 - task: Maven@3
   inputs:
     mavenPomFile: 'pom.xml'
@@ -20,7 +33,7 @@ steps:
     javaHomeOption: 'path'
     jdkDirectory: '/usr/local/openjdk-17'
     mavenVersionOption: 'Default'
-    mavenOptions: '-Xmx3072m'
+    mavenOptions: '-Xmx3072m $(MAVEN_OPTS)'
     mavenAuthenticateFeed: false
     effectivePomSkip: false
     sonarQubeRunAnalysis: false
