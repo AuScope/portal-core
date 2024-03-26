@@ -78,9 +78,9 @@ public class ElasticsearchService {
 	// CSWRecord search fields
 	public static final List<String> CSWRECORD_QUERY_FIELDS = Arrays.asList(new String[]{
 		// Native CSWRecord fields
-		"fileIdentifier", "serviceName", "descriptiveKeywords", "dataIdentificationAbstract", "layerName", "knownLayerNames", "knownLayerDescriptions",
+		"fileIdentifier", "serviceName", "descriptiveKeywords", "dataIdentificationAbstract", "knownLayerNames", "knownLayerDescriptions",
 		// Nested onlineResources fields (OnlineResource)
-		"onlineResources.name", "onlineResources.description", "onlineResources.protocol", "funder.organisationName"
+		"onlineResources.name", "onlineResources.description"
 	});
 	
 	@Autowired
@@ -314,16 +314,18 @@ public class ElasticsearchService {
 
 		// Search Criteria and Query
 		Criteria cswRecordCriteria = new Criteria();
+		
 		if (StringUtils.isNotBlank(matchPhraseText)) {
-			if (cswRecordFields == null || cswRecordFields.size() == 0) {
-				cswRecordCriteria = cswRecordCriteria.startsWith(matchPhraseText);
-			} else {
-				Criteria cswFieldCriteria = new Criteria();
-				for (String field: cswRecordFields) {
-					cswFieldCriteria = cswFieldCriteria.or(field).startsWith(matchPhraseText);
+			Criteria cswFieldCriteria = new Criteria();
+			//Criteria cswFieldCriteria = Criteria.or();
+			for (String field: cswRecordFields) {
+				if (field.equals("knownLayerNames") || field.equals("knownLayerDescriptions")) {
+					cswFieldCriteria = cswFieldCriteria.or(field).contains(matchPhraseText).boost(2);
+				} else {
+					cswFieldCriteria = cswFieldCriteria.or(field).contains(matchPhraseText);
 				}
-				cswRecordCriteria = cswRecordCriteria.and(cswFieldCriteria);
 			}
+			cswRecordCriteria = cswFieldCriteria;			
 		}
 		
 		// OGC services query
