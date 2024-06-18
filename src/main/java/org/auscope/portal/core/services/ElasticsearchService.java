@@ -314,18 +314,24 @@ public class ElasticsearchService {
 
 		// Search Criteria and Query
 		Criteria cswRecordCriteria = new Criteria();
-		
 		if (StringUtils.isNotBlank(matchPhraseText)) {
-			Criteria cswFieldCriteria = new Criteria();
-			//Criteria cswFieldCriteria = Criteria.or();
-			for (String field: cswRecordFields) {
-				if (field.equals("knownLayerNames") || field.equals("knownLayerDescriptions")) {
-					cswFieldCriteria = cswFieldCriteria.or(field).contains(matchPhraseText).boost(2);
-				} else {
-					cswFieldCriteria = cswFieldCriteria.or(field).contains(matchPhraseText);
+			try {
+				Criteria cswFieldCriteria = new Criteria();
+				for (String field: cswRecordFields) {
+					if (StringUtils.containsAny(matchPhraseText, " *?")) {
+						cswFieldCriteria = cswFieldCriteria.or(field).expression(matchPhraseText);
+					} else {
+						cswFieldCriteria = cswFieldCriteria.or(field).contains(matchPhraseText);
+					}
+					if (field.equals("knownLayerNames") || field.equals("knownLayerDescriptions")) {
+						cswFieldCriteria = cswFieldCriteria.boost(2);
+					}
 				}
+				cswRecordCriteria = cswFieldCriteria;
+			} catch(Exception e) {
+				log.error("Error creating search criteria: " + e.getLocalizedMessage());
+				return new CSWRecordSearchResponse(0, new ArrayList<CSWRecord>(), new ArrayList<String>());
 			}
-			cswRecordCriteria = cswFieldCriteria;			
 		}
 		
 		// OGC services query
