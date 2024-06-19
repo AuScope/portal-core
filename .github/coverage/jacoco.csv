@@ -1,6 +1,6 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
-Portal-Core,org.auscope.portal.core.server,PortalProfileXmlWebApplicationContext,24,0,2,0,5,0,3,0,2,0
 Portal-Core,org.auscope.portal.core.server,PortalPropertySourcesPlaceholderConfigurer,99,0,10,0,25,0,8,0,3,0
+Portal-Core,org.auscope.portal.core.server,PortalProfileXmlWebApplicationContext,24,0,2,0,5,0,3,0,2,0
 Portal-Core,org.auscope.portal.core.server,OgcServiceProviderType,0,36,0,2,0,6,0,3,0,2
 Portal-Core,org.auscope.portal.core.services.methodmakers,GeonetworkMethodMaker,210,0,0,0,39,0,7,0,7,0
 Portal-Core,org.auscope.portal.core.services.methodmakers,SOSMethodMaker,4,295,8,18,1,61,8,8,0,3
@@ -49,8 +49,8 @@ Portal-Core,org.auscope.portal.core.services.responses.wcs,SingleValue,0,17,0,0,
 Portal-Core,org.auscope.portal.core.services.responses.wcs,CoverageOfferingBrief,45,120,2,4,18,27,8,8,6,7
 Portal-Core,org.auscope.portal.core.services.responses.wcs,SimpleEnvelope,77,137,4,6,16,28,6,10,2,9
 Portal-Core,org.auscope.portal.core.services.responses.wcs,TimeConstraint,41,65,5,5,5,14,4,8,1,6
-Portal-Core,org.auscope.portal.core.services.responses.wcs,RectifiedGrid,89,244,0,8,17,63,1,21,1,17
 Portal-Core,org.auscope.portal.core.services.responses.wcs,SimpleTimePosition,0,45,0,0,0,13,0,3,0,3
+Portal-Core,org.auscope.portal.core.services.responses.wcs,RectifiedGrid,89,244,0,8,17,63,1,21,1,17
 Portal-Core,org.auscope.portal.core.services.responses.wcs,AxisDescriptionImpl,4,79,1,3,1,16,1,6,0,5
 Portal-Core,org.auscope.portal.core.services.csw.custom,CustomRegistry,78,0,8,0,23,0,15,0,11,0
 Portal-Core,org.auscope.portal.core.server.http,HttpServiceCaller,241,163,15,15,57,41,22,10,12,5
@@ -224,7 +224,7 @@ Portal-Core,org.auscope.portal.core.services,CSWService,104,98,5,7,23,24,5,5,0,4
 Portal-Core,org.auscope.portal.core.services,BaseWFSService,113,298,5,19,21,64,10,13,5,6
 Portal-Core,org.auscope.portal.core.services,LocalCSWFilterService,76,642,11,77,16,148,12,44,2,8
 Portal-Core,org.auscope.portal.core.services,VocabularyService,51,225,7,11,16,65,5,14,1,9
-Portal-Core,org.auscope.portal.core.services,ElasticsearchService,927,37,105,0,194,1,66,1,13,1
+Portal-Core,org.auscope.portal.core.services,ElasticsearchService,952,37,107,0,200,1,67,1,13,1
 Portal-Core,org.auscope.portal.core.services,SISSVoc3Service,6,203,1,9,2,57,3,11,2,7
 Portal-Core,org.auscope.portal.core.services,GoogleCloudMonitoringService,190,127,3,7,52,32,10,7,8,4
 Portal-Core,org.auscope.portal.core.services,CSWFilterService,211,360,10,18,41,66,12,17,6,9
@@ -241,8 +241,8 @@ Portal-Core,org.auscope.portal.core.util,FileIOUtil,433,551,52,56,122,138,48,30,
 Portal-Core,org.auscope.portal.core.util,MimeUtil,20,143,5,15,6,33,6,7,1,2
 Portal-Core,org.auscope.portal.core.util,DOMResponseUtil,19,41,0,0,5,11,1,1,1,1
 Portal-Core,org.auscope.portal.core.util,ResourceUtil,15,14,1,1,2,5,2,2,1,2
-Portal-Core,org.auscope.portal.core.util,SLDLoader,137,84,11,9,29,22,10,5,3,2
 Portal-Core,org.auscope.portal.core.util,DateUtil.TimeField,0,33,0,0,0,2,0,1,0,1
+Portal-Core,org.auscope.portal.core.util,SLDLoader,137,84,11,9,29,22,10,5,3,2
 Portal-Core,org.auscope.portal.core.util,DOMUtil,3,136,0,2,1,37,1,9,1,8
 Portal-Core,org.auscope.portal.core.util,HttpUtil,92,48,4,2,19,7,5,2,3,1
 Portal-Core,org.auscope.portal.core.util,TextUtil,58,50,11,3,10,11,10,3,4,2
