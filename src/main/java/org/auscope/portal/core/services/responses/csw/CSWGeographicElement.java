@@ -6,7 +6,7 @@ import org.springframework.data.elasticsearch.core.geo.GeoJsonPolygon;
  * An interface representing abstract geometry that can bound a record in a CSW response.
  */
 public interface CSWGeographicElement {
-
+    
     /**
      * Gets the west bound longitude.
      *
@@ -91,4 +91,10 @@ public interface CSWGeographicElement {
      */
     public void setBoundingPolygon(double westBoundLongitude, double eastBoundLongitude, double southBoundLatitude, double northBoundLatitude);
     
+    /**
+     * Gets the missing source coordinates field
+     * 
+     * @return true iff this was constructed with missing source coords and a global default had to be substituted
+     */
+    public boolean hasMissingCoords();
 }
