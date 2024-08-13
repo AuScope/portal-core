@@ -549,9 +549,11 @@ public class CSWCacheService {
                     }
                 }
             }
-            CSWGeographicElement geoElemArr[] = new CSWGeographicElement[geoElemSet.size()];
-            geoElemSet.toArray(geoElemArr);
-            destination.setCSWGeographicElements(geoElemArr);
+            if (geoElemSet.size() > 0) {
+                CSWGeographicElement geoElemArr[] = new CSWGeographicElement[geoElemSet.size()];
+                geoElemSet.toArray(geoElemArr);
+                destination.setCSWGeographicElements(geoElemArr);
+            }
 
             // Merge constraints, accessConstraints and useLimitConstraints (no dupes)
             Set<String> constraintSet = new HashSet<>();
