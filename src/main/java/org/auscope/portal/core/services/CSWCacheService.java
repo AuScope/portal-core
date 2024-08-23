@@ -25,6 +25,7 @@ import org.auscope.portal.core.services.responses.csw.CSWGetRecordResponse;
 import org.auscope.portal.core.services.responses.csw.CSWOnlineResourceImpl;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.services.responses.csw.CSWRecordTransformerFactory;
+import org.auscope.portal.core.services.responses.csw.CSWGeographicElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
@@ -531,7 +532,29 @@ public class CSWCacheService {
             targetSet.addAll(destination.getOnlineResources());
             targetSet.addAll(source.getOnlineResources());
             destination.setOnlineResources(new ArrayList<AbstractCSWOnlineResource>(targetSet));
-            
+
+            // Merge CSWGeographicElements, only legitimate BBOX coords allowed
+            Set<CSWGeographicElement> geoElemSet = new HashSet<CSWGeographicElement>();
+            for (CSWGeographicElement geo : destination.getCSWGeographicElements()) {
+                if (geo != null) {
+                    if (!geo.hasMissingCoords()) {
+                        geoElemSet.add(geo);
+                    }
+                }
+            }
+            for (CSWGeographicElement geo : source.getCSWGeographicElements()) {
+                if (geo != null) {
+                    if (!geo.hasMissingCoords()) {
+                        geoElemSet.add(geo);
+                    }
+                }
+            }
+            if (geoElemSet.size() > 0) {
+                CSWGeographicElement geoElemArr[] = new CSWGeographicElement[geoElemSet.size()];
+                geoElemSet.toArray(geoElemArr);
+                destination.setCSWGeographicElements(geoElemArr);
+            }
+
             // Merge constraints, accessConstraints and useLimitConstraints (no dupes)
             Set<String> constraintSet = new HashSet<>();
             constraintSet.addAll(Arrays.asList(destination.getConstraints()));
