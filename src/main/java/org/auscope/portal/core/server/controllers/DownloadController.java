@@ -278,43 +278,54 @@ public class DownloadController extends BasePortalController {
         response.setHeader("Content-Disposition", "inline; filename=" + Files.getNameWithoutExtension(filenameStr)
                 + "." + ext + ";");
 
-        // Create the output stream
-        ZipOutputStream zout = new ZipOutputStream(response.getOutputStream());
-
-        for (int i = 0; i < serviceUrls.length; i++) {
-            // Some file names have spaces, they need to be encoded
-            UriComponents uri = UriComponentsBuilder.fromHttpUrl(serviceUrls[i]).build().encode();
-
-            HttpGet method = new HttpGet(uri.toString());
-            HttpResponse httpResponse = serviceCaller.getMethodResponseAsHttpResponse(method);
-
-            Header contentType = httpResponse.getEntity().getContentType();
-
-            byte[] responseBytes = IOUtils.toByteArray(httpResponse.getEntity().getContent());
-
-            // Create a new entry in the zip file with a timestamped name
-            String mime = null;
-            if (contentType != null) {
-                mime = contentType.getValue();
-            }
-            String fileExtension = MimeUtil.mimeToFileExtension(mime);
-            if (fileExtension != null && !fileExtension.isEmpty()) {
-                fileExtension = "." + fileExtension;
-            }
-            // Is there no filename in the download URL? If so, use a date format as the zip filename
-            String zipFilename = getFileName(uri);
-            if (zipFilename.equals("")) {
-                zipFilename = new SimpleDateFormat((i + 1) + "_yyyyMMdd_HHmmss").format(new Date());
-            }
-            zout.putNextEntry(new ZipEntry(zipFilename + fileExtension));
-
-            zout.write(responseBytes);
-            zout.closeEntry();
+        HttpResponse httpResponse = null;
+        try {
+	        // Create the output stream
+	        ZipOutputStream zout = new ZipOutputStream(response.getOutputStream());
+	
+	        for (int i = 0; i < serviceUrls.length; i++) {
+	            // Some file names have spaces, they need to be encoded
+	            UriComponents uri = UriComponentsBuilder.fromHttpUrl(serviceUrls[i]).build().encode();
+	
+	            HttpGet method = new HttpGet(uri.toString());
+	            httpResponse = serviceCaller.getMethodResponseAsHttpResponse(method);
+	
+	            Header contentType = httpResponse.getEntity().getContentType();
+	
+	            byte[] responseBytes = IOUtils.toByteArray(httpResponse.getEntity().getContent());
+	
+	            // Create a new entry in the zip file with a timestamped name
+	            String mime = null;
+	            if (contentType != null) {
+	                mime = contentType.getValue();
+	            }
+	            String fileExtension = MimeUtil.mimeToFileExtension(mime);
+	            if (fileExtension != null && !fileExtension.isEmpty()) {
+	                fileExtension = "." + fileExtension;
+	            }
+	            // Is there no filename in the download URL? If so, use a date format as the zip filename
+	            String zipFilename = getFileName(uri);
+	            if (zipFilename.equals("")) {
+	                zipFilename = new SimpleDateFormat((i + 1) + "_yyyyMMdd_HHmmss").format(new Date());
+	            }
+	            zout.putNextEntry(new ZipEntry(zipFilename + fileExtension));
+	
+	            zout.write(responseBytes);
+	            zout.closeEntry();
+	        }
+	
+	        zout.finish();
+	        zout.flush();
+	        zout.close();
+        } catch(IOException e) {
+        	try {
+        		// Get error code from service call and attach to exception
+        		int statusCode = Integer.parseInt(e.getMessage());
+        		response.sendError(statusCode);
+        	} catch(NumberFormatException nfe) {
+        		throw e;
+        	}
         }
-
-        zout.finish();
-        zout.flush();
-        zout.close();
     }
 
     /**

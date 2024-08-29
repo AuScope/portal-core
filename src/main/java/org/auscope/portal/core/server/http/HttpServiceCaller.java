@@ -364,18 +364,16 @@ public class HttpServiceCaller {
         if (statusCode != HttpStatus.SC_OK &&
                 statusCode != HttpStatus.SC_CREATED &&
                 statusCode != HttpStatus.SC_ACCEPTED) {
-
             // if it's unavailable then throw connection exception
             if (statusCode == HttpStatus.SC_SERVICE_UNAVAILABLE) {
                 throw new ConnectException();
             }
-
-            log.error("Returned status line: " + response.getStatusLine());
             if (log.isTraceEnabled()) {
-                String responseBody = responseToString(response.getEntity().getContent());
+            	String responseBody = responseToString(response.getEntity().getContent());
                 log.trace("Returned response body: " + responseBody);
             }
-            throw new IOException(statusCodeText);
+            // The IOException contains the error code.
+            throw new IOException(Integer.toString(statusCode));
         } else {
             return response;
         }
