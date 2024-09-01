@@ -2,13 +2,9 @@ package org.auscope.portal.core.view.knownlayer;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 
-import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.json.JSONArray;
-import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.OnlineResourceType;
-import org.auscope.portal.core.view.knownlayer.KnownLayerSelector.RelationType;
 
 public class VMFSelector implements KnownLayerSelector {
     
@@ -59,12 +55,9 @@ public class VMFSelector implements KnownLayerSelector {
      */
     @Override
     public RelationType isRelatedRecord(CSWRecord record) {
-        
-
         if (layerName.equals(record.getLayerName())) {
             return RelationType.Belongs;
         }
-
         return RelationType.NotRelated;
     }    
 
