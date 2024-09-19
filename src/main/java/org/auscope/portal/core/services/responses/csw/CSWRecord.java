@@ -267,7 +267,10 @@ public class CSWRecord {
      * @return the online resources
      */
     public List<AbstractCSWOnlineResource> getOnlineResources() {
-        return onlineResources;
+    	if (onlineResources == null) { 
+    		onlineResources = new ArrayList<AbstractCSWOnlineResource>();
+    	}
+    	return onlineResources;
     }
     
     /**
@@ -706,23 +709,24 @@ public class CSWRecord {
      */
     public List<AbstractCSWOnlineResource> getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType... types) {
         List<AbstractCSWOnlineResource> result = new ArrayList<>();
-
-        for (AbstractCSWOnlineResource r : onlineResources) {
-            if (r == null) {
-                continue;
-            }
-            boolean matching = false;
-            AbstractCSWOnlineResource.OnlineResourceType typeToMatch = r.getType();
-            for (AbstractCSWOnlineResource.OnlineResourceType type : types) {
-                if (typeToMatch == type) {
-                    matching = true;
-                    break;
-                }
-            }
-
-            if (matching) {
-                result.add(r);
-            }
+        if (onlineResources != null) {
+	        for (AbstractCSWOnlineResource r : onlineResources) {
+	            if (r == null) {
+	                continue;
+	            }
+	            boolean matching = false;
+	            AbstractCSWOnlineResource.OnlineResourceType typeToMatch = r.getType();
+	            for (AbstractCSWOnlineResource.OnlineResourceType type : types) {
+	                if (typeToMatch == type) {
+	                    matching = true;
+	                    break;
+	                }
+	            }
+	
+	            if (matching) {
+	                result.add(r);
+	            }
+	        }
         }
 
         return result;
@@ -743,24 +747,25 @@ public class CSWRecord {
             CSWRecordsFilterVisitor visitor,
             AbstractCSWOnlineResource.OnlineResourceType... types) {
         List<AbstractCSWOnlineResource> result = new ArrayList<>();
-
-        for (AbstractCSWOnlineResource r : onlineResources) {
-            if (r == null) {
-                continue;
-            }
-            boolean matching = false;
-            AbstractCSWOnlineResource.OnlineResourceType typeToMatch = r
-                    .getType();
-            for (AbstractCSWOnlineResource.OnlineResourceType type : types) {
-                if (typeToMatch == type) {
-                    matching = true;
-                    break;
-                }
-            }
-
-            if (matching && r.accept(visitor)) {
-                result.add(r);
-            }
+        if (onlineResources != null) {
+	        for (AbstractCSWOnlineResource r : onlineResources) {
+	            if (r == null) {
+	                continue;
+	            }
+	            boolean matching = false;
+	            AbstractCSWOnlineResource.OnlineResourceType typeToMatch = r
+	                    .getType();
+	            for (AbstractCSWOnlineResource.OnlineResourceType type : types) {
+	                if (typeToMatch == type) {
+	                    matching = true;
+	                    break;
+	                }
+	            }
+	
+	            if (matching && r.accept(visitor)) {
+	                result.add(r);
+	            }
+	        }
         }
 
         return result;
