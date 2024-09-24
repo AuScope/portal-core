@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
-import javax.print.DocFlavor.STRING;
-
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicElement;

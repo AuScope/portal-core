@@ -53,7 +53,7 @@ Portal-Core,org.auscope.portal.core.services.responses.wcs,SimpleTimePosition,0,
 Portal-Core,org.auscope.portal.core.services.responses.wcs,RectifiedGrid,89,244,0,8,17,63,1,21,1,17
 Portal-Core,org.auscope.portal.core.services.responses.wcs,AxisDescriptionImpl,4,79,1,3,1,16,1,6,0,5
 Portal-Core,org.auscope.portal.core.services.csw.custom,CustomRegistry,78,0,8,0,23,0,15,0,11,0
-Portal-Core,org.auscope.portal.core.server.http,HttpServiceCaller,241,163,15,15,57,41,22,10,12,5
+Portal-Core,org.auscope.portal.core.server.http,HttpServiceCaller,236,163,15,15,56,41,22,10,12,5
 Portal-Core,org.auscope.portal.core.server.http,DistributedHTTPServiceCaller,14,172,1,25,4,42,2,19,1,7
 Portal-Core,org.auscope.portal.core.server.http,HttpClientInputStream,26,31,1,1,8,10,6,5,5,5
 Portal-Core,org.auscope.portal.core.server.http,DistributedHTTPServiceCallerException,0,4,0,0,0,2,0,1,0,1
@@ -72,7 +72,7 @@ Portal-Core,org.auscope.portal.core.uifilter.mandatory,UITextBox,14,0,0,0,6,0,2,
 Portal-Core,org.auscope.portal.core.server.controllers,OPeNDAPController,311,0,24,0,66,0,16,0,4,0
 Portal-Core,org.auscope.portal.core.server.controllers,CSWFilterController,186,750,44,66,38,140,40,27,2,10
 Portal-Core,org.auscope.portal.core.server.controllers,WFSController,434,223,12,6,84,54,11,9,4,7
-Portal-Core,org.auscope.portal.core.server.controllers,DownloadController,364,222,52,18,97,57,37,8,5,5
+Portal-Core,org.auscope.portal.core.server.controllers,DownloadController,376,225,52,18,103,59,37,8,5,5
 Portal-Core,org.auscope.portal.core.server.controllers,WCSController,167,338,34,26,36,70,22,16,1,7
 Portal-Core,org.auscope.portal.core.server.controllers,KnownLayerController,18,0,0,0,5,0,3,0,3,0
 Portal-Core,org.auscope.portal.core.server.controllers,ServiceConfigurationController,24,0,2,0,9,0,3,0,2,0
@@ -110,16 +110,6 @@ Portal-Core,org.auscope.portal.core.view.knownlayer,CSWTitleFilterRecordSelector
 Portal-Core,org.auscope.portal.core.view.knownlayer,WMSSelector,83,83,17,11,21,18,16,8,6,4
 Portal-Core,org.auscope.portal.core.services.vocabs,VocabularyServiceItem,15,18,0,0,7,7,4,3,4,3
 Portal-Core,org.auscope.portal.core.services.responses.sos,SOSResponse,15,0,0,0,6,0,3,0,3,0
-Portal-Core,org.auscope.portal.core.services.cloud,CloudComputeService,52,47,0,0,19,18,13,7,13,7
-Portal-Core,org.auscope.portal.core.services.cloud,FileStagingService,159,424,14,36,35,92,16,30,4,17
-Portal-Core,org.auscope.portal.core.services.cloud,CloudStorageServiceJClouds.new Supplier() {...},13,0,0,0,2,0,2,0,2,0
-Portal-Core,org.auscope.portal.core.services.cloud,STSRequirement,0,21,0,0,0,4,0,1,0,1
-Portal-Core,org.auscope.portal.core.services.cloud,CloudComputeServiceAws,467,383,51,22,95,61,39,14,8,8
-Portal-Core,org.auscope.portal.core.services.cloud,CloudComputeServiceNectar,475,207,47,6,102,40,36,7,11,5
-Portal-Core,org.auscope.portal.core.services.cloud,CloudStorageServiceJClouds,614,394,58,22,143,92,45,15,9,11
-Portal-Core,org.auscope.portal.core.services.cloud,CloudStorageService,72,127,1,5,29,33,18,15,17,13
-Portal-Core,org.auscope.portal.core.services.cloud,CloudComputeService.ProviderType,0,21,0,0,0,4,0,1,0,1
-Portal-Core,org.auscope.portal.core.services.cloud,CloudComputeService.InstanceStatus,0,21,0,0,0,4,0,1,0,1
 Portal-Core,org.auscope.portal.core.services.responses.wms,GetCapabilitiesRecord_1_3_0,109,378,11,20,32,95,13,25,2,20
 Portal-Core,org.auscope.portal.core.services.responses.wms,GetCapabilitiesWMSLayer_1_3_0,125,211,22,16,24,47,17,12,3,7
 Portal-Core,org.auscope.portal.core.services.responses.wms,GetCapabilitiesRecord_1_1_1,118,331,11,16,35,85,14,21,3,18
@@ -130,8 +120,6 @@ Portal-Core,org.auscope.portal.core.uifilter.optional.xpath,AbstractXPathFilter,
 Portal-Core,org.auscope.portal.core.uifilter.optional.xpath,UIDropDownSelectList,37,0,0,0,15,0,6,0,6,0
 Portal-Core,org.auscope.portal.core.uifilter.optional.xpath,UITextBox,17,0,0,0,7,0,2,0,2,0
 Portal-Core,org.auscope.portal.core.uifilter.optional.xpath,UIDate,17,0,0,0,7,0,2,0,2,0
-Portal-Core,org.auscope.portal.core.services.cloud.monitor,JobStatusException,6,79,0,2,2,16,2,4,2,3
-Portal-Core,org.auscope.portal.core.services.cloud.monitor,JobStatusMonitor,12,115,1,9,3,30,1,8,0,4
 Portal-Core,org.auscope.portal.core.services.admin,EndpointAndSelector,52,52,12,10,12,18,10,7,2,4
 Portal-Core,org.auscope.portal.core.services.admin,AdminService,155,398,2,14,29,78,4,12,3,5
 Portal-Core,org.auscope.portal.core.services.admin,AdminService.new AdminService.ResponseValidator() {...},21,35,0,0,3,8,0,2,0,2
@@ -152,7 +140,6 @@ Portal-Core,org.auscope.portal.core.services.csw,ViewGriddedCSWRecordFactory,33,
 Portal-Core,org.auscope.portal.core.services.csw,CSWRecordsHostFilter,14,27,3,3,6,6,4,2,1,2
 Portal-Core,org.auscope.portal.core.services.namespaces,WFSNamespaceContext,0,27,0,0,0,6,0,1,0,1
 Portal-Core,org.auscope.portal.core.services.namespaces,VocabNamespaceContext,0,75,0,0,0,14,0,1,0,1
-Portal-Core,org.auscope.portal.core.services.namespaces,AWSEC2NamespaceContext,9,0,0,0,3,0,1,0,1,0
 Portal-Core,org.auscope.portal.core.services.namespaces,CSWNamespaceContext,0,69,0,0,0,13,0,1,0,1
 Portal-Core,org.auscope.portal.core.services.namespaces,IterableNamespace,13,34,1,5,3,9,3,5,2,3
 Portal-Core,org.auscope.portal.core.services.namespaces,ServiceNamespaceContext,3,10,0,0,1,3,1,2,1,2
@@ -160,13 +147,6 @@ Portal-Core,org.auscope.portal.core.services.namespaces,OGCNamespaceContext,0,9,
 Portal-Core,org.auscope.portal.core.services.namespaces,WCSNamespaceContext,0,27,0,0,0,6,0,1,0,1
 Portal-Core,org.auscope.portal.core.services.namespaces,ErmlNamespaceContext,30,21,2,0,7,5,2,1,1,1
 Portal-Core,org.auscope.portal.core.services.namespaces,XsdNamespace,27,0,0,0,6,0,1,0,1,0
-Portal-Core,org.auscope.portal.core.cloud,CloudFileInformation,22,45,0,0,9,14,5,5,5,5
-Portal-Core,org.auscope.portal.core.cloud,ComputeType,44,14,0,0,19,5,12,1,12,1
-Portal-Core,org.auscope.portal.core.cloud,MachineImage,74,0,0,0,27,0,15,0,15,0
-Portal-Core,org.auscope.portal.core.cloud,CloudJob,77,88,1,1,29,32,17,20,16,20
-Portal-Core,org.auscope.portal.core.cloud,StagedFile,14,56,1,5,7,12,4,9,3,7
-Portal-Core,org.auscope.portal.core.cloud,StagingInformation,4,9,0,0,2,4,1,2,1,2
-Portal-Core,org.auscope.portal.core.cloud,CloudDirectoryInformation,99,0,6,0,34,0,16,0,13,0
 Portal-Core,org.auscope.portal.core.uifilter,Predicate,0,33,0,0,0,2,0,1,0,1
 Portal-Core,org.auscope.portal.core.uifilter,AbstractBaseFilter,29,0,0,0,11,0,8,0,8,0
 Portal-Core,org.auscope.portal.core.uifilter,GenericFilter,186,107,19,13,42,24,18,8,5,5
@@ -182,10 +162,10 @@ Portal-Core,org.auscope.portal.core.services.responses.csw,CSWGetCapabilities.CS
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWContact,3,83,0,0,1,28,1,19,1,19
 Portal-Core,org.auscope.portal.core.services.responses.csw,AbstractCSWOnlineResource.OnlineResourceType,0,87,0,0,0,15,0,1,0,1
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWRecordTransformer.Scope,0,15,0,0,0,2,0,1,0,1
-Portal-Core,org.auscope.portal.core.services.responses.csw,CSWGeographicBoundingBox,57,290,1,37,9,53,4,33,3,15
+Portal-Core,org.auscope.portal.core.services.responses.csw,CSWGeographicBoundingBox,60,354,8,54,10,60,12,38,4,15
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWRecordTransformer.GeoServerHelper,355,411,57,31,72,77,41,6,0,3
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWRecordTransformer.PyCSWHelper,357,503,59,41,73,90,43,12,0,5
-Portal-Core,org.auscope.portal.core.services.responses.csw,CSWRecord,180,456,22,34,52,135,33,72,21,56
+Portal-Core,org.auscope.portal.core.services.responses.csw,CSWRecord,185,465,25,37,53,138,36,72,21,56
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWOnlineResourceImpl,5,81,1,3,3,28,2,11,1,10
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWResponsibleParty,0,41,0,0,0,14,0,10,0,10
 Portal-Core,org.auscope.portal.core.services.responses.csw,CSWRecordTransformer,905,1285,74,102,148,245,67,41,6,14
@@ -219,16 +199,16 @@ Portal-Core,org.auscope.portal.core.services,WFSGml32Service,22,0,0,0,4,0,2,0,2,
 Portal-Core,org.auscope.portal.core.services,KnownLayerService,427,327,52,33,94,75,31,22,4,6
 Portal-Core,org.auscope.portal.core.services,CSWCacheService,394,0,32,0,89,0,35,0,19,0
 Portal-Core,org.auscope.portal.core.services,GoogleCloudMonitoringCachedService,84,19,6,0,19,7,6,3,3,3
-Portal-Core,org.auscope.portal.core.services,PortalServiceException,24,34,0,0,10,14,4,6,4,6
+Portal-Core,org.auscope.portal.core.services,PortalServiceException,31,27,0,0,13,11,5,5,5,5
 Portal-Core,org.auscope.portal.core.services,CSWService,104,98,5,7,23,24,5,5,0,4
 Portal-Core,org.auscope.portal.core.services,BaseWFSService,113,298,5,19,21,64,10,13,5,6
 Portal-Core,org.auscope.portal.core.services,LocalCSWFilterService,76,642,11,77,16,148,12,44,2,8
 Portal-Core,org.auscope.portal.core.services,VocabularyService,51,225,7,11,16,65,5,14,1,9
-Portal-Core,org.auscope.portal.core.services,ElasticsearchService,952,37,107,0,200,1,67,1,13,1
+Portal-Core,org.auscope.portal.core.services,ElasticsearchService,1029,37,111,0,218,1,72,1,16,1
 Portal-Core,org.auscope.portal.core.services,SISSVoc3Service,6,203,1,9,2,57,3,11,2,7
 Portal-Core,org.auscope.portal.core.services,GoogleCloudMonitoringService,190,127,3,7,52,32,10,7,8,4
 Portal-Core,org.auscope.portal.core.services,CSWFilterService,211,360,10,18,41,66,12,17,6,9
-Portal-Core,org.auscope.portal.core.services,CSWCacheService.CSWCacheUpdateThread,889,0,80,0,190,0,48,0,8,0
+Portal-Core,org.auscope.portal.core.services,CSWCacheService.CSWCacheUpdateThread,1019,0,106,0,215,0,62,0,9,0
 Portal-Core,org.auscope.portal.core.services,SISSVoc2Service,0,151,2,4,0,35,2,4,0,3
 Portal-Core,org.auscope.portal.core.services,VocabularyCacheService.VocabularyCacheUpdateThread,0,121,0,6,0,33,0,8,0,5
 Portal-Core,org.auscope.portal.core.services,GoogleCloudMonitoringCachedService.CacheEntry,51,0,0,0,21,0,8,0,8,0
@@ -245,7 +225,7 @@ Portal-Core,org.auscope.portal.core.util,DateUtil.TimeField,0,33,0,0,0,2,0,1,0,1
 Portal-Core,org.auscope.portal.core.util,SLDLoader,137,84,11,9,29,22,10,5,3,2
 Portal-Core,org.auscope.portal.core.util,DOMUtil,3,136,0,2,1,37,1,9,1,8
 Portal-Core,org.auscope.portal.core.util,HttpUtil,92,48,4,2,19,7,5,2,3,1
-Portal-Core,org.auscope.portal.core.util,TextUtil,58,50,11,3,10,11,10,3,4,2
+Portal-Core,org.auscope.portal.core.util,TextUtil,63,45,12,2,11,10,11,2,5,1
 Portal-Core,org.auscope.portal.core.util,DateUtil,79,102,20,0,18,28,13,3,3,3
 Portal-Core,org.auscope.portal.core.util,GeoJsonPolygonUtils,296,0,42,0,69,0,29,0,8,0
 Portal-Core,org.auscope.portal.core.util,CSVUtil,20,158,4,14,4,32,4,10,0,5

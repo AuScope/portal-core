@@ -44,14 +44,18 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
     // The GeoJsonPolyogn instance of the bounding box, used for indexing geometry in Elasticsearch.
     private GeoJsonPolygon boundingPolygon;
 
+    // True iff this was constructed with missing source coords and a global default had to be substituted
+    private boolean missingSourceCoords;
+
     /**
-     * Instantiates a new cSW geographic bounding box.
+     * Instantiates a new CSW geographic bounding box.
      */
     public CSWGeographicBoundingBox() {
+        this.missingSourceCoords = false;
     }
 
     /**
-     * Instantiates a new cSW geographic bounding box.
+     * Instantiates a new CSW geographic bounding box.
      *
      * @param westBoundLongitude
      *            the west bound longitude
@@ -65,10 +69,21 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
     public CSWGeographicBoundingBox(double westBoundLongitude,
             double eastBoundLongitude, double southBoundLatitude,
             double northBoundLatitude) {
+        this.missingSourceCoords = Double.isNaN(westBoundLongitude) || Double.isNaN(eastBoundLongitude) || 
+                              Double.isNaN(southBoundLatitude) || Double.isNaN(northBoundLatitude);
         this.westBoundLongitude = Double.isNaN(westBoundLongitude) ? -180 : westBoundLongitude;
         this.eastBoundLongitude = Double.isNaN(eastBoundLongitude) ? 180 : eastBoundLongitude;
         this.southBoundLatitude = Double.isNaN(southBoundLatitude) ? -90 : southBoundLatitude;
         this.northBoundLatitude = Double.isNaN(northBoundLatitude) ? 90 : northBoundLatitude;
+    }
+
+    /**
+     * Gets the missing source coordinates field
+     * 
+     * @return true iff this was constructed with missing source coords and a global default had to be substituted
+     */
+    public boolean hasMissingCoords() {
+        return missingSourceCoords;
     }
 
     /**
@@ -89,6 +104,7 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
      */
     @Override
     public void setWestBoundLongitude(double westBoundLongitude) {
+        this.missingSourceCoords = this.missingSourceCoords || Double.isNaN(westBoundLongitude);
         this.westBoundLongitude = Double.isNaN(westBoundLongitude) ? -180 : westBoundLongitude;
     }
 
@@ -110,6 +126,7 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
      */
     @Override
     public void setEastBoundLongitude(double eastBoundLongitude) {
+        this.missingSourceCoords = this.missingSourceCoords || Double.isNaN(eastBoundLongitude);
         this.eastBoundLongitude = Double.isNaN(eastBoundLongitude) ? 180 : eastBoundLongitude;
     }
 
@@ -131,6 +148,7 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
      */
     @Override
     public void setSouthBoundLatitude(double southBoundLatitude) {
+        this.missingSourceCoords = this.missingSourceCoords || Double.isNaN(southBoundLatitude);
         this.southBoundLatitude = Double.isNaN(southBoundLatitude) ? -90 : southBoundLatitude;
     }
 
@@ -152,6 +170,7 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
      */
     @Override
     public void setNorthBoundLatitude(double northBoundLatitude) {
+        this.missingSourceCoords = this.missingSourceCoords || Double.isNaN(northBoundLatitude);
         this.northBoundLatitude = Double.isNaN(northBoundLatitude) ? 90 : northBoundLatitude;
     }
     

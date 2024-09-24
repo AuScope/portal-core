@@ -25,6 +25,7 @@ import org.auscope.portal.core.services.responses.csw.CSWGetRecordResponse;
 import org.auscope.portal.core.services.responses.csw.CSWOnlineResourceImpl;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.services.responses.csw.CSWRecordTransformerFactory;
+import org.auscope.portal.core.services.responses.csw.CSWGeographicElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
@@ -531,7 +532,33 @@ public class CSWCacheService {
             targetSet.addAll(destination.getOnlineResources());
             targetSet.addAll(source.getOnlineResources());
             destination.setOnlineResources(new ArrayList<AbstractCSWOnlineResource>(targetSet));
-            
+
+            // Merge CSWGeographicElements, only legitimate BBOX coords allowed
+            Set<CSWGeographicElement> geoElemSet = new HashSet<CSWGeographicElement>();
+            if (destination.getCSWGeographicElements() != null) {
+	            for (CSWGeographicElement geo : destination.getCSWGeographicElements()) {
+	                if (geo != null) {
+	                    if (!geo.hasMissingCoords()) {
+	                        geoElemSet.add(geo);
+	                    }
+	                }
+	            }
+            }
+            if (source.getCSWGeographicElements() != null) {
+	            for (CSWGeographicElement geo : source.getCSWGeographicElements()) {
+	                if (geo != null) {
+	                    if (!geo.hasMissingCoords()) {
+	                        geoElemSet.add(geo);
+	                    }
+	                }
+	            }
+            }
+            if (geoElemSet.size() > 0) {
+                CSWGeographicElement geoElemArr[] = new CSWGeographicElement[geoElemSet.size()];
+                geoElemSet.toArray(geoElemArr);
+                destination.setCSWGeographicElements(geoElemArr);
+            }
+
             // Merge constraints, accessConstraints and useLimitConstraints (no dupes)
             Set<String> constraintSet = new HashSet<>();
             constraintSet.addAll(Arrays.asList(destination.getConstraints()));
@@ -557,12 +584,14 @@ public class CSWCacheService {
             }
         }
 
-        /*
+        /**
          * After retrieving the current set of records from the endpoint, this
          * will update the application cache.
+         * 
+         * @param cswRecordMap the CSW records
          */
         private void updateAppCache(Map<String, CSWRecord> cswRecordMap) {
-            //After parent/children have been linked, begin the keyword merging and extraction
+            // After parent/children have been linked, begin the keyword merging and extraction
             synchronized (newKeywordCache) {
                 synchronized (newRecordCache) {
                     for (CSWRecord record : cswRecordMap.values()) {
@@ -600,13 +629,6 @@ public class CSWCacheService {
 
                             // Loop through existing records
                             for (CSWRecord existingRec : newRecordCache) {
-                            	
-                            	/*
-                            	if (record.getLayerName().equals("gsmlp:BoreholeView") && existingRec.getLayerName().equals("gsmlp:BoreholeView") &&
-                            			(record.getFileIdentifier().equals("20f0650cc4cb09a1aaa06b7077c584130f9a502e") || record.getFileIdentifier().equals("49a7dce44a3520e465a5ce103941791908de692c"))) {
-                            		System.out.println("CSWCacheServiuce: SA Borehole: " + existingRec.getFileIdentifier());
-                            	}
-                            	*/
                             	
                                 // Loop through online resources of each record
                                 if (StringUtils.isEmpty(existingRec.getLayerName())) {
@@ -668,7 +690,6 @@ public class CSWCacheService {
                                 break;
                         }
 
-
                         //If the record was NOT merged into an existing record we then update the record cache
                         if (!recordMerged) {
                             // Update the keyword cache
@@ -682,6 +703,22 @@ public class CSWCacheService {
                     }
                 }
             }
+        }
+        
+        /**
+         * Get the cached CSWrecord map for the current service
+         * 
+         * @return a Map<fileIdentifier, CSWRecord> of CSWRecords for the current servcie
+         */
+        private Map<String, CSWRecord> getCachedCswRecordMap() {
+        	Map<String, CSWRecord> recordMap = new HashMap<String, CSWRecord>();
+        	List<CSWRecord> recordList = elasticsearchService.getAllCSWRecordsForService(this.endpoint.getId());
+        	if (recordList != null) {
+	        	for (CSWRecord record: recordList) {
+	        		recordMap.put(record.getFileIdentifier(), record);
+	        	}
+        	}
+        	return recordMap;
         }
 
         @Override
@@ -698,7 +735,6 @@ public class CSWCacheService {
                         record.setNoCache(true);
                         record.setServiceName(this.endpoint.getTitle());
                         record.setServiceId(this.endpoint.getId());
-
                         record.setRecordInfoUrl(this.endpoint.getRecordInformationUrl());
 
                         CSWOnlineResourceImpl cswResource = new CSWOnlineResourceImpl(
@@ -781,6 +817,10 @@ public class CSWCacheService {
                 // Update the cache using the new records, if successfully
                 // retrieved, or the cached version if not.
                 Map<String, CSWRecord> cswRecordMap = this.cswRecordsCache.get(this.endpoint.getId());
+                if (cswRecordMap == null || cswRecordMap.size() == 0) {
+                	threadLog.info(String.format("Retrieving cached results for '%1$s", this.endpoint.getServiceUrl()));   
+                	cswRecordMap = this.getCachedCswRecordMap();
+                }
                 if (cswRecordMap != null && cswRecordMap.size() > 0) {
                     updateAppCache(cswRecordMap);
                 } else {

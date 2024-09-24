@@ -200,7 +200,7 @@ public class ElasticsearchService {
 	 */
 	public void updateCSWRecords(final List<CSWRecord> cswRecords) throws DataAccessResourceFailureException {
 		try {
-			List<List<CSWRecord>> batchRecords = Lists.partition(cswRecords, 100);
+			List<List<CSWRecord>> batchRecords = Lists.partition(cswRecords, 1000);
 			for (List<CSWRecord> recordSet : batchRecords) {
 				this.recordRepository.saveAll(recordSet);
 			}
@@ -221,8 +221,38 @@ public class ElasticsearchService {
 		Query query = NativeQuery.builder()
 		    .withQuery(q -> q
 		        .matchAll(ma -> ma))
-		    .withFields("message")
-		    .withPageable(PageRequest.of(0, 10))
+		    .withPageable(PageRequest.of(0, 1000))
+		    .build();
+		SearchScrollHits<CSWRecord> scroll = elasticsearchTemplate.searchScrollStart(1000, query, CSWRecord.class, index);
+		String scrollId = scroll.getScrollId();
+		while (scroll.hasSearchHits()) {
+			for (SearchHit<CSWRecord> searchHit: scroll.getSearchHits()) {
+				records.add(searchHit.getContent());
+			}
+			scrollId = scroll.getScrollId();
+			scroll = elasticsearchTemplate.searchScrollContinue(scrollId, 1000, CSWRecord.class, index);
+		}
+		elasticsearchTemplate.searchScrollClear(scrollId);
+		return records;
+	}
+	
+	/**
+	 * Retrieve all CSWRecords from Elasticsearch index for a given service.
+	 * Uses paging to get over 10,000 record maximum when using finalAll() with a repository.
+	 *  
+	 * @return All indexed CSWRecords for a given service
+	 * @param serviceId the ID of the service
+	 * @return indexed CSWRecords for a given service
+	 */
+	public List<CSWRecord> getAllCSWRecordsForService(String serviceId) {
+		List<CSWRecord> records = new ArrayList<CSWRecord>();
+		IndexCoordinates index = IndexCoordinates.of(cswRecordIndex);
+		Query query = NativeQuery.builder()
+		    .withQuery(q -> q
+		        .match(m -> m
+		        		.field("serviceId")
+		        		.query(serviceId)))
+		    .withPageable(PageRequest.of(0, 1000))
 		    .build();
 		SearchScrollHits<CSWRecord> scroll = elasticsearchTemplate.searchScrollStart(1000, query, CSWRecord.class, index);
 		String scrollId = scroll.getScrollId();
