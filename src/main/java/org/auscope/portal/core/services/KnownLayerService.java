@@ -27,6 +27,7 @@ import org.auscope.portal.core.view.knownlayer.KnownLayerGrouping;
 import org.auscope.portal.core.view.knownlayer.KnownLayerSelector;
 import org.auscope.portal.core.view.knownlayer.WMSSelector;
 import org.auscope.portal.core.view.knownlayer.WMSSelectors;
+import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
@@ -333,19 +334,76 @@ public class KnownLayerService {
 
             Set<String> onlineResourceEndpoints = new HashSet<>();
             ArrayList<String> layerNames = new ArrayList<>();
+
+            JSONArray onlineResourceOrderList = null;
+            boolean onlineReorder = false;
+
+            if (kl.getOnlineResourceOrder() != null) {
+                onlineReorder = true;
+
+                onlineResourceOrderList = kl.getOnlineResourceOrder();
+
+                for (int i = 0; i < onlineResourceOrderList.length(); i++) {
+
+                    JSONArray resourceOrderItem = (JSONArray) onlineResourceOrderList.get(i);
+
+                    if ((resourceOrderItem).length() == 2) {
+                        String resourceOrderName = (String) resourceOrderItem.get(0);
+                        int resourceOrderIndex = (int) resourceOrderItem.get(1);
+                    }
+                }
+            }
+            
             for (CSWRecord rec : knownLayerAndRecords.getBelongingRecords()) {
                 if (rec != null) {
-                	// Update the CSW record with KnownLayer information required for searching (name and description)
-                	rec.addKnownLayerId(knownLayerAndRecords.getKnownLayer().getId());
-                	rec.addKnownLayerName(knownLayerAndRecords.getKnownLayer().getName());
-                	rec.addKnownLayerDescription(knownLayerAndRecords.getKnownLayer().getDescription());
-                	recordsToUpdate.add(rec);
-                	// OnlineResources
-                    for (AbstractCSWOnlineResource onlineResource : rec.getOnlineResources()) {
-                        if (onlineResource.getLinkage() != null) {
-                            onlineResourceEndpoints.add(onlineResource.getLinkage().getHost());
+                    // Update the CSW record with KnownLayer information required for searching
+                    // (name and description)
+                    rec.addKnownLayerId(knownLayerAndRecords.getKnownLayer().getId());
+                    rec.addKnownLayerName(knownLayerAndRecords.getKnownLayer().getName());
+                    rec.addKnownLayerDescription(knownLayerAndRecords.getKnownLayer().getDescription());
+
+                    recordsToUpdate.add(rec);
+                    // OnlineResources
+                    if (rec.getOnlineResources() != null) {
+
+                        // reorder online resources based on onlineResourceOrder specified in
+                        // layers.yaml (if present)
+                        if (onlineReorder) {
+                            List<AbstractCSWOnlineResource> newOnlineResourceList = new ArrayList<>();
+
+                            // add the resources and reorder afterwards
+                            for (AbstractCSWOnlineResource onlineResource : rec.getOnlineResources()) {
+                                newOnlineResourceList.add(onlineResource);
+                            }
+
+                            for (int i = 0; i < onlineResourceOrderList.length(); i++) {
+                                JSONArray resourceOrderItem = (JSONArray) onlineResourceOrderList.get(i);
+                                if ((resourceOrderItem).length() == 2) {
+                                    String resourceOrderName = (String) resourceOrderItem.get(0);
+                                    int resourceOrderIndex = (int) resourceOrderItem.get(1) - 1;
+
+                                    // find online resource with the name resourceOrderName
+                                    for (AbstractCSWOnlineResource onlineResource : rec.getOnlineResources()) {
+                                        if (onlineResource.getName().equalsIgnoreCase(resourceOrderName)) {
+                                            try {
+                                                newOnlineResourceList.remove(resourceOrderIndex);
+                                                newOnlineResourceList.add(resourceOrderIndex, onlineResource);
+                                            } catch (Exception e) {
+                                                logger.error("Error reordeing online resources " + kl.getName() + " :" + e.getMessage());
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            rec.setOnlineResources(newOnlineResourceList);
                         }
-                        layerNames.add(onlineResource.getName());
+
+                        for (AbstractCSWOnlineResource onlineResource : rec.getOnlineResources()) {
+                            if (onlineResource.getLinkage() != null) {
+                                onlineResourceEndpoints.add(onlineResource.getLinkage().getHost());
+                            }
+                            layerNames.add(onlineResource.getName());
+                        }
                     }
                     viewMappedRecords.add(viewCSWRecordFactory.toView(rec));
                 }
@@ -362,7 +420,8 @@ public class KnownLayerService {
             List<ModelMap> viewCapabilityRecords = new ArrayList<>();
             String layerName = null;
             if (layerNames.size() > 0) {
-                layerName = layerNames.get(0);
+                layerName = layerNames.get(0); // TODO: - rather than getting the first - should get online resource
+                                               // that matches selector in layers.yaml??
             }
             for (GetCapabilitiesRecord rec : knownLayerAndRecords.getCapabilitiesRecords()) {
                 viewCapabilityRecords.add(viewGetCapabilitiesFactory.toView(rec, layerName));

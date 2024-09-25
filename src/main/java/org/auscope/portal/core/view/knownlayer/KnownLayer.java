@@ -118,6 +118,9 @@ public class KnownLayer implements Serializable {
     /** geoJson bbox */
     private JSONArray bbox;
 
+    /** onlineResourceOrder */
+    private JSONArray onlineResourceOrder;
+    
     /**
      * Creates a new KnownLayer
      *
@@ -542,6 +545,14 @@ public class KnownLayer implements Serializable {
     }
 
     /**
+     * @return the onlineResourceOrder
+     */
+    public JSONArray getOnlineResourceOrder() {
+        return onlineResourceOrder;
+    }
+
+
+    /**
      * Set the VMF - polygon
      * 
      * @param polygonGeoJson
@@ -579,6 +590,28 @@ public class KnownLayer implements Serializable {
             newCoordNode.put(oldCoordNode.get(0));
             newCoordNode.put(oldCoordNode.get(1));
             this.bbox.put(newCoordNode);
+
+        }
+
+    }
+    
+
+    /**
+     * Set the setOnlineResourceOrder
+     * 
+     * @param orderList
+     */
+    public void setOnlineResourceOrder(JSONArray orderList) {
+        this.onlineResourceOrder = new JSONArray();
+
+        for (int i = 0; i < orderList.length(); i++) {
+
+            JSONArray oldResourceOrder = (JSONArray) orderList.get(i);
+
+            JSONArray newResourceOrder = new JSONArray();
+            newResourceOrder.put(oldResourceOrder.get(0)); // online reosurce name
+            newResourceOrder.put(oldResourceOrder.get(1)); // online resource order - numeric - starting at 1
+            this.onlineResourceOrder.put(newResourceOrder);
 
         }
 
