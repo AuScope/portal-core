@@ -17,7 +17,6 @@ import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.WCSService;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
-import org.auscope.portal.core.services.responses.wcs.DescribeCoverageRecord;
 import org.auscope.portal.core.services.responses.wcs.GetCapabilitiesRecord_1_0_0;
 import org.auscope.portal.core.services.responses.wcs.Resolution;
 import org.auscope.portal.core.services.responses.wcs.TimeConstraint;
@@ -314,32 +313,6 @@ public class WCSController extends BasePortalController {
         }
 
         FileIOUtil.closeQuietly(zout);
-    }
-
-    /**
-     * Returns a DescribeCoverageRecord as a JSON Response representing the response
-     *
-     * { success : true/false errorMsg : '' rawXml : [Can be null] <Set to the raw XML string returned from the DescribeCoverageResponse> records : [Can be
-     * null] <Set to the DescribeCoverageRecord list parsed from the rawXml> }
-     *
-     * @param serviceUrl
-     * @param layerName
-     * @return
-     */
-    @RequestMapping("/describeCoverage.do")
-    public ModelAndView describeCoverage(
-    		@RequestParam("serviceUrl") final String serviceUrl,
-    		@RequestParam("coverageName") final String coverageName) {
-        DescribeCoverageRecord[] records = null;
-        try {
-            records = wcsService.describeCoverage(serviceUrl, coverageName);
-        } catch (Exception ex) {
-            logger.error("Error describing coverage", ex);
-            return generateJSONResponseMAV(false, null,
-                    "Error occured whilst communicating to remote service: " + ex.getMessage());
-        }
-
-        return generateJSONResponseMAV(true, records, "");
     }
     
     /**

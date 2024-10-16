@@ -135,38 +135,6 @@ public class WCSMethodMaker extends AbstractMethodMaker {
     }
 
     /**
-     * Method for creating a DescribeCoverage request for a particular coverage
-     * 
-     * @param serviceUrl
-     *            The WCS endpoint to query
-     * @param coverageName
-     *            The name of the coverage to query
-     * @return
-     * @throws URISyntaxException
-     */
-    public HttpRequestBase describeCoverageMethod(String serviceUrl, String coverageName) throws URISyntaxException {
-        HttpGet httpMethod = new HttpGet();
-        URIBuilder builder = new URIBuilder(serviceUrl);
-
-        //Do some simple error checking to align with WCS standard
-        if (serviceUrl == null || serviceUrl.isEmpty())
-            throw new IllegalArgumentException("You must specify a serviceUrl");
-        if (coverageName == null || coverageName.isEmpty())
-            throw new IllegalArgumentException("You must specify a coverageName");
-
-        builder.setParameter("service", "WCS");
-        builder.setParameter("version", "1.0.0");
-        builder.setParameter("request", "DescribeCoverage");
-        builder.setParameter("coverage", coverageName);
-
-        httpMethod.setURI(builder.build());
-
-        logger.debug(String.format("url='%1$s' query='%2$s'", serviceUrl, httpMethod.getURI().getQuery()));
-
-        return httpMethod;
-    }
-
-    /**
      * Method for creating a GetCapabilities request for a WCS service
      * 
      * @param serviceUrl

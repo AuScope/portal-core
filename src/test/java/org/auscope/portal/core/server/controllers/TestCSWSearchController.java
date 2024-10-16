@@ -1,6 +1,5 @@
 package org.auscope.portal.core.server.controllers;
 
-import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,7 +12,6 @@ import org.auscope.portal.core.services.CSWFilterService;
 import org.auscope.portal.core.services.LocalCSWFilterService;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.WMSService;
-import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.responses.csw.CSWOnlineResourceImpl;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.services.responses.search.FacetedMultiSearchResponse;

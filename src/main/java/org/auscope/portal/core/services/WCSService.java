@@ -11,13 +11,9 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WCSMethodMaker;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
-import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
-import org.auscope.portal.core.services.responses.wcs.DescribeCoverageRecord;
 import org.auscope.portal.core.services.responses.wcs.GetCapabilitiesRecord_1_0_0;
 import org.auscope.portal.core.services.responses.wcs.Resolution;
 import org.auscope.portal.core.services.responses.wcs.TimeConstraint;
-import org.auscope.portal.core.util.DOMUtil;
-import org.w3c.dom.Document;
 
 /**
  * Service class for interacting with a Web Coverage Service
@@ -142,36 +138,5 @@ public class WCSService {
 			throw new PortalServiceException("Unable to create GetCoverage request",e);
 		}
 	}
-
-    /**
-     * Makes a DescribeCoverage request, returns the response as an array of DescribeCoverageRecords
-     * 
-     * @param serviceUrl
-     *            The WCS endpoint to query
-     * @param coverageName
-     *            The coverage name to describe
-     * @throws URISyntaxException
-     */
-    public DescribeCoverageRecord[] describeCoverage(String serviceUrl, String coverageName)
-            throws PortalServiceException {
-
-        HttpRequestBase method = null;
-        try {
-            method = methodMaker.describeCoverageMethod(serviceUrl, coverageName);
-            try (InputStream response = serviceCaller.getMethodResponseAsStream(method)) {
-
-                Document responseDoc = DOMUtil.buildDomFromStream(response);
-                OWSExceptionParser.checkForExceptionResponse(responseDoc);
-
-                return DescribeCoverageRecord.parseRecords(responseDoc);
-            }
-        } catch (Exception ex) {
-            throw new PortalServiceException(method, "Error while making DescribeCoverage request", ex);
-        } finally {
-            if (method != null) {
-                method.releaseConnection();
-            }
-        }
-    }
 
 }

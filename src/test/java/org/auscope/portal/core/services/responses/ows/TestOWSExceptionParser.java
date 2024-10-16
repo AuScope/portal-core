@@ -30,8 +30,6 @@ public class TestOWSExceptionParser extends PortalTestClass {
 
     @Test
     public void testDontThrowException() throws IOException, ParserConfigurationException, SAXException, OWSException  {
-        check("org/auscope/portal/core/test/responses/wcs/DescribeCoverageResponse1.xml");
-        check("org/auscope/portal/core/test/responses/wcs/DescribeCoverageResponse2.xml");
         check("org/auscope/portal/core/test/responses/wfs/GetWFSFeatureCount.xml");
         check("org/auscope/portal/core/test/responses/wfs/EmptyWFSResponse.xml");
     }
