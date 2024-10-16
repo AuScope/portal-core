@@ -123,31 +123,6 @@ public class DownloadController extends BasePortalController {
 
     }
 
-    @RequestMapping("/checkGMLDownloadStatus.do")
-    public void checkGMLDownloadStatus(
-            @RequestParam("email") final String email,
-            HttpServletResponse response,
-            HttpServletRequest request) throws Exception {
-
-        DownloadTracker downloadTracker = DownloadTracker.getTracker(email);
-        Progression progress = downloadTracker.getProgress();
-        String htmlResponse = "";
-        response.setContentType("text/html");
-
-        if (progress == Progression.INPROGRESS) {
-            htmlResponse = "<html><p>Download currently still in progress</p></html>";
-        } else if (progress == Progression.NOT_STARTED) {
-            htmlResponse = "<html><p>No download request found..</p></html>";
-        } else if (progress == Progression.COMPLETED) {
-            htmlResponse = "<html><p>Your download has successfully completed.</p><p><a href='getGmlDownload.do?email="
-                    + email + "'>Click on this link to download</a></p></html>";
-        } else {
-            htmlResponse = "<html><p>A serious error has occurred, please contact our Administrator on cg-admin@csiro.au</p></html>";
-        }
-
-        response.getOutputStream().write(htmlResponse.getBytes());
-    }
-
     /**
      * Given a list of URls, this function will collate the responses into a zip file and send the response back to the browser. if no email is provided, a zip
      * is written to the response output If email address is provided, a html response is returned to the user informing his request has been processed and to
