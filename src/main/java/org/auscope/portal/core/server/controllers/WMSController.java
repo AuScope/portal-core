@@ -4,12 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.naming.OperationNotSupportedException;
@@ -22,12 +19,6 @@ import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.WMSService;
-import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
-import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
-import org.auscope.portal.core.services.responses.csw.CSWGeographicElement;
-import org.auscope.portal.core.services.responses.csw.CSWOnlineResourceImpl;
-import org.auscope.portal.core.services.responses.csw.CSWRecord;
-import org.auscope.portal.core.services.responses.csw.CSWResponsibleParty;
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord;
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesWMSLayerRecord;
 import org.auscope.portal.core.util.FileIOUtil;
@@ -60,8 +51,6 @@ public class WMSController extends BaseCSWController {
     protected static int BUFFERSIZE = 1024 * 1024;
     HttpServiceCaller serviceCaller;
 
-    private ViewGetCapabilitiesFactory viewGetCapabilitiesFactory;
-
     // ----------------------------------------------------------- Constructors
     @Autowired
     public WMSController(WMSService wmsService, ViewCSWRecordFactory viewCSWRecordFactory, 
@@ -69,7 +58,6 @@ public class WMSController extends BaseCSWController {
         super(viewCSWRecordFactory);
         this.wmsService = wmsService;
         this.serviceCaller = serviceCaller;
-        this.viewGetCapabilitiesFactory = viewGetCapabilitiesFactory;
     }
 
     /**
@@ -116,173 +104,6 @@ public class WMSController extends BaseCSWController {
             ) throws PortalServiceException, OperationNotSupportedException, URISyntaxException, IOException {
 		this.wmsService.getWMSCapabilitiesViaProxy(response, request, url, version, usePost, useWhitelist);
 	}
-
-
-    /**
-     * Gets all WMS data records from a discovery service, and then creates JSON response for the WMS layers list in the portal
-     *
-     * @param serviceUrl
-     *            The WMS URL to query
-     *
-     * @param weakCheck
-     *            Turns off checking for the correct EPSG records before URL resolution
-     *
-     * @return a JSON representation of the CSWRecord equivalent records
-     *
-     * @throws Exception
-     */
-    @RequestMapping("/getCustomLayers.do")
-    public ModelAndView getCustomLayers(@RequestParam("serviceUrl") String serviceUrl,
-            @RequestParam(required = false, value="weakCheck", defaultValue = "N") String weakCheck) throws Exception {
-
-        CSWRecord[] records;
-        int invalidLayerCount = 0;
-        GetCapabilitiesRecord capabilitiesRec = null;
-        try {
-            //VT:We have absolutely no way of finding out wms version in custom layer so we have to
-            //guess the version by setting version to null.
-            capabilitiesRec = wmsService.getWmsCapabilities(serviceUrl, null);
-
-            List<CSWRecord> cswRecords = new ArrayList<CSWRecord>();
-            if (capabilitiesRec != null) {
-                //Make a best effort of parsing a WMS into a CSWRecord
-                for (GetCapabilitiesWMSLayerRecord rec : capabilitiesRec.getLayers()) {
-                    //If weakCheck is not 'Y' then check if layers are EPSG:4326 or EPSG:3857 SRS
-                    String[] uniqueSRSList = getSRSList(capabilitiesRec.getLayerSRS(), rec.getChildLayerSRS());
-                    if (!weakCheck.equals("Y") && !((Arrays.binarySearch(uniqueSRSList, "epsg:3857")) >= 0 || (Arrays.binarySearch(uniqueSRSList,
-                            "epsg:4326")) >= 0)) {
-                        invalidLayerCount += 1;
-                        continue;
-                    }
-
-                    if (rec.getName() == null || rec.getName().isEmpty()) {
-                        continue;
-                    }
-
-                    String serviceName = rec.getTitle();
-                    //VT:Ext.DomQuery.selectNode('#rowexpandercontainer-' + record.id, el.parentNode); cannot handle : and .
-                    String fileId = "unique-id-"
-                            + StringUtils.replaceEach(rec.getName(), new String[] {":", "."}, new String[] {"", ""});
-                    String recordInfoUrl = null;
-                    String dataAbstract = rec.getAbstract();
-                    CSWResponsibleParty responsibleParty = new CSWResponsibleParty();
-                    responsibleParty.setOrganisationName(capabilitiesRec.getOrganisation());
-
-                    CSWGeographicElement[] geoEls = null;
-                    CSWGeographicBoundingBox bbox = rec.getBoundingBox();
-                    if (bbox != null) {
-                        geoEls = new CSWGeographicElement[] {bbox};
-                    }
-
-                    List<AbstractCSWOnlineResource> onlineResources = new ArrayList<AbstractCSWOnlineResource>();
-
-                    if (capabilitiesRec.getVersion().equals("1.3.0")) {
-                        onlineResources.add(new CSWOnlineResourceImpl(new URL(capabilitiesRec.getMapUrl()),
-                                "OGC:WMS-1.3.0-http-get-map",
-                                rec.getName(),
-                                rec.getTitle(),
-                                capabilitiesRec.getApplicationProfile()));
-                    } else {
-                        onlineResources.add(new CSWOnlineResourceImpl(new URL(capabilitiesRec.getMapUrl()),
-                                "OGC:WMS-1.1.1-http-get-map",
-                                rec.getName(),
-                                rec.getTitle(),
-                                capabilitiesRec.getApplicationProfile()));
-                    }
-
-                    CSWRecord newRecord = new CSWRecord(serviceName, fileId, recordInfoUrl, dataAbstract,
-                            onlineResources, geoEls);
-                    newRecord.setContact(responsibleParty);
-                    cswRecords.add(newRecord);
-
-                }
-            } else {
-                // Cannot find any WMS capability records
-                log.debug("Cannot find any WMS capability records");
-                return generateJSONResponseMAV(false, "I can resolve your WMS URL, but cannot find any WMS capability records", null);
-            }
-
-            //generate the same response from a getCachedCSWRecords call
-            records = cswRecords.toArray(new CSWRecord[cswRecords.size()]);
-        } catch (MalformedURLException e) {
-            log.debug(e.getMessage());
-            return generateJSONResponseMAV(false, "I cannot resolve your WMS URL, there was a malformed URL error: "+e.getMessage(), null);
-        } catch (Exception e) {
-            String excStr = e.getMessage();
-            log.debug(excStr);
-            // Fix up the least informative messages
-            if (excStr.equals("Not Found")) {
-                return generateJSONResponseMAV(false, "I cannot resolve your WMS URL: page not found", null);
-
-            } else if (excStr.equals("null")) {
-                return generateJSONResponseMAV(false, "I cannot resolve your WMS URL", null);
-            }
-
-            return generateJSONResponseMAV(false, excStr, null);
-        }
-
-        if (records.length == 0) {
-            return generateJSONResponseMAV(false, "Your WMS does not appear to support EPSG:3857 (WGS 84 / Pseudo-Mercator) or EPSG:4326 (WGS 84). This is required to be able to display your map in this Portal. If you are certain that your service supports EPSG:3857, click Yes for portal to attempt loading of the layer else No to exit.", null);
-        }
-
-        // Convert csw records to ModelMap
-        List<ModelMap> recordRepresentations = new ArrayList<>();
-        try {
-            for (CSWRecord record : records) {
-                recordRepresentations.add(viewCSWRecordFactory.toView(record));
-            }
-        } catch (Exception ex) {
-            log.error("Error converting csw data records", ex);
-            return generateJSONResponseMAV(false, "Error converting csw data records", null);
-        }
-
-        ModelMap mMap = new ModelMap();
-        mMap.addAttribute("cswRecords", recordRepresentations);
-
-        if (capabilitiesRec != null) {
-            // Convert capability records to ModelMap
-            List<ModelMap> viewCapabilityRecords = new ArrayList<>();
-            try {
-                viewCapabilityRecords.add(viewGetCapabilitiesFactory.toView(capabilitiesRec, null));
-            } catch (Exception ex) {
-                log.error("Error converting capability data records", ex);
-                return generateJSONResponseMAV(false, "Error converting capability data records", null);
-            }
-            mMap.addAttribute("capabilityRecords", viewCapabilityRecords);
-        }
-        mMap.addAttribute("invalidLayerCount", invalidLayerCount);
-        return generateJSONResponseMAV(true, mMap, "");
-    }
-
-    public String[] getSRSList(String[] layerSRS, String[] childLayerSRS) {
-        try {
-            int totalLength = layerSRS.length;
-            totalLength += childLayerSRS.length;
-            String[] totalSRS = new String[totalLength];
-            System.arraycopy(layerSRS, 0, totalSRS, 0, layerSRS.length);
-            System.arraycopy(childLayerSRS, 0, totalSRS, layerSRS.length, childLayerSRS.length);
-            Arrays.sort(totalSRS);
-
-            int k = 0;
-            for (int i = 0; i < totalSRS.length; i++) {
-                if (i > 0 && totalSRS[i].equals(totalSRS[i - 1])) {
-                    continue;
-                }
-                totalSRS[k++] = totalSRS[i];
-            }
-            String[] uniqueSRS = new String[k];
-            System.arraycopy(totalSRS, 0, uniqueSRS, 0, k);
-
-            for (int i = 0; i < uniqueSRS.length; i++) {
-                uniqueSRS[i] = uniqueSRS[i].toLowerCase();
-            }
-
-            return uniqueSRS;
-        } catch (Exception e) {
-            log.debug(e.getMessage());
-            return null;
-        }
-    }
 
     /**
      * Gets all the valid GetMap formats that a service defines
