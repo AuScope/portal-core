@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.services.PortalServiceException;
-import org.auscope.portal.core.services.WFSGml32Service;
 import org.auscope.portal.core.services.WFSService;
 import org.auscope.portal.core.services.methodmakers.filter.SimplePropertyFilter;
 import org.auscope.portal.core.services.responses.wfs.WFSCountResponse;
@@ -23,7 +22,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * Unit tests for GSMLController
+ * Unit tests for WFSController
  *
  * @author Matthew Wyatt
  * @author Josh Vote
@@ -39,15 +38,13 @@ public class TestWfsController extends PortalTestClass {
 
     private WFSService mockWfsService = context.mock(WFSService.class);
 
-    private WFSGml32Service mockWfs32Service = context.mock(WFSGml32Service.class);
-
     private HttpServletResponse mockResponse = context.mock(HttpServletResponse.class);
 
     private HttpServletRequest mockRequest = context.mock(HttpServletRequest.class);
 
     @Before
     public void setUp() {
-        wfsController = new WFSController(mockWfsService, mockWfs32Service);
+        wfsController = new WFSController(mockWfsService);
     }
 
     /**

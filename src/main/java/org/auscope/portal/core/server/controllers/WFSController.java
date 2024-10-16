@@ -1,6 +1,5 @@
 package org.auscope.portal.core.server.controllers;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -13,7 +12,6 @@ import jakarta.servlet.http.HttpServletResponseWrapper;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.http.HttpStatus;
-import org.auscope.portal.core.services.WFSGml32Service;
 import org.auscope.portal.core.services.WFSService;
 import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
 import org.auscope.portal.core.services.methodmakers.filter.SimpleBBoxFilter;
@@ -44,48 +42,9 @@ public class WFSController extends BasePortalController {
 
     private WFSService wfsService;
 
-    private WFSGml32Service wfsGml32Service;
-
     @Autowired
-    public WFSController(WFSService wfsService, WFSGml32Service wfsGml32Service) {
+    public WFSController(WFSService wfsService) {
         this.wfsService = wfsService;
-        this.wfsGml32Service = wfsGml32Service;
-
-    }
-
-    
-    @RequestMapping("/getAllGml32Features.do")
-    public void requestAllGml32Features(HttpServletResponse response,
-            @RequestParam("serviceUrl") final String serviceUrl,
-            @RequestParam("typeName") final String featureType,
-            @RequestParam(required = false, value = "bbox") final String bboxJSONString,
-            @RequestParam(required = false, value = "maxFeatures", defaultValue = "0") int maxFeatures)
-            throws Exception {
-
-        FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxJSONString);
-
-        SimpleBBoxFilter filter = new SimpleBBoxFilter();
-        String filterString = null;
-        // this is what google map uses
-        String srs = null;
-        if (bbox == null) {
-            filterString = filter.getFilterStringAllRecords();
-        } else {
-            filterString = filter.getFilterStringBoundingBox(bbox);
-        }
-
-        WFSResponse wfsResponse = null;
-        try {
-            wfsResponse = wfsGml32Service.getWfsResponse(serviceUrl, featureType, filterString, maxFeatures, srs);
-        } catch (Exception ex) {
-            log.warn(String.format("Exception getting '%2$s' from '%1$s': %3$s", serviceUrl, featureType, ex));
-            log.debug("Exception: ", ex);
-            generateExceptionResponse(ex, serviceUrl);
-        }
-
-        String responseString = wfsResponse.getData();        
-        InputStream responseStream = new ByteArrayInputStream(responseString.getBytes());
-        FileIOUtil.writeInputToOutputStream(responseStream, response.getOutputStream(), WMSController.BUFFERSIZE, true);
     }
     
     /**
