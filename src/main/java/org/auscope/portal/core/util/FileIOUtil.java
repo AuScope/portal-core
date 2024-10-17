@@ -237,6 +237,7 @@ public class FileIOUtil {
     public static String writeResponseToString(DownloadResponse download) throws IOException {
         String strResponse = "";
         try {
+            @SuppressWarnings("unused")
             URI downloadURI = new URI(download.getRequestURL());
         } catch (URISyntaxException e1) {
             throw new IOException(e1.getMessage(), e1);

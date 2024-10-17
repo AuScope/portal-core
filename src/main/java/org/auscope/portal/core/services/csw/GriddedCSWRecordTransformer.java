@@ -1,6 +1,5 @@
 package org.auscope.portal.core.services.csw;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -52,7 +51,6 @@ public class GriddedCSWRecordTransformer extends CSWRecordTransformer {
         String dateStamp = evalXPathString(this.mdMetadataNode, "gmd:dateStamp/gco:DateTime");
         String dateTimeString = null;
         // Note: ElasticSEarch indexes the String field as a Date for some reason, so it can't be empty
-        SimpleDateFormat sdf = new SimpleDateFormat(DATETIMEFORMATSTRING);
         try {
         	dateTimeString = LocalDateTime.parse(dateStamp).format(dateTimeFormatter); 
         } catch(DateTimeParseException e) {

@@ -1,10 +1,7 @@
 package org.auscope.portal.core.server.controllers;
 
-import java.net.URISyntaxException;
 import java.util.List;
 
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.URIBuilder;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.CSWService;
 import org.auscope.portal.core.services.csw.CSWServiceItem;

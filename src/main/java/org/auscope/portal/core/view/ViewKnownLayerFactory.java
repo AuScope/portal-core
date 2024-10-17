@@ -4,16 +4,12 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
-import org.auscope.portal.core.services.responses.csw.CSWGeographicElement;
 import org.auscope.portal.core.view.knownlayer.KnownLayer;
 import org.auscope.portal.core.view.knownlayer.KnownLayerSelector;
 import org.auscope.portal.core.view.knownlayer.SelectorsMode;
 import org.auscope.portal.core.view.knownlayer.WMSSelectors;
 import org.json.JSONArray;
-import org.json.JSONObject;
 import org.springframework.ui.ModelMap;
 
 /**
