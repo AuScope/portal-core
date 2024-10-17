@@ -244,37 +244,6 @@ public class WMSController extends BaseCSWController {
         InputStream responseStream = new ByteArrayInputStream(responseString.getBytes());
         FileIOUtil.writeInputToOutputStream(responseStream, response.getOutputStream(), BUFFERSIZE, true);
     }
-    /**
-    * get the default style for polygon Layer
-    * @param response
-    * @param layerName 
-    * 			the layName 
-    * @throws Exception
-    */
-    @RequestMapping("/getDefaultPolygonStyle.do")
-    public void getDefaultPolygonStyle( 
-            HttpServletResponse response,    		
-            @RequestParam(required = false, value = "layerName") String layerName,
-            @RequestParam(required = false, value = "colour") Integer colour)
-                    throws Exception {
-        if (colour == null) {
-            colour = 0xed9c38; 
-        }
-        String hexColour="#" + Integer.toHexString(colour);    	
-        String style = this.getStyle(layerName, hexColour, "POLYGON");
-
-        response.setContentType("text/xml");
-
-        ByteArrayInputStream styleStream = new ByteArrayInputStream(
-                style.getBytes());
-        OutputStream outputStream = response.getOutputStream();
-
-        FileIOUtil.writeInputToOutputStream(styleStream, outputStream, 1024, false);
-
-        styleStream.close();
-        outputStream.close();
-    }
-
 
     /**
      * Gets the LegendURL from the getCapabilities record if it is defined there.
@@ -311,74 +280,5 @@ public class WMSController extends BaseCSWController {
             log.debug(e);
             return generateJSONResponseMAV(false, "", null);
         }
-    }
-
-    /**
-    * get the default style for point Layer
-    * @param response
-    * @param layerName 
-    * 			the layName 
-    * @throws Exception
-    */    
-    @RequestMapping("/getDefaultStyle.do")
-    public void getDefaultStyle(
-            HttpServletResponse response,
-            @RequestParam("layerName") String layerName,
-            @RequestParam(required = false, value = "colour") Integer colour)
-                    throws Exception {
-        if (colour == null) {
-            colour = 0xed9c38; 
-        }
-        String hexColour="#" + Integer.toHexString(colour);
-        String style = this.getStyle(layerName, hexColour, "POINT");
-
-        response.setContentType("text/xml");
-
-        ByteArrayInputStream styleStream = new ByteArrayInputStream(
-                style.getBytes());
-        OutputStream outputStream = response.getOutputStream();
-
-        FileIOUtil.writeInputToOutputStream(styleStream, outputStream, 1024, false);
-
-        styleStream.close();
-        outputStream.close();
-    }
-
-    public String getStyle(String name, String color, String spatialType) {
-        // VT : This is a hack to get around using functions in feature chaining
-        // https://jira.csiro.au/browse/SISS-1374
-        // there are currently no available fix as wms request are made prior to
-        // knowing app-schema mapping.
-        String header = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                + "<StyledLayerDescriptor version=\"1.0.0\" xmlns:mo=\"http://xmlns.geoscience.gov.au/minoccml/1.0\" xmlns:er=\"urn:cgi:xmlns:GGIC:EarthResource:1.1\" xsi:schemaLocation=\"http://www.opengis.net/sld StyledLayerDescriptor.xsd\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:gsml=\"urn:cgi:xmlns:CGI:GeoSciML:2.0\" xmlns:sld=\"http://www.opengis.net/sld\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
-                + "<NamedLayer>" + "<Name>" + name + "</Name>" + "<UserStyle>" + "<Name>portal-style</Name>" + "<Title>"
-                + name + "</Title>" + "<Abstract>Portal-Default-Style</Abstract>" + "<IsDefault>1</IsDefault>"
-                + "<FeatureTypeStyle>";
-        String tail = "</FeatureTypeStyle>" + "</UserStyle>" + "</NamedLayer>" + "</StyledLayerDescriptor>";
-
-        String rule = "";
-
-        switch (spatialType) {
-        case "POLYGON":
-            rule = "<Rule>" + "<Name>AuscopeDefaultPolygon</Name>" + "<PolygonSymbolizer>" + "<Fill>"
-                    + "<CssParameter name=\"fill\">" + color + "</CssParameter>"
-                    + "<CssParameter name=\"fill-opacity\">0.4</CssParameter>" + "</Fill>" + "<Stroke>"
-                    + "<CssParameter name=\"stroke\">" + color + "</CssParameter>"
-                    + "<CssParameter name=\"stroke-width\">0.1</CssParameter>" + "</Stroke>" + "</PolygonSymbolizer>"
-                    + "</Rule>";
-            break;
-        case "POINT":
-        default:
-            rule = "<Rule>" + "<Name>AuscopeDefaultPoint</Name>" + "<Abstract>" + name + "</Abstract>" + "<PointSymbolizer>"
-                    + "<Graphic>" + "<Mark>" + "<WellKnownName>circle</WellKnownName>" + "<Fill>"
-                    + "<CssParameter name=\"fill\">" + color + "</CssParameter>"
-                    + "<CssParameter name=\"fill-opacity\">0.4</CssParameter>" + "</Fill>" + "<Stroke>"
-                    + "<CssParameter name=\"stroke\">" + color + "</CssParameter>"
-                    + "<CssParameter name=\"stroke-width\">1</CssParameter>" + "</Stroke>" + "</Mark>"
-                    + "<Size>8</Size>" + "</Graphic>" + "</PointSymbolizer>" + "</Rule>";
-            break;
-        }
-        String style = header + rule + tail;
-        return style;
     }
 }
