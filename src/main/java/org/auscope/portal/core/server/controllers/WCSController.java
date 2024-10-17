@@ -17,7 +17,6 @@ import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.WCSService;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
-import org.auscope.portal.core.services.responses.wcs.GetCapabilitiesRecord_1_0_0;
 import org.auscope.portal.core.services.responses.wcs.Resolution;
 import org.auscope.portal.core.services.responses.wcs.TimeConstraint;
 import org.auscope.portal.core.util.FileIOUtil;
@@ -25,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 
 /**
  * A controller that attempts to provide functions for use by the generic WCS use case.
@@ -314,25 +312,4 @@ public class WCSController extends BasePortalController {
 
         FileIOUtil.closeQuietly(zout);
     }
-    
-    /**
-     * Returns a WCS GetCapabilitiesRecord (v1.0.0) response.
-     * 
-     * @param serviceUrl the link the the GetCapabilities service.
-     * @return a WCS {@link GetCapabilitiesRecord_1_0_0} response as JSON.
-     */
-    @RequestMapping("/getWCSCapabilities.do")
-    public ModelAndView getCapabilities(
-    		@RequestParam("serviceUrl") final String serviceUrl) {
-    	GetCapabilitiesRecord_1_0_0 getCap = null;
-    	try {
-    		getCap = wcsService.getWcsCapabilities(serviceUrl);
-    	} catch(Exception ex) {
-    		logger.error("Error getting capabilities" , ex);
-    		return generateJSONResponseMAV(false, null,
-                    "Error occured whilst communicating to remote service: " + ex.getMessage());
-    	}
-    	return generateJSONResponseMAV(true, getCap, "");
-    }
-    
 }
