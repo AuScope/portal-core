@@ -2,24 +2,13 @@ package org.auscope.portal.core.services;
 
 import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
 
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker.ResultType;
-import org.auscope.portal.core.services.namespaces.WFSNamespaceContext;
 import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
-import org.auscope.portal.core.services.responses.wfs.WFSGetCapabilitiesResponse;
 import org.auscope.portal.core.services.responses.wfs.WFSResponse;
-import org.auscope.portal.core.util.DOMUtil;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * An abstract base class containing common functionality for all Service classes that intend to interact with a one or more Web Feature Services.
@@ -141,71 +130,6 @@ public abstract class BaseWFSService {
         } catch (Exception ex) {
             throw new PortalServiceException(method, ex);
         }
-    }
-
-    public WFSGetCapabilitiesResponse getCapabilitiesResponse(String wfsUrl) throws PortalServiceException {
-        HttpRequestBase method = null;
-
-        try {
-            //Make WFS request
-            method = wfsMethodMaker.makeGetCapabilitiesMethod(wfsUrl);
-            String responseString = httpServiceCaller.getMethodResponseAsString(method);
-
-            //Parse resulting XML
-            Document responseDoc = DOMUtil.buildDomFromString(responseString);
-            OWSExceptionParser.checkForExceptionResponse(responseDoc);
-
-            WFSGetCapabilitiesResponse parsedGetCap = new WFSGetCapabilitiesResponse();
-
-            //Get the output formats
-            XPathExpression xPathGetOf = DOMUtil
-                    .compileXPathExpr(
-                            "wfs:WFS_Capabilities/ows:OperationsMetadata/ows:Operation[@name=\"GetFeature\"]/ows:Parameter[@name=\"outputFormat\"]/ows:Value",
-                            new WFSNamespaceContext());
-            NodeList formatNodes = (NodeList) xPathGetOf.evaluate(responseDoc, XPathConstants.NODESET);
-            String[] outputFormats = new String[formatNodes.getLength()];
-            for (int i = 0; i < formatNodes.getLength(); i++) {
-                outputFormats[i] = formatNodes.item(i).getTextContent();
-            }
-            parsedGetCap.setGetFeatureOutputFormats(outputFormats);
-
-            //Get feature type names and abstracts
-            XPathExpression xPathGetTn = DOMUtil.compileXPathExpr(
-                    "wfs:WFS_Capabilities/wfs:FeatureTypeList/wfs:FeatureType/wfs:Name", new WFSNamespaceContext());
-            NodeList nameNodes = (NodeList) xPathGetTn.evaluate(responseDoc, XPathConstants.NODESET);
-            String[] typeNames = new String[nameNodes.getLength()];
-            XPathExpression xPathGetAbstract = DOMUtil.compileXPathExpr(
-                    "wfs:WFS_Capabilities/wfs:FeatureTypeList/wfs:FeatureType/wfs:Abstract", new WFSNamespaceContext());
-            NodeList abstractNodes = (NodeList) xPathGetAbstract.evaluate(responseDoc, XPathConstants.NODESET);
-            Map<String, String> featureAbstracts = new HashMap<>();
-            XPathExpression xPathGetMetadataURL = DOMUtil.compileXPathExpr(
-                    "wfs:WFS_Capabilities/wfs:FeatureTypeList/wfs:FeatureType/wfs:MetadataURL", new WFSNamespaceContext());
-            NodeList metadataURLNodes = (NodeList) xPathGetMetadataURL.evaluate(responseDoc, XPathConstants.NODESET);
-            Map<String, String> metadataURLs = new HashMap<>();
-
-            for (int i = 0; i < nameNodes.getLength(); i++) {
-                String typeName = nameNodes.item(i).getTextContent();
-                typeNames[i] = typeName;
-                if (abstractNodes.getLength() > i && abstractNodes.item(i) != null) {
-                    featureAbstracts.put(typeName, abstractNodes.item(i).getTextContent());
-                }
-                if (metadataURLNodes.getLength() > i && metadataURLNodes.item(i) != null) {
-                    metadataURLs.put(typeName, metadataURLNodes.item(i).getTextContent());
-                }
-            }
-            parsedGetCap.setFeatureTypes(typeNames);
-            parsedGetCap.setFeatureAbstracts(featureAbstracts);
-            parsedGetCap.setMetadataURLs(metadataURLs);
-
-            return parsedGetCap;
-        } catch (Exception e) {
-            throw new PortalServiceException(method, e);
-        } finally {
-            if (method != null) {
-                method.releaseConnection();
-            }
-        }
-
     }
 
     /**
