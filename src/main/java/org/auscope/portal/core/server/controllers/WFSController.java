@@ -14,7 +14,6 @@ import org.apache.http.HttpStatus;
 import org.auscope.portal.core.services.WFSService;
 import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
 import org.auscope.portal.core.services.methodmakers.filter.SimpleBBoxFilter;
-import org.auscope.portal.core.services.methodmakers.filter.SimplePropertyFilter;
 import org.auscope.portal.core.services.responses.wfs.WFSResponse;
 import org.auscope.portal.core.services.responses.wfs.WFSTransformedResponse;
 import org.auscope.portal.core.util.FileIOUtil;
@@ -154,39 +153,6 @@ public class WFSController extends BasePortalController {
         } catch (Exception ex) {
             log.warn(String.format("Exception getting '%2$s' with id '%4$s' from '%1$s': %3$s", serviceUrl,
                     featureType, ex, featureId));
-            log.debug("Exception: ", ex);
-            return generateExceptionResponse(ex, serviceUrl);
-        }
-
-        return generateNamedJSONResponseMAV(true, "gml", response.getData(), response.getMethod());
-    }
-
-    /**
-     * Given a service Url, a feature type and a property + value to filter by, this function will fetch the specific feature and then convert it into KML to be
-     * displayed, assuming that the response will be complex feature GeoSciML
-     *
-     * This function exists to workaround some WFS instances whose featureId lookups do not work as required (such as Geoserver simple feature WFS sourced from
-     * data with no primary keys)
-     *
-     * @param serviceUrl
-     * @param featureType
-     * @param featureId
-     * @param request
-     * @return
-     */
-    @RequestMapping("/requestFeatureByProperty.do")
-    public ModelAndView requestFeatureByProperty(@RequestParam("serviceUrl") final String serviceUrl,
-            @RequestParam("typeName") final String featureType,
-            @RequestParam("property") final String property,
-            @RequestParam("value") final String value) throws Exception {
-        SimplePropertyFilter filter = new SimplePropertyFilter(property, value);
-        WFSResponse response = null;
-        try {
-            response = wfsService.getWfsResponse(serviceUrl, featureType, filter.getFilterStringAllRecords(),
-                    null, null);
-        } catch (Exception ex) {
-            log.warn(String.format("Exception getting '%2$s' with property '%4$s' equal to '%5$s' '%1$s': %3$s",
-                    serviceUrl, featureType, ex, property, value));
             log.debug("Exception: ", ex);
             return generateExceptionResponse(ex, serviceUrl);
         }
