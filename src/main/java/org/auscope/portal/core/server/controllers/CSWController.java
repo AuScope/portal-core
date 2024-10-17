@@ -54,61 +54,6 @@ public class CSWController extends BaseCSWController {
     }
 
     /**
-     * use for testing a csw connection
-     * 
-     * @param cswServiceUrl
-     * @return
-     * @throws Exception
-     * @throws URISyntaxException
-     */
-    @RequestMapping("/testCSWConnection.do")
-    public ModelAndView testConnection(
-            @RequestParam(value = "cswServiceUrl", required = true) String cswServiceUrl) throws Exception {
-        try {
-            HttpGet method = new HttpGet(cswServiceUrl);
-            URIBuilder builder = new URIBuilder(cswServiceUrl);
-            // test request=GetCapabilities&service=CSW&acceptVersions=2.0.2&acceptFormats=application%2Fxml
-            builder.addParameter("request", "GetCapabilities");
-            builder.addParameter("service", "CSW");
-            builder.addParameter("acceptVersions", "2.0.2");
-            builder.addParameter("acceptFormats", "application/xml");
-            method.setURI(builder.build());
-            this.serviceCaller.getMethodResponseAsString(method);
-
-            return generateJSONResponseMAV(true);
-        } catch (Exception e) {
-            throw e;
-        }
-
-    }
-
-    /**
-     * use for testing a csw connection
-     * 
-     * @param cswServiceUrl
-     * @return
-     * @throws Exception
-     * @throws URISyntaxException
-     */
-    @RequestMapping("/testServiceGetCap.do")
-    public ModelAndView testServiceGetCap(
-            @RequestParam(value = "serviceUrl", required = true) String serviceUrl) throws Exception {
-        try {
-            HttpGet method = new HttpGet(serviceUrl);
-            URIBuilder builder = new URIBuilder(serviceUrl);
-            // test request=GetCapabilities&service=CSW&acceptVersions=2.0.2&acceptFormats=application%2Fxml
-            builder.addParameter("request", "GetCapabilities");
-            method.setURI(builder.build());
-            this.serviceCaller.getMethodResponseAsString(method);
-
-            return generateJSONResponseMAV(true);
-        } catch (Exception e) {
-            throw e;
-        }
-
-    }
-
-    /**
      * Requests CSW records from the cswServiceUrl provided. The results will be filtered by the CQL Text and the filter options. Records will be returned from
      * the starting point (where 1 is the first record, not 0) and the number of records retrieved will not exceed maxRecords.
      *
