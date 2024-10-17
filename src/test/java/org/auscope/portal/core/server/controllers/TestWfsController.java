@@ -9,7 +9,6 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.WFSService;
 import org.auscope.portal.core.services.methodmakers.filter.SimplePropertyFilter;
-import org.auscope.portal.core.services.responses.wfs.WFSCountResponse;
 import org.auscope.portal.core.services.responses.wfs.WFSResponse;
 import org.auscope.portal.core.services.responses.wfs.WFSTransformedResponse;
 import org.auscope.portal.core.test.ByteBufferedServletOutputStream;
@@ -155,56 +154,6 @@ public class TestWfsController extends PortalTestClass {
         Assert.assertTrue((Boolean) modelAndView.getModel().get("success"));
         Assert.assertNotNull(dataObj);
         Assert.assertEquals(gmlBlob, dataObj.get("gml"));
-    }
-
-    /**
-     * Tests get feature count works as expected
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testGetFeatureCount() throws Exception {
-        final String wfsUrl = "http://service/wfs";
-        final String featureType = "type:name";
-        final String bboxJsonString = "{\"bboxSrs\":\"http://www.opengis.net/gml/srs/epsg.xml%234326\",\"lowerCornerPoints\":[-5,-6],\"upperCornerPoints\":[7,8]}";
-        final int maxFeatures = 12315;
-        final int featureCount = 21;
-
-        context.checking(new Expectations() {
-            {
-                oneOf(mockWfsService).getWfsFeatureCount(with(equal(wfsUrl)), with(equal(featureType)),
-                        with(any(String.class)), with(equal(maxFeatures)), with(equal((String) null)));
-                will(returnValue(new WFSCountResponse(featureCount)));
-            }
-        });
-        ModelAndView modelAndView = wfsController.requestFeatureCount(wfsUrl, featureType, bboxJsonString, maxFeatures);
-        Integer dataObj = (Integer) modelAndView.getModel().get("data");
-        Assert.assertTrue((Boolean) modelAndView.getModel().get("success"));
-        Assert.assertNotNull(dataObj);
-        Assert.assertEquals(Integer.valueOf(featureCount), dataObj);
-    }
-
-    /**
-     * Tests get feature count works as expected
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testGetFeatureCountException() throws Exception {
-        final String wfsUrl = "http://service/wfs";
-        final String featureType = "type:name";
-        final String bboxJsonString = "{\"bboxSrs\":\"http://www.opengis.net/gml/srs/epsg.xml%234326\",\"lowerCornerPoints\":[-5,-6],\"upperCornerPoints\":[7,8]}";
-        final int maxFeatures = 12315;
-
-        context.checking(new Expectations() {
-            {
-                oneOf(mockWfsService).getWfsFeatureCount(with(equal(wfsUrl)), with(equal(featureType)),
-                        with(any(String.class)), with(equal(maxFeatures)), with(equal((String) null)));
-                will(throwException(new PortalServiceException("")));
-            }
-        });
-        ModelAndView modelAndView = wfsController.requestFeatureCount(wfsUrl, featureType, bboxJsonString, maxFeatures);
-        Assert.assertFalse((Boolean) modelAndView.getModel().get("success"));
     }
 
     /**

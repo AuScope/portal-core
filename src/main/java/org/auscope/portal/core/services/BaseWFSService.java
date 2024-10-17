@@ -14,7 +14,6 @@ import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker.ResultType;
 import org.auscope.portal.core.services.namespaces.WFSNamespaceContext;
 import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
-import org.auscope.portal.core.services.responses.wfs.WFSCountResponse;
 import org.auscope.portal.core.services.responses.wfs.WFSGetCapabilitiesResponse;
 import org.auscope.portal.core.services.responses.wfs.WFSResponse;
 import org.auscope.portal.core.util.DOMUtil;
@@ -120,33 +119,6 @@ public abstract class BaseWFSService {
                     startIndex);
         } else {
             return wfsMethodMaker.makeGetMethod(wfsUrl, featureType, featureId, srs, outputFormat);
-        }
-    }
-
-    /**
-     * Makes a WFS GetFeature request represented by method, only the count of features will be returned
-     *
-     * @param method
-     * @return
-     * @throws PortalServiceException
-     */
-    protected WFSCountResponse getWfsFeatureCount(HttpRequestBase method) throws PortalServiceException {
-        try (InputStream responseStream = httpServiceCaller.getMethodResponseAsStream(method)) {
-            Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
-            OWSExceptionParser.checkForExceptionResponse(responseDoc);
-
-            XPathExpression xPath = DOMUtil.compileXPathExpr("wfs:FeatureCollection/@numberOfFeatures",
-                    new WFSNamespaceContext());
-            Node numNode = (Node) xPath.evaluate(responseDoc, XPathConstants.NODE);
-            int numNodeValue = Integer.parseInt(numNode.getTextContent());
-
-            return new WFSCountResponse(numNodeValue);
-        } catch (Exception ex) {
-            throw new PortalServiceException(method, ex);
-        } finally {
-            if (method != null) {
-                method.releaseConnection();
-            }
         }
     }
 

@@ -16,7 +16,6 @@ import org.auscope.portal.core.services.WFSService;
 import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
 import org.auscope.portal.core.services.methodmakers.filter.SimpleBBoxFilter;
 import org.auscope.portal.core.services.methodmakers.filter.SimplePropertyFilter;
-import org.auscope.portal.core.services.responses.wfs.WFSCountResponse;
 import org.auscope.portal.core.services.responses.wfs.WFSGetCapabilitiesResponse;
 import org.auscope.portal.core.services.responses.wfs.WFSResponse;
 import org.auscope.portal.core.services.responses.wfs.WFSTransformedResponse;
@@ -195,46 +194,6 @@ public class WFSController extends BasePortalController {
         }
 
         return generateNamedJSONResponseMAV(true, "gml", response.getData(), response.getMethod());
-    }
-
-    /**
-     * Given a WFS service Url and a feature type this will query for the count of all of the features that optionally lie within a bounding box
-     *
-     * @param serviceUrl
-     *            The WFS endpoint
-     * @param featureType
-     *            The feature type name to query
-     * @param boundingBox
-     *            [Optional] A JSON encoding of a FilterBoundingBox instance
-     * @param maxFeatures
-     *            [Optional] The maximum number of features to query
-     */
-    @RequestMapping("/getFeatureCount.do")
-    public ModelAndView requestFeatureCount(@RequestParam("serviceUrl") final String serviceUrl,
-            @RequestParam("typeName") final String featureType,
-            @RequestParam(required = false, value = "bbox") final String bboxJSONString,
-            @RequestParam(required = false, value = "maxFeatures", defaultValue = "0") int maxFeatures)
-            throws Exception {
-
-        FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxJSONString);
-        SimpleBBoxFilter filter = new SimpleBBoxFilter();
-        String filterString = null;
-        if (bbox == null) {
-            filterString = filter.getFilterStringAllRecords();
-        } else {
-            filterString = filter.getFilterStringBoundingBox(bbox);
-        }
-
-        WFSCountResponse response = null;
-        try {
-            response = wfsService.getWfsFeatureCount(serviceUrl, featureType, filterString, maxFeatures, null);
-        } catch (Exception ex) {
-            log.warn(String.format("Exception getting '%2$s' from '%1$s': %3$s", serviceUrl, featureType, ex));
-            log.debug("Exception: ", ex);
-            return generateExceptionResponse(ex, serviceUrl);
-        }
-
-        return generateJSONResponseMAV(true, Integer.valueOf(response.getNumberOfFeatures()), "");
     }
 
     /**

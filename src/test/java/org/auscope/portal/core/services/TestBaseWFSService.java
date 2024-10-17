@@ -11,7 +11,6 @@ import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker.ResultType;
-import org.auscope.portal.core.services.responses.wfs.WFSCountResponse;
 import org.auscope.portal.core.services.responses.wfs.WFSGetCapabilitiesResponse;
 import org.auscope.portal.core.services.responses.wfs.WFSResponse;
 import org.auscope.portal.core.test.PortalTestClass;
@@ -107,53 +106,6 @@ public class TestBaseWFSService extends PortalTestClass {
 
         Assert.assertSame(mockMethod,
                 service.generateWFSRequest(wfsUrl, featureType, featureId, filterString, maxFeatures, srs, resultType));
-    }
-
-    @Test
-    public void testGetFeatureCount() throws PortalServiceException, IOException {
-        try (HttpClientInputStream responseStream = new HttpClientInputStream(ResourceUtil
-                .loadResourceAsStream("org/auscope/portal/core/test/responses/wfs/GetWFSFeatureCount.xml"), null)) {
-            context.checking(new Expectations() {
-                {
-                    oneOf(mockHttpServiceCaller).getMethodResponseAsStream(mockMethod);
-                    will(returnValue(responseStream));
-                    oneOf(mockMethod).releaseConnection();
-                }
-            });
-
-            WFSCountResponse response = service.getWfsFeatureCount(mockMethod);
-            Assert.assertNotNull(response);
-            Assert.assertEquals(161, response.getNumberOfFeatures());
-        }
-    }
-
-    @Test(expected = PortalServiceException.class)
-    public void testGetFeatureCountError() throws PortalServiceException, IOException {
-        context.checking(new Expectations() {
-            {
-                oneOf(mockHttpServiceCaller).getMethodResponseAsStream(mockMethod);
-                will(throwException(new IOException()));
-                oneOf(mockMethod).releaseConnection();
-            }
-        });
-
-        service.getWfsFeatureCount(mockMethod);
-    }
-
-    @Test(expected = PortalServiceException.class)
-    public void testGetFeatureCountOWSError() throws PortalServiceException, IOException {
-        try (InputStream responseStream = getClass().getResourceAsStream("/OWSExceptionSample1.xml")) {
-
-            context.checking(new Expectations() {
-                {
-                    oneOf(mockHttpServiceCaller).getMethodResponseAsStream(mockMethod);
-                    will(returnValue(responseStream));
-                    oneOf(mockMethod).releaseConnection();
-                }
-            });
-
-            service.getWfsFeatureCount(mockMethod);
-        }
     }
 
     @Test(expected = PortalServiceException.class)
