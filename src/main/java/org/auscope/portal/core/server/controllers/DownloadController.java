@@ -85,44 +85,6 @@ public class DownloadController extends BasePortalController {
         this.serviceConfiguration = serviceConfiguration;
     }
 
-    @RequestMapping("/getGmlDownload.do")
-    public void getGmlDownload(
-            @RequestParam("email") final String email,
-            HttpServletResponse response) throws Exception {
-        DownloadTracker downloadTracker = DownloadTracker.getTracker(email);
-        Progression progress = downloadTracker.getProgress();
-        if (progress == Progression.COMPLETED) {
-            response.setContentType("application/zip");
-
-            boolean csvSign = false;
-            ZipFile downloadZip = null;
-            try {
-            	downloadZip = new ZipFile(downloadTracker.getFileHandle().getAbsolutePath());
-            	Enumeration<? extends ZipEntry> zipEntries = downloadZip.entries();
-                while (zipEntries.hasMoreElements()) {
-                    String fileName = ((ZipEntry) zipEntries.nextElement()).getName();
-                    if (fileName.contains("csv"))
-                    {
-                        csvSign = true;
-                        break;
-                    }
-                }
-            } finally {
-                if (downloadZip != null) {
-                    downloadZip.close();
-                }
-            }
-            if (csvSign == false)
-                response.setHeader("Content-Disposition",
-                    "inline; filename=GMLDownload.zip;");
-            else
-                response.setHeader("Content-Disposition",
-                    "inline; filename=CSVDownload.zip;");
-            FileIOUtil.writeInputToOutputStream(downloadTracker.getFile(), response.getOutputStream(), 1024, true);
-        }
-
-    }
-
     /**
      * Given a list of URls, this function will collate the responses into a zip file and send the response back to the browser. if no email is provided, a zip
      * is written to the response output If email address is provided, a html response is returned to the user informing his request has been processed and to
