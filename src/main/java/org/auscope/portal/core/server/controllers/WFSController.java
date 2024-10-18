@@ -1,11 +1,9 @@
 package org.auscope.portal.core.server.controllers;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,13 +11,9 @@ import jakarta.servlet.http.HttpServletResponseWrapper;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.http.HttpStatus;
-import org.auscope.portal.core.services.WFSGml32Service;
 import org.auscope.portal.core.services.WFSService;
 import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
 import org.auscope.portal.core.services.methodmakers.filter.SimpleBBoxFilter;
-import org.auscope.portal.core.services.methodmakers.filter.SimplePropertyFilter;
-import org.auscope.portal.core.services.responses.wfs.WFSCountResponse;
-import org.auscope.portal.core.services.responses.wfs.WFSGetCapabilitiesResponse;
 import org.auscope.portal.core.services.responses.wfs.WFSResponse;
 import org.auscope.portal.core.services.responses.wfs.WFSTransformedResponse;
 import org.auscope.portal.core.util.FileIOUtil;
@@ -44,48 +38,9 @@ public class WFSController extends BasePortalController {
 
     private WFSService wfsService;
 
-    private WFSGml32Service wfsGml32Service;
-
     @Autowired
-    public WFSController(WFSService wfsService, WFSGml32Service wfsGml32Service) {
+    public WFSController(WFSService wfsService) {
         this.wfsService = wfsService;
-        this.wfsGml32Service = wfsGml32Service;
-
-    }
-
-    
-    @RequestMapping("/getAllGml32Features.do")
-    public void requestAllGml32Features(HttpServletResponse response,
-            @RequestParam("serviceUrl") final String serviceUrl,
-            @RequestParam("typeName") final String featureType,
-            @RequestParam(required = false, value = "bbox") final String bboxJSONString,
-            @RequestParam(required = false, value = "maxFeatures", defaultValue = "0") int maxFeatures)
-            throws Exception {
-
-        FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxJSONString);
-
-        SimpleBBoxFilter filter = new SimpleBBoxFilter();
-        String filterString = null;
-        // this is what google map uses
-        String srs = null;
-        if (bbox == null) {
-            filterString = filter.getFilterStringAllRecords();
-        } else {
-            filterString = filter.getFilterStringBoundingBox(bbox);
-        }
-
-        WFSResponse wfsResponse = null;
-        try {
-            wfsResponse = wfsGml32Service.getWfsResponse(serviceUrl, featureType, filterString, maxFeatures, srs);
-        } catch (Exception ex) {
-            log.warn(String.format("Exception getting '%2$s' from '%1$s': %3$s", serviceUrl, featureType, ex));
-            log.debug("Exception: ", ex);
-            generateExceptionResponse(ex, serviceUrl);
-        }
-
-        String responseString = wfsResponse.getData();        
-        InputStream responseStream = new ByteArrayInputStream(responseString.getBytes());
-        FileIOUtil.writeInputToOutputStream(responseStream, response.getOutputStream(), WMSController.BUFFERSIZE, true);
     }
     
     /**
@@ -206,79 +161,6 @@ public class WFSController extends BasePortalController {
     }
 
     /**
-     * Given a service Url, a feature type and a property + value to filter by, this function will fetch the specific feature and then convert it into KML to be
-     * displayed, assuming that the response will be complex feature GeoSciML
-     *
-     * This function exists to workaround some WFS instances whose featureId lookups do not work as required (such as Geoserver simple feature WFS sourced from
-     * data with no primary keys)
-     *
-     * @param serviceUrl
-     * @param featureType
-     * @param featureId
-     * @param request
-     * @return
-     */
-    @RequestMapping("/requestFeatureByProperty.do")
-    public ModelAndView requestFeatureByProperty(@RequestParam("serviceUrl") final String serviceUrl,
-            @RequestParam("typeName") final String featureType,
-            @RequestParam("property") final String property,
-            @RequestParam("value") final String value) throws Exception {
-        SimplePropertyFilter filter = new SimplePropertyFilter(property, value);
-        WFSResponse response = null;
-        try {
-            response = wfsService.getWfsResponse(serviceUrl, featureType, filter.getFilterStringAllRecords(),
-                    null, null);
-        } catch (Exception ex) {
-            log.warn(String.format("Exception getting '%2$s' with property '%4$s' equal to '%5$s' '%1$s': %3$s",
-                    serviceUrl, featureType, ex, property, value));
-            log.debug("Exception: ", ex);
-            return generateExceptionResponse(ex, serviceUrl);
-        }
-
-        return generateNamedJSONResponseMAV(true, "gml", response.getData(), response.getMethod());
-    }
-
-    /**
-     * Given a WFS service Url and a feature type this will query for the count of all of the features that optionally lie within a bounding box
-     *
-     * @param serviceUrl
-     *            The WFS endpoint
-     * @param featureType
-     *            The feature type name to query
-     * @param boundingBox
-     *            [Optional] A JSON encoding of a FilterBoundingBox instance
-     * @param maxFeatures
-     *            [Optional] The maximum number of features to query
-     */
-    @RequestMapping("/getFeatureCount.do")
-    public ModelAndView requestFeatureCount(@RequestParam("serviceUrl") final String serviceUrl,
-            @RequestParam("typeName") final String featureType,
-            @RequestParam(required = false, value = "bbox") final String bboxJSONString,
-            @RequestParam(required = false, value = "maxFeatures", defaultValue = "0") int maxFeatures)
-            throws Exception {
-
-        FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxJSONString);
-        SimpleBBoxFilter filter = new SimpleBBoxFilter();
-        String filterString = null;
-        if (bbox == null) {
-            filterString = filter.getFilterStringAllRecords();
-        } else {
-            filterString = filter.getFilterStringBoundingBox(bbox);
-        }
-
-        WFSCountResponse response = null;
-        try {
-            response = wfsService.getWfsFeatureCount(serviceUrl, featureType, filterString, maxFeatures, null);
-        } catch (Exception ex) {
-            log.warn(String.format("Exception getting '%2$s' from '%1$s': %3$s", serviceUrl, featureType, ex));
-            log.debug("Exception: ", ex);
-            return generateExceptionResponse(ex, serviceUrl);
-        }
-
-        return generateJSONResponseMAV(true, Integer.valueOf(response.getNumberOfFeatures()), "");
-    }
-
-    /**
      * Encodes the url, so that any space characters are encoded as %20
      * note: tried various encoding libraries but they encode other characters in the url, i.e. /
      * 
@@ -377,41 +259,6 @@ public class WFSController extends BasePortalController {
             log.debug("Exception: ", ex);
             // Create a wrapper for the servlet response as the output stream has already been consumed
             new HttpServletResponseWrapper(response).sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    /**
-     * Gets the MetadataURL  from the getCapabilities record if it is defined there.
-     * The version is currently hardcoded in the WFSGetFeaturemethodMaker class.
-     *
-     * @param serviceUrl The WMS URL to query
-     * @param version the version of the WFS to request
-     * @param name the name of the feature
-     */
-    @RequestMapping("/getWFSFeatureMetadataURL.do")
-    public ModelAndView getWFSFeatureMetadataURL(
-            @RequestParam("serviceUrl") String serviceUrl,
-            @RequestParam("version") String version,
-            @RequestParam("name") String name) throws Exception {
-
-        try {
-            /*
-             * It might be preferable to create a nicer way of getting the data for the specific layer
-             * This implementation just loops through the whole capabilities document looking for the layer.
-             */
-            String decodedServiceURL = URLDecoder.decode(serviceUrl, "UTF-8");
-
-            WFSGetCapabilitiesResponse getCapabilitiesRecord =
-                    wfsService.getCapabilitiesResponse(decodedServiceURL);
-
-            String featureMetadataURL = getCapabilitiesRecord.getMetadataURLs().get(name);
-
-            return generateJSONResponseMAV(true, featureMetadataURL, "");
-
-        } catch (Exception e) {
-            log.warn(String.format("Unable to download WFS Feature metadataURL for '%1$s'", serviceUrl));
-            log.debug(e);
-            return generateJSONResponseMAV(false, "", null);
         }
     }
 }

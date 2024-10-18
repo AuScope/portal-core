@@ -340,18 +340,7 @@ public class KnownLayerService {
 
             if (kl.getOnlineResourceOrder() != null) {
                 onlineReorder = true;
-
                 onlineResourceOrderList = kl.getOnlineResourceOrder();
-
-                for (int i = 0; i < onlineResourceOrderList.length(); i++) {
-
-                    JSONArray resourceOrderItem = (JSONArray) onlineResourceOrderList.get(i);
-
-                    if ((resourceOrderItem).length() == 2) {
-                        String resourceOrderName = (String) resourceOrderItem.get(0);
-                        int resourceOrderIndex = (int) resourceOrderItem.get(1);
-                    }
-                }
             }
             
             for (CSWRecord rec : knownLayerAndRecords.getBelongingRecords()) {

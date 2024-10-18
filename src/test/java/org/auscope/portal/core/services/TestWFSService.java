@@ -1,17 +1,14 @@
 package org.auscope.portal.core.services;
 
-import java.io.InputStream;
 import java.net.ConnectException;
 
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker.ResultType;
 import org.auscope.portal.core.services.namespaces.ErmlNamespaceContext;
 import org.auscope.portal.core.services.responses.ows.OWSException;
-import org.auscope.portal.core.services.responses.wfs.WFSCountResponse;
 import org.auscope.portal.core.services.responses.wfs.WFSResponse;
 import org.auscope.portal.core.services.responses.wfs.WFSTransformedResponse;
 import org.auscope.portal.core.test.PortalTestClass;
@@ -416,108 +413,6 @@ public class TestWFSService extends PortalTestClass {
 
         try {
             service.getWfsResponseAsHtml(serviceUrl, baseUrl);
-            Assert.fail("Exception should have been thrown");
-        } catch (PortalServiceException ex) {
-            Assert.assertTrue(ex.getCause() instanceof OWSException);
-            Assert.assertNotNull(ex.getRootMethod());
-        }
-    }
-
-    /**
-     * Tests the count request works as expected
-     */
-    @Test
-    public void testGetWfsCount() throws Exception {
-        final String filterString = "<ogc:filter/>"; //we aren't testing the validity of this
-        final String serviceUrl = "http://service/wfs";
-        final String srsName = "srsName";
-        final int maxFeatures = 12321;
-        final String typeName = "type:Name";
-        final InputStream responseStream = ResourceUtil
-                .loadResourceAsStream("org/auscope/portal/core/test/responses/wfs/GetWFSFeatureCount.xml");
-        final int expectedCount = 161;
-
-        context.checking(new Expectations() {
-            {
-                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
-                will(returnValue(new HttpClientInputStream(responseStream, null)));
-
-                oneOf(mockMethodMaker).makePostMethod(serviceUrl, typeName, filterString, maxFeatures, srsName,
-                        ResultType.Hits, null, null);
-                will(returnValue(mockMethod));
-
-                oneOf(mockMethod).releaseConnection();
-            }
-        });
-
-        WFSCountResponse response = service
-                .getWfsFeatureCount(serviceUrl, typeName, filterString, maxFeatures, srsName);
-        Assert.assertNotNull(response);
-        Assert.assertEquals(expectedCount, response.getNumberOfFeatures());
-    }
-
-    /**
-     * Tests the count request fails as expected
-     */
-    @Test
-    public void testGetWfsCountError() throws Exception {
-        final String filterString = "<ogc:filter/>"; //we aren't testing the validity of this
-        final String serviceUrl = "http://service/wfs";
-        final String srsName = "srsName";
-        final ConnectException exceptionThrown = new ConnectException();
-        final int maxFeatures = 12321;
-        final String typeName = "type:Name";
-
-        context.checking(new Expectations() {
-            {
-                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
-                will(throwException(exceptionThrown));
-
-                oneOf(mockMethodMaker).makePostMethod(serviceUrl, typeName, filterString, maxFeatures, srsName,
-                        ResultType.Hits, null, null);
-                will(returnValue(mockMethod));
-
-                oneOf(mockMethod).releaseConnection();
-            }
-        });
-
-        try {
-            service.getWfsFeatureCount(serviceUrl, typeName, filterString, maxFeatures, srsName);
-            Assert.fail("Exception should have been thrown");
-        } catch (PortalServiceException ex) {
-            Assert.assertSame(exceptionThrown, ex.getCause());
-            Assert.assertSame(mockMethod, ex.getRootMethod());
-        }
-    }
-
-    /**
-     * Tests the count request fails as expected
-     */
-    @Test
-    public void testGetWfsCountOWSError() throws Exception {
-        final String filterString = "<ogc:filter/>"; //we aren't testing the validity of this
-        final String serviceUrl = "http://service/wfs";
-        final String srsName = "srsName";
-        final int maxFeatures = 12321;
-        final String typeName = "type:Name";
-        final InputStream responseStream = ResourceUtil
-                .loadResourceAsStream("org/auscope/portal/core/test/responses/ows/OWSExceptionSample1.xml");
-
-        context.checking(new Expectations() {
-            {
-                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
-                will(returnValue(new HttpClientInputStream(responseStream, null)));
-
-                oneOf(mockMethodMaker).makePostMethod(serviceUrl, typeName, filterString, maxFeatures, srsName,
-                        ResultType.Hits, null, null);
-                will(returnValue(mockMethod));
-
-                oneOf(mockMethod).releaseConnection();
-            }
-        });
-
-        try {
-            service.getWfsFeatureCount(serviceUrl, typeName, filterString, maxFeatures, srsName);
             Assert.fail("Exception should have been thrown");
         } catch (PortalServiceException ex) {
             Assert.assertTrue(ex.getCause() instanceof OWSException);

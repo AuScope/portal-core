@@ -1,10 +1,7 @@
 package org.auscope.portal.core.server.controllers;
 
-import java.net.URISyntaxException;
 import java.util.List;
 
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.URIBuilder;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.CSWService;
 import org.auscope.portal.core.services.csw.CSWServiceItem;
@@ -51,61 +48,6 @@ public class CSWController extends BaseCSWController {
                 endOfDay ? 59 : 0, // minuteOfHour
                 endOfDay ? 59 : 0, // secondOfMinute
                 endOfDay ? 999 : 0); // millisOfSecond
-    }
-
-    /**
-     * use for testing a csw connection
-     * 
-     * @param cswServiceUrl
-     * @return
-     * @throws Exception
-     * @throws URISyntaxException
-     */
-    @RequestMapping("/testCSWConnection.do")
-    public ModelAndView testConnection(
-            @RequestParam(value = "cswServiceUrl", required = true) String cswServiceUrl) throws Exception {
-        try {
-            HttpGet method = new HttpGet(cswServiceUrl);
-            URIBuilder builder = new URIBuilder(cswServiceUrl);
-            // test request=GetCapabilities&service=CSW&acceptVersions=2.0.2&acceptFormats=application%2Fxml
-            builder.addParameter("request", "GetCapabilities");
-            builder.addParameter("service", "CSW");
-            builder.addParameter("acceptVersions", "2.0.2");
-            builder.addParameter("acceptFormats", "application/xml");
-            method.setURI(builder.build());
-            this.serviceCaller.getMethodResponseAsString(method);
-
-            return generateJSONResponseMAV(true);
-        } catch (Exception e) {
-            throw e;
-        }
-
-    }
-
-    /**
-     * use for testing a csw connection
-     * 
-     * @param cswServiceUrl
-     * @return
-     * @throws Exception
-     * @throws URISyntaxException
-     */
-    @RequestMapping("/testServiceGetCap.do")
-    public ModelAndView testServiceGetCap(
-            @RequestParam(value = "serviceUrl", required = true) String serviceUrl) throws Exception {
-        try {
-            HttpGet method = new HttpGet(serviceUrl);
-            URIBuilder builder = new URIBuilder(serviceUrl);
-            // test request=GetCapabilities&service=CSW&acceptVersions=2.0.2&acceptFormats=application%2Fxml
-            builder.addParameter("request", "GetCapabilities");
-            method.setURI(builder.build());
-            this.serviceCaller.getMethodResponseAsString(method);
-
-            return generateJSONResponseMAV(true);
-        } catch (Exception e) {
-            throw e;
-        }
-
     }
 
     /**

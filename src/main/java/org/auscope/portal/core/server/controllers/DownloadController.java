@@ -3,11 +3,9 @@ package org.auscope.portal.core.server.controllers;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -83,69 +81,6 @@ public class DownloadController extends BasePortalController {
     public DownloadController(HttpServiceCaller serviceCaller, ServiceConfiguration serviceConfiguration) {
         this.serviceCaller = serviceCaller;
         this.serviceConfiguration = serviceConfiguration;
-    }
-
-    @RequestMapping("/getGmlDownload.do")
-    public void getGmlDownload(
-            @RequestParam("email") final String email,
-            HttpServletResponse response) throws Exception {
-        DownloadTracker downloadTracker = DownloadTracker.getTracker(email);
-        Progression progress = downloadTracker.getProgress();
-        if (progress == Progression.COMPLETED) {
-            response.setContentType("application/zip");
-
-            boolean csvSign = false;
-            ZipFile downloadZip = null;
-            try {
-            	downloadZip = new ZipFile(downloadTracker.getFileHandle().getAbsolutePath());
-            	Enumeration<? extends ZipEntry> zipEntries = downloadZip.entries();
-                while (zipEntries.hasMoreElements()) {
-                    String fileName = ((ZipEntry) zipEntries.nextElement()).getName();
-                    if (fileName.contains("csv"))
-                    {
-                        csvSign = true;
-                        break;
-                    }
-                }
-            } finally {
-                if (downloadZip != null) {
-                    downloadZip.close();
-                }
-            }
-            if (csvSign == false)
-                response.setHeader("Content-Disposition",
-                    "inline; filename=GMLDownload.zip;");
-            else
-                response.setHeader("Content-Disposition",
-                    "inline; filename=CSVDownload.zip;");
-            FileIOUtil.writeInputToOutputStream(downloadTracker.getFile(), response.getOutputStream(), 1024, true);
-        }
-
-    }
-
-    @RequestMapping("/checkGMLDownloadStatus.do")
-    public void checkGMLDownloadStatus(
-            @RequestParam("email") final String email,
-            HttpServletResponse response,
-            HttpServletRequest request) throws Exception {
-
-        DownloadTracker downloadTracker = DownloadTracker.getTracker(email);
-        Progression progress = downloadTracker.getProgress();
-        String htmlResponse = "";
-        response.setContentType("text/html");
-
-        if (progress == Progression.INPROGRESS) {
-            htmlResponse = "<html><p>Download currently still in progress</p></html>";
-        } else if (progress == Progression.NOT_STARTED) {
-            htmlResponse = "<html><p>No download request found..</p></html>";
-        } else if (progress == Progression.COMPLETED) {
-            htmlResponse = "<html><p>Your download has successfully completed.</p><p><a href='getGmlDownload.do?email="
-                    + email + "'>Click on this link to download</a></p></html>";
-        } else {
-            htmlResponse = "<html><p>A serious error has occurred, please contact our Administrator on cg-admin@csiro.au</p></html>";
-        }
-
-        response.getOutputStream().write(htmlResponse.getBytes());
     }
 
     /**

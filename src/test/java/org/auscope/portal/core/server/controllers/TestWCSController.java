@@ -15,14 +15,12 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.auscope.portal.core.services.WCSService;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
-import org.auscope.portal.core.services.responses.wcs.DescribeCoverageRecord;
 import org.auscope.portal.core.services.responses.wcs.Resolution;
 import org.auscope.portal.core.services.responses.wcs.TimeConstraint;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.web.servlet.ModelAndView;
 
 public class TestWCSController extends PortalTestClass {
 
@@ -225,28 +223,5 @@ public class TestWCSController extends PortalTestClass {
         int dataRead = zip.read(uncompressedData);
         Assert.assertEquals(netCdfData.length, dataRead);
         Assert.assertArrayEquals(netCdfData, uncompressedData);
-    }
-
-    @Test
-    public void testDescribeCoverageSuccess() throws Exception {
-        final String serviceUrl = "http://fake.com/bob";
-        final String layerName = "layer_name";
-        final DescribeCoverageRecord[] records = new DescribeCoverageRecord[0];
-
-        context.checking(new Expectations() {
-            {
-                oneOf(wcsService).describeCoverage(serviceUrl, layerName);
-                will(returnValue(records));
-            }
-        });
-
-        WCSController controller = new WCSController(wcsService);
-        ModelAndView mav = controller.describeCoverage(serviceUrl, layerName);
-
-        Assert.assertNotNull(mav);
-        Map<String, Object> model = mav.getModel();
-
-        Assert.assertEquals(true, model.get("success"));
-        Assert.assertSame(records, model.get("data"));
     }
 }

@@ -2,7 +2,6 @@ package org.auscope.portal.core.services;
 
 import java.awt.Dimension;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,11 +11,9 @@ import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WCSMethodMaker;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
-import org.auscope.portal.core.services.responses.wcs.DescribeCoverageRecord;
 import org.auscope.portal.core.services.responses.wcs.Resolution;
 import org.auscope.portal.core.services.responses.wcs.TimeConstraint;
 import org.auscope.portal.core.test.PortalTestClass;
-import org.auscope.portal.core.util.ResourceUtil;
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Before;
@@ -91,71 +88,5 @@ public class TestWCSService extends PortalTestClass {
 
         service.getCoverage(serviceUrl, coverageName, downloadFormat, outputSize, outputResolution, outputCrs,
                 inputCrs, bbox, timeConstraint, customParameters);
-    }
-
-    @Test
-    public void testDescribeCoverage() throws PortalServiceException, URISyntaxException, IOException {
-        final String serviceUrl = "http://example.org/wcs";
-        final String coverageName = "coverage";
-
-        try (final HttpClientInputStream responseStream = new HttpClientInputStream(ResourceUtil
-                .loadResourceAsStream("org/auscope/portal/core/test/responses/wcs/DescribeCoverageResponse1.xml"), null)) {
-
-            context.checking(new Expectations() {
-                {
-                    oneOf(mockMethodMaker).describeCoverageMethod(serviceUrl, coverageName);
-                    will(returnValue(mockMethod));
-                    oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
-                    will(returnValue(responseStream));
-                    oneOf(mockMethod).releaseConnection();
-                }
-            });
-
-            // Just going to do a quick test on the response - tests for parsing
-            // the actual data are handled
-            // by the DescribeCoverageRecord class
-            DescribeCoverageRecord[] recs = service.describeCoverage(serviceUrl, coverageName);
-            Assert.assertNotNull(recs);
-            Assert.assertEquals(1, recs.length);
-        }
-    }
-
-    @Test(expected = PortalServiceException.class)
-    public void testDescribeCoverageOwsError() throws PortalServiceException, URISyntaxException, IOException {
-        final String serviceUrl = "http://example.org/wcs";
-        final String coverageName = "coverage";
-
-        try (final InputStream responseStream = getClass().getResourceAsStream("/OWSExceptionSample1.xml")) {
-
-            context.checking(new Expectations() {
-                {
-                    oneOf(mockMethodMaker).describeCoverageMethod(serviceUrl, coverageName);
-                    will(returnValue(mockMethod));
-                    oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
-                    will(returnValue(responseStream));
-                    oneOf(mockMethod).releaseConnection();
-                }
-            });
-
-            service.describeCoverage(serviceUrl, coverageName);
-        }
-    }
-
-    @Test(expected = PortalServiceException.class)
-    public void testDescribeCoverageConnectionError() throws URISyntaxException, IOException, PortalServiceException {
-        final String serviceUrl = "http://example.org/wcs";
-        final String coverageName = "coverage";
-
-        context.checking(new Expectations() {
-            {
-                oneOf(mockMethodMaker).describeCoverageMethod(serviceUrl, coverageName);
-                will(returnValue(mockMethod));
-                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
-                will(throwException(new IOException()));
-                oneOf(mockMethod).releaseConnection();
-            }
-        });
-
-        service.describeCoverage(serviceUrl, coverageName);
     }
 }

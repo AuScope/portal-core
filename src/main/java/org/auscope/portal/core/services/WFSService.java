@@ -9,7 +9,6 @@ import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker.ResultType;
 import org.auscope.portal.core.services.namespaces.ErmlNamespaceContext;
 import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
-import org.auscope.portal.core.services.responses.wfs.WFSCountResponse;
 import org.auscope.portal.core.services.responses.wfs.WFSResponse;
 import org.auscope.portal.core.services.responses.wfs.WFSTransformedResponse;
 import org.auscope.portal.core.xslt.GmlToHtml;
@@ -159,31 +158,6 @@ public class WFSService extends BaseWFSService {
                 ResultType.Results);
 
         return doRequest(method);
-    }
-
-    /**
-     * Makes a WFS GetFeature request constrained by the specified parameters. Instead of returning the full response only the count of features will be
-     * returned.
-     *
-     * @param wfsUrl
-     *            the web feature service url
-     * @param featureType
-     *            the type name
-     * @param filterString
-     *            A OGC filter string to constrain the request
-     * @param maxFeatures
-     *            A maximum number of features to request
-     * @param srsName
-     *            [Optional] the SRS to make the WFS request using - will use BaseWFSService.DEFAULT_SRS if unspecified
-     * @return
-     * @throws PortalServiceException
-     * @throws URISyntaxException
-     */
-    public WFSCountResponse getWfsFeatureCount(String wfsUrl, String featureType, String filterString,
-            Integer maxFeatures, String srsName) throws PortalServiceException, URISyntaxException {
-        HttpRequestBase method = generateWFSRequest(wfsUrl, featureType, null, filterString, maxFeatures, srsName,
-                ResultType.Hits);
-        return getWfsFeatureCount(method);
     }
 
     /**
