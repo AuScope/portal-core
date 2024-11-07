@@ -115,6 +115,12 @@ public class KnownLayer implements Serializable {
     /** VMF - geoJson polygon */
     private JSONArray polygon;
 
+    /** VMF - maps */
+    private String maps;
+    
+    /** VMF - apikey */
+    private String apikey;
+    
     /** geoJson bbox */
     private JSONArray bbox;
 
@@ -535,6 +541,38 @@ public class KnownLayer implements Serializable {
      */
     public JSONArray getPolygon() {
         return polygon;
+    }
+
+    /**
+     * Set the VMF - maps
+     * 
+     * @param maps
+     */
+    public void setMaps(String maps) {
+        this.maps = maps;
+    }
+
+    /**
+     * @return the VMF - maps
+     */
+    public String getMaps() {
+        return maps;
+    }
+    
+    /**
+     * Set the VMF - apikey
+     * 
+     * @param endPoint
+     */
+    public void setApikey(String apikey) {
+        this.apikey = apikey;
+    }
+
+    /**
+     * @return the VMF - apikey
+     */
+    public String getApikey() {
+        return apikey;
     }
 
     /**
