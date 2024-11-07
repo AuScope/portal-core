@@ -19,16 +19,21 @@ public class VMFSelector implements KnownLayerSelector {
      * GeoJson polygon used to cookie cut area of interest
      */
     private JSONArray polygonGeoJson;
-    
+    /** The apikey -  https://api-docs.native-land.ca/get-and-use-your-api-key */
+    private String apikey;
+    /** The maps - There are 3 categories available: territories, languages, and treaties. */
+    private String maps;
 
     /**
      * @param serviceEndpoint
      *            The serviceEndpoint that identifies which VMF this KnownLayer is identifying
      */
-    public VMFSelector(String layerName, String serviceEndpoint, JSONArray polygonGeoJson) throws MalformedURLException {
+    public VMFSelector(String layerName, String serviceEndpoint, JSONArray polygonGeoJson, String apikey, String maps) throws MalformedURLException {
             this.layerName = layerName;
             this.serviceEndpoint = new URL(serviceEndpoint);
             this.polygonGeoJson = polygonGeoJson;
+            this.apikey = apikey;
+            this.maps = maps;
     }
 
     /**

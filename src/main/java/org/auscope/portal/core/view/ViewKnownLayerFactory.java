@@ -128,6 +128,14 @@ public class ViewKnownLayerFactory {
             obj.put("serverType", k.getServerType());
         }
 
+        if (k.getApikey() != null) {
+            obj.put("apikey", k.getApikey());
+        }
+
+        if (k.getMaps() != null) {
+            obj.put("maps", k.getMaps());
+        }
+
         return obj;
     }
 
