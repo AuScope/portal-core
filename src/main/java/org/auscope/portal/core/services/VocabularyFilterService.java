@@ -2,9 +2,12 @@ package org.auscope.portal.core.services;
 
 import org.apache.jena.rdf.model.*;
 import org.auscope.portal.core.services.namespaces.VocabNamespaceContext;
+import org.auscope.portal.core.util.structure.RDFTriple;
 import org.apache.jena.vocabulary.SKOS;
 
 import java.util.*;
+
+
 
 /**
  * Service class that handles filtering of JENA models that are cached by the {@link VocabularyCacheService}.
@@ -13,7 +16,6 @@ import java.util.*;
 public class VocabularyFilterService {
 
     private VocabularyCacheService vocabularyCacheService;
-
 
     public VocabularyFilterService(VocabularyCacheService vocabularyCacheService) {
         this.vocabularyCacheService = vocabularyCacheService;
@@ -53,22 +55,25 @@ public class VocabularyFilterService {
      * @param selectors List of selectors used to query the model
      * @return
      */
-    public Map<String, String> getVocabularyById(String vocabularyId, Selector... selectors) {
+    public Map<String, String> getVocabularyById(String vocabularyId, RDFTriple... triples) {
         Model model = this.vocabularyCacheService.getVocabularyCacheById(vocabularyId);
 
-        if (selectors == null || selectors.length == 0) {
+        if (triples == null || triples.length == 0) {
             return  getLabeledVocabulary(model);
         }
 
         Model filteredModel = ModelFactory.createDefaultModel();
-        for (Selector selector : selectors) {
-            StmtIterator stmtIterator = filterModel(model, selector).listStatements();
+        for (RDFTriple  triple: triples) {
+            StmtIterator stmtIterator;
+            if (triple.language == null) {
+                stmtIterator = filterModel(model, triple.subject, triple.predicate, (RDFNode) triple.object).listStatements();
+            } else {
+                stmtIterator = filterModel(model, triple.subject, triple.predicate, (String) triple.object, triple.language).listStatements();
+            }
             while (stmtIterator.hasNext()) {
                 Statement statement = stmtIterator.next();
-                Selector resourceSelector = new SimpleSelector(statement.getSubject(), null, (RDFNode) null);
-                filteredModel.add(model.listStatements(resourceSelector));
+                filteredModel.add(model.listStatements(statement.getSubject(), null, (RDFNode) null));
             }
-
         }
 
         return getLabeledVocabulary(filteredModel);
@@ -170,8 +175,7 @@ public class VocabularyFilterService {
     private Set<String> getNarrower(Model model, String uri) {
         Property property = model.createProperty(VocabNamespaceContext.SKOS_NAMESPACE, "narrower");
         Resource resource = model.getResource(uri);
-        Selector selector = new SimpleSelector(resource, property, (RDFNode) null);
-        Model filteredModel = filterModel(model, selector);
+        Model filteredModel = filterModel(model, resource, property, (RDFNode) null);
         return getSubjectUris(filteredModel);
     }
 
@@ -198,8 +202,7 @@ public class VocabularyFilterService {
     private Set<String> getNarrowerTransitive(Model model, String uri) {
         Property property = model.createProperty(VocabNamespaceContext.SKOS_NAMESPACE, "narrowerTransitive");
         Resource resource = model.getResource(uri);
-        Selector selector = new SimpleSelector(resource, property, (RDFNode) null);
-        Model filteredModel = filterModel(model, selector);
+        Model filteredModel = filterModel(model, resource, property, (RDFNode) null);
         return getSubjectUris(filteredModel);
     }
 
@@ -223,16 +226,37 @@ public class VocabularyFilterService {
 
 
     /**
-     * Filters a model by the given selector
+     * Filters a model by the given (resource, property, object) triple
      *
      * @param model Model to filter
-     * @param selector Query for the model to filter on
+     * @param resource Resource to filter by
+     * @param property Property to filter by
+     * @param object RDFNode to filter by
      * @return New filtered model
      */
-    private Model filterModel(Model model, Selector selector) {
+    private Model filterModel(Model model, Resource resource, Property property, RDFNode object) {
         Model filteredModel = ModelFactory.createDefaultModel();
         if (model != null) {
-            StmtIterator stmtIterator = model.listStatements(selector);
+            StmtIterator stmtIterator = model.listStatements(resource, property, object);
+            filteredModel.add(stmtIterator);
+        }
+        return filteredModel;
+    }
+
+    /**
+     * Filters a model by the given (resource, property, object) triple
+     *
+     * @param model Model to filter
+     * @param resource Resource to filter by
+     * @param property Property to filter by
+     * @param object RDFNode to filter by
+     * @param language language
+     * @return New filtered model
+     */
+    private Model filterModel(Model model, Resource resource, Property property, String object, String language) {
+        Model filteredModel = ModelFactory.createDefaultModel();
+        if (model != null) {
+            StmtIterator stmtIterator = model.listStatements(resource, property, object, language);
             filteredModel.add(stmtIterator);
         }
         return filteredModel;
