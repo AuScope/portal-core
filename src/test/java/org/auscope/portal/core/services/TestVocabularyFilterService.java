@@ -2,6 +2,7 @@ package org.auscope.portal.core.services;
 
 import org.apache.jena.rdf.model.*;
 import org.auscope.portal.core.test.PortalTestClass;
+import org.auscope.portal.core.util.structure.RDFTriple;
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Before;
@@ -90,7 +91,7 @@ public class TestVocabularyFilterService extends PortalTestClass {
     @Test
     public void testGetFilteredVocabularyById() {
 
-        Selector mockSelector = new SimpleSelector(null, mockDefaultProperty, "example", "en");
+        RDFTriple mockSelector = new RDFTriple(null, mockDefaultProperty, "example", "en");
 
         context.checking(new Expectations() {
             {

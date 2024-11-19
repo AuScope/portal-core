@@ -11,8 +11,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.ResourceFactory;
-import org.apache.jena.rdf.model.Selector;
-import org.apache.jena.rdf.model.SimpleSelector;
+import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
@@ -181,13 +180,12 @@ public class TestVocabularyCacheService extends PortalTestClass {
             }
 
             Map<String, Model> cache = this.vocabularyCacheService.getVocabularyCache();
-            Selector selector = new SimpleSelector(null, ResourceFactory.createProperty("http://www.w3.org/2004/02/skos/core#prefLabel"), (RDFNode) null);
-
+            Property property = ResourceFactory.createProperty("http://www.w3.org/2004/02/skos/core#prefLabel");
 
             Assert.assertEquals(totalRequestsMade, cache.size());
             int numberOfTerms =0;
             for (Map.Entry<String, Model> entry: cache.entrySet() ) {
-                StmtIterator statements = entry.getValue().listStatements(selector);
+                StmtIterator statements = entry.getValue().listStatements(null, property, (RDFNode) null);
                 numberOfTerms += statements.toList().size();
             }
 
@@ -291,13 +289,12 @@ public class TestVocabularyCacheService extends PortalTestClass {
             }
 
             Map<String, Model> cache = this.vocabularyCacheService.getVocabularyCache();
-            Selector selector = new SimpleSelector(null, ResourceFactory.createProperty("http://www.w3.org/2004/02/skos/core#prefLabel"), (RDFNode) null);
-
+            Property property = ResourceFactory.createProperty("http://www.w3.org/2004/02/skos/core#prefLabel");
 
             Assert.assertEquals(CONCURRENT_THREADS_TO_RUN - 1, cache.size());
             int numberOfTerms =0;
             for (Map.Entry<String, Model> entry: cache.entrySet() ) {
-                StmtIterator statements = entry.getValue().listStatements(selector);
+                StmtIterator statements = entry.getValue().listStatements(null, property, (RDFNode) null);
                 numberOfTerms += statements.toList().size();
             }
             Assert.assertEquals(VOCABULARY_ERRORS_COUNT_TOTAL, numberOfTerms);
