@@ -343,43 +343,58 @@ public class ElasticsearchService {
 		}
 
 		// Search Criteria and Query
-		Criteria cswRecordCriteria = new Criteria();
+		Criteria cswSearchCriteria = new Criteria();
 		if (StringUtils.isNotBlank(matchPhraseText)) {
 			try {
-				Criteria cswFieldCriteria = new Criteria();
 				for (String field: cswRecordFields) {
+					Criteria cswFieldCriteria = new Criteria();
+					// Wildcards need an expression search, match otherwise
 					if (StringUtils.containsAny(matchPhraseText, " *?")) {
-						cswFieldCriteria = cswFieldCriteria.or(field).expression(matchPhraseText);
+						cswFieldCriteria = new Criteria(field).expression(matchPhraseText);
 					} else {
-						cswFieldCriteria = cswFieldCriteria.or(field).contains(matchPhraseText);
+						cswFieldCriteria = new Criteria(field).contains(matchPhraseText);
 					}
+					// Boost known layer fields in results
 					if (field.equals("knownLayerNames") || field.equals("knownLayerDescriptions")) {
 						cswFieldCriteria = cswFieldCriteria.boost(2);
 					}
+					if (cswSearchCriteria == null) {
+						cswSearchCriteria = cswFieldCriteria;
+					} else {
+						cswSearchCriteria = cswSearchCriteria.or(cswFieldCriteria);
+					}
+					cswSearchCriteria = cswSearchCriteria.or(cswFieldCriteria);
 				}
-				cswRecordCriteria = cswFieldCriteria;
 			} catch(Exception e) {
 				log.error("Error creating search criteria: " + e.getLocalizedMessage());
 				return new CSWRecordSearchResponse(0, new ArrayList<CSWRecord>(), new ArrayList<String>());
 			}
 		}
 		
-		// OGC services query
-		if (ogcServices != null && ogcServices.size() > 0) {
-			Criteria ogcServicesCriteria = new Criteria();
-			for (String service: ogcServices) {
-				ogcServicesCriteria = ogcServicesCriteria.or("onlineResources.protocol").contains(service.toLowerCase());
-			}
-			cswRecordCriteria = cswRecordCriteria.and(ogcServicesCriteria);
-		}
-		
-		// CSWRecords spatial Criteria
-		Criteria cswRecordSpatialCriteria = createSpatialBoundsCriteria("cswGeographicElements.boundingPolygon", spatialRelation,
+		// Spatial Criteria
+		Criteria spatialCriteria = createSpatialBoundsCriteria("cswGeographicElements.boundingPolygon", spatialRelation,
 				westBoundLongitude, eastBoundLongitude, southBoundLatitude, northBoundLatitude);
-		if (cswRecordSpatialCriteria != null) {
-			cswRecordCriteria = cswRecordCriteria.and(cswRecordSpatialCriteria);
+		
+		// OGC services query
+		Criteria ogcServicesCriteria = null;
+		if (ogcServices != null && ogcServices.size() > 0) {
+			ogcServicesCriteria = new Criteria();
+			for (String service: ogcServices) {
+				Criteria serviceCriteria = new Criteria("onlineResources.protocol").contains(service);
+				ogcServicesCriteria = ogcServicesCriteria.or(serviceCriteria);
+			}
 		}
 		
+		// Combine Criteria
+		Criteria cswRecordCriteria = cswSearchCriteria;
+		if (ogcServicesCriteria != null) {
+			cswRecordCriteria = Criteria.and().subCriteria(cswSearchCriteria).subCriteria(ogcServicesCriteria);
+		}
+		if (spatialCriteria != null) {
+			cswRecordCriteria = cswRecordCriteria.and(spatialCriteria);
+		}
+
+		// Search
 		Query cswRecordQuery = new CriteriaQuery(cswRecordCriteria);
 		Pageable pageable = PageRequest.of(0, 1000);
 		if (page != null && pageSize != null) {
@@ -396,6 +411,7 @@ public class ElasticsearchService {
 			return new CSWRecordSearchResponse(0, recordResults, new ArrayList<String>());
 		}
 		
+		// Add known layer IDs to result set
 		Set<String> knownLayerIds = new HashSet<String>();
 		for (SearchHit<CSWRecord> hit: searchHits) {
 			recordResults.add(hit.getContent());
