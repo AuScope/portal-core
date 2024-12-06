@@ -207,7 +207,7 @@ Portal-Core,org.auscope.portal.core.services,CSWService,104,98,5,7,23,24,5,5,0,4
 Portal-Core,org.auscope.portal.core.services,BaseWFSService,113,78,0,8,21,16,5,8,5,4
 Portal-Core,org.auscope.portal.core.services,LocalCSWFilterService,76,642,11,77,16,148,12,44,2,8
 Portal-Core,org.auscope.portal.core.services,VocabularyService,51,225,7,11,16,65,5,14,1,9
-Portal-Core,org.auscope.portal.core.services,ElasticsearchService,1029,37,111,0,218,1,72,1,16,1
+Portal-Core,org.auscope.portal.core.services,ElasticsearchService,1054,37,115,0,225,1,74,1,16,1
 Portal-Core,org.auscope.portal.core.services,SISSVoc3Service,6,203,1,9,2,57,3,11,2,7
 Portal-Core,org.auscope.portal.core.services,GoogleCloudMonitoringService,190,127,3,7,52,32,10,7,8,4
 Portal-Core,org.auscope.portal.core.services,CSWFilterService,211,360,10,18,41,66,12,17,6,9
