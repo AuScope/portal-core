@@ -23,8 +23,8 @@
     </scm>
     <distributionManagement>
         <repository>
-            <id>aus-mvn</id>
-            <url>https://pkgs.dev.azure.com/CSIROMineralResources/40352a90-4ca9-4028-b1e6-953538e003b4/_packaging/aus-mvn/maven/v1</url>
+            <name>AuScope GitHub Packages</name>
+      	    <url>https://maven.pkg.github.com/AuScope/portal-core</url>
             <!--
             <releases>
                 <enabled>true</enabled>
@@ -55,16 +55,6 @@
 
     <!-- Repositories section -->
     <repositories>
-        <repository>
-            <id>aus-mvn</id>
-            <url>https://pkgs.dev.azure.com/CSIROMineralResources/40352a90-4ca9-4028-b1e6-953538e003b4/_packaging/aus-mvn/maven/v1</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
         <repository>
             <id>unidata</id>
             <name>Unidata Repository</name>
