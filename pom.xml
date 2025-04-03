@@ -23,7 +23,8 @@
     </scm>
     <distributionManagement>
         <repository>
-            <name>AuScope GitHub Packages</name>
+	    <id>github</id>
+            <name>GitHub Packages</name>
       	    <url>https://maven.pkg.github.com/AuScope/portal-core</url>
             <!--
             <releases>
