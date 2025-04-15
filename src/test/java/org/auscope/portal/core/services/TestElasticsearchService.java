@@ -70,13 +70,14 @@ public class TestElasticsearchService extends PortalTestClass {
     public void testIndexCSWRecords() {
     	CSWRecord record1 = new CSWRecord();
     	record1.setFileIdentifier("abc123");
+        record1.setMinScale(1.7976931348623157E308);
+        record1.setMaxScale(1.7976931348623157E308);
     	CSWRecord record2 = new CSWRecord();
     	record2.setFileIdentifier("def456");
         List<CSWRecord> cswRecords = Arrays.asList(record1, record2);
         context.checking(new Expectations() {{
             oneOf(recordRepository).saveAll(cswRecords);
         }});
-
         assertDoesNotThrow(() -> elasticsearchService.indexCSWRecords(cswRecords));
     }
 

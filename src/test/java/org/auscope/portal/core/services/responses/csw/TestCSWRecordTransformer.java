@@ -279,7 +279,7 @@ public class TestCSWRecordTransformer extends PortalTestClass {
     public void testLargeScaleDenominator() throws XPathException, ParserConfigurationException, SAXException, IOException {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse_largeDenominator.xml");
 
-        Assert.assertEquals((double)this.records[0].getMinScale(), (double)Float.MAX_VALUE, 0.000001);
+        Assert.assertEquals((double)this.records[0].getMinScale(), 1.7976931348623157E308, 0.1);
     }
 
     @Test

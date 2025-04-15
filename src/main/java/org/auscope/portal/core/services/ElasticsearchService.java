@@ -171,6 +171,14 @@ public class ElasticsearchService {
 					bbox.setBoundingPolygon(westLong, eastLong, southLat, northLat);
 				}
 			}
+			// Prevent crashing when minScale > 3.4E+38
+			if ((record.getMinScale() != null) && (record.getMinScale() > Float.MAX_VALUE)) {
+				record.setMinScale((double)Float.MAX_VALUE);
+			}
+			// Prevent crashing when maxScale > 3.4E+38
+			if ((record.getMaxScale() != null) && (record.getMaxScale() > Float.MAX_VALUE)) {
+				record.setMaxScale((double)Float.MAX_VALUE);
+			}
 		}
 		try {
 			this.updateCSWRecords(cswRecords);
@@ -186,6 +194,14 @@ public class ElasticsearchService {
 	 * @param cswRecord the CSWRecord instance
 	 */
 	public void updateCSWRecord(final CSWRecord cswRecord) throws DataAccessResourceFailureException {
+		// Prevent crashing when minScale > 3.4E+38
+		if ((cswRecord.getMinScale() != null) && (cswRecord.getMinScale() > Float.MAX_VALUE)) {
+			cswRecord.setMinScale((double)Float.MAX_VALUE);
+		}
+		// Prevent crashing when maxScale > 3.4E+38
+		if ((cswRecord.getMaxScale() != null) && (cswRecord.getMaxScale() > Float.MAX_VALUE)) {
+			cswRecord.setMaxScale((double)Float.MAX_VALUE);
+		}
 		try {
 			this.recordRepository.save(cswRecord);
 		} catch (DataAccessResourceFailureException e) {

@@ -845,14 +845,6 @@ public class CSWRecordTransformer {
                     record.setMaxScale(Collections.max(scaleRange));
                 }
             }
-            // Prevent Springboot elasticsearch crashing when minScale > 3.4E+38
-            if ((record.getMinScale() != null) && (record.getMinScale() > Float.MAX_VALUE)) {
-                record.setMinScale((double)Float.MAX_VALUE);
-            }
-            // Prevent Springboot elasticsearch crashing when maxScale > 3.4E+38
-            if ((record.getMaxScale() != null) && (record.getMaxScale() > Float.MAX_VALUE)) {
-                    record.setMaxScale((double)Float.MAX_VALUE);
-            }
         }
         
         return record;
@@ -1097,14 +1089,6 @@ public class CSWRecordTransformer {
                         record.setMaxScale(Collections.max(scaleRange));
                     }
                 }
-            }
-            // Prevent Springboot elasticsearch crashing when minScale > 3.4E+38
-            if ((record.getMinScale() != null) && (record.getMinScale() > Float.MAX_VALUE)) {
-                record.setMinScale((double)Float.MAX_VALUE);
-            }
-            // Prevent Springboot elasticsearch crashing when maxScale > 3.4E+38
-            if ((record.getMaxScale() != null) && (record.getMaxScale() > Float.MAX_VALUE)) {
-                record.setMaxScale((double)Float.MAX_VALUE);
             }
             
             return record;
@@ -1399,14 +1383,6 @@ public class CSWRecordTransformer {
                     if (scaleRange.size() > 1) {
                         record.setMaxScale(Collections.max(scaleRange));
                     }
-                }
-                // Prevent Springboot elasticsearch crashing when minScale > 3.4E+38
-                if ((record.getMinScale() != null) && (record.getMinScale() > Float.MAX_VALUE)) {
-                        record.setMinScale((double)Float.MAX_VALUE);
-                }
-                // Prevent Springboot elasticsearch crashing when maxScale > 3.4E+38
-                if ((record.getMaxScale() != null) && (record.getMaxScale() > Float.MAX_VALUE)) {
-                        record.setMaxScale((double)Float.MAX_VALUE);
                 }
             }
             
