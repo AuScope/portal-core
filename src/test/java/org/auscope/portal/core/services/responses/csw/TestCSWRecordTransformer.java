@@ -269,6 +269,20 @@ public class TestCSWRecordTransformer extends PortalTestClass {
     }
 
     @Test
+    public void testScaleDenominator() throws XPathException, ParserConfigurationException, SAXException, IOException {
+        setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
+
+        Assert.assertEquals((double)this.records[3].getMinScale(), 250000, 0.1);
+    }
+
+    @Test
+    public void testLargeScaleDenominator() throws XPathException, ParserConfigurationException, SAXException, IOException {
+        setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse_largeDenominator.xml");
+
+        Assert.assertEquals((double)this.records[0].getMinScale(), 1.7976931348623157E308, 0.1);
+    }
+
+    @Test
     public void testUploadedResourceParsing() throws XPathException, ParserConfigurationException, SAXException, IOException {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse_UploadedResources.xml");
 
