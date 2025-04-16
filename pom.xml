@@ -23,17 +23,14 @@
     </scm>
     <distributionManagement>
         <repository>
-	    <id>github</id>
-            <name>GitHub Packages</name>
-      	    <url>https://maven.pkg.github.com/AuScope/portal-core</url>
-            <!--
-            <releases>
+	    <id>auscope-mvn</id>
+  	    <url>https://pkgs.dev.azure.com/CSIROMineralResources/8244f127-6c7b-4d82-91f9-6208b7f5b796/_packaging/auscope-mvn/maven/v1</url>
+  	    <releases>
                 <enabled>true</enabled>
             </releases>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
-            -->
         </repository>
     </distributionManagement>
 
