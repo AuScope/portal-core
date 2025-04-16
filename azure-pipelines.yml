@@ -39,7 +39,7 @@ steps:
     sonarQubeRunAnalysis: false
 - task: MavenAuthenticate@0
   inputs:
-    artifactsFeeds: 'aus-mvn'
+    artifactsFeeds: 'auscope-mvn'
 - task: Maven@3
   inputs:
     mavenPomFile: 'pom.xml'
