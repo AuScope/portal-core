@@ -26,6 +26,8 @@ import ucar.nc2.Group;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 
+import com.google.common.collect.ImmutableList;
+
 /**
  * Unit tests for ViewVariableFactory (and various ViewVariable implementations)
  *
@@ -211,8 +213,10 @@ public class TestViewVariableFactory extends PortalTestClass {
         final SimpleAxis expectation = new SimpleAxis("axis1", dataType.name(), "units1", new SimpleBounds(0, 237566),
                 new SimpleBounds(-3995.345, 21531.3));
 
-        final List<Variable> variableList = Arrays.asList(mockVariable1);
-        final List<Dimension> dimensionList = Arrays.asList(mockDimension1);
+        final Variable[] vars = { mockVariable1 };
+        final List<Variable> variableList = ImmutableList.copyOf(vars);
+        final Dimension[] dims = { mockDimension1 };
+        final List<Dimension> dimensionList = ImmutableList.copyOf(dims);
 
         //Build up our "mock" dataset
         context.checking(new Expectations() {
@@ -269,10 +273,15 @@ public class TestViewVariableFactory extends PortalTestClass {
         final SimpleGrid expectation = new SimpleGrid("grid1", dataType.name(), "myunits", new AbstractViewVariable[] {
                 axis1, axis2});
 
-        final List<Variable> variableList = Arrays.asList(mockVariable1, mockVariable2, mockVariable3);
-        final List<Dimension> dimensionList1 = Arrays.asList(mockDimension1, mockDimension2);
-        final List<Dimension> dimensionList2 = Arrays.asList(mockDimension1);
-        final List<Dimension> dimensionList3 = Arrays.asList(mockDimension2);
+        final Variable[] mocks = { mockVariable1, mockVariable2, mockVariable3};
+        final List<Variable> variableList = ImmutableList.copyOf(mocks);
+
+        final Dimension[] dims = { mockDimension1, mockDimension2 };
+        final Dimension[] dims1 = { mockDimension1 };
+        final Dimension[] dims2 = { mockDimension2 };
+        final List<Dimension> dimensionList1 = ImmutableList.copyOf(dims);
+        final List<Dimension> dimensionList2 = ImmutableList.copyOf(dims1);
+        final List<Dimension> dimensionList3 = ImmutableList.copyOf(dims2);
 
         //Build up our "mock" dataset
         context.checking(new Expectations() {
@@ -368,9 +377,10 @@ public class TestViewVariableFactory extends PortalTestClass {
         final DataType dataType = DataType.FLOAT;
         final SimpleAxis expectation = new SimpleAxis("axis1", dataType.name(), "units1", new SimpleBounds(0, 237566),
                 new SimpleBounds(-3995.345, 21531.3));
-
-        final List<Variable> variableList = Arrays.asList(mockVariable1);
-        final List<Dimension> dimensionList = Arrays.asList(mockDimension1);
+        final Variable[] vars = { mockVariable1 };
+        final List<Variable> variableList = ImmutableList.copyOf(vars);
+        final Dimension[] dims = { mockDimension1 };
+        final List<Dimension> dimensionList = ImmutableList.copyOf(dims);
 
         //Build up our "mock" dataset
         context.checking(new Expectations() {
@@ -419,10 +429,12 @@ public class TestViewVariableFactory extends PortalTestClass {
         final SimpleGrid expectation = new SimpleGrid("grid1", dataType.name(), "myunits", new AbstractViewVariable[] {
                 axis1, axis2});
 
-        final List<Variable> variableList = Arrays.asList(mockVariable1, mockVariable2);
-        final List<Dimension> dimensionList1 = Arrays.asList(mockDimension1, mockDimension2);
-        final List<Dimension> dimensionList2 = Arrays.asList(mockDimension1);
-   //     final List<Dimension> dimensionList3 = Arrays.asList(mockDimension2);
+        final Variable[] vars = { mockVariable1, mockVariable2 };
+        final List<Variable> variableList = ImmutableList.copyOf(vars);
+        final Dimension[] dims = { mockDimension1, mockDimension2 };
+        final Dimension[] dims1 = { mockDimension1 };
+        final List<Dimension> dimensionList1 = ImmutableList.copyOf(dims);
+        final List<Dimension> dimensionList2 = ImmutableList.copyOf(dims1);
 
         //Build up our "mock" dataset
         context.checking(new Expectations() {
@@ -506,10 +518,14 @@ public class TestViewVariableFactory extends PortalTestClass {
         final SimpleGrid grid1 = new SimpleGrid("grid1", dataType.name(), "myunits", new AbstractViewVariable[] {axis1,
                 axis2});
 
-        final List<Variable> variableList = Arrays.asList(mockVariable1, mockVariable2, mockVariable3);
-        final List<Dimension> dimensionList1 = Arrays.asList(mockDimension1, mockDimension2);
-        final List<Dimension> dimensionList2 = Arrays.asList(mockDimension1);
-        final List<Dimension> dimensionList3 = Arrays.asList(mockDimension2);
+        final Variable[] vars = { mockVariable1, mockVariable2, mockVariable3 };
+        final List<Variable> variableList = ImmutableList.copyOf(vars);
+        final Dimension[] dims = { mockDimension1, mockDimension2 };
+        final Dimension[] dims1 = { mockDimension1 };
+        final Dimension[] dims2 = { mockDimension2 };
+        final List<Dimension> dimensionList1 = ImmutableList.copyOf(dims);
+        final List<Dimension> dimensionList2 = ImmutableList.copyOf(dims1);
+        final List<Dimension> dimensionList3 = ImmutableList.copyOf(dims2);
 
         //Build up our "mock" dataset
         context.checking(new Expectations() {

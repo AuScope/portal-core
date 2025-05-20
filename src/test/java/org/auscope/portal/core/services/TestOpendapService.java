@@ -2,7 +2,6 @@ package org.auscope.portal.core.services;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpClientInputStream;
@@ -24,6 +23,8 @@ import ucar.ma2.InvalidRangeException;
 import ucar.nc2.Dimension;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
+
+import com.google.common.collect.ImmutableList;
 
 public class TestOpendapService extends PortalTestClass {
     private HttpServiceCaller mockServiceCaller = context.mock(HttpServiceCaller.class);
@@ -84,18 +85,25 @@ public class TestOpendapService extends PortalTestClass {
         context.checking(new Expectations() {
             {
                 oneOf(mockDataset).getVariables();
-                will(returnValue(Arrays.asList(mockVariable1, mockVariable2)));
+                final Variable[] mocks = {mockVariable1, mockVariable2};
+                will(returnValue(ImmutableList.copyOf(mocks)));
 
                 allowing(mockVariable1).getName();
                 will(returnValue(variableName));
+
                 oneOf(mockVariable1).getDimensions();
-                will(returnValue(Arrays.asList(mockDimension1)));
+                final Dimension[] dims  = {mockDimension1};
+                will(returnValue(ImmutableList.copyOf(dims)));
+
                 oneOf(mockVariable1).getDataType();
                 will(returnValue(dataType1));
+
                 oneOf(mockVariable1).getUnitsString();
                 will(returnValue(variableUnits));
+
                 oneOf(mockVariable1).read(new int[] {0}, new int[] {1});
                 will(returnValue(mockArray1));
+
                 oneOf(mockVariable1).read(new int[] {mockDimension1Data.length - 1}, new int[] {1});
                 will(returnValue(mockArray2));
 
