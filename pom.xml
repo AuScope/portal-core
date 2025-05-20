@@ -7,15 +7,11 @@
     <version>2.9.0-SNAPSHOT</version>
     <name>Portal-Core</name>
     <description>Core functionality common to various AuScope portals.</description>
-    <url>http://portal.auscope.org</url>
+    <url>https://portal.auscope.org.au</url>
     <issueManagement>
         <system>Jira</system>
         <url>https://jira.csiro.au/browse/AUS</url>
     </issueManagement>
-    <ciManagement>
-        <system>Travis-CI</system>
-        <url>https://travis-ci.com</url>
-    </ciManagement>
     <scm>
         <connection>scm:git:https://github.com/AuScope/portal-core.git</connection>
         <developerConnection>scm:git:https://github.com/AuScope/portal-core.git</developerConnection>
@@ -36,7 +32,7 @@
 
     <organization>
         <name>AuScope</name>
-        <url>http://www.auscope.org</url>
+        <url>https://www.auscope.org.au</url>
     </organization>
 
     <!-- Project properties -->
@@ -48,20 +44,20 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.7</version>
+        <version>3.3.11</version>
     </parent>
 
     <!-- Repositories section -->
     <repositories>
         <repository>
-            <id>unidata</id>
-            <name>Unidata Repository</name>
-            <url>https://artifacts.unidata.ucar.edu/repository/unidata-all/</url>
-        </repository>
-        <repository>
             <id>apache-releases</id>
             <name>apache maven repo</name>
             <url>https://repository.apache.org/content/repositories/releases</url>
+        </repository>
+        <repository>
+            <id>sci-java</id>
+            <name>SciJava Repository</name>
+            <url>https://maven.scijava.org/content/repositories/public</url>
         </repository>
     </repositories>
 
@@ -94,7 +90,6 @@
                 <configuration>
                     <source>17</source>
                     <target>17</target>
-                    <compilerVersion>17</compilerVersion>
                 </configuration>
             </plugin>
             <plugin>
@@ -251,7 +246,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>3.3.7</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -264,12 +258,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
-            <version>3.3.7</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
-            <version>3.3.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -312,9 +304,10 @@
         <dependency>
             <groupId>edu.ucar</groupId>
             <artifactId>netcdf4</artifactId>
-            <version>5.3.3</version>
+            <version>5.6.0</version>
             <optional>false</optional>
-   	     </dependency>
+            <type>pom</type>
+   	   </dependency>
         <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
@@ -346,4 +339,5 @@
             <version>2.6.0</version>
         </dependency>
     </dependencies>
+
 </project>
