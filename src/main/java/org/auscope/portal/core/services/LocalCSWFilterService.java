@@ -19,7 +19,7 @@ import org.auscope.portal.core.services.responses.csw.CSWGetRecordResponse;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.services.responses.search.FacetedMultiSearchResponse;
 import org.auscope.portal.core.services.responses.search.FacetedSearchResponse;
-import org.joda.time.DateTime;
+import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -88,10 +88,10 @@ public class LocalCSWFilterService {
                 remoteFilter.setKeywordMatchType(KeywordMatchType.All);
                 break;
             case "datefrom":
-                remoteFilter.setModifiedDateFrom((DateTime)facet.getValue());
+                remoteFilter.setModifiedDateFrom((LocalDateTime)facet.getValue());
                 break;
             case "dateto":
-                remoteFilter.setModifiedDateTo((DateTime)facet.getValue());
+                remoteFilter.setModifiedDateTo((LocalDateTime)facet.getValue());
                 break;
             default:
                 localFacets.add(facet);

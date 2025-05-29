@@ -10,9 +10,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.services.methodmakers.filter.AbstractFilter;
 import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 
 /**
@@ -41,21 +40,20 @@ public abstract class GenericFilter extends AbstractFilter {
         super();
     }
 
-    private String parseDateType(JSONObject obj){
-        DateTimeFormatter outFormatter = DateTimeFormat
-                .forPattern("yyyy-MM-dd");
-        DateTime date = outFormatter
-                .parseDateTime(obj.getString("value").split("T")[0]);
-        String stringDate = outFormatter.print(date) + " 00:00:00";
-        if(Predicate.valueOf(obj.getString("predicate")) == (Predicate.BIGGER_THAN)){
+    private String parseDateType(JSONObject obj) {
+        DateTimeFormatter outFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate date = LocalDate
+                .parse(obj.getString("value").split("T")[0], outFormatter);
+        String stringDate = outFormatter.format(date) + " 00:00:00";
+        if(Predicate.valueOf(obj.getString("predicate")) == (Predicate.BIGGER_THAN)) {
             return this.generateDatePropertyIsGreaterThan(
                     obj.getString("xpath"),false,
                     this.generateFunctionDateParse(stringDate));
-        }else if(Predicate.valueOf(obj.getString("predicate")) == (Predicate.SMALLER_THAN)){
+        } else if (Predicate.valueOf(obj.getString("predicate")) == (Predicate.SMALLER_THAN)) {
             return this.generateDatePropertyIsLessThan(
                     obj.getString("xpath"),false,
                     this.generateFunctionDateParse(stringDate));
-        }else throw new UnsupportedOperationException("Unable to parse date string fragment.");
+        } else throw new UnsupportedOperationException("Unable to parse date string fragment.");
 
     }
 

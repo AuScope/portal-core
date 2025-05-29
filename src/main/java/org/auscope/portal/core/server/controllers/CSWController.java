@@ -10,7 +10,7 @@ import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecord
 import org.auscope.portal.core.services.responses.csw.CSWGetRecordResponse;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.view.ViewCSWRecordFactory;
-import org.joda.time.DateTime;
+import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,9 +38,9 @@ public class CSWController extends BaseCSWController {
      *            false means the time will be 00:00:00:000 true means the time will be 23:59:59:999
      * @return
      */
-    private DateTime stringToDateTime(String dateString, boolean endOfDay) {
+    private LocalDateTime stringToDateTime(String dateString, boolean endOfDay) {
         String[] date = dateString.split("/");
-        return new DateTime(
+        return LocalDateTime.of(
                 Integer.parseInt(date[2]), // year
                 Integer.parseInt(date[1]), // monthOfYear
                 Integer.parseInt(date[0]), // dayOfMonth

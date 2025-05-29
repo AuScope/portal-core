@@ -44,7 +44,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.11</version>
+        <version>3.4.6</version>
     </parent>
 
     <!-- Repositories section -->
@@ -55,9 +55,9 @@
             <url>https://repository.apache.org/content/repositories/releases</url>
         </repository>
         <repository>
-            <id>sci-java</id>
-            <name>SciJava Repository</name>
-            <url>https://maven.scijava.org/content/repositories/public</url>
+            <id>unidata-all</id>
+            <name>Unidata All</name>
+            <url>https://artifacts.unidata.ucar.edu/repository/unidata-all/</url>
         </repository>
     </repositories>
 
@@ -304,10 +304,15 @@
         <dependency>
             <groupId>edu.ucar</groupId>
             <artifactId>netcdf4</artifactId>
-            <version>5.6.0</version>
-            <optional>false</optional>
-            <type>pom</type>
-   	   </dependency>
+            <version>5.7.0</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>edu.ucar</groupId>
+            <artifactId>cdm-core</artifactId>
+            <version>5.7.0</version>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
