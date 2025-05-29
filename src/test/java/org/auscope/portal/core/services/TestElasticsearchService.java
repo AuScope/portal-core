@@ -105,7 +105,6 @@ public class TestElasticsearchService extends PortalTestClass {
     @SuppressWarnings("unchecked")
 	@Test
 	public void testGetAllCSWRecords() {
-        SearchHits<CSWRecord> searchHits = context.mock(SearchHits.class);
         SearchScrollHits<CSWRecord> searchScrollHits = context.mock(SearchScrollHits.class);
         CSWRecord cswRecord = new CSWRecord();
 

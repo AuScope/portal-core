@@ -23,7 +23,11 @@ import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.test.jmock.CSWGetDataRecordsFilterMatcher;
 import org.jmock.Expectations;
 import org.jmock.Sequence;
-import org.joda.time.DateTime;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.Instant;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -67,8 +71,10 @@ public class TestLocalCSWFilterService extends PortalTestClass {
                 new SearchFacet<FilterBoundingBox>(bbox, "bbox", Comparison.Equal),
                 new SearchFacet<String>("kw1", "keyword", Comparison.Equal),
                 new SearchFacet<String>("kw2", "keyword", Comparison.Equal),
-                new SearchFacet<DateTime>(new DateTime(0l), "datefrom", Comparison.GreaterThan),
-                new SearchFacet<DateTime>(new DateTime(1000l), "dateto", Comparison.LessThan));
+                new SearchFacet<LocalDateTime>(LocalDateTime.ofInstant(Instant.ofEpochMilli(0l), ZoneId.systemDefault()),
+                                               "datefrom", Comparison.GreaterThan),
+                new SearchFacet<LocalDateTime>(LocalDateTime.ofInstant(Instant.ofEpochMilli(1000l), ZoneId.systemDefault()),
+                                               "dateto", Comparison.LessThan));
 
         final int startIndex = 1;
         final int maxRecords = 3;
@@ -259,8 +265,10 @@ public class TestLocalCSWFilterService extends PortalTestClass {
                 new SearchFacet<FilterBoundingBox>(bbox, "bbox", Comparison.Equal),
                 new SearchFacet<String>("kw1", "keyword", Comparison.Equal),
                 new SearchFacet<String>("kw2", "keyword", Comparison.Equal),
-                new SearchFacet<DateTime>(new DateTime(0l), "datefrom", Comparison.GreaterThan),
-                new SearchFacet<DateTime>(new DateTime(1000l), "dateto", Comparison.LessThan));
+                new SearchFacet<LocalDateTime>(LocalDateTime.ofInstant(Instant.ofEpochMilli(0l), ZoneId.systemDefault()),
+                                               "datefrom", Comparison.GreaterThan),
+                new SearchFacet<LocalDateTime>(LocalDateTime.ofInstant(Instant.ofEpochMilli(1000l), ZoneId.systemDefault()),
+                                               "dateto", Comparison.LessThan));
 
         final int startIndex = 1;
         final int maxRecords = 3;

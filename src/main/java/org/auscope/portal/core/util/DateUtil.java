@@ -5,7 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import org.joda.time.DateTime;
+import java.time.LocalDateTime;
 
 /**
  * Utility methods for date and time operations.
@@ -102,9 +102,9 @@ public class DateUtil {
      *            false means the time will be 00:00:00:000 true means the time will be 23:59:59:999
      * @return
      */
-    public static DateTime stringToDateTime(String dateString, boolean endOfDay) {
+    public static LocalDateTime stringToDateTime(String dateString, boolean endOfDay) {
         String[] date = dateString.split("/");
-        return new DateTime(
+        return LocalDateTime.of(
                 Integer.parseInt(date[2]), // year
                 Integer.parseInt(date[1]), // monthOfYear
                 Integer.parseInt(date[0]), // dayOfMonth
@@ -123,8 +123,8 @@ public class DateUtil {
      *            false means the date will be Jan 1st and the time will be 00:00:00:000 true means the date will be Dec 31st and the time will be 23:59:59:999
      * @return
      */
-    public static DateTime stringYearToDate(String yearString, boolean endOfYear) {
-        return new DateTime(
+    public static LocalDateTime stringYearToDate(String yearString, boolean endOfYear) {
+        return LocalDateTime.of(
                 Integer.parseInt(yearString), // year
                 endOfYear ? 12 : 1, // monthOfYear
                 endOfYear ? 31 : 1, // dayOfMonth

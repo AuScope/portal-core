@@ -29,7 +29,11 @@ import org.auscope.portal.core.services.responses.search.FacetedMultiSearchRespo
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord;
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesWMSLayerRecord;
 import org.auscope.portal.core.view.ViewCSWRecordFactory;
-import org.joda.time.DateTime;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -189,8 +193,8 @@ public class CSWSearchController extends BaseCSWController {
                 newFacet = new SearchFacet<FilterBoundingBox>(bbox, rawFields[i], cmp);
                 break;
             case "date":
-                DateTime value = new DateTime(Long.parseLong(rawValues[i]));
-                newFacet = new SearchFacet<DateTime>(value, rawFields[i], cmp);
+                LocalDateTime value = LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(rawValues[i])), ZoneId.systemDefault());
+                newFacet = new SearchFacet<LocalDateTime>(value, rawFields[i], cmp);
                 break;
             case "string":
                 newFacet = new SearchFacet<String>(rawValues[i], rawFields[i], cmp);

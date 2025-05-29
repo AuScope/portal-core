@@ -10,7 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.services.methodmakers.filter.AbstractFilter;
 import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
-import org.joda.time.DateTime;
+import java.time.LocalDateTime;
 
 /**
  * Represents a OGC:Filter that will fetch matching records from a CSW.
@@ -107,28 +107,28 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     private String onlineResourceType = null;
 
     /** Date on which the record was created or updated within the catalogue. */
-    private DateTime modifiedDateFrom = null;
+    private LocalDateTime modifiedDateFrom = null;
 
     /** Date on which the record was created or updated within the catalogue. */
-    private DateTime modifiedDateTo = null;
+    private LocalDateTime modifiedDateTo = null;
 
     /** The publication date's lower bound. */
-    private DateTime publicationDateFrom = null;
+    private LocalDateTime publicationDateFrom = null;
 
     /** The publication date's upper bound. */
-    private DateTime publicationDateTo = null;
+    private LocalDateTime publicationDateTo = null;
 
     /** The metadata change date's lower bound. */
-    private DateTime metadataChangeDateFrom = null;
+    private LocalDateTime metadataChangeDateFrom = null;
 
     /** The metadata change date's upper bound. */
-    private DateTime metadataChangeDateTo = null;
+    private LocalDateTime metadataChangeDateTo = null;
 
     /** The temporal extent's lower bound. */
-    private DateTime temporalExtentFrom = null;
+    private LocalDateTime temporalExtentFrom = null;
 
     /** The temporal extent's upper bound. */
-    private DateTime temporalExtentTo = null;
+    private LocalDateTime temporalExtentTo = null;
 
     /** The spatial bounds. */
     private FilterBoundingBox spatialBounds;
@@ -472,22 +472,22 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     }
 
     /** Gets the metadata change date's lower bound. */
-    public DateTime getMetadataChangeDateFrom() {
+    public LocalDateTime getMetadataChangeDateFrom() {
         return this.metadataChangeDateFrom;
     }
 
     /** Gets the metadata change date's upper bound. */
-    public DateTime getMetadataChangeDateTo() {
+    public LocalDateTime getMetadataChangeDateTo() {
         return this.metadataChangeDateTo;
     }
 
     /** Gets the temporal extent's lower bound. */
-    public DateTime getTemporalExtentFrom() {
+    public LocalDateTime getTemporalExtentFrom() {
         return this.temporalExtentFrom;
     }
 
     /** Gets the temporal extent's upper bound. */
-    public DateTime getTemporalExtentTo() {
+    public LocalDateTime getTemporalExtentTo() {
         return this.temporalExtentTo;
     }
 
@@ -524,7 +524,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
      * Date on which the record was created or updated within the catalogue.
      * @return
      */
-    public DateTime getModifiedDateFrom() {
+    public LocalDateTime getModifiedDateFrom() {
         return modifiedDateFrom;
     }
 
@@ -532,7 +532,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
      * Date on which the record was created or updated within the catalogue.
      * @return
      */
-    public void setModifiedDateFrom(DateTime modifiedDateFrom) {
+    public void setModifiedDateFrom(LocalDateTime modifiedDateFrom) {
         this.modifiedDateFrom = modifiedDateFrom;
     }
 
@@ -540,7 +540,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
      * Date on which the record was created or updated within the catalogue.
      * @return
      */
-    public DateTime getModifiedDateTo() {
+    public LocalDateTime getModifiedDateTo() {
         return modifiedDateTo;
     }
 
@@ -548,7 +548,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
      * Date on which the record was created or updated within the catalogue.
      * @return
      */
-    public void setModifiedDateTo(DateTime modifiedDateTo) {
+    public void setModifiedDateTo(LocalDateTime modifiedDateTo) {
         this.modifiedDateTo = modifiedDateTo;
     }
 
@@ -569,48 +569,48 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     /**
      * @return the publicationDateFrom
      */
-    public DateTime getPublicationDateFrom() {
+    public LocalDateTime getPublicationDateFrom() {
         return publicationDateFrom;
     }
 
     /**
      * @param publicationDateFrom the publicationDateFrom to set
      */
-    public void setPublicationDateFrom(DateTime publicationDateFrom) {
+    public void setPublicationDateFrom(LocalDateTime publicationDateFrom) {
         this.publicationDateFrom = publicationDateFrom;
     }
 
     /**
      * @return the publicationDateTo
      */
-    public DateTime getPublicationDateTo() {
+    public LocalDateTime getPublicationDateTo() {
         return publicationDateTo;
     }
 
     /**
      * @param publicationDateTo the publicationDateTo to set
      */
-    public void setPublicationDateTo(DateTime publicationDateTo) {
+    public void setPublicationDateTo(LocalDateTime publicationDateTo) {
         this.publicationDateTo = publicationDateTo;
     }
 
     /** Sets metadataChangeDateFrom. */
-    public void setMetadataChangeDateFrom(DateTime metadataChangeDateFrom) {
+    public void setMetadataChangeDateFrom(LocalDateTime metadataChangeDateFrom) {
         this.metadataChangeDateFrom = metadataChangeDateFrom;
     }
 
     /** Sets metadataChangeDateTo. */
-    public void setMetadataChangeDateTo(DateTime metadataChangeDateTo) {
+    public void setMetadataChangeDateTo(LocalDateTime metadataChangeDateTo) {
         this.metadataChangeDateTo = metadataChangeDateTo;
     }
 
     /** Sets temporalExtentFrom. */
-    public void setTemporalExtentFrom(DateTime temporalExtentFrom) {
+    public void setTemporalExtentFrom(LocalDateTime temporalExtentFrom) {
         this.temporalExtentFrom = temporalExtentFrom;
     }
 
     /** Sets temporalExtentTo. */
-    public void setTemporalExtentTo(DateTime temporalExtentTo) {
+    public void setTemporalExtentTo(LocalDateTime temporalExtentTo) {
         this.temporalExtentTo = temporalExtentTo;
     }
 

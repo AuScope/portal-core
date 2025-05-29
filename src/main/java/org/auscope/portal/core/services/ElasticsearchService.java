@@ -104,6 +104,10 @@ public class ElasticsearchService {
 
 	public ElasticsearchService(HttpServiceCaller httpServiceCaller) {
 		this.httpServiceCaller = httpServiceCaller;
+		// Needed for testing
+		if (cswRecordIndex == null) {
+			cswRecordIndex = "test-index";
+		}
 	}
 
 	/**
