@@ -1,6 +1,6 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
-Portal-Core,org.auscope.portal.core.server,PortalPropertySourcesPlaceholderConfigurer,99,0,10,0,25,0,8,0,3,0
 Portal-Core,org.auscope.portal.core.server,PortalProfileXmlWebApplicationContext,24,0,2,0,5,0,3,0,2,0
+Portal-Core,org.auscope.portal.core.server,PortalPropertySourcesPlaceholderConfigurer,99,0,10,0,25,0,8,0,3,0
 Portal-Core,org.auscope.portal.core.server,OgcServiceProviderType,0,36,0,2,0,6,0,3,0,2
 Portal-Core,org.auscope.portal.core.services.methodmakers,GeonetworkMethodMaker,210,0,0,0,39,0,7,0,7,0
 Portal-Core,org.auscope.portal.core.services.methodmakers,CSWMethodMakerGetDataRecords.ResultType,0,15,0,0,0,3,0,1,0,1
@@ -44,8 +44,8 @@ Portal-Core,org.auscope.portal.core.services.responses.wcs,SingleValue,17,0,0,0,
 Portal-Core,org.auscope.portal.core.services.responses.wcs,CoverageOfferingBrief,165,0,6,0,45,0,16,0,13,0
 Portal-Core,org.auscope.portal.core.services.responses.wcs,SimpleEnvelope,214,0,10,0,44,0,16,0,11,0
 Portal-Core,org.auscope.portal.core.services.responses.wcs,TimeConstraint,41,65,5,5,5,14,4,8,1,6
-Portal-Core,org.auscope.portal.core.services.responses.wcs,SimpleTimePosition,45,0,0,0,13,0,3,0,3,0
 Portal-Core,org.auscope.portal.core.services.responses.wcs,RectifiedGrid,333,0,8,0,80,0,22,0,18,0
+Portal-Core,org.auscope.portal.core.services.responses.wcs,SimpleTimePosition,45,0,0,0,13,0,3,0,3,0
 Portal-Core,org.auscope.portal.core.services.responses.wcs,AxisDescriptionImpl,83,0,4,0,17,0,7,0,5,0
 Portal-Core,org.auscope.portal.core.services.csw.custom,CustomRegistry,78,0,8,0,23,0,15,0,11,0
 Portal-Core,org.auscope.portal.core.server.http,HttpServiceCaller,236,164,15,15,56,41,22,10,12,5
