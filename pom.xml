@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.auscope.portal</groupId>
+    <groupId>io.github.auscope</groupId>
     <artifactId>portal-core</artifactId>
     <packaging>jar</packaging>
     <version>2.9.1-SNAPSHOT</version>
@@ -17,18 +17,40 @@
         <developerConnection>scm:git:https://github.com/AuScope/portal-core.git</developerConnection>
         <url>https://github.com/AuScope/portal-core</url>
     </scm>
-    <distributionManagement>
-        <repository>
-	    <id>auscope-mvn</id>
-  	    <url>https://pkgs.dev.azure.com/CSIROMineralResources/8244f127-6c7b-4d82-91f9-6208b7f5b796/_packaging/auscope-mvn/maven/v1</url>
-  	    <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </distributionManagement>
+	<profiles>
+		<profile>
+			<id>central</id>
+			<distributionManagement>
+				<repository>
+					<id>central</id>
+					<name>Central Repository OSSRH</name>
+					<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+					<releases>
+						<enabled>true</enabled>
+					</releases>
+					<snapshots>
+						<enabled>true</enabled>
+					</snapshots>
+				</repository>
+			</distributionManagement>
+		</profile>
+		<profile>
+			<id>github</id>
+			<distributionManagement>
+				<repository>
+					<id>github</id>
+					<name>GitHub Packages</name>
+					<url>https://maven.pkg.github.com/AuScope/portal-core</url>
+					<releases>
+						<enabled>true</enabled>
+					</releases>
+					<snapshots>
+						<enabled>true</enabled>
+					</snapshots>
+				</repository>
+			</distributionManagement>
+		</profile>
+	</profiles>
 
     <organization>
         <name>AuScope</name>
@@ -203,6 +225,47 @@
                     <cacheFile>checkstyle.cache</cacheFile>
                 </configuration>
             </plugin>
+			<plugin>
+			  <groupId>org.sonatype.central</groupId>
+			  <artifactId>central-publishing-maven-plugin</artifactId>
+			  <version>0.9.0</version>
+			  <extensions>true</extensions>
+			  <configuration>
+				<publishingServerId>central</publishingServerId>
+			  </configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.12.0</version> <!-- Use the latest stable version -->
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<!-- Optional: Add configuration options here, e.g., for HTML5 output -->
+					<additionalOptions>-html5</additionalOptions>
+					<failOnError>false</failOnError>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>3.2.4</version> <!-- Use the latest version -->
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
         </plugins>
         <resources>
             <resource>
@@ -267,7 +330,7 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
-	    <dependency>
+        <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20231013</version>
@@ -338,7 +401,7 @@
             <artifactId>minlog</artifactId>
             <version>1.3.1</version>
         </dependency>
-		<dependency>
+        <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.6.0</version>
