@@ -196,6 +196,18 @@ public class TestCSWRecordTransformer extends PortalTestClass {
         Assert.assertEquals("CSIRO Exploration and Mining Web Site", contactResource.getName());
     }
 
+    @Test
+    public void testAuthors() throws XPathException, ParserConfigurationException, SAXException, IOException  {
+        setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse_NoMoreRecords.xml");
+
+        final CSWRecord rec = this.records[12];
+
+        final CSWResponsibleParty[] authors = rec.getAuthors();
+        Assert.assertNotNull(authors);
+
+        Assert.assertEquals("J S", authors[0].getIndividualName());
+    }
+
     /**
      * Tests that the data quality info is correctly parsed
      * @throws IOException 

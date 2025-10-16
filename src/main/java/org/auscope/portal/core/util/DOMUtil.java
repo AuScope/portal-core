@@ -30,8 +30,6 @@ import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.esotericsoftware.minlog.Log;
-
 
 /**
  * Utility functions for interacting with a DOM object
@@ -107,7 +105,6 @@ public class DOMUtil {
             throws ParserConfigurationException, IOException, SAXException {
         //build the XML dom
         String theString = IOUtils.toString(stream, Charset.forName("UTF-8")); 
-        Log.debug(theString);
         stream = IOUtils.toInputStream(theString, Charset.forName("UTF-8"));
 
         DocumentBuilderFactory factory = getDocumentBuilderFactory();

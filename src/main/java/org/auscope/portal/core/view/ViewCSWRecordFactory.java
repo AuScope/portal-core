@@ -40,18 +40,25 @@ public class ViewCSWRecordFactory {
         obj.put("noCache", record.getNoCache());
         obj.put("service", record.isService());
         
+        // Contact Organisation, Contact Person & Adminstrative Area
         CSWResponsibleParty rp = record.getContact();
         String adminArea = null;
         String contactOrg = "Unknown";
+        String contactPerson = null;
         if (rp != null) {
             if (rp.getOrganisationName() != null && !rp.getOrganisationName().isEmpty()) {
                 contactOrg = rp.getOrganisationName();
+            }
+            if (rp.getIndividualName() != null && !rp.getIndividualName().isEmpty()) {
+                contactPerson = rp.getIndividualName();
             }
             adminArea = (rp.getContactInfo() == null ? null : rp.getContactInfo().getAddressAdministrativeArea());
         }
         obj.put("adminArea", adminArea);
         obj.put("contactOrg", contactOrg);
+        obj.put("contactPerson", contactPerson);
         
+        // Funder
         CSWResponsibleParty frp = record.getFunder();
         String funderOrg = "Unknown";
         if (frp != null) {
@@ -61,6 +68,19 @@ public class ViewCSWRecordFactory {
         }
         obj.put("funderOrg", funderOrg);
 
+        // Authors
+        List<String> authors = new ArrayList<>();
+        if (record.getAuthors() != null) {
+            for (CSWResponsibleParty authorParty : record.getAuthors()) {
+                if (authorParty.getIndividualName() != null) {
+                    authors.add(authorParty.getIndividualName());
+                }
+            }
+        }
+        obj.put("authors", authors);
+
+
+        // Online resources
         List<Map<String, Object>> onlineResources = new ArrayList<>();
         if (record.getOnlineResources() != null) {
             for (AbstractCSWOnlineResource res : record.getOnlineResources()) {
@@ -71,6 +91,7 @@ public class ViewCSWRecordFactory {
         }
         obj.put("onlineResources", onlineResources);
 
+        // Geographic Elements
         List<Map<String, Object>> geographicElements = new ArrayList<>();
         if (record.getCSWGeographicElements() != null) {
             for (CSWGeographicElement geo : record.getCSWGeographicElements()) {
@@ -79,9 +100,11 @@ public class ViewCSWRecordFactory {
         }
         obj.put("geographicElements", geographicElements);
         
+        // Temporal Extent
         if(record.getTemporalExtent() != null)
         	obj.put("temporalExtent", temporalExtentToView(record.getTemporalExtent()));
 
+        // Descriptive Keywords
         List<String> descriptiveKeywords = new ArrayList<>();
         if (record.getDescriptiveKeywords() != null) {
             for (String s : record.getDescriptiveKeywords()) {
@@ -90,6 +113,7 @@ public class ViewCSWRecordFactory {
         }
         obj.put("descriptiveKeywords", descriptiveKeywords);
 
+        // Dataset URIs
         List<String> datasetURIs = new ArrayList<>();
         if (record.getDataSetURIs() != null) {
             for (String s : record.getDataSetURIs()) {
@@ -98,6 +122,7 @@ public class ViewCSWRecordFactory {
         }
         obj.put("datasetURIs", datasetURIs);
 
+        // Constraints
         List<String> constraints = new ArrayList<>();
         if (record.getConstraints() != null) {
             for (String s : record.getConstraints()) {
@@ -106,8 +131,7 @@ public class ViewCSWRecordFactory {
         }
         obj.put("constraints", constraints);
         
-        //added use limit constraints
-        
+        // Use limit constraints
         List<String> useLimitConstraints = new ArrayList<>();
         if (record.getUseLimitConstraints() != null) {
             for (String s : record.getUseLimitConstraints()) {
@@ -116,8 +140,7 @@ public class ViewCSWRecordFactory {
         }
         obj.put("useLimitConstraints", useLimitConstraints);
 
-        //added access constraints
-        
+        //Access constraints
         List<String> accessConstraints = new ArrayList<>();
         if (record.getAccessConstraints() != null) {
             for (String s : record.getAccessConstraints()) {
@@ -126,6 +149,7 @@ public class ViewCSWRecordFactory {
         }
         obj.put("accessConstraints", accessConstraints);
 
+        // Child records
         List<Map<String, Object>> childRecords = new ArrayList<>();
         if (record.hasChildRecords()) {
             for (CSWRecord childRecord : record.getChildRecords()) {
@@ -134,6 +158,7 @@ public class ViewCSWRecordFactory {
         }
         obj.put("childRecords", childRecords);
 
+        // Date
         String dateString = "";
         if (record.getDate() != null) {
             DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss zzz");
@@ -142,9 +167,11 @@ public class ViewCSWRecordFactory {
         }
         obj.put("date", dateString);
 
+        // Min scale, max scale
         obj.put("minScale", record.getMinScale());
         obj.put("maxScale", record.getMaxScale());
         
+        // Known layer ids
         List<String> knownLayerIds = new ArrayList<String>();
         if (record.getKnownLayerIds() != null && record.getKnownLayerIds().size() > 0) {
         	for (String s: record.getKnownLayerIds()) {
@@ -153,6 +180,7 @@ public class ViewCSWRecordFactory {
         	obj.put("knownLayerIds", knownLayerIds);
         }
         
+        // Known layer names
         List<String> knownLayerNames = new ArrayList<String>();
         if (record.getKnownLayerNames() != null && record.getKnownLayerNames().size() > 0) {
         	for (String s: record.getKnownLayerNames()) {
@@ -161,6 +189,7 @@ public class ViewCSWRecordFactory {
         	obj.put("knownLayerNames", knownLayerNames);
         }
         
+        // Known layer descriptions
         List<String> knownLayerDescriptions = new ArrayList<String>();
         if (record.getKnownLayerDescriptions() != null && record.getKnownLayerDescriptions().size() > 0) {
         	for (String s: record.getKnownLayerDescriptions()) {
