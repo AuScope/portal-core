@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -54,9 +55,9 @@ public class CSWCacheController extends BaseCSWController {
      * @return
      */
     @RequestMapping("/updateCSWCache.do")
-    public ModelAndView updateCSWCache() {
+    public ModelAndView updateCSWCache(@RequestParam(value = "serviceId", required = false) List<String> serviceIds) {
         try {
-            this.cswService.updateCache();
+            this.cswService.updateCache(serviceIds);
             return generateJSONResponseMAV(true);
         } catch (Exception e) {
             log.warn(String.format("Error updating CSW cache: %1$s", e));
