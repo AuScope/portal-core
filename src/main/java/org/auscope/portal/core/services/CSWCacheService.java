@@ -1,5 +1,6 @@
 package org.auscope.portal.core.services;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -8,7 +9,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +25,7 @@ import org.auscope.portal.core.services.responses.csw.CSWGetRecordResponse;
 import org.auscope.portal.core.services.responses.csw.CSWOnlineResourceImpl;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.services.responses.csw.CSWRecordTransformerFactory;
+import org.auscope.portal.core.services.responses.ows.OWSException;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -254,7 +255,7 @@ public class CSWCacheService {
     /**
      * Returns an unmodifiable Map of keyword names to matching CSWRecords
      *
-     * This function may trigger a cache update to begin on a seperate thread.
+     * This function may trigger a cache update to begin on a separate thread.
      *
      * @return
      */
@@ -297,7 +298,21 @@ public class CSWCacheService {
      * running default to make 3 attempts at 15 seconds interval if fail to connect.
      */
     public boolean updateCache() {
-        return updateCache(3, 15000);
+        return updateCache((List<String>) null, 3, 15000);
+    }
+    
+    /**
+     * Updates the internal keyword/record cache by querying supplied CSW's
+     *
+     * If an update is already running this function will have no effect
+     *
+     * The update will occur on a separate thread so this function will return immediately with true if an update has started or false if an update is already
+     * running default to make 3 attempts at 15 seconds interval if fail to connect.
+     * 
+     * @param serviceIds a list of service IDs as strings
+     */
+    public boolean updateCache(List<String> serviceIds) {
+    	return updateCache(serviceIds, 3, 15000);
     }
 
     /**
@@ -308,45 +323,101 @@ public class CSWCacheService {
      * The update will occur on a separate thread so this function will return immediately with true if an update has started or false if an update is already
      * running
      *
+     * @param serviceIds a list of service IDs as strings
      * @param connectionAttempts
      *            - number of attempts to try connecting
      * @param timeBtwConnectionAttempts
      *            - length of time in millisecond between each attempt to connect.
      * @return
      */
-    public boolean updateCache(int connectionAttempts, long timeBtwConnectionAttempts) {
+    public boolean updateCache(List<String> serviceIds, int connectionAttempts, long timeBtwConnectionAttempts) {
         if (!okToUpdate()) {
             return false;
         }
         
-        //This will be our new cache
-        Map<String, Set<CSWRecord>> newKeywordCache = new HashMap<>();
-        Map<String, Set<String>> newKeywordByEndpointCache = new HashMap<>();
-        List<CSWRecord> newRecordCache = new ArrayList<>();
-
-        //Create our worker threads (ensure they are all aware of each other)
-        CSWCacheUpdateThread[] updateThreads = new CSWCacheUpdateThread[cswServiceList.length];
-        for (int i = 0; i < updateThreads.length; i++) {
-            updateThreads[i] =
-                new CSWCacheUpdateThread(this,
-                                         updateThreads,
-                                         cswServiceList[i],
-                                         newKeywordCache,
-                                         newKeywordByEndpointCache,
-                                         newRecordCache,
-                                         this.cswRecordCache,
-                                         serviceCaller,
-                                         connectionAttempts,
-                                         timeBtwConnectionAttempts);
+        // Keep track of update started so we can set updateRunning if no exceptions
+        boolean updateStarted = false;
+        try {
+	        List<CSWServiceItem> serviceItems = this.getCSWServiceItems(serviceIds);
+	        if (serviceItems.isEmpty()) {
+	            log.warn("No valid serviceIds supplied; nothing to update.");
+	            this.updateRunning = false;
+	            return false;
+	        }
+	        
+	        // This will be our new cache
+	        Map<String, Set<CSWRecord>> newKeywordCache = new HashMap<>();
+	        Map<String, Set<String>> newKeywordByEndpointCache = new HashMap<>();
+	        List<CSWRecord> newRecordCache = new ArrayList<>();
+	
+	        // Create our worker threads (ensure they are all aware of each other)
+	        CSWCacheUpdateThread[] updateThreads = new CSWCacheUpdateThread[serviceItems.size()];
+	        for (int i = 0; i < updateThreads.length; i++) {
+	            updateThreads[i] =
+	                new CSWCacheUpdateThread(this,
+	                                         updateThreads,
+	                                         serviceItems.get(i),
+	                                         newKeywordCache,
+	                                         newKeywordByEndpointCache,
+	                                         newRecordCache,
+	                                         this.cswRecordCache,
+	                                         serviceCaller,
+	                                         connectionAttempts,
+	                                         timeBtwConnectionAttempts);
+	        }
+	
+	        // Fire off our worker threads, the last one to finish will update the
+	        // internal cache and call 'updateFinished'
+	        for (CSWCacheUpdateThread thread : updateThreads) {
+	            this.executor.execute(thread);
+	        }
+	
+	        updateStarted = true;
+	        return true;
+        } catch (Exception e) {
+        	log.error("Failed to start CSW cache update", e);
+            return false;
+        } finally {
+        	if (!updateStarted) {
+                // Clear the flag if we never actually started the update threads
+                this.updateRunning = false;
+            }
         }
-
-        //Fire off our worker threads, the last one to finish will update the
-        //internal cache and call 'updateFinished'
-        for (CSWCacheUpdateThread thread : updateThreads) {
-            this.executor.execute(thread);
+    }
+    
+    /**
+     * Retrieve a list of service items. If no IDs are passed this will revert to cswServiceList.
+     * @param serviceIds a list of service item IDs
+     * @return a list of CSWServiceItems
+     */
+    private List<CSWServiceItem> getCSWServiceItems(List<String> serviceIds) {
+    	List<CSWServiceItem> serviceItems = new ArrayList<CSWServiceItem>();
+        List<String> missingIds = new ArrayList<String>();
+        if (serviceIds != null && !serviceIds.isEmpty()) {
+        	for (String id: serviceIds) {
+        		if (id == null) continue;
+        		String currentId = id.trim();
+        		if (currentId == null) continue;
+        		CSWServiceItem match = null;
+        		for (CSWServiceItem item : this.cswServiceList) {
+        			if (item != null && currentId.equals(item.getId())) {
+        				match = item;
+        				break;
+        			}
+        		}
+        		if (match != null) {
+        			serviceItems.add(match);
+        		} else {
+        			missingIds.add(currentId);
+        		}
+        	}
+        	if (!missingIds.isEmpty()) {
+                log.warn("Requested serviceIds not found: " + String.join(", ", missingIds));
+            }
+        } else {
+        	serviceItems = Arrays.asList(this.cswServiceList);
         }
-
-        return true;
+        return serviceItems;
     }
 
     /**
@@ -472,8 +543,8 @@ public class CSWCacheService {
             synchronized (siblings) {
                 this.setFinishedExecution(true);
 
-                //This is all synchronized so nothing can finish execution until we release
-                //the lock on siblings
+                // This is all synchronized so nothing can finish execution until we release
+                // the lock on siblings
                 boolean cleanupRequired = true;
                 for (CSWCacheUpdateThread sibling : siblings) {
                     if (!sibling.isFinishedExecution()) {
@@ -482,7 +553,7 @@ public class CSWCacheService {
                     }
                 }
 
-                //Last thread to finish tells our parent we've terminated
+                // Last thread to finish tells our parent we've terminated
                 if (cleanupRequired) {
                     parent.updateFinished(newKeywordCache, newRecordCache, newKeywordByEndpointCache);
                 }
@@ -708,7 +779,7 @@ public class CSWCacheService {
         /**
          * Get the cached CSWrecord map for the current service
          * 
-         * @return a Map<fileIdentifier, CSWRecord> of CSWRecords for the current servcie
+         * @return a Map<fileIdentifier, CSWRecord> of CSWRecords for the current service
          */
         private Map<String, CSWRecord> getCachedCswRecordMap() {
         	Map<String, CSWRecord> recordMap = new HashMap<String, CSWRecord>();
@@ -720,6 +791,104 @@ public class CSWCacheService {
         	}
         	return recordMap;
         }
+        
+        /**
+         * Create the dummy CSWResource - to avoid confusion: this is a CSW End point, NOT a CSW record.
+         * If we're not caching the responses we need to add this endpoint as a fake CSW record so that we can query it later:
+         */
+        private void addDummyCacheRecord() throws MalformedURLException {
+            CSWRecord record = new CSWRecord(this.endpoint.getId());
+            record.setNoCache(true);
+            record.setServiceName(this.endpoint.getTitle());
+            record.setServiceId(this.endpoint.getId());
+            record.setRecordInfoUrl(this.endpoint.getRecordInformationUrl());
+            record.setConstraints(this.endpoint.getDefaultConstraints());
+            // Add the DefaultAnyTextFilter to the record so that we can use it in conjunction
+            // with whatever the user enters in the filter form.
+            record.setDescriptiveKeywords(new String[] {this.endpoint.getDefaultAnyTextFilter()});
+
+            CSWOnlineResourceImpl cswResource = new CSWOnlineResourceImpl(
+                    new URL(this.endpoint.getServiceUrl()),
+                    OnlineResourceType.CSWService.toString(), // Set the protocol to CSWService.
+                    this.endpoint.getTitle(),
+                    "A link to a CSW end point.");
+
+            record.setOnlineResources(List.of(cswResource));
+            
+            synchronized (newRecordCache) {
+                newRecordCache.add(record);
+            }
+        }
+        
+        /**
+         * Iterate the cswRecordMap resolving parent/children relationships.
+         * Children will NOT be removed from the map.
+         * @param cswRecordMap the Map of records keyed by record ID
+         */
+        private void resolveParentChildRelationships(Map<String, CSWRecord> cswRecordMap) {
+            for (CSWRecord rec : cswRecordMap.values()) {
+                String parentId = rec.getParentIdentifier();
+                if (StringUtils.isNotBlank(parentId)) {
+                    CSWRecord parent = cswRecordMap.get(parentId);
+                    if (parent == null) {
+                        threadLog.debug(String.format(
+                            "Record '%1$s' is an orphan referencing non existent parent '%2$s'",
+                            rec.getFileIdentifier(), parentId));
+                    } else {
+                        parent.addChildRecord(rec);
+                    }
+                }
+            }
+        }
+        
+        /**
+         * Fetch all records for a given endpoint.
+         * @return a Map<String, CSWRecord> of records with record ID as the key
+         */
+        private Map<String, CSWRecord> fetchAllRecordsFromEndpoint() {
+            final Map<String, CSWRecord> cswRecordMap = new HashMap<>();
+            int startPosition = 1;
+
+            // Request page after page of CSWRecords until we've iterated the entire store
+            do {
+                CSWGetRecordResponse response = null;
+                try {
+	                response = cswService.queryCSWEndpoint(
+	                    startPosition,
+	                    endpoint.getPageSize(),
+	                    connectionAttempts,
+	                    timeBtwConnectionAttempts
+	                );
+                } catch(OWSException | IOException e) {
+                	threadLog.warn(e);
+                }
+                
+                if (response == null) {
+                	threadLog.warn("No response: " + endpoint.getServiceUrl());
+                }
+
+                for (CSWRecord rec : response.getRecords()) {
+            		rec.setServiceId(endpoint.getId());
+                    final String fid = rec.getFileIdentifier();
+                    if (StringUtils.isNotBlank(fid)) {
+                        cswRecordMap.put(fid, rec);
+                	}
+                }
+
+                threadLog.trace(String.format("%1$s - Response parsed!", endpoint.getServiceUrl()));
+
+                // Prepare to request next 'page' of records (if required)
+                int next = response.getNextRecord();
+                if (next > response.getRecordsMatched() || next <= 0) {
+                    startPosition = -1;
+                } else {
+                    startPosition = next;
+                }
+            } while (startPosition > 0);
+
+            resolveParentChildRelationships(cswRecordMap);
+            return cswRecordMap;
+        }
 
         @Override
         public void run() {
@@ -728,100 +897,77 @@ public class CSWCacheService {
                 String cswServiceUrl = this.endpoint.getServiceUrl();
                 threadLog.info("Updating CSW cache for: " + cswServiceUrl);
                 if (this.endpoint.getNoCache()) {
-                    // Create the dummy CSWResource - to avoid confusion: this is a CSW End point, NOT a CSW record.
-                    // If we're not caching the responses we need to add this endpoint as a fake CSW record so that we can query it later:
-                    synchronized (newRecordCache) {
-                        CSWRecord record = new CSWRecord(this.endpoint.getId());
-                        record.setNoCache(true);
-                        record.setServiceName(this.endpoint.getTitle());
-                        record.setServiceId(this.endpoint.getId());
-                        record.setRecordInfoUrl(this.endpoint.getRecordInformationUrl());
-
-                        CSWOnlineResourceImpl cswResource = new CSWOnlineResourceImpl(
-                                new URL(cswServiceUrl),
-                                OnlineResourceType.CSWService.toString(), // Set the protocol to CSWService.
-                                this.endpoint.getTitle(),
-                                "A link to a CSW end point.");
-
-                        record.setConstraints(this.endpoint.getDefaultConstraints());
-
-                        // Add the DefaultAnyTextFilter to the record so that we can use it in conjunction
-                        // with whatever the user enters in the filter form.
-                        record.setDescriptiveKeywords(new String[] {this.endpoint.getDefaultAnyTextFilter()});
-
-                        List<AbstractCSWOnlineResource> onlineResources = new ArrayList<AbstractCSWOnlineResource>();
-                        onlineResources.add(cswResource);
-                        record.setOnlineResources(onlineResources);
-                        
-                        newRecordCache.add(record);
-                    }
+                	this.addDummyCacheRecord();
                 }
                 else {
-                    int startPosition = 1;
+                	// Fetch new records from the endpoint
+                	Map<String, CSWRecord> cswRecordMap = fetchAllRecordsFromEndpoint();
+                	if (cswRecordMap != null && !cswRecordMap.isEmpty()) {
+                		// Normalize record map to ensure key integrity
+                		Map<String, CSWRecord> normalizedNewMap = new HashMap<>();
+                	    for (Map.Entry<String, CSWRecord> e : cswRecordMap.entrySet()) {
+                	        String fid = e.getKey();
+                	        if (StringUtils.isBlank(fid)) {
+                	            fid = e.getValue().getFileIdentifier();
+                	        }
+                	        if (StringUtils.isNotBlank(fid)) {
+                	            normalizedNewMap.put(fid, e.getValue());
+                	        }
+                	    }
+                	    
+                	    // Determine whether we need to load records from index
+                	    boolean loadFromIndexRequired;
+                	    synchronized (cswRecordsCache) {
+                	        Map<String, CSWRecord> prev = cswRecordsCache.get(endpoint.getId());
+                	        loadFromIndexRequired = (prev == null || prev.isEmpty());
+                	    }
+                	    
+                	    Set<String> indexIds = elasticsearchService.getAllCSWRecordIdsForService(endpoint.getId());
+                	    
+                	    // Update cache and determine 
+                	    Set<String> removedIds = new HashSet<>();
+                	    synchronized (cswRecordsCache) {
+                	        // Load previous records (cache if present, index if not)
+                	        Map<String, CSWRecord> previousCachedRecords = cswRecordsCache.get(endpoint.getId());
+                	        Set<String> previouslyKnownIds;
+                	        if (previousCachedRecords == null || previousCachedRecords.isEmpty()) {
+                	            previouslyKnownIds = new HashSet<>(indexIds);
+                	        } else {
+                	            previouslyKnownIds = new HashSet<>(previousCachedRecords.keySet());
+                	        }
 
-                    // Request page after page of CSWRecords until we've iterated the entire store
-                    HashMap<String, CSWRecord> cswRecordMap = new HashMap<>();
-                    do {
-                        CSWGetRecordResponse response = this.cswService.queryCSWEndpoint(startPosition,
-                               this.endpoint.getPageSize(), this.connectionAttempts, this.timeBtwConnectionAttempts);
-                        for (CSWRecord rec : response.getRecords()) {
-                        	rec.setServiceId(this.endpoint.getId());
-                        	if(StringUtils.isNotBlank(rec.getFileIdentifier())) {
-                        		cswRecordMap.put(rec.getFileIdentifier(), rec);
-                        	}
-                        }
+                	        // Atomically publish the new snapshot into the shared cache
+                	        cswRecordsCache.put(endpoint.getId(), new HashMap<>(normalizedNewMap));
 
-                        threadLog.trace(String.format("%1$s - Response parsed!", this.endpoint.getServiceUrl()));
+                	        // Compute removed IDs (previous - new)
+                	        Set<String> newIds = new HashSet<>(normalizedNewMap.keySet());
+                	        removedIds.addAll(previouslyKnownIds);
+                	        removedIds.removeAll(newIds);
+                	    }
 
-                        // Prepare to request next 'page' of records (if required)
-                        if (response.getNextRecord() > response.getRecordsMatched() ||
-                                response.getNextRecord() <= 0) {
-                            startPosition = -1; //we are done in this case
-                        } else {
-                            startPosition = response.getNextRecord();
-                        }
-                    } while (startPosition > 0);
-
-                    // Iterate the cswRecordMap resolving parent/children relationships
-                    // children will NOT be removed from the map
-                    for (Iterator<String> i = cswRecordMap.keySet().iterator(); i.hasNext();) {
-                        CSWRecord next = cswRecordMap.get(i.next());
-
-                        String parentId = next.getParentIdentifier();
-                        if (parentId != null && !parentId.isEmpty()) {
-                            CSWRecord parentRecord = cswRecordMap.get(parentId);
-                            if (parentRecord == null) {
-                                threadLog.debug(String.format(
-                                        "Record '%1$s' is an orphan referencing non existent parent '%2$s'",
-                                        next.getFileIdentifier(), parentId));
-                            } else {
-                                parentRecord.addChildRecord(next);
-                            }
-                        }
-                    }
-
-                    // Store the contents for this endpoint so we can use it in case of errors later
-                    synchronized(this.cswRecordsCache) {
-                        // If there are records returned, serialise the cache and saved it to disk
-                        if (cswRecordMap != null && cswRecordMap.size() > 0) {
-                        	this.cswRecordsCache.put(this.endpoint.getId(), cswRecordMap);
-	                        threadLog.info(this.endpoint.getServiceUrl() + " has been serialized.");
-                        }
-                    }
+                	    // Perform any required record deletion
+                	    if (!removedIds.isEmpty()) {
+                	        threadLog.info(String.format("Records to be removed for endpoint %s: %s", endpoint.getId(), String.join(", ", removedIds)));
+                	        try {
+                	            elasticsearchService.deleteCSWRecordsById(removedIds);
+                	        } catch (Exception ex) {
+                	            threadLog.error("Error deleting CSWRecords from index: " + ex.getMessage(), ex);
+                	        }
+                	    }
+                	}
                 }
             } catch (Exception ex) {
                 threadLog.warn(String.format("Error updating keyword cache for '%1$s': %2$s", this.endpoint.getServiceUrl(), ex));
                 threadLog.warn("Exception: ", ex);
                 threadLog.info("Falling back on cached results for this endpoint.");
             } finally {
-                // Update the cache using the new records, if successfully
-                // retrieved, or the cached version if not.
+                // Update the cache using the new records if successfully retrieved, or the cached version if not
                 Map<String, CSWRecord> cswRecordMap = this.cswRecordsCache.get(this.endpoint.getId());
-                if (cswRecordMap == null || cswRecordMap.size() == 0) {
+                if (cswRecordMap == null || cswRecordMap.isEmpty()) {
                 	threadLog.info(String.format("Retrieving cached results for '%1$s", this.endpoint.getServiceUrl()));   
                 	cswRecordMap = this.getCachedCswRecordMap();
                 }
-                if (cswRecordMap != null && cswRecordMap.size() > 0) {
+                if (cswRecordMap != null && !cswRecordMap.isEmpty()) {
                     updateAppCache(cswRecordMap);
                 } else {
                     threadLog.warn(String.format("No cached results available for failed CSW %1$s", this.endpoint.getServiceUrl()));

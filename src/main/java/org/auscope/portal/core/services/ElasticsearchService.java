@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -43,6 +44,7 @@ import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.Criteria;
 import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
+import org.springframework.data.elasticsearch.core.query.FetchSourceFilter;
 import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.data.geo.Point;
 
@@ -57,6 +59,8 @@ import jakarta.annotation.PostConstruct;
 public class ElasticsearchService {
 
 	private final Log log = LogFactory.getLog(getClass());
+	
+	private final int PAGE_SIZE = 200;
 
 	@Value("${spring.data.elasticsearch.cluster-nodes}")
 	private String elasticsearchNodesUrl;
@@ -222,7 +226,7 @@ public class ElasticsearchService {
 	 */
 	public void updateCSWRecords(final List<CSWRecord> cswRecords) throws DataAccessResourceFailureException {
 		try {
-			List<List<CSWRecord>> batchRecords = Lists.partition(cswRecords, 1000);
+			List<List<CSWRecord>> batchRecords = Lists.partition(cswRecords, PAGE_SIZE);
 			for (List<CSWRecord> recordSet : batchRecords) {
 				this.recordRepository.saveAll(recordSet);
 			}
@@ -240,9 +244,9 @@ public class ElasticsearchService {
 	public List<CSWRecord> getAllCSWRecords() {
 		List<CSWRecord> records = new ArrayList<CSWRecord>();
 		IndexCoordinates index = IndexCoordinates.of(cswRecordIndex);
-		Query query = NativeQuery.builder().withQuery(q -> q.matchAll(ma -> ma)).withPageable(PageRequest.of(0, 1000))
+		Query query = NativeQuery.builder().withQuery(q -> q.matchAll(ma -> ma)).withPageable(PageRequest.of(0, PAGE_SIZE))
 				.build();
-		SearchScrollHits<CSWRecord> scroll = elasticsearchTemplate.searchScrollStart(1000, query, CSWRecord.class,
+		SearchScrollHits<CSWRecord> scroll = elasticsearchTemplate.searchScrollStart(PAGE_SIZE, query, CSWRecord.class,
 				index);
 		String scrollId = scroll.getScrollId();
 		while (scroll.hasSearchHits()) {
@@ -250,7 +254,7 @@ public class ElasticsearchService {
 				records.add(searchHit.getContent());
 			}
 			scrollId = scroll.getScrollId();
-			scroll = elasticsearchTemplate.searchScrollContinue(scrollId, 1000, CSWRecord.class, index);
+			scroll = elasticsearchTemplate.searchScrollContinue(scrollId, PAGE_SIZE, CSWRecord.class, index);
 		}
 		elasticsearchTemplate.searchScrollClear(scrollId);
 		return records;
@@ -269,8 +273,8 @@ public class ElasticsearchService {
 		List<CSWRecord> records = new ArrayList<CSWRecord>();
 		IndexCoordinates index = IndexCoordinates.of(cswRecordIndex);
 		Query query = NativeQuery.builder().withQuery(q -> q.match(m -> m.field("serviceId").query(serviceId)))
-				.withPageable(PageRequest.of(0, 1000)).build();
-		SearchScrollHits<CSWRecord> scroll = elasticsearchTemplate.searchScrollStart(1000, query, CSWRecord.class,
+				.withPageable(PageRequest.of(0, PAGE_SIZE)).build();
+		SearchScrollHits<CSWRecord> scroll = elasticsearchTemplate.searchScrollStart(PAGE_SIZE, query, CSWRecord.class,
 				index);
 		String scrollId = scroll.getScrollId();
 		while (scroll.hasSearchHits()) {
@@ -278,10 +282,55 @@ public class ElasticsearchService {
 				records.add(searchHit.getContent());
 			}
 			scrollId = scroll.getScrollId();
-			scroll = elasticsearchTemplate.searchScrollContinue(scrollId, 1000, CSWRecord.class, index);
+			scroll = elasticsearchTemplate.searchScrollContinue(scrollId, PAGE_SIZE, CSWRecord.class, index);
 		}
 		elasticsearchTemplate.searchScrollClear(scrollId);
 		return records;
+	}
+	
+	/**
+	 * Retrieve a set of IDs from Elasticsearch index for a given service.
+	 * 
+	 * @param serviceId the ID of the service
+	 * @return a set of IDs for each record indexed for the given service
+	 */
+	public Set<String> getAllCSWRecordIdsForService(String serviceId) {
+	    Set<String> ids = new HashSet<>();
+	    IndexCoordinates index = IndexCoordinates.of(cswRecordIndex);
+	    Query query = NativeQuery.builder()
+	        .withQuery(q -> q.match(m -> m.field("serviceId").query(serviceId)))
+	        .withPageable(PageRequest.of(0, PAGE_SIZE))
+	        .withSourceFilter(new FetchSourceFilter(new String[] { "fileIdentifier" }, null))
+	        .build();
+	    String scrollId = null;
+	    try {
+	        SearchScrollHits<Map> scroll = elasticsearchTemplate.searchScrollStart(PAGE_SIZE, query, Map.class, index);
+	        scrollId = scroll.getScrollId();
+	        while (scroll.hasSearchHits()) {
+	            for (SearchHit<Map> hit : scroll.getSearchHits()) {
+	                Map content = hit.getContent();
+	                if (content == null) continue;
+	                Object fidObj = content.get("fileIdentifier");
+	                if (fidObj != null) {
+	                    String fid = fidObj.toString();
+	                    if (StringUtils.isNotBlank(fid)) ids.add(fid);
+	                }
+	            }
+	            scrollId = scroll.getScrollId();
+	            scroll = elasticsearchTemplate.searchScrollContinue(scrollId, PAGE_SIZE, Map.class, index);
+	        }
+	    } catch (Exception ex) {
+	        log.warn("Failed to retrieve IDs for service " + serviceId + ": " + ex.getMessage(), ex);
+	    } finally {
+	        if (scrollId != null) {
+	            try {
+	                elasticsearchTemplate.searchScrollClear(scrollId);
+	            } catch (Exception e) {
+	                log.debug("Failed to clear scroll: " + e.getMessage(), e);
+	            }
+	        }
+	    }
+	    return ids;
 	}
 
 	/**
@@ -423,7 +472,7 @@ public class ElasticsearchService {
 
 		// Search
 		Query cswRecordQuery = new CriteriaQuery(cswRecordCriteria);
-		Pageable pageable = PageRequest.of(0, 1000);
+		Pageable pageable = PageRequest.of(0, PAGE_SIZE);
 		if (page != null && pageSize != null) {
 			pageable = PageRequest.of(page, pageSize);
 		}
@@ -450,6 +499,29 @@ public class ElasticsearchService {
 
 		return new CSWRecordSearchResponse(searchHits.getTotalHits(), recordResults,
 				new ArrayList<String>(knownLayerIds));
+	}
+	
+	/**
+	 * Delete CSWRecords from the index using the supplied IDs.
+	 *
+	 * @param ids collection of CSWRecord fileIdentifier values to delete
+	 * @throws DataAccessResourceFailureException if an ES error occurs
+	 */
+	protected void deleteCSWRecordsById(Collection<String> ids) throws DataAccessResourceFailureException {
+	    if (ids == null || ids.isEmpty()) {
+	        log.info("deleteCSWRecordsById called with empty id collection; nothing to delete.");
+	        return;
+	    }
+	    try {
+	        log.info("Deleting " + ids.size() + " CSWRecords from index");
+	        this.recordRepository.deleteAllById(ids);
+	        log.info("Deleted CSWRecords: " + String.join(", ", ids));
+	    } catch (DataAccessResourceFailureException e) {
+	        throw e;
+	    } catch (Exception e) {
+	        log.error("Error deleting CSWRecords: " + e.getLocalizedMessage(), e);
+	        throw new DataAccessResourceFailureException("Error deleting CSWRecords", e);
+	    }
 	}
 	
 	protected HttpPost createSuggestTermMethod(String prefix) {
