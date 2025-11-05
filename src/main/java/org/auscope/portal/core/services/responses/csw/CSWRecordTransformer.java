@@ -20,7 +20,6 @@ import org.auscope.portal.core.server.OgcServiceProviderType;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.namespaces.CSWNamespaceContext;
 import org.auscope.portal.core.util.DOMUtil;
-import org.springframework.util.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -58,6 +57,8 @@ public class CSWRecordTransformer {
 
     protected static final String CONTACTEXPRESSION = "gmd:contact/gmd:CI_ResponsibleParty";
     protected static final String FUNDEREXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty[./gmd:role[./gmd:CI_RoleCode[@codeListValue = 'funder']]]";
+    protected static final String AUTHORSEXPRESSION = "gmd:contact/gmd:CI_ResponsibleParty[./gmd:role[./gmd:CI_RoleCode[@codeListValue = 'author']]]"
+                                                 + " | gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty[./gmd:role[./gmd:CI_RoleCode[@codeListValue = 'author']]]";
     protected static final String RESOURCEPROVIDEREXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty[./gmd:role[./gmd:CI_RoleCode[@codeListValue = 'resourceProvider']]]/gmd:organisationName/gco:CharacterString";
     protected static final String FILEIDENTIFIEREXPRESSION = "gmd:fileIdentifier/gco:CharacterString";
     protected static final String PARENTIDENTIFIEREXPRESSION = "gmd:parentIdentifier/gco:CharacterString";
@@ -700,11 +701,11 @@ public class CSWRecordTransformer {
             	sdf.applyPattern(DATETIMEFORMATSTRING);
             	CSWTemporalExtent temporalExtent = new CSWTemporalExtent();
             	String beginPos = (evalXPathString(temporalNode, "gml:beginPosition"));
-            	if(!StringUtils.isEmpty(beginPos)) {
+            	if (beginPos != null && !beginPos.isEmpty()) {
             		temporalExtent.setBeginPosition(sdf.parse(beginPos));
             	}
             	String endPos = (evalXPathString(temporalNode, "gml:endPosition"));
-            	if(!StringUtils.isEmpty(endPos)) {
+            	if (endPos != null && !endPos.isEmpty()) {
             		temporalExtent.setEndPosition(sdf.parse(endPos));
             	}
             	record.setTemporalExtent(temporalExtent);
@@ -750,6 +751,7 @@ public class CSWRecordTransformer {
             }
         }
         
+        // Parse funder
         tempNode = evalXPathNode(this.mdMetadataNode, FUNDEREXPRESSION);
         if (tempNode != null) {
             try {
@@ -758,6 +760,24 @@ public class CSWRecordTransformer {
             } catch (Exception ex) {
                 logger.debug(String.format("Unable to parse funder for serviceName='%1$s' %2$s",
                         record.getServiceName(), ex));
+            }
+        }
+
+        // Parse author
+        tempNodeList = evalXPathNodeList(this.mdMetadataNode, AUTHORSEXPRESSION);
+        if (tempNodeList != null && tempNodeList.getLength() > 0) {
+            Node author;
+            List<CSWResponsibleParty> authors = new ArrayList<>();
+            for (int j = 0; j < tempNodeList.getLength(); j++) {
+                author = tempNodeList.item(j);
+                try {
+                    CSWResponsibleParty respParty = CSWResponsiblePartyFactory.generateResponsiblePartyFromNode(author);
+                    authors.add(respParty);
+                } catch (Exception ex) {
+                    System.out.println(String.format("Unable to parse funder for serviceName='%1$s' %2$s",
+                            record.getServiceName(), ex));
+                }
+                record.setAuthors(authors.toArray(new CSWResponsibleParty[0]));
             }
         }
         
@@ -942,11 +962,11 @@ public class CSWRecordTransformer {
                 	SimpleDateFormat sdf = new SimpleDateFormat(DATETIMEFORMATSTRING);
                 	CSWTemporalExtent temporalExtent = new CSWTemporalExtent();
                 	String beginPos = (evalXPathString(temporalNode, "gml:beginPosition"));
-                	if(!StringUtils.isEmpty(beginPos)) {
+                	if (beginPos != null && !beginPos.isEmpty()) {
                 		temporalExtent.setBeginPosition(sdf.parse(beginPos));
                 	}
                 	String endPos = (evalXPathString(temporalNode, "gml:endPosition"));
-                	if(!StringUtils.isEmpty(endPos)) {
+                	if(endPos != null && !endPos.isEmpty()) {
                 		temporalExtent.setEndPosition(sdf.parse(endPos));
                 	}
                 	record.setTemporalExtent(temporalExtent);
@@ -1237,11 +1257,11 @@ public class CSWRecordTransformer {
                 	SimpleDateFormat sdf = new SimpleDateFormat(DATETIMEFORMATSTRING);
                 	CSWTemporalExtent temporalExtent = new CSWTemporalExtent();
                 	String beginPos = (evalXPathString(temporalNode, "gml:beginPosition"));
-                	if(!StringUtils.isEmpty(beginPos)) {
+                	if (beginPos != null && !beginPos.isEmpty()) {
                 		temporalExtent.setBeginPosition(sdf.parse(beginPos));
                 	}
                 	String endPos = (evalXPathString(temporalNode, "gml:endPosition"));
-                	if(!StringUtils.isEmpty(endPos)) {
+                	if(endPos != null && !endPos.isEmpty()) {
                 		temporalExtent.setEndPosition(sdf.parse(endPos));
                 	}
                 	record.setTemporalExtent(temporalExtent);

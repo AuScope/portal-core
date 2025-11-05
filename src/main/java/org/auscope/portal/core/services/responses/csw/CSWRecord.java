@@ -76,6 +76,9 @@ public class CSWRecord {
     /** The contact. */
     @Field(type = FieldType.Object)
     private CSWResponsibleParty contact;
+
+    /** The authors. */
+    private CSWResponsibleParty[] authors;
     
     /** The funder. */
     @Field(type = FieldType.Object)
@@ -569,6 +572,25 @@ public class CSWRecord {
         this.funder = funder;
     }
 
+    
+    /**
+     * 
+     * @returns the authors
+     */
+    public CSWResponsibleParty[] getAuthors() {
+        return authors;
+    }
+
+    /**
+     * Sets the authors.
+     *
+     * @param author
+     *        the new author
+     */
+    public void setAuthors(CSWResponsibleParty[] authors) {
+        this.authors = authors;
+    }
+
     /**
      * Gets the date.
      *
@@ -693,9 +715,13 @@ public class CSWRecord {
                 + Arrays.toString(dataSetURIs)
                 + ", dataIdentificationAbstract=" + dataIdentificationAbstract
                 + ", supplementalInformation=" + supplementalInformation
-                + ", language=" + language + ", constraints="
-                + Arrays.toString(constraints) + ", use limit constraints="+ Arrays.toString(useLimitConstraints) + ", access constraints=" + Arrays.toString(accessConstraints)+ ", contact=" + contact
+                + ", language=" + language
+                + ", constraints=" + Arrays.toString(constraints)
+                + ", use limit constraints="+ Arrays.toString(useLimitConstraints)
+                + ", access constraints=" + Arrays.toString(accessConstraints)
+                + ", contact=" + contact
                 + (this.funder != null ? "funder: " + funder + ", " : "")
+                + ", authors=" + Arrays.toString(authors)
                 + ", date=" + date + ", childRecords="
                 + childRecords + ", layerName=" + layerName + "]";
     }
