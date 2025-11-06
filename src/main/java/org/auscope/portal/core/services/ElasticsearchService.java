@@ -455,11 +455,15 @@ public class ElasticsearchService {
 							.expression(quotedMatchPhraseText)
 							.boost(phraseBoostMultiplier * fieldWeight);
 
-					// No boosting beyond the default field weights for term query
-					Criteria termCriteria = new Criteria(field).expression(matchPhraseText).boost(fieldWeight);
-
-					Criteria combined = phraseCriteria.or(termCriteria);
-					cswSearchCriteria = (cswSearchCriteria == null) ? combined : cswSearchCriteria.or(combined);
+					// If no quotes use the current phase criteria, otherwise we'll construct a term criteria as well  
+					if (matchPhraseText.contains("\"")) {
+						cswSearchCriteria = (cswSearchCriteria == null) ? phraseCriteria: cswSearchCriteria.or(phraseCriteria);
+					} else {
+						// No boosting beyond the default field weights for term query
+						Criteria termCriteria = new Criteria(field).expression(matchPhraseText).boost(fieldWeight);
+						Criteria combined = phraseCriteria.or(termCriteria);
+						cswSearchCriteria = (cswSearchCriteria == null) ? combined : cswSearchCriteria.or(combined);
+					}
 				}
 			} catch (Exception e) {
 				log.error("Error creating search criteria: " + e.getLocalizedMessage());
