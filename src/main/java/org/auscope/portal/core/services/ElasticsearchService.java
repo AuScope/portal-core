@@ -79,13 +79,19 @@ public class ElasticsearchService {
 
 	private URL elasticsearchSuggestionUrl;
 
-	// CSWRecord search fields
-	public static final List<String> CSWRECORD_QUERY_FIELDS = Arrays.asList(new String[] {
+	// CSWRecord search fields and associated search weightings
+	public static final Map<String, Float> CSWRECORD_QUERY_FIELDS = Map.of(
 			// Native CSWRecord fields
-			"fileIdentifier", "serviceName", "descriptiveKeywords", "dataIdentificationAbstract", "knownLayerNames",
-			"knownLayerDescriptions",
+			"fileIdentifier", 1.0f,
+			"serviceName", 3.0f,
+			"descriptiveKeywords", 1.0f,
+			"dataIdentificationAbstract", 2.0f,
+			"knownLayerNames", 3.0f,
+			"knownLayerDescriptions", 2.0f,
 			// Nested onlineResources fields (OnlineResource)
-			"onlineResources.name", "onlineResources.description" });
+			"onlineResources.name", 1.0f,
+			"onlineResources.description", 1.0f
+	);
 
 	@Autowired
 	private CSWRecordRepository recordRepository;
@@ -409,41 +415,55 @@ public class ElasticsearchService {
 		// Fields to query
 		List<String> cswRecordFields = new ArrayList<String>();
 		if (queryFields == null || queryFields.size() == 0) {
-			cswRecordFields.addAll(CSWRECORD_QUERY_FIELDS);
+			cswRecordFields.addAll(CSWRECORD_QUERY_FIELDS.keySet());
 		} else {
 			for (String field : queryFields) {
-				if (CSWRECORD_QUERY_FIELDS.contains(field)) {
+				if (CSWRECORD_QUERY_FIELDS.keySet().contains(field)) {
 					cswRecordFields.add(field);
 				}
 			}
 		}
 
-		// Search Criteria and Query
-		Criteria cswSearchCriteria = new Criteria();
+		// Construct Criteria from text query
+		Criteria cswSearchCriteria = null;
 		if (StringUtils.isNotBlank(matchPhraseText)) {
 			try {
+				final float phraseBoostMultiplier = 3.0f;
+				// Build Criteria per field
 				for (String field : cswRecordFields) {
-					Criteria cswFieldCriteria = new Criteria();
-					// Wildcards need an expression search, match otherwise
-					if (StringUtils.containsAny(matchPhraseText, " *?")) {
-						cswFieldCriteria = new Criteria(field).expression(matchPhraseText);
-					} else {
-						cswFieldCriteria = new Criteria(field).contains(matchPhraseText);
+					Float fieldWeight = CSWRECORD_QUERY_FIELDS.getOrDefault(field, 1.0f);
+
+					// If no spaces, just use an expression Criteria and move on
+					if (!StringUtils.contains(matchPhraseText, " ")) {
+						Criteria expr = new Criteria(field)
+								.expression(matchPhraseText)
+								.boost(phraseBoostMultiplier * fieldWeight);
+
+						cswSearchCriteria = (cswSearchCriteria == null) ? expr : cswSearchCriteria.or(expr);
+						continue;
 					}
-					// Boost known layer fields in results
-					if (field.equals("knownLayerNames") || field.equals("knownLayerDescriptions")) {
-						cswFieldCriteria = cswFieldCriteria.boost(2);
-					}
-					if (cswSearchCriteria == null) {
-						cswSearchCriteria = cswFieldCriteria;
-					} else {
-						cswSearchCriteria = cswSearchCriteria.or(cswFieldCriteria);
-					}
-					cswSearchCriteria = cswSearchCriteria.or(cswFieldCriteria);
+
+					/*
+					 * There are spaces so we'll first construct a phrase query. If there are no
+					 * quotes present we'll book-end the existing text with them.
+					 */
+					String quotedMatchPhraseText =
+							matchPhraseText.contains("\"") ? matchPhraseText : "\"" + matchPhraseText + "\"";
+
+					// Boost the phrase query results
+					Criteria phraseCriteria = new Criteria(field)
+							.expression(quotedMatchPhraseText)
+							.boost(phraseBoostMultiplier * fieldWeight);
+
+					// No boosting beyond the default field weights for term query
+					Criteria termCriteria = new Criteria(field).expression(matchPhraseText).boost(fieldWeight);
+
+					Criteria combined = phraseCriteria.or(termCriteria);
+					cswSearchCriteria = (cswSearchCriteria == null) ? combined : cswSearchCriteria.or(combined);
 				}
 			} catch (Exception e) {
 				log.error("Error creating search criteria: " + e.getLocalizedMessage());
-				return new CSWRecordSearchResponse(0, new ArrayList<CSWRecord>(), new ArrayList<String>());
+				return new CSWRecordSearchResponse(0, new ArrayList<>(), new ArrayList<>());
 			}
 		}
 
