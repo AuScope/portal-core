@@ -16,7 +16,7 @@ jobs:
       - name: Set up Java for publishing to Maven Central Repository
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
           server-id: central
           server-username: MAVEN_USERNAME
@@ -32,7 +32,7 @@ jobs:
       - name: Set up Java for publishing to GitHub Packages
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
       - name: Publish to GitHub Packages
         run: mvn --batch-mode deploy -Pgithub
