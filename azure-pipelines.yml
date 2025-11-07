@@ -9,7 +9,7 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-container: maven:3.8.4-openjdk-17-slim
+container: maven:3.8.4-openjdk-21-slim
 
 variables:
   MAVEN_CACHE_FOLDER: $(Pipeline.Workspace)/.m2/repository
@@ -31,7 +31,7 @@ steps:
     publishJUnitResults: true
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
     javaHomeOption: 'path'
-    jdkDirectory: '/usr/local/openjdk-17'
+    jdkDirectory: '/usr/local/openjdk-21'
     mavenVersionOption: 'Default'
     mavenOptions: '-Xmx3072m $(MAVEN_OPTS)'
     mavenAuthenticateFeed: false
@@ -46,7 +46,7 @@ steps:
     goals: 'deploy'
     publishJUnitResults: false
     javaHomeOption: 'path'
-    jdkDirectory: '/usr/local/openjdk-17'
+    jdkDirectory: '/usr/local/openjdk-21'
     mavenVersionOption: 'Default'
     mavenOptions: '-Xmx3072m $(MAVEN_OPTS)'
     mavenAuthenticateFeed: false
