@@ -53,7 +53,7 @@ public abstract class AbstractFilter implements IFilter {
     }
 
     /**
-     * returns a ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+     * returns a ogc:Filter string fragment that can be embedded in &lt;ogc:And&gt; &lt;ogc:Or&gt; &lt;ogc:Not&gt; &lt;ogc:Filter&gt; parent elements.
      *
      * The filter will return true if the specified propertyName geometry lies within the specified bounding box bounds
      *
@@ -121,7 +121,7 @@ public abstract class AbstractFilter implements IFilter {
     }
 
     /**
-     * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+     * Generates an ogc:Filter string fragment that can be embedded in &lt;ogc:And&gt; &lt;ogc:Or&gt; &lt;ogc:Not&gt; &lt;ogc:Filter&gt; parent elements.
      *
      * Will compare a string property against a literal (using * as wild, # for single and ! for escape).
      *
@@ -138,7 +138,7 @@ public abstract class AbstractFilter implements IFilter {
     }
 
     /**
-     * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+     * Generates an ogc:Filter string fragment that can be embedded in &lt;ogc:And&gt; &lt;ogc:Or&gt; &lt;ogc:Not&gt; &lt;ogc:Filter&gt; parent elements.
      *
      * Will compare a string property against a literal (using * as wild, # for single and ! for escape).
      *
@@ -155,7 +155,7 @@ public abstract class AbstractFilter implements IFilter {
     }
 
     /**
-     * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+     * Generates an ogc:Filter string fragment that can be embedded in &lt;ogc:And&gt; &lt;ogc:Or&gt; &lt;ogc:Not&gt; &lt;ogc:Filter&gt; parent elements.
      *
      * Will compare a string property against a literal
      *
@@ -192,7 +192,7 @@ public abstract class AbstractFilter implements IFilter {
     }
 
     /**
-     * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+     * Generates an ogc:Filter string fragment that can be embedded in &lt;ogc:And&gt; &lt;ogc:Or&gt; &lt;ogc:Not&gt; &lt;ogc:Filter&gt; parent elements.
      *
      * The comparison will default to case insensitive matching
      *
@@ -209,7 +209,7 @@ public abstract class AbstractFilter implements IFilter {
     }
 
     /**
-     * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+     * Generates an ogc:Filter string fragment that can be embedded in &lt;ogc:And&gt; &lt;ogc:Or&gt; &lt;ogc:Not&gt; &lt;ogc:Filter&gt; parent elements.
      *
      * Will compare whether a property equals literal
      *
@@ -226,7 +226,7 @@ public abstract class AbstractFilter implements IFilter {
     }
 
     /**
-     * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+     * Generates an ogc:Filter string fragment that can be embedded in &lt;ogc:And&gt; &lt;ogc:Or&gt; &lt;ogc:Not&gt; &lt;ogc:Filter&gt; parent elements.
      *
      * Will compare whether a property equals literal
      *
@@ -255,7 +255,7 @@ public abstract class AbstractFilter implements IFilter {
     }
 
     /**
-     * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+     * Generates an ogc:Filter string fragment that can be embedded in &lt;ogc:And&gt; &lt;ogc:Or&gt; &lt;ogc:Not&gt; &lt;ogc:Filter&gt; parent elements.
      *
      * Will default to a 'case insensitive' match
      *
@@ -272,7 +272,7 @@ public abstract class AbstractFilter implements IFilter {
     }
 
     /**
-     * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+     * Generates an ogc:Filter string fragment that can be embedded in &lt;ogc:And&gt; &lt;ogc:Or&gt; &lt;ogc:Not&gt; &lt;ogc:Filter&gt; parent elements.
      *
      * Will test if a property is greater than or equal to the literal
      *
@@ -297,7 +297,7 @@ public abstract class AbstractFilter implements IFilter {
     }
 
     /**
-     * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+     * Generates an ogc:Filter string fragment that can be embedded in &lt;ogc:And&gt; &lt;ogc:Or&gt; &lt;ogc:Not&gt; &lt;ogc:Filter&gt; parent elements.
      *
      * Will default to a 'case insensitive' match
      *
@@ -314,7 +314,7 @@ public abstract class AbstractFilter implements IFilter {
     }
 
     /**
-     * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+     * Generates an ogc:Filter string fragment that can be embedded in &lt;ogc:And&gt; &lt;ogc:Or&gt; &lt;ogc:Not&gt; &lt;ogc:Filter&gt; parent elements.
      *
      * Will compare a property against a literal to see if they mismatch
      *
@@ -338,7 +338,7 @@ public abstract class AbstractFilter implements IFilter {
     }
 
     /**
-     * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+     * Generates an ogc:Filter string fragment that can be embedded in &lt;ogc:And&gt; &lt;ogc:Or&gt; &lt;ogc:Not&gt; &lt;ogc:Filter&gt; parent elements.
      *
      * Will default to a 'case insensitive' match
      *
@@ -354,7 +354,7 @@ public abstract class AbstractFilter implements IFilter {
         return generatePropertyIsLessThan(propertyName, literal, false, null);
     }
     /**
-     * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+     * Generates an ogc:Filter string fragment that can be embedded in &lt;ogc:And&gt; &lt;ogc:Or&gt; &lt;ogc:Not&gt; &lt;ogc:Filter&gt; parent elements.
      *
      * Will default to a 'case insensitive' match and no attributes
      *
@@ -375,7 +375,7 @@ public abstract class AbstractFilter implements IFilter {
     }
 
     /**
-     * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+     * Generates an ogc:Filter string fragment that can be embedded in &lt;ogc:And&gt; &lt;ogc:Or&gt; &lt;ogc:Not&gt; &lt;ogc:Filter&gt; parent elements.
      *
      * Will compare a property to see if it is less than a literal
      *
@@ -399,7 +399,7 @@ public abstract class AbstractFilter implements IFilter {
     }
 
     /**
-     * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+     * Generates an ogc:Filter string fragment that can be embedded in &lt;ogc:And&gt; &lt;ogc:Or&gt; &lt;ogc:Not&gt; &lt;ogc:Filter&gt; parent elements.
      *
      * Will default to a 'case insensitive' match
      *
@@ -415,7 +415,7 @@ public abstract class AbstractFilter implements IFilter {
         return generatePropertyIsGreaterThan(propertyName, literal, false, null);
     }
     /**
-     * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+     * Generates an ogc:Filter string fragment that can be embedded in &lt;ogc:And&gt; &lt;ogc:Or&gt; &lt;ogc:Not&gt; &lt;ogc:Filter&gt; parent elements.
      *
      * Will default to a 'case insensitive' match and no attributes
      *
@@ -436,7 +436,7 @@ public abstract class AbstractFilter implements IFilter {
     }
 
     /**
-     * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+     * Generates an ogc:Filter string fragment that can be embedded in &lt;ogc:And&gt; &lt;ogc:Or&gt; &lt;ogc:Not&gt; &lt;ogc:Filter&gt; parent elements.
      *
      * Will default to a 'case insensitive' match and no attributes
      *
@@ -457,7 +457,7 @@ public abstract class AbstractFilter implements IFilter {
     }
 
     /**
-     * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+     * Generates an ogc:Filter string fragment that can be embedded in &lt;ogc:And&gt; &lt;ogc:Or&gt; &lt;ogc:Not&gt; &lt;ogc:Filter&gt; parent elements.
      *
      * Will compare a property to see if it is greater than a literal
      *
@@ -481,7 +481,7 @@ public abstract class AbstractFilter implements IFilter {
     }
 
     /**
-     * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+     * Generates an ogc:Filter string fragment that can be embedded in &lt;ogc:And&gt; &lt;ogc:Or&gt; &lt;ogc:Not&gt; &lt;ogc:Filter&gt; parent elements.
      *
      * Will default to a 'case insensitive' match
      *
@@ -498,7 +498,7 @@ public abstract class AbstractFilter implements IFilter {
     }
 
     /**
-     * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+     * Generates an ogc:Filter string fragment that can be embedded in &lt;ogc:And&gt; &lt;ogc:Or&gt; &lt;ogc:Not&gt; &lt;ogc:Filter&gt; parent elements.
      *
      * Will compare a property to see if it is greater than or equal to a literal
      *
@@ -522,7 +522,7 @@ public abstract class AbstractFilter implements IFilter {
     }
 
     /**
-     * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+     * Generates an ogc:Filter string fragment that can be embedded in &lt;ogc:And&gt; &lt;ogc:Or&gt; &lt;ogc:Not&gt; &lt;ogc:Filter&gt; parent elements.
      *
      * Will compare a property to see if it is null
      *
@@ -535,7 +535,7 @@ public abstract class AbstractFilter implements IFilter {
     }
 
     /**
-     * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+     * Generates an ogc:Filter string fragment that can be embedded in &lt;ogc:And&gt; &lt;ogc:Or&gt; &lt;ogc:Not&gt; &lt;ogc:Filter&gt; parent elements.
      *
      * Will compare a variable number of filters using a logical AND comparison
      *
@@ -550,7 +550,7 @@ public abstract class AbstractFilter implements IFilter {
     }
 
     /**
-     * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+     * Generates an ogc:Filter string fragment that can be embedded in &lt;ogc:And&gt; &lt;ogc:Or&gt; &lt;ogc:Not&gt; &lt;ogc:Filter&gt; parent elements.
      *
      * Will compare a variable number of filters using a logical OR comparison
      *
@@ -565,7 +565,7 @@ public abstract class AbstractFilter implements IFilter {
     }
 
     /**
-     * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+     * Generates an ogc:Filter string fragment that can be embedded in &lt;ogc:And&gt; &lt;ogc:Or&gt; &lt;ogc:Not&gt; &lt;ogc:Filter&gt; parent elements.
      *
      * Will logical NOT the fragments result
      *
