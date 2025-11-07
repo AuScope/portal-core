@@ -135,7 +135,7 @@ public class TestElasticsearchService extends PortalTestClass {
 	@Test
 	public void testSearchCSWRecords() {
         String matchPhraseText = "test";
-        List<String> queryFields = Arrays.asList("field1", "field2");
+        List<String> queryFields = Arrays.asList("knownLayerNames", "knownLayerDescriptions");
         Integer page = 0;
         Integer pageSize = 10;
         List<String> ogcServices = Arrays.asList("OGC:WMS");
