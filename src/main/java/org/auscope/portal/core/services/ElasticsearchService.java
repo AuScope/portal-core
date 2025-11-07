@@ -300,7 +300,7 @@ public class ElasticsearchService {
 	    Query query = NativeQuery.builder()
 	        .withQuery(q -> q.match(m -> m.field("serviceId").query(serviceId)))
 	        .withPageable(PageRequest.of(0, PAGE_SIZE))
-	        .withSourceFilter(new FetchSourceFilter(new String[] { "fileIdentifier" }, null))
+	        .withSourceFilter(new FetchSourceFilter(true, new String[] { "fileIdentifier" }, null))
 	        .build();
 	    String scrollId = null;
 	    try {
