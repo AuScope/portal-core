@@ -972,5 +972,59 @@ public class CSWRecord {
     	}
    		knownLayerDescriptions.add(knownLayerDescription);
     }
+    
+    /**
+     * Shallow clone the CSWRecord.
+     *
+     * The clone shares immutable fields but creates new collection instances for lists/arrays
+     * so callers can safely modify the clone (e.g. replace onlineResources) without affecting
+     * the original.
+     */
+    @Override
+    public CSWRecord clone() {
+        CSWRecord clonedRecord = new CSWRecord();
+
+        clonedRecord.serviceName = this.serviceName;
+        clonedRecord.resourceProvider = this.resourceProvider;
+        clonedRecord.fileIdentifier = this.fileIdentifier;
+        clonedRecord.parentIdentifier = this.parentIdentifier;
+        clonedRecord.recordInfoUrl = this.recordInfoUrl;
+        clonedRecord.cswGeographicElements = this.cswGeographicElements == null ? null :
+                Arrays.copyOf(this.cswGeographicElements, this.cswGeographicElements.length);
+        clonedRecord.descriptiveKeywords = this.descriptiveKeywords == null ? null :
+                Arrays.copyOf(this.descriptiveKeywords, this.descriptiveKeywords.length);
+        clonedRecord.dataSetURIs = this.dataSetURIs == null ? null :
+                Arrays.copyOf(this.dataSetURIs, this.dataSetURIs.length);
+        clonedRecord.dataIdentificationAbstract = this.dataIdentificationAbstract;
+        clonedRecord.supplementalInformation = this.supplementalInformation;
+        clonedRecord.language = this.language;
+        clonedRecord.constraints = this.constraints == null ? null :
+                Arrays.copyOf(this.constraints, this.constraints.length);
+        clonedRecord.useLimitConstraints = this.useLimitConstraints == null ? null :
+                Arrays.copyOf(this.useLimitConstraints, this.useLimitConstraints.length);
+        clonedRecord.accessConstraints = this.accessConstraints == null ? null :
+                Arrays.copyOf(this.accessConstraints, this.accessConstraints.length);
+        clonedRecord.contact = this.contact;
+        clonedRecord.authors = this.authors == null ? null : Arrays.copyOf(this.authors, this.authors.length);
+        clonedRecord.funder = this.funder;
+        clonedRecord.date = this.date == null ? null : (Date) this.date.clone();
+        clonedRecord.dataQualityStatement = this.dataQualityStatement;
+        clonedRecord.temporalExtent = this.temporalExtent;
+        clonedRecord.childRecords = new ArrayList<>(this.childRecords == null ? List.of() : this.childRecords);
+        clonedRecord.noCache = this.noCache;
+        clonedRecord.service = this.service;
+        clonedRecord.layerName = this.layerName;
+        clonedRecord.maxScale = this.maxScale;
+        clonedRecord.minScale = this.minScale;
+        clonedRecord.serviceId = this.serviceId;
+        clonedRecord.knownLayerIds = this.knownLayerIds == null ? null : new ArrayList<>(this.knownLayerIds);
+        clonedRecord.knownLayerNames = this.knownLayerNames == null ? null : new ArrayList<>(this.knownLayerNames);
+        clonedRecord.knownLayerDescriptions = this.knownLayerDescriptions == null ? null : new ArrayList<>(this.knownLayerDescriptions);
+
+        // Important: create a new list instance for onlineResources so callers can set a new list on the clone.
+        clonedRecord.onlineResources = this.onlineResources == null ? new ArrayList<>() : new ArrayList<>(this.onlineResources);
+
+        return clonedRecord;
+    }
 
 }
