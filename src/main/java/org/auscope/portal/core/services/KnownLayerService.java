@@ -147,53 +147,80 @@ public class KnownLayerService {
             // We also need to mark the record as being mapped using mappedRecordIDs
             for (CSWRecord record : originalRecordList) {
                 try {
-                    switch (selector.isRelatedRecord(record)) {
-                    case Related:
-                        addToListConsiderWMSSelectors(relatedRecords, record, knownLayer);
-                        mappedRecordIDs.put(record.getFileIdentifier(), null);
-                        break;
-                    case Belongs:
-                        addToListConsiderWMSSelectors(belongingRecords, record, knownLayer);
-                        mappedRecordIDs.put(record.getFileIdentifier(), null);
+                	// Evaluate selector against the whole record first
+                	KnownLayerSelector.RelationType relation = selector.isRelatedRecord(record);
 
-                        // Look for services for which require a GetCapabilitiesRecord
-                        List<AbstractCSWOnlineResource> onlineResourceList = record.getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType.WMS);
-                        if (onlineResourceList.size() > 0) {
-                            for (AbstractCSWOnlineResource onlineRes: onlineResourceList) {
-                                // So far only GSKY services require us to fetch a 'GetCapabilities' response 
-                                if (onlineRes.getApplicationProfile().contains("GSKY")) {
-                                    URL linkage = onlineRes.getLinkage();
-                                    String url = linkage.getProtocol() + "://" + linkage.getHost() + linkage.getPath();
-                                    if (!capDoneList.contains(url)) {
-                                        try {
-                                            // Send a 'GetCapabilities' request to the service
-                                            GetCapabilitiesRecord capabilitiesRec = wmsService.getWmsCapabilities(url, "1.3.0");
+                	// If NotRelated, evaluate selector on each WMS/WFS online resource separately
+                	if (relation == KnownLayerSelector.RelationType.NotRelated) {
+                	    List<AbstractCSWOnlineResource> onlineResources = record.getOnlineResourcesByType(
+                	            AbstractCSWOnlineResource.OnlineResourceType.WMS,
+                	            AbstractCSWOnlineResource.OnlineResourceType.WFS);
 
-                                            // Only collect the 'GetCapabilities' record if it contains a valid 'timeExtent' value in its WMS layers
-                                            for (GetCapabilitiesWMSLayerRecord wmsCapRec: capabilitiesRec.getLayers()) {
-                                                String[] timeExtArr = wmsCapRec.getTimeExtent();
-                                                if (timeExtArr != null && timeExtArr.length > 0) {
-                                                    capabilitiesRecords.add(capabilitiesRec);
-                                                    break;
-                                                }
-                                            }
-                                        } catch (XPathException e) {
-                                            logger.warn(String.format("Unable to retrieve WMS GetCapabilities for '%1$s'", url));
-                                            logger.warn(e);
-                                        }
-                                        capDoneList.add(url);
-                                    }
-                                }
-                            }
-                        }
-                        break;
-                    default:
-                        // Ignore metadata CSW records - they have no named online resources and no geographic element BBOXes
+                	    // We need to recurse each resource. A nicer (but harder) way to do this would be to create
+                	    // an isRecordRelated(OnlineResource) method for each selector class
+                	    for (AbstractCSWOnlineResource onlineRes : onlineResources) {
+                	        if (onlineRes == null) continue;
+                	        // Shallow clone and replace its onlineResources with only this resource
+                	        CSWRecord singleView = record.clone();
+                	        singleView.setOnlineResources(List.of(onlineRes));
+                	        relation = selector.isRelatedRecord(singleView);
+                	        // Found a matching online resource
+                	        if (relation == KnownLayerSelector.RelationType.Related
+                	                || relation == KnownLayerSelector.RelationType.Belongs) {
+                	            break;
+                	        }
+                	    }
+                	}
+
+                	// Act on the determined relation
+                	switch (relation) {
+                	case Related:
+                	    addToListConsiderWMSSelectors(relatedRecords, record, knownLayer);
+                	    mappedRecordIDs.put(record.getFileIdentifier(), null);
+                	    break;
+                	case Belongs:
+                	    addToListConsiderWMSSelectors(belongingRecords, record, knownLayer);
+                	    mappedRecordIDs.put(record.getFileIdentifier(), null);
+
+                	    // Look for services for which require a GetCapabilitiesRecord
+                	    List<AbstractCSWOnlineResource> onlineResourceList = record.getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType.WMS);
+                	    if (onlineResourceList.size() > 0) {
+                	        for (AbstractCSWOnlineResource onlineRes : onlineResourceList) {
+                	        	// So far only GSKY services require us to fetch a 'GetCapabilities' response 
+                	            if (onlineRes.getApplicationProfile().contains("GSKY")) {
+                	                URL linkage = onlineRes.getLinkage();
+                	                String url = linkage.getProtocol() + "://" + linkage.getHost() + linkage.getPath();
+                	                if (!capDoneList.contains(url)) {
+                	                    try {
+                	                    	// Send a 'GetCapabilities' request to the service
+                	                        GetCapabilitiesRecord capabilitiesRec = wmsService.getWmsCapabilities(url, "1.3.0");
+                	                        
+                	                        // Only collect the 'GetCapabilities' record if it contains a valid 'timeExtent' value in its WMS layers
+                	                        for (GetCapabilitiesWMSLayerRecord wmsCapRec : capabilitiesRec.getLayers()) {
+                	                            String[] timeExtArr = wmsCapRec.getTimeExtent();
+                	                            if (timeExtArr != null && timeExtArr.length > 0) {
+                	                                capabilitiesRecords.add(capabilitiesRec);
+                	                                break;
+                	                            }
+                	                        }
+                	                    } catch (XPathException e) {
+                	                        logger.warn(String.format("Unable to retrieve WMS GetCapabilities for '%1$s'", url));
+                	                        logger.warn(e);
+                	                    }
+                	                    capDoneList.add(url);
+                	                }
+                	            }
+                	        }
+                	    }
+                	    break;
+                	default:
+                		// Ignore metadata CSW records - they have no named online resources and no geographic element BBOXes
                         // To ignore we must add it to the mapped record ids, so it does not get counted as an unmapped record
-                        if (!record.hasNamedOnlineResources() && !record.hasGeographicElements()) {
-                            mappedRecordIDs.put(record.getFileIdentifier(), null);
-                        }
-                    }
+                	    if (!record.hasNamedOnlineResources() && !record.hasGeographicElements()) {
+                	        mappedRecordIDs.put(record.getFileIdentifier(), null);
+                	    }
+                	}
+                	
                 } catch (PortalServiceException e) {
                     logger.error("Expecting data to line up", e);
                 }
@@ -354,7 +381,6 @@ public class KnownLayerService {
                     recordsToUpdate.add(rec);
                     // OnlineResources
                     if (rec.getOnlineResources() != null) {
-
                         // reorder online resources based on onlineResourceOrder specified in
                         // layers.yaml (if present)
                         if (onlineReorder) {
