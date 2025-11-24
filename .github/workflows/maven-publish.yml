@@ -11,29 +11,37 @@ jobs:
     permissions:
       contents: read
       packages: write
+
     steps:
-      - uses: actions/checkout@v5
-      - name: Set up Java for publishing to Maven Central Repository
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      # ✅ Set up Java and Maven for Maven Central
+      - name: Set up Java for Maven Central
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
           server-id: central
-          server-username: MAVEN_USERNAME
-          server-password: MAVEN_PASSWORD
-          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
-          gpg-passphrase: MAVEN_GPG_PASSPHRASE
-      - name: Publish to the Maven Central Repository
-        run: mvn --batch-mode deploy -Pcentral
+          server-username: ${{ secrets.OSSRH_USERNAME }}   # Sonatype username
+          server-password: ${{ secrets.OSSRH_TOKEN }}      # Sonatype token/password
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }} # ASCII-armored GPG key
+          gpg-passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+
+      # ✅ Deploy to Maven Central
+      - name: Publish to Maven Central
+        run: mvn --batch-mode clean deploy -Pcentral
         env:
-          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
-      - name: Set up Java for publishing to GitHub Packages
+
+      # ✅ Set up Java for GitHub Packages
+      - name: Set up Java for GitHub Packages
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
+
+      # ✅ Deploy to GitHub Packages
       - name: Publish to GitHub Packages
         run: mvn --batch-mode deploy -Pgithub
         env:
