@@ -41,7 +41,7 @@ jobs:
       - name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@v6
         with:
-          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          gpg_private_key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
 
       # ✅ Deploy to Maven Central
