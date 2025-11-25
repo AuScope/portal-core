@@ -40,6 +40,7 @@ jobs:
       # ✅ Deploy to Maven Central
       - name: Publish to Maven Central
         run: mvn --batch-mode clean deploy -Pcentral
+        continue-on-error: true
         env:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
 
