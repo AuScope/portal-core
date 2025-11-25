@@ -16,6 +16,15 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
+      # ✅ Cache Maven dependencies
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
       # ✅ Set up Java and Maven for Maven Central
       - name: Set up Java for Maven Central
         uses: actions/setup-java@v4
