@@ -32,10 +32,10 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           server-id: central
-          server-username: ${{ secrets.CENTRAL_USERNAME }}   # Sonatype Central Portal token name
-          server-password: ${{ secrets.CENTRAL_PASSWORD }}   # Sonatype Central Portal token value
+          server-username: CENTRAL_USERNAME
+          server-password: CENTRAL_PASSWORD
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
-          gpg-passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
       # Import GPG key (optional if setup-java handles it)
       - name: Import GPG key
@@ -49,6 +49,8 @@ jobs:
         run: mvn --batch-mode clean deploy -X
         continue-on-error: true
         env:
+          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+          CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}          
       
       # ✅ Set up Java for GitHub Packages
