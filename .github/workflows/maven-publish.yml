@@ -37,17 +37,9 @@ jobs:
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
-      # Import GPG key (optional if setup-java handles it)
-      - name: Import GPG key
-        uses: crazy-max/ghaction-import-gpg@v6
-        with:
-          gpg_private_key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
-          passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
-
       # ✅ Deploy to Maven Central
       - name: Publish to Maven Central
         run: mvn --batch-mode clean deploy -X
-        continue-on-error: true
         env:
           CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
           CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
