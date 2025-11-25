@@ -19,44 +19,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/x
     </scm>
 	<profiles>
 		<profile>
-			<id>central</id>
-			<distributionManagement>
-				<snapshotRepository>
-			    	<id>central</id>
-			    	<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-			  	</snapshotRepository>
-				<repository>
-					<id>central</id>
-					<name>Central Repository OSSRH</name>
-					<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-					<releases>
-						<enabled>true</enabled>
-					</releases>
-				</repository>
-			</distributionManagement>
-			
-			<build>
-		        <plugins>
-		
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-gpg-plugin</artifactId>
-						<version>3.2.4</version> <!-- Use the latest version -->
-						<executions>
-							<execution>
-								<id>sign-artifacts</id>
-								<phase>deploy</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>		
-			    </plugins>
-			</build>
-
-		</profile>
-		<profile>
 			<id>github</id>
 			<distributionManagement>
 				<repository>
