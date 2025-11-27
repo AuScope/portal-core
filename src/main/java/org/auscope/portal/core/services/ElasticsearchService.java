@@ -452,7 +452,7 @@ public class ElasticsearchService {
 					// If quotes use the current phase criteria, otherwise we'll construct a term criteria as well.
 					// Note: we're also limiting KnownLayer searches to phrase searching as queries such as "mt isa" would
 					// match KnownLayers containing (for example) "mt" and "polarisation" and put them to the top of the list. 
-					if (matchPhraseText.contains("\"") || field.equals("knownLayerNames") || field.equals("knownLayerDescriptions")) {
+					if (matchPhraseText.contains("\"") || field.equals("knownLayerNames")) {
 						cswSearchCriteria = (cswSearchCriteria == null) ? phraseCriteria: cswSearchCriteria.or(phraseCriteria);
 					} else {
 						// No boosting beyond the default field weights for term query
