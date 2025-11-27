@@ -81,28 +81,34 @@ public class TestKnownLayerService extends PortalTestClass {
             {
                 allowing(cswRecordList.get(0)).getFileIdentifier();
                 will(returnValue("id1"));
+                allowing(cswRecordList.get(0)).getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType.WMS, AbstractCSWOnlineResource.OnlineResourceType.WFS );
                 allowing(cswRecordList.get(0)).getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType.WMS);
 
                 allowing(cswRecordList.get(1)).getFileIdentifier();
                 will(returnValue("id2"));
-                allowing(cswRecordList.get(0)).getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType.WMS);
+                allowing(cswRecordList.get(1)).getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType.WMS, AbstractCSWOnlineResource.OnlineResourceType.WFS);
+                allowing(cswRecordList.get(1)).getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType.WMS);
 
                 allowing(cswRecordList.get(2)).getFileIdentifier();
                 will(returnValue("id3"));
-                allowing(cswRecordList.get(0)).getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType.WMS);
+                allowing(cswRecordList.get(2)).getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType.WMS, AbstractCSWOnlineResource.OnlineResourceType.WFS);
+                allowing(cswRecordList.get(2)).getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType.WMS);
 
                 allowing(cswRecordList.get(0)).getOnlineResources();
                 will(returnValue(null));
+                allowing(cswRecordList.get(0)).getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType.WMS, AbstractCSWOnlineResource.OnlineResourceType.WFS);
                 allowing(cswRecordList.get(0)).getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType.WMS);
 
                 allowing(cswRecordList.get(1)).getOnlineResources();
                 will(returnValue(null));
-                allowing(cswRecordList.get(0)).getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType.WMS);
+                allowing(cswRecordList.get(1)).getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType.WMS, AbstractCSWOnlineResource.OnlineResourceType.WFS);
+                allowing(cswRecordList.get(1)).getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType.WMS);
 
                 allowing(cswRecordList.get(2)).getOnlineResources();
                 will(returnValue(null));
-                allowing(cswRecordList.get(0)).getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType.WMS);
-            }
+                allowing(cswRecordList.get(2)).getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType.WMS, AbstractCSWOnlineResource.OnlineResourceType.WFS);
+                allowing(cswRecordList.get(2)).getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType.WMS);
+            }   
         });
 
     }
