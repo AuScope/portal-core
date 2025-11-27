@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -86,11 +85,7 @@ public class ElasticsearchService {
 			"serviceName", 3.0f,
 			"descriptiveKeywords", 1.0f,
 			"dataIdentificationAbstract", 2.0f,
-			"knownLayerNames", 3.0f,
-			"knownLayerDescriptions", 2.0f,
-			// Nested onlineResources fields (OnlineResource)
-			"onlineResources.name", 1.0f,
-			"onlineResources.description", 1.0f
+			"knownLayerNames", 3.0f
 	);
 
 	@Autowired
@@ -429,24 +424,23 @@ public class ElasticsearchService {
 		if (StringUtils.isNotBlank(matchPhraseText)) {
 			try {
 				final float phraseBoostMultiplier = 3.0f;
+				
 				// Build Criteria per field
 				for (String field : cswRecordFields) {
 					Float fieldWeight = CSWRECORD_QUERY_FIELDS.getOrDefault(field, 1.0f);
-
+					 
 					// If no spaces, just use an expression Criteria and move on
 					if (!StringUtils.contains(matchPhraseText, " ")) {
-						Criteria expr = new Criteria(field)
+						Criteria expressionCriteria = new Criteria(field)
 								.expression(matchPhraseText)
 								.boost(phraseBoostMultiplier * fieldWeight);
 
-						cswSearchCriteria = (cswSearchCriteria == null) ? expr : cswSearchCriteria.or(expr);
+						cswSearchCriteria = (cswSearchCriteria == null) ? expressionCriteria : cswSearchCriteria.or(expressionCriteria);
 						continue;
 					}
 
-					/*
-					 * There are spaces so we'll first construct a phrase query. If there are no
-					 * quotes present we'll book-end the existing text with them.
-					 */
+					// There are spaces so we'll first construct a phrase query. If there are no
+					// quotes present we'll book-end the existing text with them.
 					String quotedMatchPhraseText =
 							matchPhraseText.contains("\"") ? matchPhraseText : "\"" + matchPhraseText + "\"";
 
@@ -455,8 +449,10 @@ public class ElasticsearchService {
 							.expression(quotedMatchPhraseText)
 							.boost(phraseBoostMultiplier * fieldWeight);
 
-					// If no quotes use the current phase criteria, otherwise we'll construct a term criteria as well  
-					if (matchPhraseText.contains("\"")) {
+					// If quotes use the current phase criteria, otherwise we'll construct a term criteria as well.
+					// Note: we're also limiting KnownLayer searches to phrase searching as queries such as "mt isa" would
+					// match KnownLayers containing (for example) "mt" and "polarisation" and put them to the top of the list. 
+					if (matchPhraseText.contains("\"") || field.equals("knownLayerNames")) {
 						cswSearchCriteria = (cswSearchCriteria == null) ? phraseCriteria: cswSearchCriteria.or(phraseCriteria);
 					} else {
 						// No boosting beyond the default field weights for term query

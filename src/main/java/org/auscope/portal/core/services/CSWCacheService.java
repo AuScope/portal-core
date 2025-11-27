@@ -922,7 +922,16 @@ public class CSWCacheService {
                 	        loadFromIndexRequired = (prev == null || prev.isEmpty());
                 	    }
                 	    
-                	    Set<String> indexIds = elasticsearchService.getAllCSWRecordIdsForService(endpoint.getId());
+                	    Set<String> indexIds = new HashSet<>();
+                	    if (loadFromIndexRequired) {
+                	        try {
+                	            indexIds = elasticsearchService.getAllCSWRecordIdsForService(endpoint.getId());
+                	            if (indexIds == null) indexIds = new HashSet<>();
+                	        } catch (Exception ex) {
+                	            threadLog.warn("Load failed for " + endpoint.getId() + ", continuing without index load: " + ex.getMessage(), ex);
+                	            indexIds = new HashSet<>();
+                	        }
+                	    }
                 	    
                 	    // Update cache and determine 
                 	    Set<String> removedIds = new HashSet<>();
