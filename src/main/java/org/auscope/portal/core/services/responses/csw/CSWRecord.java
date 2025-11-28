@@ -3,7 +3,9 @@ package org.auscope.portal.core.services.responses.csw;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.auscope.portal.core.services.csw.CSWRecordsFilterVisitor;
 import org.springframework.data.annotation.Id;
@@ -115,13 +117,13 @@ public class CSWRecord {
     private String serviceId;
     
     // The IDs of any associated KnownLayers
-    private List<String> knownLayerIds;
+    private Set<String> knownLayerIds;
     
     // The names of any associated known layers (for searching)
-    private List<String> knownLayerNames;
+    private Set<String> knownLayerNames;
     
     // The descriptions of any associated known layers (for searching)
-    private List<String> knownLayerDescriptions;
+    private Set<String> knownLayerDescriptions;
     
 
     /**
@@ -891,7 +893,7 @@ public class CSWRecord {
      * Get IDs of the associated KnownLayers (if the record has any)
      * @return the IDs of the KnownLayers
      */
-    public List<String> getKnownLayerIds() {
+    public Set<String> getKnownLayerIds() {
     	return knownLayerIds;
     }
     
@@ -899,7 +901,7 @@ public class CSWRecord {
      * Set the ID of the associated KnownLayer
      * @param knownLayerId ID of associated KnownLayer
      */
-    public void setKnownLayerIds(List<String> knownLayerIds) {
+    public void setKnownLayerIds(Set<String> knownLayerIds) {
     	this.knownLayerIds = knownLayerIds;
     }
     
@@ -910,7 +912,7 @@ public class CSWRecord {
      */
     public boolean addKnownLayerId(String knownLayerId) {
     	if(knownLayerIds == null) {
-    		knownLayerIds = new ArrayList<String>();
+    		knownLayerIds = new HashSet<String>();
     	}
     	if(!knownLayerIds.contains(knownLayerId)) {
     		knownLayerIds.add(knownLayerId);
@@ -923,7 +925,7 @@ public class CSWRecord {
      * Get the associated KnownLayer names
      * @return KnownLayer names
      */
-    public List<String> getKnownLayerNames() {
+    public Set<String> getKnownLayerNames() {
     	return knownLayerNames;
     }
     
@@ -931,7 +933,7 @@ public class CSWRecord {
      * Set the associated KnownLayer names
      * @param knownLayerNames List of KnownLayer names
      */
-    public void setKnownLayerNames(List<String> knownLayerNames) {
+    public void setKnownLayerNames(Set<String> knownLayerNames) {
     	this.knownLayerNames = knownLayerNames;
     }
     
@@ -941,7 +943,7 @@ public class CSWRecord {
      */
     public void addKnownLayerName(String knownLayerName) {
     	if(knownLayerNames == null) {
-    		knownLayerNames = new ArrayList<String>();
+    		knownLayerNames = new HashSet<String>();
     	}
    		knownLayerNames.add(knownLayerName);
     }
@@ -950,7 +952,7 @@ public class CSWRecord {
      * Gets associated KnownLayer descriptions
      * @return List of KnownLayer descriptions
      */
-    public List<String> getKnownLayerDescriptions() {
+    public Set<String> getKnownLayerDescriptions() {
     	return knownLayerDescriptions;
     }
     
@@ -958,7 +960,7 @@ public class CSWRecord {
      * Set associated KnownLayer descriptions
      * @param knownLayerDescriptions KnownLayer descriptions
      */
-    public void setKnownLayerDescriptions(List<String> knownLayerDescriptions) {
+    public void setKnownLayerDescriptions(Set<String> knownLayerDescriptions) {
     	this.knownLayerDescriptions = knownLayerDescriptions;
     }
     
@@ -968,7 +970,7 @@ public class CSWRecord {
      */
     public void addKnownLayerDescription(String knownLayerDescription) {
     	if(knownLayerDescriptions == null) {
-    		knownLayerDescriptions = new ArrayList<String>();
+    		knownLayerDescriptions = new HashSet<String>();
     	}
    		knownLayerDescriptions.add(knownLayerDescription);
     }
