@@ -1019,9 +1019,9 @@ public class CSWRecord {
         clonedRecord.maxScale = this.maxScale;
         clonedRecord.minScale = this.minScale;
         clonedRecord.serviceId = this.serviceId;
-        clonedRecord.knownLayerIds = this.knownLayerIds == null ? null : new ArrayList<>(this.knownLayerIds);
-        clonedRecord.knownLayerNames = this.knownLayerNames == null ? null : new ArrayList<>(this.knownLayerNames);
-        clonedRecord.knownLayerDescriptions = this.knownLayerDescriptions == null ? null : new ArrayList<>(this.knownLayerDescriptions);
+        clonedRecord.knownLayerIds = this.knownLayerIds == null ? null : new HashSet<>(this.knownLayerIds);
+        clonedRecord.knownLayerNames = this.knownLayerNames == null ? null : new HashSet<>(this.knownLayerNames);
+        clonedRecord.knownLayerDescriptions = this.knownLayerDescriptions == null ? null : new HashSet<>(this.knownLayerDescriptions);
 
         // Important: create a new list instance for onlineResources so callers can set a new list on the clone.
         clonedRecord.onlineResources = this.onlineResources == null ? new ArrayList<>() : new ArrayList<>(this.onlineResources);

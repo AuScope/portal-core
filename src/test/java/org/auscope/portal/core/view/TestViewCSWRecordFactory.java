@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
@@ -237,11 +238,11 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 will(returnValue(null));
                 
                 allowing(mockCSWRecord).getKnownLayerIds();
-                will(returnValue(Arrays.asList("layerId1")));
+                will(returnValue(new HashSet<>(Arrays.asList("layerId1"))));
                 allowing(mockCSWRecord).getKnownLayerNames();
-                will(returnValue(Arrays.asList("layerName1")));
+                will(returnValue(new HashSet<>(Arrays.asList("layerName1"))));
                 allowing(mockCSWRecord).getKnownLayerDescriptions();
-                will(returnValue(Arrays.asList("layerDescription1")));
+                will(returnValue(new HashSet<>(Arrays.asList("layerDescription1"))));
 
                 allowing(mockCSWChildRecord1).getServiceName();
                 will(returnValue(serviceName_1));
@@ -289,11 +290,11 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 will(returnValue(null));
                 
                 allowing(mockCSWChildRecord1).getKnownLayerIds();
-                will(returnValue(Arrays.asList("layerId1")));
+                will(returnValue(new HashSet<>(Arrays.asList("layerId1"))));
                 allowing(mockCSWChildRecord1).getKnownLayerNames();
-                will(returnValue(Arrays.asList("layerName1")));
+                will(returnValue(new HashSet<>(Arrays.asList("layerName1"))));
                 allowing(mockCSWChildRecord1).getKnownLayerDescriptions();
-                will(returnValue(Arrays.asList("layerDescription1")));
+                will(returnValue(new HashSet<>(Arrays.asList("layerDescription1"))));
 
                 allowing(mockBbox).getEastBoundLongitude();
                 will(returnValue(bboxEast));
@@ -477,11 +478,11 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 allowing(mockCSWRecord).getTemporalExtent();
                 will(returnValue(null));
                 allowing(mockCSWRecord).getKnownLayerIds();
-                will(returnValue(Arrays.asList("layerId1")));
+                will(returnValue(new HashSet<>(Arrays.asList("layerId1"))));
                 allowing(mockCSWRecord).getKnownLayerNames();
-                will(returnValue(Arrays.asList("layerName1")));
+                will(returnValue(new HashSet<>(Arrays.asList("layerName1"))));
                 allowing(mockCSWRecord).getKnownLayerDescriptions();
-                will(returnValue(Arrays.asList("layerDescription1")));
+                will(returnValue(new HashSet<>(Arrays.asList("layerDescription1"))));
 
                 allowing(mockBbox).getEastBoundLongitude();
                 will(returnValue(bboxEast));
@@ -655,11 +656,11 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
                 allowing(mockCSWRecord).getTemporalExtent();
                 will(returnValue(null));                
                 allowing(mockCSWRecord).getKnownLayerIds();
-                will(returnValue(Arrays.asList("layerId1")));
+                will(returnValue(new HashSet<>(Arrays.asList("layerId1"))));
                 allowing(mockCSWRecord).getKnownLayerNames();
-                will(returnValue(Arrays.asList("layerName1")));
+                will(returnValue(new HashSet<>(Arrays.asList("layerName1"))));
                 allowing(mockCSWRecord).getKnownLayerDescriptions();
-                will(returnValue(Arrays.asList("layerDescription1")));
+                will(returnValue(new HashSet<>(Arrays.asList("layerDescription1"))));
 
                 allowing(mockCSWRecord).isService();
                 will(returnValue(false));
