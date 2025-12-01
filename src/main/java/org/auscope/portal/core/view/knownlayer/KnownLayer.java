@@ -81,9 +81,6 @@ public class KnownLayer implements Serializable {
 
     private int feature_count;
 
-    /** Set an order - defaults to name */
-    private String order;
-
     /**
      * Whether the layer should be requested as a single tile or many tiles (many is
      * the default).
@@ -126,6 +123,9 @@ public class KnownLayer implements Serializable {
 
     /** onlineResourceOrder */
     private JSONArray onlineResourceOrder;
+
+    /** layerSld - use this as SLD parameter in OGC WMS requests */
+    private JSONArray layerSldParameter;
     
     /**
      * Creates a new KnownLayer
@@ -414,14 +414,6 @@ public class KnownLayer implements Serializable {
         this.feature_count = feature_count;
     }
 
-    public String getOrder() {
-        return order;
-    }
-
-    public void setOrder(String order) {
-        this.order = (order == null) ? "" : order;
-    }
-
     public Boolean getSingleTile() {
         return singleTile;
     }
@@ -475,7 +467,7 @@ public class KnownLayer implements Serializable {
                 + ", proxyStyleUrl=" + proxyStyleUrl + ", proxyDownloadUrl=" + proxyDownloadUrl
                 + ", knownLayerSelector=" + knownLayerSelector + ", iconUrl=" + iconUrl + ", polygonColor="
                 + polygonColor + ", iconAnchor=" + iconAnchor + ", iconSize=" + iconSize + ", styles=" + mapStyles
-                + ", feature_count=" + feature_count + ", order=" + order + ", singleTile=" + singleTile
+                + ", feature_count=" + feature_count + ", singleTile=" + singleTile
                 + ", legendImg=" + legendImg + ", supportsCsvDownloads=" + supportsCsvDownloads
                 + (getServerType() != null ? ", serverType=" + getServerType() : "") + ']';
     }
@@ -589,6 +581,14 @@ public class KnownLayer implements Serializable {
         return onlineResourceOrder;
     }
 
+    /**
+     * 
+     * @return the layer's OGC WMS SLD parameter and selector 
+     */
+    public JSONArray getLayerSldParameter() {
+        return layerSldParameter;
+    }
+
 
     /**
      * Set the VMF - polygon
@@ -655,4 +655,25 @@ public class KnownLayer implements Serializable {
 
     }
 
+    /**
+     * Set the OGC WMS SLD parameters and selectors
+     * 
+     * @param sldList
+     */
+    public void setLayerSldParameter(JSONArray sldList) {
+        System.out.println("setLayerSldParameter("+sldList.toString()+")");
+        this.layerSldParameter = new JSONArray();
+
+        for (int i = 0; i < sldList.length(); i++) {
+
+            JSONArray oldSldParams = (JSONArray) sldList.get(i);
+
+            JSONArray newSldParams = new JSONArray();
+            newSldParams.put(oldSldParams.get(0)); // SLD URL selector
+            newSldParams.put(oldSldParams.get(1)); // SLD name
+            this.layerSldParameter.put(newSldParams);
+        }
+    }
+
 }
+

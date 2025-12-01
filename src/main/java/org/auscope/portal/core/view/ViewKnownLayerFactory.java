@@ -52,7 +52,6 @@ public class ViewKnownLayerFactory {
 
         obj.put("mapStyles", k.getMapStyles());
         obj.put("feature_count", k.getFeature_count());
-        obj.put("order", k.getOrder());
         obj.put("singleTile", k.getSingleTile());
         obj.put("legendImg", k.getLegendImg());
 
@@ -134,6 +133,19 @@ public class ViewKnownLayerFactory {
 
         if (k.getMaps() != null) {
             obj.put("maps", k.getMaps());
+        }
+
+        if (k.getLayerSldParameter() != null) {
+            JSONArray sldParamList = k.getLayerSldParameter();
+            List<Object> tupList = new ArrayList<>();
+            for (int i = 0; i < sldParamList.length(); i++) {
+                JSONArray inTuple = (JSONArray) sldParamList.get(i);
+                List<String> outTuple = new ArrayList<String>();
+                outTuple.add((String) inTuple.get(0));
+                outTuple.add((String) inTuple.get(1));
+                tupList.add(outTuple);
+            }
+            obj.put("sldParam", tupList);
         }
 
         return obj;
