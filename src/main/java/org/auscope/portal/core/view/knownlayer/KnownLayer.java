@@ -661,7 +661,6 @@ public class KnownLayer implements Serializable {
      * @param sldList
      */
     public void setLayerSldParameter(JSONArray sldList) {
-        System.out.println("setLayerSldParameter("+sldList.toString()+")");
         this.layerSldParameter = new JSONArray();
 
         for (int i = 0; i < sldList.length(); i++) {
