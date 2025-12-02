@@ -2,12 +2,14 @@ package org.auscope.portal.core.view;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.util.ArrayList;
 
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.view.knownlayer.KnownLayer;
 import org.auscope.portal.core.view.knownlayer.KnownLayerSelector;
 import org.junit.Assert;
 import org.junit.Test;
+import org.json.JSONArray;
 import org.springframework.ui.ModelMap;
 
 public class TestViewKnownLayerFactory extends PortalTestClass {
@@ -23,6 +25,11 @@ public class TestViewKnownLayerFactory extends PortalTestClass {
         double y = 5.0;
         double width = 32.0;
         double height = 16.0;
+        JSONArray sldList = new JSONArray();
+        JSONArray tup = new JSONArray();
+        tup.put("url");
+        tup.put("name");
+        sldList.put(tup);
 
         Point p1 = new Point();
         p1.setLocation(x, y);
@@ -44,6 +51,7 @@ public class TestViewKnownLayerFactory extends PortalTestClass {
         knownLayer.setIconAnchor(p1);
         knownLayer.setStackdriverServiceGroup("EarthResourcesLayers");
         knownLayer.setSupportsCsvDownloads(true);
+        knownLayer.setLayerSldParameter(sldList);
 
         //Test with all optional params
         model = factory.toView(knownLayer);
@@ -65,5 +73,10 @@ public class TestViewKnownLayerFactory extends PortalTestClass {
 
         Assert.assertEquals("EarthResourcesLayers", model.get("stackdriverServiceGroup"));
         Assert.assertEquals(true, (Boolean) model.get("supportsCsvDownloads"));
+        Assert.assertEquals("EarthResourcesLayers", model.get("stackdriverServiceGroup"));
+        Assert.assertEquals(1, ((ArrayList<Object>) model.get("sldParam")).size());
+        Assert.assertEquals("url", ((ArrayList<String>) ((ArrayList<Object>) model.get("sldParam")).get(0)).get(0));
+        Assert.assertEquals("name", ((ArrayList<String>) ((ArrayList<Object>) model.get("sldParam")).get(0)).get(1));
+
     }
 }
