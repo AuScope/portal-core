@@ -11,6 +11,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.services.namespaces.CSWNamespaceContext;
 import org.auscope.portal.core.util.DOMUtil;
+import org.springframework.data.elasticsearch.annotations.GeoShapeField;
+import org.springframework.data.elasticsearch.annotations.GeoShapeField.Orientation;
 import org.springframework.data.elasticsearch.core.geo.GeoJsonPolygon;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.w3c.dom.Node;
@@ -42,6 +44,14 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
     
     /** Non-OGC fields below **/
     // The GeoJsonPolyogn instance of the bounding box, used for indexing geometry in Elasticsearch.
+    // Note: I don't think the annotation fields are being used correctly by Spring ES Data, but
+    // have added an explicit mapping to EalsticsearchService's @PostConstruct method
+    @GeoShapeField(
+    		ignoreMalformed = true,
+    		coerce = true,
+    		orientation = Orientation.ccw,
+    		ignoreZValue = true
+    )
     private GeoJsonPolygon boundingPolygon;
 
     // True iff this was constructed with missing source coords and a global default had to be substituted
@@ -204,12 +214,22 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
      */
     @Override
     public void setBoundingPolygon(double westBoundLongitude, double eastBoundLongitude, double southBoundLatitude, double northBoundLatitude) {
-    	this.boundingPolygon = GeoJsonPolygon.of(
-    			new GeoPoint(northBoundLatitude, westBoundLongitude),
-				new GeoPoint(southBoundLatitude, westBoundLongitude),
-				new GeoPoint(southBoundLatitude, eastBoundLongitude),
-				new GeoPoint(northBoundLatitude, eastBoundLongitude),
-				new GeoPoint(northBoundLatitude, westBoundLongitude));
+    	// Normalize bounds in case inputs arrive swapped
+	    double minLon = Math.min(westBoundLongitude, eastBoundLongitude);
+	    double maxLon = Math.max(westBoundLongitude, eastBoundLongitude);
+	    double minLat = Math.min(southBoundLatitude, northBoundLatitude);
+	    double maxLat = Math.max(southBoundLatitude, northBoundLatitude);
+
+	    // GeoPoint(lat, lon)
+	    GeoPoint bottomLeft  = new GeoPoint(minLat, minLon);
+	    GeoPoint bottomRight = new GeoPoint(minLat, maxLon);
+	    GeoPoint topRight    = new GeoPoint(maxLat, maxLon);
+	    GeoPoint topLeft     = new GeoPoint(maxLat, minLon);
+
+	    // Closed counter-clockwise outer ring
+	    this.boundingPolygon = GeoJsonPolygon.of(
+	        bottomLeft, bottomRight, topRight, topLeft, bottomLeft
+	    );
     }
 
     /**
@@ -235,7 +255,6 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
         CSWGeographicBoundingBox bbox = new CSWGeographicBoundingBox();
         
         if (nodeList.getLength() > 0) {
-            
             westBoundLongitudeExpr = DOMUtil.compileXPathExpr("gmd:westBoundLongitude/gco:Decimal", nc);
             eastBoundLongitudeExpr = DOMUtil.compileXPathExpr("gmd:eastBoundLongitude/gco:Decimal",  nc);
             northBoundLatitudeExpr = DOMUtil.compileXPathExpr("gmd:northBoundLatitude/gco:Decimal", nc);

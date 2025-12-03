@@ -35,9 +35,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.IndexOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.SearchScrollHits;
+import org.springframework.data.elasticsearch.core.document.Document;
 import org.springframework.data.elasticsearch.core.geo.GeoJsonPolygon;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
@@ -114,7 +116,7 @@ public class ElasticsearchService {
 			cswRecordIndex = "test-index";
 		}
 	}
-
+	
 	/**
 	 * Construct the elasticsearchUrl from the settings. E.g.
 	 * https://elasticsearch-server.com/suggestion-index/_search
@@ -131,6 +133,31 @@ public class ElasticsearchService {
 		} catch (Exception e) {
 			log.error("Unable to build Elasticsearch URL: " + e.getLocalizedMessage());
 		}
+		
+		// GeoShape annotations (boundingPolygon) weren't being applied, so force mapping
+		IndexOperations io = elasticsearchOperations.indexOps(CSWRecord.class);
+		if (!io.exists()) {
+		    io.create();
+		}
+		Document mapping = Document.create();
+		mapping.put("properties", Map.of(
+		    "cswGeographicElements", Map.of(
+		        "properties", Map.of(
+		            "boundingPolygon", Map.of(
+		                "type", "geo_shape",
+		                "ignore_malformed", true,
+		                "coerce", true,
+		                "orientation", "ccw",
+		                "ignore_z_value", true
+		            ),
+		            "westBoundLongitude",  Map.of("type", "float"),
+		            "eastBoundLongitude",  Map.of("type", "float"),
+		            "southBoundLatitude",  Map.of("type", "float"),
+		            "northBoundLatitude",  Map.of("type", "float")
+		        )
+		    )
+		));
+		io.putMapping(mapping);
 	}
 
 	/**
