@@ -58,7 +58,8 @@ public class CSWRecordTransformer {
     protected static final String CONTACTEXPRESSION = "gmd:contact/gmd:CI_ResponsibleParty";
     protected static final String FUNDEREXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty[./gmd:role[./gmd:CI_RoleCode[@codeListValue = 'funder']]]";
     protected static final String AUTHORSEXPRESSION = "gmd:contact/gmd:CI_ResponsibleParty[./gmd:role[./gmd:CI_RoleCode[@codeListValue = 'author']]]"
-                                                 + " | gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty[./gmd:role[./gmd:CI_RoleCode[@codeListValue = 'author']]]";
+                                                 + " | gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty[./gmd:role[./gmd:CI_RoleCode[@codeListValue = 'author']]]"
+                                                 + " | gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty[./gmd:role[./gmd:CI_RoleCode[@codeListValue = 'author']]]";
     protected static final String RESOURCEPROVIDEREXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty[./gmd:role[./gmd:CI_RoleCode[@codeListValue = 'resourceProvider']]]/gmd:organisationName/gco:CharacterString";
     protected static final String FILEIDENTIFIEREXPRESSION = "gmd:fileIdentifier/gco:CharacterString";
     protected static final String PARENTIDENTIFIEREXPRESSION = "gmd:parentIdentifier/gco:CharacterString";
@@ -67,6 +68,7 @@ public class CSWRecordTransformer {
     protected static final String TEMPORALEXTENTEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:temporalElement/gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod";
     protected static final String KEYWORDLISTEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:descriptiveKeywords/gmd:MD_Keywords/gmd:keyword/gco:CharacterString";
     protected static final String DATASETURIEXPRESSION = "gmd:dataSetURI/gco:CharacterString";
+    protected static final String DATASETURIEXPRESSION2 = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:identifier/gmd:RS_Identifier[./gmd:codeSpace[./gco:CharacterString = 'doi.org']]/gmd:code/gco:CharacterString";
     protected static final String SUPPLEMENTALINFOEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:supplementalInformation/gco:CharacterString";
     protected static final String LANGUAGEEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:language/gco:CharacterString";
     protected static final String OTHERCONSTRAINTSEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_LegalConstraints/(gmd:otherConstraints/gco:CharacterString | gmd:reference/gmd:CI_Citation/gmd:title/gco:CharacterString)";
@@ -738,6 +740,17 @@ public class CSWRecordTransformer {
                 datasetURIs.add(datasetURI.getTextContent());
             }
             record.setDataSetURIs(datasetURIs.toArray(new String[datasetURIs.size()]));
+        } else {
+            tempNodeList = evalXPathNodeList(this.mdMetadataNode, DATASETURIEXPRESSION2);
+            if (tempNodeList != null && tempNodeList.getLength() > 0) {
+                List<String> datasetURIs = new ArrayList<>();
+                Node datasetURI;
+                for (int j = 0; j < tempNodeList.getLength(); j++) {
+                    datasetURI = tempNodeList.item(j);
+                    datasetURIs.add(datasetURI.getTextContent());
+                }
+                record.setDataSetURIs(datasetURIs.toArray(new String[datasetURIs.size()]));
+            }
         }
 
         Node tempNode = evalXPathNode(this.mdMetadataNode, CONTACTEXPRESSION);
