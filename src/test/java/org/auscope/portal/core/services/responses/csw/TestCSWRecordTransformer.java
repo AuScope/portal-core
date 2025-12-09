@@ -208,6 +208,26 @@ public class TestCSWRecordTransformer extends PortalTestClass {
         Assert.assertEquals("J S", authors[0].getIndividualName());
     }
 
+    /** Tests that authors from the format used by the AuScope Data Repository
+     *  can be retrieved from the CSW Response
+     * 
+     * @throws XPathException
+     * @throws ParserConfigurationException
+     * @throws SAXException
+     * @throws IOException
+     */
+    @Test
+    public void testAuthors_AuDataRepo() throws XPathException, ParserConfigurationException, SAXException, IOException  {
+        setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse_AuDataRepo.xml");
+
+        final CSWRecord rec = this.records[0];
+
+        final CSWResponsibleParty[] authors = rec.getAuthors();
+        Assert.assertNotNull(authors);
+
+        Assert.assertEquals("James R. Austin", authors[0].getIndividualName());
+    }
+
     /**
      * Tests that the data quality info is correctly parsed
      * @throws IOException 
@@ -253,6 +273,23 @@ public class TestCSWRecordTransformer extends PortalTestClass {
         Assert.assertEquals("http://geology.data.vic.gov.au/searchAssistant/reference.html?q=record_id:26150",
                 this.records[0].getDataSetURIs()[0]);
     }
+
+    /**
+     * Tests that the format used by the AuScope Data Repo can be parsed to retrieve a dataSetURI.
+     * @throws IOException
+     * @throws SAXException
+     * @throws ParserConfigurationException
+     * @throws XPathExpressionException
+     */
+    @Test
+    public void testSingleDatasetURI_AuDataRepo() throws XPathException, ParserConfigurationException, SAXException, IOException  {
+        setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse_AuDataRepo.xml");
+        Assert.assertNotNull(this.records[0].getDataSetURIs());
+        Assert.assertEquals("https://doi.org/10.60623/82trleue",
+                this.records[0].getDataSetURIs()[0]);
+    }
+
+
 
     /**
      * Tests that the record is correctly parsed with a single dataSetURI.
