@@ -39,7 +39,7 @@ jobs:
 
       # ✅ Deploy to Maven Central
       - name: Publish to Maven Central
-        run: mvn --batch-mode clean deploy -X
+        run: mvn --batch-mode clean deploy -Dgpg.skip=false
         env:
           CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
           CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
@@ -54,6 +54,6 @@ jobs:
 
       # ✅ Deploy to GitHub Packages
       - name: Publish to GitHub Packages
-        run: mvn --batch-mode deploy -Pgithub
+        run: mvn --batch-mode clena deploy -Pgithub -Dgpg.skip=false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
