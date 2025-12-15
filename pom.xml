@@ -237,6 +237,23 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/x
 					<failOnError>false</failOnError>
 				</configuration>
 			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.2.8</version>
+                <configuration>
+                    <skip>false</skip>
+                </configuration>
+                <executions>
+                <execution>
+                    <id>sign-artifacts</id>
+                    <phase>verify</phase>
+                    <goals>
+                    <goal>sign</goal>
+                    </goals>
+                </execution>
+                </executions>
+            </plugin>
         </plugins>
         <resources>
             <resource>
